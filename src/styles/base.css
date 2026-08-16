@@ -1,0 +1,253 @@
+/* ============================================================
+   XStudioz — Base: fonts, reset, primitive type styles
+   ============================================================ */
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+/* Metric-matched fallback keeps the ch-sized hero stable while Satoshi loads */
+@font-face {
+  font-family: 'Satoshi Fallback';
+  src: local('Helvetica Neue'), local('Arial');
+  size-adjust: 99%;
+  ascent-override: 100%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+html,
+body {
+  overflow-x: clip;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+  color: var(--ink);
+  background: var(--parchment);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--brand-a);
+  color: var(--paper);
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.footer :focus-visible {
+  outline-color: var(--parchment);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.svg-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ---------- Primitive type styles ---------- */
+
+.label {
+  font-size: var(--text-caption);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.body {
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: 0.01em;
+}
+
+.body-sm {
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+  letter-spacing: 0.01em;
+}
+
+.subheading {
+  font-size: var(--text-subheading);
+  font-weight: 400;
+  line-height: var(--leading-solid);
+  letter-spacing: 0.005em;
+}
+
+.heading-sm {
+  font-size: var(--text-heading-sm);
+  font-weight: 400;
+  line-height: var(--leading-solid);
+  letter-spacing: 0.005em;
+}
+
+.display {
+  font-size: var(--text-display);
+  font-weight: 400;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  text-transform: uppercase;
+}
+
+.sup {
+  font-size: 0.5em;
+  vertical-align: super;
+}
+
+/* ---------- Layout primitives ---------- */
+
+.container {
+  width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: var(--section-gap) 0;
+}
+
+.section__head {
+  margin-bottom: clamp(40px, 5vw, 64px);
+}
+
+.section__head .label {
+  color: var(--ink);
+  margin-bottom: var(--sp-3);
+}
+
+/* Hairline rule */
+.rule {
+  height: 1px;
+  width: 100%;
+  background: var(--ash);
+  transform-origin: left center;
+}
+
+.rule--invert {
+  background: rgba(229, 228, 224, 0.25);
+}
+
+/* Notched rule — the mark's diagonal cut, carried into structure.
+   Three segments: line / 45° jog / line. */
+.rule-notch {
+  display: flex;
+  align-items: center;
+  height: 9px;
+}
+.rule-notch i {
+  display: block;
+  background: var(--ash);
+  transform-origin: left center;
+}
+.rule-notch i:nth-child(1) {
+  height: 1px;
+  width: 38%;
+}
+.rule-notch i:nth-child(2) {
+  height: 1px;
+  width: 12px;
+  transform: rotate(-45deg);
+  margin-inline: -1px;
+  transform-origin: center;
+}
+.rule-notch i:nth-child(3) {
+  height: 1px;
+  flex: 1;
+}
+
+/* ---------- Line-reveal scaffolding ---------- */
+
+.line {
+  display: block;
+  overflow: hidden;
+  /* extend the mask window past the baseline so descenders never clip */
+  padding-bottom: 0.09em;
+  margin-bottom: -0.09em;
+}
+.line__in {
+  display: block;
+  text-wrap: balance;
+}
+
+/* Motion-hidden defaults are applied by JS (progressive enhancement):
+   without JS everything is simply visible. */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

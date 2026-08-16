@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XStudioz — Brand Design Studio</title>
+  <meta name="description" content="XStudioz is an independent brand design studio. Logos, identities, and the systems that carry them — designed properly, for founders worldwide." />
+  <meta property="og:title" content="XStudioz — Brand Design Studio" />
+  <meta property="og:description" content="A logo is a mark. A brand is a promise. We design both." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://xstudioz.com" />
+  <meta property="og:image" content="https://xstudioz.com/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preload" href="/fonts/Satoshi-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/Satoshi-500.woff2" as="font" type="font/woff2" crossorigin />
+  <script>
+    try {
+      if (!sessionStorage.getItem('xz-seen')) {
+        document.documentElement.classList.add('show-loader');
+        sessionStorage.setItem('xz-seen', '1');
+      }
+    } catch (e) {}
+  </script>
+</head>
+<body>
+
+  <!-- Shared vector definitions: the X mark, brand gradient, arrow + chevron glyphs -->
+  <svg class="svg-defs" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="xg" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#e634be" />
+        <stop offset="1" stop-color="#38016c" />
+      </linearGradient>
+      <symbol id="xmark" viewBox="758 335 404 404">
+        <path d="M1041.4,732c-3.7,0-7.4-1.4-10.2-4.3l-51.9-51.9c-2.9-2.9-4.5-7.1-4.2-11.3l1.8-24.8-88,88c-5.6,5.6-14.8,5.6-20.5,0l-96.1-96.1c-2.7-2.7-4.3-6.4-4.3-10.2s1.6-7.5,4.3-10.2l71.1-71.1-71.1-71.1c-2.7-2.7-4.3-6.4-4.3-10.2s1.6-7.5,4.3-10.2l96.1-96.1c5.6-5.6,14.8-5.6,20.5,0l51.9,51.9c2.9,2.9,4.5,7.1,4.2,11.3l-1.8,24.8,88-88c2.7-2.7,6.4-4.3,10.2-4.3h0c3.8,0,7.5,1.6,10.2,4.3l96.1,96.1c5.6,5.6,5.6,14.8,0,20.5l-71.1,71.1,71.1,71.1c5.6,5.6,5.6,14.8,0,20.5l-96.1,96.1c-2.9,2.9-6.5,4.3-10.2,4.3ZM803.1,621.4l75.6,75.6,105.3-105.3c4.3-4.3,10.8-5.5,16.3-2.9,5.5,2.5,8.8,8.2,8.4,14.2l-4.2,57,37,37,75.6-75.6-71.1-71.1c-5.6-5.6-5.6-14.8,0-20.5l71.1-71.1-75.6-75.6-105.2,105.2c-4.3,4.3-10.8,5.5-16.3,2.9s-8.8-8.2-8.4-14.2l4.2-57-37-37-75.6,75.6,71.1,71.1c5.6,5.6,5.6,14.8,0,20.5l-71.1,71.1h0Z" />
+      </symbol>
+      <symbol id="arr-ne" viewBox="0 0 16 16">
+        <path d="M3 13 L12.6 3.4 M5.4 3 H13 V10.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+      </symbol>
+      <symbol id="arr-e" viewBox="0 0 18 12">
+        <path d="M1 6 H16 M11 1.4 L15.6 6 L11 10.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+      </symbol>
+      <symbol id="chev-s" viewBox="0 0 14 9">
+        <path d="M1.5 1.5 L7 7 L12.5 1.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- Preloader -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader__mark">
+      <svg class="loader__x loader__x--ink"><use href="#xmark" /></svg>
+      <svg class="loader__x loader__x--grad"><use href="#xmark" fill="url(#xg)" /></svg>
+    </div>
+    <p class="loader__word label">XStudioz</p>
+  </div>
+
+  <!-- Print-sheet furniture: crop marks + running folio -->
+  <div class="furniture" aria-hidden="true">
+    <i class="crop crop--tl"></i>
+    <i class="crop crop--tr"></i>
+    <i class="crop crop--bl"></i>
+    <i class="crop crop--br"></i>
+    <p class="furniture__doc label">XStudioz — Brand manual</p>
+    <p class="furniture__folio label"><span id="folio">The Cover</span></p>
+  </div>
+
+  <header class="nav" id="nav">
+    <div class="container nav__row">
+      <a class="nav__brand" href="#top" aria-label="XStudioz — home">
+        <svg class="nav__mark" aria-hidden="true"><use href="#xmark" /></svg>
+        <span class="nav__name">XStudioz</span>
+      </a>
+      <nav class="nav__links" aria-label="Primary">
+        <a class="nav__link" href="#mark">The Mark</a>
+        <a class="nav__link" href="#studio">The Studio</a>
+        <a class="nav__link" href="#capabilities">Capabilities</a>
+        <a class="nav__link" href="#work">The Archive</a>
+        <a class="nav__link" href="#process">The Process</a>
+      </nav>
+      <a class="pill nav__cta" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
+        <span>Start a project</span>
+        <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+      </a>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ================= HERO ================= -->
+    <section class="hero" data-folio="The Cover" aria-label="Introduction">
+      <div class="container hero__grid">
+
+        <div class="hero__meta-top">
+          <p class="label" data-reveal="fade">XStudioz — Independent brand design studio</p>
+          <p class="label hero__meta-right" data-reveal="fade">Brand manual — first edition</p>
+        </div>
+        <div class="rule hero__rule-top" data-rule></div>
+
+        <div class="hero__stage">
+          <div class="hero__x" data-hero-x aria-hidden="true">
+            <svg class="hero__x-svg"><use href="#xmark" fill="url(#xg)" /></svg>
+          </div>
+          <h1 class="hero__title display">
+            <span class="line"><span class="line__in">A logo is a mark.</span></span>
+            <span class="line"><span class="line__in">A brand is a promise.</span></span>
+            <span class="line"><span class="line__in">We design both.</span></span>
+          </h1>
+        </div>
+
+        <div class="hero__foot">
+          <p class="hero__scroll label" data-reveal="fade">
+            Scroll
+            <svg class="hero__chev" aria-hidden="true"><use href="#chev-s" /></svg>
+          </p>
+          <p class="hero__lede" data-reveal="fade">
+            XStudioz is an independent studio for founders who take their brand
+            seriously. Logos, identities, and the systems that carry them —
+            designed properly, wherever you are building.
+          </p>
+        </div>
+
+        <div class="rule hero__rule-bot" data-rule></div>
+        <div class="hero__meta-bot">
+          <p class="label" data-reveal="fade">Doc. no. XZ-001</p>
+          <p class="label" data-reveal="fade">Identity · Logo · Systems</p>
+          <p class="label hero__meta-right" data-reveal="fade">Applies to everything we ship</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= SEC. 01 — THE MARK ================= -->
+    <section class="anatomy section" id="mark" data-folio="Sec. 01 — The Mark" aria-label="The mark">
+      <div class="container">
+        <div class="section__head">
+          <p class="label" data-reveal="fade">Sec. 01 — The Mark</p>
+          <div class="rule-notch" data-rule-notch><i></i><i></i><i></i></div>
+        </div>
+
+        <div class="anatomy__grid">
+          <figure class="anatomy__plate" data-anatomy>
+            <svg class="anatomy__fig" viewBox="0 0 720 720" role="img" aria-label="Construction diagram of the XStudioz mark: concentric guides, 45-degree axes and clearspace boundaries around the X">
+              <!-- clearspace -->
+              <rect class="guide" x="70" y="70" width="580" height="580" fill="none" stroke-dasharray="4 6" pathLength="1" />
+              <!-- inscribing circles -->
+              <circle class="guide" cx="360" cy="360" r="235" fill="none" pathLength="1" />
+              <circle class="guide" cx="360" cy="360" r="150" fill="none" pathLength="1" />
+              <!-- axes -->
+              <line class="guide" x1="360" y1="40" x2="360" y2="680" pathLength="1" />
+              <line class="guide" x1="40" y1="360" x2="680" y2="360" pathLength="1" />
+              <!-- 45° diagonals -->
+              <line class="guide" x1="130" y1="130" x2="590" y2="590" pathLength="1" />
+              <line class="guide" x1="590" y1="130" x2="130" y2="590" pathLength="1" />
+              <!-- dimension ticks -->
+              <line class="guide guide--tick" x1="70" y1="700" x2="650" y2="700" pathLength="1" />
+              <line class="guide guide--tick" x1="70" y1="694" x2="70" y2="706" pathLength="1" />
+              <line class="guide guide--tick" x1="650" y1="694" x2="650" y2="706" pathLength="1" />
+              <!-- the mark -->
+              <use class="anatomy__x" href="#xmark" x="163" y="163" width="394" height="394" />
+              <!-- the notch highlight -->
+              <circle class="guide guide--notch" cx="378" cy="440" r="32" fill="none" pathLength="1" />
+            </svg>
+            <figcaption class="anatomy__cap">
+              <span class="label">Fig. 01 — Primary mark, construction</span>
+              <span class="label">1:1</span>
+            </figcaption>
+          </figure>
+
+          <div class="anatomy__copy">
+            <h2 class="anatomy__statement heading-sm">
+              <span class="line"><span class="line__in">Everything here</span></span>
+              <span class="line"><span class="line__in">is built from</span></span>
+              <span class="line"><span class="line__in">this mark.</span></span>
+            </h2>
+            <p class="body" data-reveal="fade">
+              The 45° cuts, the rounded terminals, the notch — the geometry of
+              our X sets the rules for every line, arrow, and movement on this
+              page. That is how we build brands: one system, drawn once,
+              applied everywhere.
+            </p>
+            <ul class="anatomy__specs" data-reveal="fade">
+              <li><span class="label">Terminals</span><span class="body-sm">Rounded, outside only</span></li>
+              <li><span class="label">Geometry</span><span class="body-sm">45° construction</span></li>
+              <li><span class="label">Signature</span><span class="body-sm">The notch — one deliberate break</span></li>
+              <li><span class="label">Color</span><span class="body-sm">Signal gradient, #E634BE → #38016C</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SEC. 02 — THE STUDIO ================= -->
+    <section class="studio section" id="studio" data-folio="Sec. 02 — The Studio" aria-label="The studio">
+      <div class="container">
+        <div class="section__head">
+          <p class="label" data-reveal="fade">Sec. 02 — The Studio</p>
+          <div class="rule-notch" data-rule-notch><i></i><i></i><i></i></div>
+        </div>
+
+        <div class="studio__grid">
+          <h2 class="studio__statement heading-sm">
+            <span class="line"><span class="line__in">Small on purpose.</span></span>
+            <span class="line"><span class="line__in">Serious by default.</span></span>
+          </h2>
+          <div class="studio__copy">
+            <p class="body" data-reveal="fade">
+              When you order from XStudioz, you work with the people who
+              actually draw. No account managers, no hand-offs, no templates
+              dressed up as design. Every brief is read, questioned, and
+              answered with work we are prepared to defend.
+            </p>
+            <p class="body" data-reveal="fade">
+              We keep the studio deliberately small so that the standard stays
+              deliberately high — the same process, the same care, whether it
+              is a single mark or a full identity system.
+            </p>
+            <a class="ghost" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener" data-reveal="fade">
+              <span>See the work</span>
+              <svg class="ghost__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+            <span class="sr-only"> (opens in a new tab)</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 02 — CAPABILITIES ================= -->
+    <section class="caps section" id="capabilities" data-folio="Sec. 03 — Capabilities" aria-label="Capabilities">
+      <div class="container">
+        <div class="section__head">
+          <p class="label" data-reveal="fade">Sec. 03 — Capabilities</p>
+          <div class="rule-notch" data-rule-notch><i></i><i></i><i></i></div>
+        </div>
+
+        <h2 class="sr-only">Capabilities</h2>
+        <ul class="caps__list">
+          <li class="caps__row" data-cap>
+            <a class="caps__link" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
+              <span class="caps__num label">01</span>
+              <span class="caps__name heading-sm">Logo Design</span>
+              <span class="caps__desc body-sm">One mark, drawn until it holds. Concepts presented properly — never thumbnails in a grid.</span>
+              <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+            <span class="sr-only"> (opens in a new tab)</span></a>
+          </li>
+          <li class="caps__row" data-cap>
+            <a class="caps__link" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
+              <span class="caps__num label">02</span>
+              <span class="caps__name heading-sm">Brand Identity</span>
+              <span class="caps__desc body-sm">Color, type, voice, and the rules that hold them together across everything you ship.</span>
+              <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+            <span class="sr-only"> (opens in a new tab)</span></a>
+          </li>
+          <li class="caps__row" data-cap>
+            <a class="caps__link" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
+              <span class="caps__num label">03</span>
+              <span class="caps__name heading-sm">Brand Guidelines</span>
+              <span class="caps__desc body-sm">The document your brand lives by — written so your team can actually use it.</span>
+              <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+            <span class="sr-only"> (opens in a new tab)</span></a>
+          </li>
+          <li class="caps__row" data-cap>
+            <a class="caps__link" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
+              <span class="caps__num label">04</span>
+              <span class="caps__name heading-sm">Social Media Kits</span>
+              <span class="caps__desc body-sm">Templates and systems that keep every post unmistakably yours.</span>
+              <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+            <span class="sr-only"> (opens in a new tab)</span></a>
+          </li>
+          <li class="caps__row" data-cap>
+            <a class="caps__link" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
+              <span class="caps__num label">05</span>
+              <span class="caps__name heading-sm">Stationery &amp; Collateral</span>
+              <span class="caps__desc body-sm">Cards, letterheads, decks — the brand you can put in someone’s hand.</span>
+              <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+            <span class="sr-only"> (opens in a new tab)</span></a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ================= 03 — THE WORK ================= -->
+    <section class="work section" id="work" data-folio="Sec. 04 — The Archive" aria-label="The archive">
+      <div class="container">
+        <div class="section__head">
+          <p class="label" data-reveal="fade">Sec. 04 — The Archive</p>
+          <div class="rule-notch" data-rule-notch><i></i><i></i><i></i></div>
+        </div>
+
+        <div class="work__grid">
+          <h2 class="work__statement subheading">
+            <span class="line"><span class="line__in">This page is the studio.</span></span>
+            <span class="line"><span class="line__in">The proof lives next door.</span></span>
+          </h2>
+          <p class="work__note body" data-reveal="fade">
+            We keep this page quiet and the archive loud. Logofolio, brand
+            identities, social kits, stationery — the full body of work lives
+            at the portfolio, curated and current.
+          </p>
+        </div>
+
+        <a class="portal" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener" data-clip>
+          <span class="portal__inner">
+            <span class="portal__top">
+              <span class="label">portfolio.xstudioz.com</span>
+              <svg class="portal__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+            </span>
+            <span class="portal__title display">
+              <span class="line"><span class="line__in">Open the</span></span>
+              <span class="line"><span class="line__in">archive<span class="portal__x" aria-hidden="true"><svg><use href="#xmark" fill="url(#xg)" /></svg></span></span></span>
+            </span>
+            <span class="portal__bottom">
+              <span class="label">Logofolio</span>
+              <span class="label">Brand Identity</span>
+              <span class="label">Social Media Kits</span>
+              <span class="label">Stationery</span>
+            </span>
+          </span>
+        <span class="sr-only"> (opens in a new tab)</span></a>
+      </div>
+    </section>
+
+    <!-- ================= 04 — THE PROCESS ================= -->
+    <section class="process section" id="process" data-folio="Sec. 05 — The Process" aria-label="Process">
+      <div class="container">
+        <div class="section__head">
+          <p class="label" data-reveal="fade">Sec. 05 — The Process</p>
+          <div class="rule-notch" data-rule-notch><i></i><i></i><i></i></div>
+        </div>
+
+        <h2 class="sr-only">The process</h2>
+        <ol class="process__steps">
+          <li class="process__step" data-reveal="fade">
+            <span class="process__num">01</span>
+            <h3 class="process__name body">Brief</h3>
+            <p class="process__body body-sm">Tell us what you’re building. We ask questions until we understand it as well as you do.</p>
+          </li>
+          <li class="process__step" data-reveal="fade">
+            <span class="process__num">02</span>
+            <h3 class="process__name body">Directions</h3>
+            <p class="process__body body-sm">Distinct concepts, each with a point of view — presented in context, not as a contact sheet.</p>
+          </li>
+          <li class="process__step" data-reveal="fade">
+            <span class="process__num">03</span>
+            <h3 class="process__name body">Refinement</h3>
+            <p class="process__body body-sm">Focused rounds of revision until the mark sits exactly right. You’ll always know what changed and why.</p>
+          </li>
+          <li class="process__step" data-reveal="fade">
+            <span class="process__num">04</span>
+            <h3 class="process__name body">Delivery</h3>
+            <p class="process__body body-sm">Vector masters, print-ready files, and web exports — packaged, named sensibly, and explained in plain language.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ================= 05 — WHERE WE WORK ================= -->
+    <section class="brief section--panel" id="brief" data-folio="Sec. 06 — The Brief" aria-label="Start a project">
+      <div class="container">
+        <div class="section__head">
+          <p class="label" data-reveal="fade">Sec. 06 — The Brief</p>
+          <div class="rule-notch" data-rule-notch><i></i><i></i><i></i></div>
+        </div>
+
+        <div class="brief__grid">
+          <h2 class="brief__statement heading-sm">
+            <span class="line"><span class="line__in">Every brand here</span></span>
+            <span class="line"><span class="line__in">started as an email.</span></span>
+          </h2>
+          <div class="brief__copy">
+            <p class="body" data-reveal="fade">
+              Tell us what you’re building — the name, the audience, the
+              ambition. We read every brief ourselves and reply with how we’d
+              approach it, what it costs, and when you’ll have it. No forms,
+              no middlemen. Just write.
+            </p>
+            <a class="pill" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz" data-reveal="fade">
+              <span>inquire@xstudioz.com</span>
+              <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FOOTER / FINAL FRAME ================= -->
+    <footer class="footer" id="contact" data-folio="Colophon" aria-label="Contact">
+      <div class="container footer__grid">
+        <p class="label footer__chapter">Colophon — The last page</p>
+        <div class="footer__stage">
+          <div class="footer__x" aria-hidden="true">
+            <svg class="footer__x-svg"><use href="#xmark" fill="url(#xg)" /></svg>
+          </div>
+          <p class="footer__title display">
+            <span class="line"><span class="line__in">Let’s make</span></span>
+            <span class="line"><span class="line__in">your mark.</span></span>
+          </p>
+        </div>
+
+        <div class="footer__ctas">
+          <a class="pill pill--invert" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
+            <span>Start a project</span>
+            <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+          </a>
+          <a class="ghost ghost--invert" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
+            <span>Browse the archive</span>
+            <svg class="ghost__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+          <span class="sr-only"> (opens in a new tab)</span></a>
+        </div>
+
+        <div class="rule rule--invert footer__rule" data-rule></div>
+
+        <div class="footer__meta">
+          <p class="label">© 2026 XStudioz</p>
+          <p class="label">Set in Satoshi, on parchment, in-house</p>
+          <p class="label footer__meta-right">End of document — start of yours</p>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

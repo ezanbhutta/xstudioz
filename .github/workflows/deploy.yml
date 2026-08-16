@@ -1,0 +1,36 @@
+name: Build for Hostinger
+
+# Every push to main builds the site and publishes the finished files to the
+# `deploy` branch. Hostinger's GIT feature tracks that branch and pulls it
+# automatically through its webhook — nothing to run on the server.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Publish dist to the deploy branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: deploy
+          force_orphan: true
+          commit_message: 'deploy: ${{ github.event.head_commit.message }}'

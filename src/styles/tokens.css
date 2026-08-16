@@ -1,0 +1,67 @@
+/* ============================================================
+   XStudioz — Design Tokens
+   Canvas: parchment & ink (editorial print).
+   Chromatic event: the brand gradient, used once per frame.
+   ============================================================ */
+
+:root {
+  /* Colors */
+  --parchment: #e5e4e0;
+  --ink: #1d1d1d;
+  --paper: #ffffff;
+  --ash: #bfbebe;
+  --stone: #cdcdc9;
+  --slate: #605f5b;           /* secondary text — 5.0:1 on parchment, AA at body sizes */
+  --parchment-70: rgba(229, 228, 224, 0.7);
+
+  /* Brand gradient — from the mark itself. A singleton, not a system. */
+  --brand-a: #e634be;
+  --brand-b: #38016c;
+  --gradient-x: linear-gradient(90deg, var(--brand-a), var(--brand-b));
+
+  /* Type — Satoshi carries everything */
+  --font-sans: 'Satoshi', 'Satoshi Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --text-caption: 11px;
+  --text-body-sm: 15px;
+  --text-body: 18px;
+  --text-subheading: clamp(26px, 2.6vw, 34px);
+  --text-heading-sm: clamp(30px, 3.6vw, 46px);
+  --text-heading: clamp(40px, 5.4vw, 70px);
+  --text-display: clamp(44px, 7.6vw, 112px);
+
+  --leading-tight: 0.92;
+  --leading-solid: 1;
+  --leading-body: 1.5;
+
+  --tracking-label: 0.09em;
+  --tracking-display: 0.005em;
+
+  /* Spacing rhythm */
+  --sp-1: 5px;
+  --sp-2: 8px;
+  --sp-3: 15px;
+  --sp-4: 19px;
+  --sp-5: 30px;
+  --sp-6: 46px;
+  --sp-7: 76px;
+  --sp-8: 119px;
+  --section-gap: clamp(76px, 11vw, 152px);
+
+  /* Layout */
+  --page-max: 1400px;
+  --gutter: clamp(20px, 4vw, 56px);
+  --col-gap: var(--sp-4);
+
+  /* Radii — interactive elements only; surfaces stay sharp */
+  --radius-ui: 10px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.65, 0.05, 0, 1);
+  --dur-fast: 0.35s;
+  --dur-med: 0.6s;
+
+  /* Hairlines */
+  --hairline: 1px solid var(--ash);
+}
