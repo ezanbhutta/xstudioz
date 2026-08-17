@@ -1,8 +1,9 @@
 /* ============================================================
    XStudioz — Interior document entry
-   The cover (main.ts) owns the loader, the hero and the running
-   folio. Every other page boots only the shared chrome, so the
-   interior bundle stays small and the content paints immediately.
+   The cover (main.ts) owns the preloader and the hero entrance.
+   Every other page boots only the shared chrome from lib/motion.ts,
+   so the interior bundle stays small and the content paints
+   immediately.
    ============================================================ */
 
 import './styles/tokens.css';

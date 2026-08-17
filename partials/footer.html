@@ -1,9 +1,30 @@
-<footer class="footer" id="contact" data-folio="Colophon" aria-label="Contact">
+<!-- The last frame of the document.
+
+     This is a colophon, not a second hero and not a sitemap dump. It closes
+     the page the way a book closes: one statement, one action, then the
+     quiet apparatus (where else to go, who made it, the legal footing).
+
+     Contracts other code depends on, do not change without checking:
+     - data-folio feeds the running folio indicator in src/main.ts
+     - .footer is observed in src/main.ts to hide that indicator down here
+     - .footer__title keeps its .line / .line__in split for the reveal
+     - the [data-consent-open] link must keep an <li> ancestor, because
+       src/lib/consent.ts calls link.closest('li').remove() when
+       measurement is off
+     - the fiverr.com, portfolio.xstudioz.com and mailto: hrefs are matched
+       by src/lib/analytics.ts to send its three link events -->
+
+<footer class="footer" id="contact" data-folio="Colophon">
   <div class="container footer__grid">
     <p class="label footer__chapter">Colophon · The last page</p>
+
     <div class="footer__stage">
+      <!-- The mark is cut into the page rather than painted on it. The brand
+           gradient is cast by the lighting rig or it is not used at all, so
+           down here the mark is a raised shape catching the room, which is
+           the same law the rest of the site runs on. -->
       <div class="footer__x" aria-hidden="true">
-        <svg class="footer__x-svg"><use href="#xmark" fill="url(#xg)" /></svg>
+        <svg class="footer__x-svg"><use href="#xmark" /></svg>
       </div>
       <p class="footer__title display">
         <span class="line"><span class="line__in">Let’s make</span></span>
@@ -11,18 +32,20 @@
       </p>
     </div>
 
+    <!-- One filled control on the whole page ends here. Everything else in
+         the footer is type, so there is never a question about what the
+         primary action is. -->
     <div class="footer__ctas">
-      <a class="pill pill--invert" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
+      <a class="pill pill--solid" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
         <span>Start a project</span>
         <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
       </a>
-      <a class="ghost ghost--invert" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
-        <span>Browse the archive</span>
-        <svg class="ghost__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
-      <span class="sr-only"> (opens in a new tab)</span></a>
+      <p class="footer__ctas-note">
+        Every brief is read by the person who would do the work.
+      </p>
     </div>
 
-    <div class="rule rule--invert footer__rule"></div>
+    <div class="rule footer__rule"></div>
 
     <div class="footer__index">
       <nav class="footer__col" aria-labelledby="fx-caps">
@@ -46,25 +69,63 @@
         </ul>
       </nav>
 
-      <nav class="footer__col" aria-labelledby="fx-else">
-        <p class="label footer__col-head" id="fx-else">Elsewhere</p>
+      <!-- The two columns above are pages on this site. This one is places
+           you actually leave for, so it is set as destinations rather than
+           as more sitemap: each on its own line, with the leaving arrow. -->
+      <nav class="footer__col footer__col--channels" aria-labelledby="fx-else">
+        <p class="label footer__col-head" id="fx-else">Where to find us</p>
         <ul>
           <li>
-            <a href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">The Archive<span class="sr-only"> (opens in a new tab)</span></a>
+            <a href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
+              <span class="footer__channel-name">The Archive</span>
+              <span class="footer__channel-note">The full body of work</span>
+              <svg class="footer__channel-arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+              <span class="sr-only"> (opens in a new tab)</span>
+            </a>
           </li>
           <li>
-            <a href="https://www.fiverr.com/x_studioz" target="_blank" rel="noopener">Fiverr<span class="sr-only"> (opens in a new tab)</span></a>
+            <a href="https://www.fiverr.com/x_studioz" target="_blank" rel="noopener">
+              <span class="footer__channel-name">Fiverr</span>
+              <span class="footer__channel-note">Hire us through the marketplace</span>
+              <svg class="footer__channel-arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+              <span class="sr-only"> (opens in a new tab)</span>
+            </a>
           </li>
-          <li><a href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">inquire@xstudioz.com</a></li>
+          <li>
+            <a href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
+              <span class="footer__channel-name">inquire@xstudioz.com</span>
+              <span class="footer__channel-note">Direct, for briefs and questions</span>
+              <svg class="footer__channel-arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+            </a>
+          </li>
         </ul>
       </nav>
     </div>
 
-    <div class="rule rule--invert footer__rule footer__rule--tight"></div>
+    <div class="rule footer__rule footer__rule--tight"></div>
 
     <div class="footer__meta">
-      <p class="label">© 2026 XStudioz</p>
-      <p class="label">Set in Satoshi, on parchment, in-house</p>
+      <p class="label footer__colophon">© 2026 XStudioz</p>
+      <p class="label footer__colophon">Set in Satoshi, built in-house</p>
+
+      <!-- The utility row. "Cookie settings" is a control rather than a
+           destination, so it sits here and not with the channels above. It
+           stays inside an <li>: consent.ts removes that <li> outright when
+           measurement is switched off.
+
+           TODO (blocked, do not add yet): Privacy Policy -> /privacy/ and
+           Cookie Policy -> /cookies/ belong in this list. Both paths are
+           final, but as of this change neither page is committed and both
+           return 404 in production, so linking them from the shared footer
+           would put two dead links on every page of the site. They also
+           need the owner's sign-off before they go live. Add them here the
+           moment those pages ship. -->
+      <ul class="footer__utility">
+        <li>
+          <a href="#" data-consent-open hidden>Cookie settings</a>
+        </li>
+      </ul>
+
       <p class="label footer__meta-right">End of document, start of yours</p>
     </div>
   </div>

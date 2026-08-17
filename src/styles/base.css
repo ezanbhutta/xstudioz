@@ -55,15 +55,15 @@ body {
   font-family: var(--font-sans);
   font-size: var(--text-body-sm);
   line-height: var(--leading-body);
-  color: var(--ink);
-  background: var(--parchment);
+  color: var(--text);
+  background: var(--canvas);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
 ::selection {
   background: var(--brand-a);
-  color: var(--paper);
+  color: var(--canvas-raised);
 }
 
 img,
@@ -91,13 +91,9 @@ button {
 }
 
 :focus-visible {
-  outline: 2px solid var(--ink);
+  outline: 2px solid var(--focus);
   outline-offset: 3px;
   border-radius: 2px;
-}
-
-.footer :focus-visible {
-  outline-color: var(--parchment);
 }
 
 .sr-only {
@@ -162,11 +158,6 @@ button {
   text-transform: uppercase;
 }
 
-.sup {
-  font-size: 0.5em;
-  vertical-align: super;
-}
-
 /* ---------- Layout primitives ---------- */
 
 .container {
@@ -185,7 +176,7 @@ button {
 }
 
 .section__head .label {
-  color: var(--ink);
+  color: var(--text);
   margin-bottom: var(--sp-3);
 }
 
@@ -193,12 +184,8 @@ button {
 .rule {
   height: 1px;
   width: 100%;
-  background: var(--ash);
+  background: var(--border);
   transform-origin: left center;
-}
-
-.rule--invert {
-  background: var(--line);
 }
 
 /* Notched rule — the mark's diagonal cut, carried into structure.
@@ -210,7 +197,7 @@ button {
 }
 .rule-notch i {
   display: block;
-  background: var(--ash);
+  background: var(--border);
   transform-origin: left center;
 }
 .rule-notch i:nth-child(1) {
@@ -274,6 +261,24 @@ button {
 
 html {
   --rot: 38deg;
+}
+
+/* The turn is declared on the three elements that actually read --rot, not on
+   html, and this is a performance fix rather than a tidy-up.
+
+   --rot is a registered property with inherits: true. Animating it on the root
+   changes an inherited custom property sixty times a second, and every one of
+   those changes invalidates the computed style of every element in the
+   document, whether or not it has anything to do with the light. Declaring the
+   same animation on the three consumers instead confines that invalidation to
+   their own subtrees, which between them hold a handful of nodes.
+
+   They stay in step because they are the same animation: same keyframes, same
+   duration, same linear timing, all started at page load off one document
+   timeline. Nothing about the composition changes. */
+.room,
+.gobo,
+.lit {
   animation: rig-turn 120s linear infinite;
 }
 
@@ -317,8 +322,7 @@ html {
 /* Anything above the rig */
 body > header,
 body > main,
-body > footer,
-body > .furniture { position: relative; z-index: 1; }
+body > footer { position: relative; z-index: 1; }
 
 /* A lit surface samples the same rig, so every lit thing in the document
    is lit by one room rather than decorated element by element.
@@ -329,21 +333,88 @@ body > .furniture { position: relative; z-index: 1; }
     conic-gradient(from var(--rot) at 50% 50%,
       var(--lamp-a) 0deg var(--wedge), transparent var(--wedge) 180deg,
       var(--lamp-b) 180deg calc(180deg + var(--wedge)), transparent calc(180deg + var(--wedge)) 360deg),
-    linear-gradient(0deg, var(--type), var(--type));
-  background-attachment: fixed, fixed;
+    linear-gradient(0deg, var(--lit-base), var(--lit-base));
+  /* No background-attachment: fixed. iOS Safari does not honour it and drops
+     to scroll, which silently changes the effect on every iPhone. The beams
+     are instead sized far larger than the element and centred on it, so the
+     ANGLE is shared across the document even though each origin is local:
+     one light direction, which is what actually reads as one room. */
+  background-size: 220vmax 220vmax, auto;
+  background-position: center center;
+  background-repeat: no-repeat;
   background-blend-mode: screen, normal;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html { animation: none; }
+  /* The rig holds still at its initial angle, which is a composition in its
+     own right rather than a broken state. */
+  .room,
+  .gobo,
+  .lit { animation: none; }
 }
 
-/* No JS, no @property support, or the rig failing for any reason: the page
-   is still a dark site with white type. Nothing depends on the rig. */
+/* If the rig cannot render, the page is still a dark site with white type.
+   Nothing on it depends on the light. */
 @supports not (background: conic-gradient(from 0deg, red, blue)) {
   .room, .gobo { display: none; }
-  .lit { background: none; color: var(--type); }
+}
+
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .lit {
+    background: none;
+    color: var(--text);
+    -webkit-text-fill-color: var(--text);
+  }
+}
+
+/* ---------- Print ----------
+   The rig is light, and light does not print. Without this the gobo lays a
+   solid black X across the sheet and every .lit heading prints as nothing,
+   because clipped-to-text backgrounds do not survive the print pipeline. */
+@media print {
+  .room,
+  .gobo,
+  .lit { animation: none !important; }
+
+  /* Screen chrome does not belong on paper. The header is position: fixed, so
+     it was printing as a 74px band across the top of the first page, on top of
+     the document's own opening lines. The skip link is a keyboard affordance
+     with nothing to skip to on a sheet of paper, and the footer's mark is a
+     large dark shape that costs ink and says nothing. The footer's text is
+     kept: a printed page should still carry who made it and how to reach
+     them. */
+  .nav,
+  .skip-link,
+  .footer__x {
+    display: none !important;
+  }
+
+  /* The footer paints itself with the void colour, which becomes a black slab
+     the moment a reader turns background graphics on. */
+  .footer {
+    background: none !important;
+    border-top: 1px solid #999 !important;
+  }
+
+  .room,
+  .gobo {
+    display: none !important;
+  }
+
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .lit {
+    background: none !important;
+    color: #000 !important;
+    -webkit-text-fill-color: #000 !important;
+  }
+
+  a { color: #000 !important; }
 }

@@ -6,6 +6,7 @@
       <svg class="nav__mark" aria-hidden="true"><use href="#xmark" /></svg>
       <span class="nav__name">XStudioz</span>
     </a>
+
     <nav class="nav__links" aria-label="Primary">
       <a class="nav__link" href="/#capabilities">Capabilities</a>
       <a class="nav__link" href="/about/">The Agency</a>
@@ -13,9 +14,48 @@
       <a class="nav__link" href="/journal/">Journal</a>
       <a class="nav__link" href="/faq/">FAQ</a>
     </nav>
+
     <a class="pill nav__cta" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
       <span>Start a project</span>
       <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
     </a>
+
+    <!-- Below the desktop band this replaces the links and the CTA.
+         The glyph is two hairlines that cross into the studio's own mark
+         when the menu opens: no icon file, no dependency. -->
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu">
+      <span class="nav__toggle-word">Menu</span>
+      <span class="nav__toggle-glyph" aria-hidden="true"><i></i><i></i></span>
+    </button>
   </div>
 </header>
+
+<dialog class="nav__dialog" id="nav-menu" aria-labelledby="nav-menu-title">
+  <div class="nav__panel">
+    <h2 class="sr-only" id="nav-menu-title">Menu</h2>
+
+    <div class="nav__panel-head">
+      <span class="label nav__panel-eyebrow">XStudioz</span>
+      <button class="nav__close" type="button">
+        <span class="nav__toggle-word">Close</span>
+        <span class="nav__toggle-glyph nav__toggle-glyph--x" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </div>
+
+    <nav class="nav__menu" aria-label="Primary">
+      <a class="nav__menu-link" href="/#capabilities"><span>Capabilities</span></a>
+      <a class="nav__menu-link" href="/about/"><span>The Agency</span></a>
+      <a class="nav__menu-link" href="/process/"><span>The Process</span></a>
+      <a class="nav__menu-link" href="/journal/"><span>Journal</span></a>
+      <a class="nav__menu-link" href="/faq/"><span>FAQ</span></a>
+    </nav>
+
+    <div class="nav__panel-foot">
+      <a class="nav__panel-mail" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
+        inquire@xstudioz.com
+      </a>
+    </div>
+  </div>
+</dialog>
+
+<script type="module" src="/src/lib/nav.ts"></script>

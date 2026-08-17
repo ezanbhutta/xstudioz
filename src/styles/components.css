@@ -14,7 +14,7 @@
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: var(--parchment);
+  background: var(--canvas);
   display: grid;
   place-content: center;
   justify-items: center;
@@ -35,105 +35,49 @@
 }
 
 .loader__x--ink {
-  fill: var(--ink);
+  fill: var(--text);
   opacity: 0.1;
 }
 
-.loader__x--grad {
+/* The mark was painted with the brand gradient here. The gradient is cast by
+   the rig or it is not used, and a preloader sits above the rig, so down here
+   the mark is simply drawn in ink. The veil lifting is what hands you over to
+   the lit room. */
+.loader__x--fill {
+  fill: var(--text);
   clip-path: inset(100% 0 0 0);
 }
 
 .loader__word {
-  color: var(--ink);
+  color: var(--text);
 }
 
 body.is-loading {
   overflow: hidden;
 }
 
-/* ---------------- Print furniture ---------------- */
+/* A failsafe that clears the overlay when the bundle never arrives already
+   exists, in doc.css, deliberately placed in the last-imported stylesheet so
+   it wins the cascade without !important. Nothing is added here; see
+   "Preloader failsafe" there.
 
-.furniture {
-  pointer-events: none;
-}
-
-.furniture__doc,
-.furniture__folio {
-  opacity: 0;
-  transition: opacity 0.45s ease;
-}
-
-.furniture--on .furniture__doc,
-.furniture--on .furniture__folio {
-  opacity: 1;
-}
-
-.crop {
-  position: fixed;
-  width: 14px;
-  height: 14px;
-  z-index: 60;
-}
-
-.crop::before,
-.crop::after {
-  content: '';
-  position: absolute;
-  background: var(--ash);
-}
-
-.crop::before {
-  width: 14px;
-  height: 1px;
-}
-
-.crop::after {
-  width: 1px;
-  height: 14px;
-}
-
-.crop--tl { top: 10px; left: 10px; }
-.crop--tl::before { top: 0; left: 0; }
-.crop--tl::after { top: 0; left: 0; }
-
-.crop--tr { top: 10px; right: 10px; }
-.crop--tr::before { top: 0; right: 0; }
-.crop--tr::after { top: 0; right: 0; }
-
-.crop--bl { bottom: 10px; left: 10px; }
-.crop--bl::before { bottom: 0; left: 0; }
-.crop--bl::after { bottom: 0; left: 0; }
-
-.crop--br { bottom: 10px; right: 10px; }
-.crop--br::before { bottom: 0; right: 0; }
-.crop--br::after { bottom: 0; right: 0; }
-
-.furniture__doc,
-.furniture__folio {
-  position: fixed;
-  bottom: 14px;
-  z-index: 60;
-  color: var(--slate);
-}
-
-.furniture__doc {
-  left: var(--gutter);
-}
-
-.furniture__folio {
-  right: var(--gutter);
-  overflow: hidden;
-}
-
-.furniture__folio span {
-  display: block;
-}
-
-@media (max-width: 1023px) {
-  .furniture {
+   Nobody who asked for less motion should meet a full-screen animated veil,
+   and skipping it outright also means they never depend on a script to
+   remove it. */
+@media (prefers-reduced-motion: reduce) {
+  .show-loader .loader {
     display: none;
   }
 }
+
+/* The print-furniture layer (.furniture, .furniture__doc, .furniture__folio,
+   the four .crop corner marks) used to live here, together with the running
+   folio that drove it from main.ts. None of that markup exists on any of the
+   sixteen routes any more, so the CSS styled nothing and initFolio() returned
+   at its first line on every page load. Removed rather than kept warm. The
+   [data-folio] attributes are left on the sections and the footer: they are
+   inert, they cost nothing, and they are what the layer would read again if
+   it ever comes back. */
 
 /* ---------------- Nav ---------------- */
 
@@ -148,7 +92,7 @@ body.is-loading {
 }
 
 .nav--scrolled {
-  background: var(--parchment);
+  background: var(--canvas);
 }
 
 .nav--scrolled::after {
@@ -158,7 +102,7 @@ body.is-loading {
   right: 0;
   bottom: 0;
   height: 1px;
-  background: var(--ash);
+  background: var(--border);
 }
 
 /* visibility drops with a delay so off-screen links leave the tab order */
@@ -170,10 +114,39 @@ body.is-loading {
 }
 
 .nav__row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--sp-4);
   padding-block: var(--sp-3);
+}
+
+.nav__cta {
+  justify-self: end;
+}
+
+/* The three header controls are 26 to 33px tall, which is smaller than a
+   finger wants on the tablet widths where the desktop header is still shown.
+   The fix is a hit area rather than a bigger box: growing them to 44px would
+   push the header from 63px to 74px on every page, which is a layout change,
+   not a repair. Each control keeps its size and gains an invisible target
+   that reaches the 44px floor. Vertical only, so neighbours never overlap. */
+.nav__brand,
+.nav__link,
+.nav__cta {
+  position: relative;
+}
+
+.nav__brand::after,
+.nav__link::after,
+.nav__cta::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 44px;
+  transform: translateY(-50%);
 }
 
 .nav__brand {
@@ -185,7 +158,7 @@ body.is-loading {
 .nav__mark {
   width: 26px;
   height: 26px;
-  fill: var(--ink);
+  fill: var(--text);
   transition: fill var(--dur-fast) ease;
 }
 
@@ -201,17 +174,16 @@ body.is-loading {
 
 .nav__links {
   display: flex;
-  gap: var(--sp-5);
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  gap: clamp(var(--sp-4), 2.2vw, var(--sp-5));
+  justify-content: center;
+  white-space: nowrap;
 }
 
 .nav__link {
   font-size: var(--text-body-sm);
   font-weight: 400;
   white-space: nowrap;
-  background-image: linear-gradient(var(--ink), var(--ink));
+  background-image: linear-gradient(var(--text), var(--text));
   background-repeat: no-repeat;
   background-size: 0% 1px;
   background-position: left calc(100% - 1px);
@@ -223,15 +195,265 @@ body.is-loading {
   background-size: 100% 1px;
 }
 
+/* The page you are on wears the hover state permanently. That is the system's
+   existing underline held open, not a new indicator invented for the purpose,
+   and the aria-current that goes with it is set in src/lib/nav.ts. */
+.nav__link[aria-current='page'],
+.nav__menu-link[aria-current='page'] {
+  background-size: 100% 1px;
+}
+
+
+/* ============================================================
+   Navigation: the menu control and its overlay
+
+   Breakpoint: 1025px. The links need the full desktop row to sit evenly;
+   below that they become one labelled control. This is well clear of the
+   768 collision the old 760px rule sat right on top of.
+   ============================================================ */
+
+.nav__toggle {
+  display: none;              /* desktop shows the links instead */
+  align-items: center;
+  gap: 10px;
+  justify-self: end;
+  /* a 44px target, with the padding doing the work rather than a fixed box
+     so the label stays on the type baseline */
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px var(--sp-3) 10px var(--sp-2);
+  margin-right: calc(var(--sp-2) * -1);
+  border-radius: var(--radius-ui);
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  color: var(--text);
+}
+
+.nav__toggle-word { line-height: 1; }
+
+/* Two hairlines. Closed they are parallel; open they cross into the
+   studio's own mark. No icon file, nothing to migrate. */
+.nav__toggle-glyph {
+  position: relative;
+  width: 18px;
+  height: 12px;
+  flex: none;
+}
+
+.nav__toggle-glyph i {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transition: transform 200ms var(--ease-out);
+}
+
+.nav__toggle-glyph i:nth-child(1) { top: 3px; }
+.nav__toggle-glyph i:nth-child(2) { bottom: 3px; }
+
+.nav__toggle-glyph--x i:nth-child(1) { top: 50%; transform: rotate(45deg); }
+.nav__toggle-glyph--x i:nth-child(2) { bottom: calc(50% - 1px); transform: rotate(-45deg); }
+
+/* ---- The overlay ---- */
+
+.nav__dialog {
+  width: 100%;
+  max-width: none;
+  max-height: none;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  overflow: hidden;
+}
+
+/* The dialog sits in the top layer, so it cannot be clipped by any ancestor
+   or by the fixed lighting rig underneath it. */
+.nav__dialog::backdrop {
+  background: rgba(9, 9, 11, 0.72);
+  backdrop-filter: blur(2px);
+}
+
+.nav__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  /* dvh so the panel is not cut off by mobile browser chrome, and the safe
+     areas so nothing lands under a notch or a home indicator */
+  max-height: 100dvh;
+  overflow-y: auto;
+  background: var(--canvas);
+  padding:
+    max(var(--sp-4), env(safe-area-inset-top)) max(var(--gutter), env(safe-area-inset-right))
+    max(var(--sp-6), env(safe-area-inset-bottom)) max(var(--gutter), env(safe-area-inset-left));
+}
+
+/* One deliberate mark detail: a single beam laid across the panel at the
+   rig's own angle. It is the only decoration in here. */
+.nav__panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: conic-gradient(from calc(var(--rot) + 96deg) at 100% 0%,
+    transparent 0deg 6deg,
+    var(--lamp-a) 6deg 15deg,
+    transparent 15deg 360deg);
+  opacity: 0.22;
+  -webkit-mask-image: linear-gradient(200deg, #000 0%, transparent 62%);
+  mask-image: linear-gradient(200deg, #000 0%, transparent 62%);
+}
+
+.nav__panel > * { position: relative; }
+
+.nav__panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  min-height: 44px;
+}
+
+.nav__panel-eyebrow { color: var(--text-muted); }
+
+.nav__close {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px var(--sp-2);
+  margin-right: calc(var(--sp-2) * -1);
+  border-radius: var(--radius-ui);
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  color: var(--text);
+}
+
+.nav__menu {
+  display: flex;
+  flex-direction: column;
+  margin-block: clamp(var(--sp-6), 9vh, var(--sp-8)) auto;
+}
+
+.nav__menu-link {
+  display: block;
+  padding-block: clamp(12px, 1.6vh, 18px);
+  border-top: var(--hairline);
+  font-size: clamp(28px, 7.4vw, 44px);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.nav__menu-link:last-child { border-bottom: var(--hairline); }
+
+.nav__menu-link span { display: inline-block; transition: transform 200ms var(--ease-out); }
+
+@media (hover: hover) {
+  .nav__menu-link:hover span { transform: translateX(10px); }
+}
+
+.nav__panel-foot {
+  padding-top: var(--sp-6);
+}
+
+.nav__panel-mail {
+  display: inline-block;
+  min-height: 44px;
+  padding-block: 11px;
+  font-size: var(--text-body);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-strong);
+}
+
+/* On a phone the panel is the whole screen, which is right: there is no room
+   for a backdrop and nothing useful behind it. From tablet up it becomes a
+   sheet, so the page stays visible beside it and a press on the exposed
+   backdrop is a natural way out. */
+@media (min-width: 600px) {
+  .nav__dialog {
+    margin-left: auto;
+  }
+
+  .nav__panel {
+    width: min(420px, 92vw);
+    margin-left: auto;
+    border-left: var(--hairline);
+  }
+}
+
+/* Scroll lock. The gap replaces the scrollbar's width so the page behind
+   does not jump sideways as the overlay opens. */
+html.nav-open {
+  overflow: hidden;
+  padding-right: var(--scrollbar-gap, 0px);
+}
+
+/* ---- Below the desktop band ---- */
+
+@media (max-width: 1024px) {
+  /* scoped to .nav__row so these beat the later .pill display rule rather
+     than losing to it on source order at equal specificity */
+  .nav__row .nav__links,
+  .nav__row .nav__cta {
+    display: none;
+  }
+
+  .nav__row .nav__toggle {
+    display: inline-flex;
+  }
+
+  .nav__row {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+/* ---- Motion ---- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .nav__dialog[open] .nav__panel {
+    animation: nav-panel-in 220ms var(--ease-out) both;
+  }
+  .nav__dialog[open]::backdrop {
+    animation: nav-backdrop-in 180ms linear both;
+  }
+}
+
+@keyframes nav-panel-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes nav-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav__toggle-glyph i,
+  .nav__menu-link span {
+    transition: none;
+  }
+}
+
 /* ---------------- Pills & ghost links ---------------- */
 
 .pill {
   position: relative;
   display: inline-flex;
   align-items: center;
+  /* Every .pill outside the header is a standalone call to action, and they
+     were landing at 39px. The header's own is exempted below, because it is
+     sized to sit inside a 63px bar. */
+  min-height: 44px;
   gap: 10px;
   padding: 11px var(--sp-4);
-  border: 1px solid var(--ink);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-ui);
   font-size: var(--text-body-sm);
   font-weight: 500;
@@ -245,14 +467,14 @@ body.is-loading {
   content: '';
   position: absolute;
   inset: -1px;
-  background: var(--ink);
+  background: var(--interactive);
   transform: translateY(101%);
   transition: transform 0.45s var(--ease-inout);
   z-index: -1;
 }
 
 .pill:hover {
-  color: var(--parchment);
+  color: var(--interactive-text);
 }
 
 .pill:hover::before {
@@ -271,29 +493,60 @@ body.is-loading {
 
 .nav__cta {
   padding: 8px var(--sp-3);
+  min-height: 0;
 }
 
-.pill--invert {
-  border-color: var(--line);
-  color: var(--parchment);
+/* The solid variant. Every other .pill on the site is an outline that fills
+   on hover; this one starts filled, because it is the last action on the
+   page and it should not have to be discovered. It is the only filled
+   element in the footer, which is what makes the ranking read instantly.
+   Its hover does the reverse of the outline pill: the fill drops away and
+   the control becomes type, so the two states are the same pair of ideas
+   in the opposite order rather than a second, unrelated behaviour. */
+.pill--solid {
+  border-color: var(--interactive);
+  background: var(--interactive);
+  color: var(--interactive-text);
+  /* The last action on the page clears the 44px target on a touch screen at
+     every width, not only where the layout has already gone to one column. */
+  min-height: 44px;
+  padding-block: 13px;
 }
 
-.pill--invert::before {
-  background: var(--parchment);
+.pill--solid::before {
+  background: var(--canvas);
+  transform: translateY(101%);
 }
 
-.pill--invert:hover {
-  color: var(--ink);
+.pill--solid:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.pill--solid:hover::before {
+  transform: translateY(0);
+}
+
+/* Without motion the fill still swaps, it just does not slide up. */
+@media (prefers-reduced-motion: reduce) {
+  .pill--solid,
+  .pill--solid::before,
+  .footer__utility a {
+    transition: none;
+  }
 }
 
 .ghost {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  /* Same floor. Every .ghost on the site is a standalone link on its own
+     line, never one set inside a sentence, so this cannot bloat body copy. */
+  min-height: 44px;
   font-size: var(--text-body-sm);
   font-weight: 500;
   padding-block: var(--sp-1);
-  background-image: linear-gradient(var(--ink), var(--ink));
+  background-image: linear-gradient(var(--text), var(--text));
   background-repeat: no-repeat;
   background-size: 0% 1px;
   background-position: left 100%;
@@ -314,77 +567,107 @@ body.is-loading {
   transform: translate(2px, -2px);
 }
 
-.ghost--invert {
-  color: var(--parchment);
-  background-image: linear-gradient(var(--parchment), var(--parchment));
-}
+/* .ghost--invert and .pill--invert used to live here, and .rule--invert in
+   base.css. All three were written for the light world, where the footer was
+   the one dark block on a pale page and its controls had to be flipped. Once
+   the whole site went dark they resolved to exactly the same declarations as
+   the plain classes, so they were three no-ops that still read like real
+   variants. Removed rather than left as decoration. */
 
-/* ---------------- Hero ---------------- */
+/* ---------------- Hero ----------------
+
+   Composition
+   The old hero pinned its content to the bottom of a 100svh box, so every
+   viewport taller than about 900px opened on several hundred pixels of
+   nothing. This is a three-row grid instead: an eyebrow that sits on the
+   header, a core that is centred in whatever space is left, and a foot that
+   holds the scroll cue. The centre row is the whole fix. It cannot leave a
+   void above the statement, because the free space is always divided evenly
+   around it, at any height from 600 to 1400.
+
+   Reading order on every size: statement, then context, then the action.
+   ------------------------------------------------------------------ */
 
 .hero {
+  position: relative;
   min-height: 100svh;
   display: flex;
   overflow-x: clip;
 }
 
 .hero__grid {
-  display: flex;
-  flex-direction: column;
-  padding-top: 92px;
-  padding-bottom: var(--sp-4);
-}
-
-.hero__meta-top {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--sp-4);
-  padding-bottom: var(--sp-3);
-}
-
-.hero__stage {
-  position: relative;
   flex: 1;
+  display: grid;
+  /* eyebrow / breathing space / statement + action / breathing space / foot */
+  grid-template-rows: auto 1fr auto;
+  /* clears the fixed header without guessing: nav row is 44px of control
+     plus its own padding */
+  padding-top: clamp(84px, 9vh, 108px);
+  padding-bottom: clamp(var(--sp-4), 3vh, var(--sp-5));
+  gap: clamp(var(--sp-5), 4vh, var(--sp-7));
+}
+
+.hero__lead .rule {
+  margin-top: var(--sp-3);
+}
+
+/* The core is centred in the free row, which is what removes the dead space.
+   min-height:0 lets it shrink rather than overflow on a 600px-tall window. */
+.hero__core {
+  align-self: center;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-}
-
-.hero__x {
-  position: absolute;
-  right: -4%;
-  top: 40%;
-  transform: translateY(-50%);
-  width: clamp(280px, 31vw, 500px);
-  aspect-ratio: 1;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.hero__x-svg {
-  width: 100%;
-  height: 100%;
+  gap: clamp(var(--sp-5), 4.5vh, var(--sp-7));
 }
 
 .hero__title {
   position: relative;
   z-index: 2;
-  padding-block: clamp(24px, 4vh, 48px) clamp(28px, 5vh, 56px);
-  max-width: 18ch;
+  max-width: 22ch;
+}
+
+/* Context and action share the lower line of the core. The lede is held to a
+   readable measure and the action sits at its end, so the eye finishes the
+   sentence and lands on the button. */
+.hero__say {
+  display: grid;
+  grid-template-columns: minmax(0, 46ch) auto;
+  align-items: end;
+  gap: clamp(var(--sp-4), 3vw, var(--sp-6));
+}
+
+.hero__lede {
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.hero__act {
+  margin: 0;
+  justify-self: start;
+}
+
+.hero__cta {
+  white-space: nowrap;
+  /* the page's primary action clears the 44px touch minimum. Scoped here
+     rather than on .pill, which is shared with denser contexts. */
+  min-height: 44px;
 }
 
 .hero__foot {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  gap: var(--sp-6);
-  padding-bottom: var(--sp-5);
+  align-items: end;
+  gap: var(--sp-4);
 }
 
 .hero__scroll {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--slate);
+  color: var(--text-muted);
 }
 
 .hero__chev {
@@ -392,22 +675,73 @@ body.is-loading {
   height: 8px;
 }
 
-.hero__lede {
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
-  max-width: 42ch;
-  text-align: left;
-}
-
-.hero__meta-bot {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--sp-4);
-  padding-top: var(--sp-3);
-}
-
-.hero__meta-right {
+.hero__foot-note {
+  color: var(--text-muted);
   text-align: right;
+}
+
+/* ---- The opening moment ----
+   A single wedge at the mark's own angle crosses the statement once and dies.
+   It animates transform and opacity only, runs for well under a second, and
+   leaves nothing behind: the calm state is the ambient rig alone. */
+.hero__sweep {
+  position: absolute;
+  inset: -30% -20%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: conic-gradient(from 0deg at 58% 42%,
+    transparent 0deg 7deg,
+    var(--lamp-a) 7deg 14deg,
+    transparent 14deg 360deg);
+  animation: hero-sweep 1500ms var(--ease-out) 200ms both;
+  will-change: transform, opacity;
+}
+
+@keyframes hero-sweep {
+  0%   { transform: rotate(-34deg); opacity: 0; }
+  30%  { opacity: 0.42; }
+  100% { transform: rotate(12deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__sweep { animation: none; opacity: 0; }
+}
+
+/* ---- Below the desktop band ---- */
+
+@media (max-width: 1024px) {
+  .hero__say {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: var(--sp-5);
+  }
+}
+
+@media (max-width: 760px) {
+  .hero__grid {
+    padding-top: clamp(76px, 12vh, 96px);
+    gap: var(--sp-5);
+  }
+
+  /* Reading and action come first on a phone. The core sits high rather than
+     dead centre, so the statement, the sentence and the button are all above
+     the fold on a 667px screen. */
+  .hero__core {
+    align-self: start;
+    gap: var(--sp-5);
+  }
+
+  .hero__title { max-width: none; }
+
+  .hero__foot-note { display: none; }
+}
+
+/* Short and wide, such as a laptop in a shallow window: give the centre row
+   permission to use the space the foot would otherwise reserve. */
+@media (max-height: 640px) and (min-width: 761px) {
+  .hero__grid { gap: var(--sp-4); }
+  .hero__foot { display: none; }
 }
 
 /* ---------------- Anatomy — the mark, constructed ---------------- */
@@ -421,7 +755,7 @@ body.is-loading {
 
 .anatomy__plate {
   grid-column: 1;
-  background-color: var(--paper);
+  background-color: var(--canvas-raised);
   background-image:
     repeating-linear-gradient(0deg, rgba(240, 239, 244, 0.045) 0 1px, transparent 1px 44px),
     repeating-linear-gradient(90deg, rgba(240, 239, 244, 0.045) 0 1px, transparent 1px 44px);
@@ -438,7 +772,7 @@ body.is-loading {
    scroll reveal leaves inline opacity on these elements and GSAP never
    writes the paint channels — the two systems stay out of each other's way. */
 .anatomy__fig .guide {
-  stroke: var(--ash);
+  stroke: var(--border-strong);
   stroke-width: 1;
   transition: stroke 0.35s ease, stroke-opacity 0.35s ease, stroke-width 0.35s ease;
 }
@@ -448,7 +782,7 @@ body.is-loading {
 }
 
 .anatomy__x {
-  fill: var(--ink);
+  fill: var(--text);
   transition: fill-opacity 0.35s ease;
 }
 
@@ -485,7 +819,7 @@ body.is-loading {
 
   /* brand-b keeps AA contrast on parchment at 11px; brand-a does not */
   .anatomy__specs li:hover .label {
-    color: var(--brand-b);
+    color: var(--lamp-a);
   }
 }
 
@@ -499,7 +833,7 @@ body.is-loading {
 }
 
 .anatomy__cap .label {
-  color: var(--slate);
+  color: var(--text-secondary);
 }
 
 .anatomy__copy {
@@ -523,7 +857,7 @@ body.is-loading {
 }
 
 .anatomy__specs .label {
-  color: var(--slate);
+  color: var(--text-secondary);
 }
 
 /* ---------------- Studio ---------------- */
@@ -575,11 +909,11 @@ body.is-loading {
 }
 
 .caps__link:hover {
-  background-color: var(--paper);
+  background-color: var(--canvas-raised);
 }
 
 .caps__num {
-  color: var(--slate);
+  color: var(--text-secondary);
   transition: color var(--dur-fast) ease;
 }
 
@@ -596,7 +930,7 @@ body.is-loading {
 }
 
 .caps__desc {
-  color: var(--slate);
+  color: var(--text-secondary);
   max-width: 44ch;
   align-self: center;
 }
@@ -626,7 +960,7 @@ body.is-loading {
   line-height: 1;
   color: transparent;
   /* slate stroke survives the white hover surface; ash washes out on paper */
-  -webkit-text-stroke: 1px var(--slate);
+  -webkit-text-stroke: 1px var(--border-strong);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.5s ease, transform 0.6s var(--ease-out);
@@ -646,6 +980,61 @@ body.is-loading {
 .caps__arr {
   position: relative;
   z-index: 1;
+}
+
+
+/* ---------------- Homepage rhythm ----------------
+
+   Sections were all separated by the same gap, which reads as a stack rather
+   than a sequence. The page now breathes in a pattern: a dense section is
+   followed by a spacious one, so each has a different weight and the eye is
+   handed forward instead of scrolling through equal blocks.
+   ------------------------------------------------------------------ */
+
+/* The opening statement of a section: quiet label, then the claim. */
+.caps__intro {
+  margin-bottom: clamp(var(--sp-6), 6vw, var(--sp-7));
+}
+
+/* The measure lives on the heading itself. On the wrapper, a ch value would
+   resolve against the 15px body size and crush the statement to a column
+   about 195px wide. */
+/* Capabilities opens the narrative, so its statement carries more weight
+   than the section statements that follow it. Everything after sits one step
+   down, which is what gives the page a descending order rather than six
+   headings of identical size. */
+.caps__statement {
+  font-size: var(--text-heading);
+  line-height: var(--leading-tight);
+  max-width: 18ch;
+}
+
+.process__statement {
+  max-width: 24ch;
+}
+
+.process__statement {
+  margin-bottom: clamp(var(--sp-6), 6vw, var(--sp-7));
+}
+
+/* Capabilities is the densest thing on the page, so it gets the most air
+   above it and the least inside it. */
+.caps.section { padding-top: clamp(96px, 13vw, 190px); }
+.studio.section { padding-top: clamp(76px, 9vw, 132px); }
+.anatomy.section { padding-top: clamp(96px, 12vw, 168px); }
+.process.section { padding-top: clamp(76px, 9vw, 132px); }
+
+/* The description column sat far right of the name at desktop, so the two
+   halves of a row read as unrelated. Pulling it in ties the row together. */
+@media (min-width: 1025px) {
+  .caps__link {
+    /* Each row is its own grid, so a content-based track would resolve
+       differently per row and leave the descriptions ragged. A shared fixed
+       track keeps every description on the same left edge, which is what
+       makes the list scannable. Sized for the longest label. */
+    grid-template-columns: 56px clamp(360px, 33vw, 480px) minmax(0, 1fr) 48px;
+    gap: clamp(var(--sp-4), 3vw, var(--sp-6));
+  }
 }
 
 /* ---------------- Work / Archive portal ---------------- */
@@ -669,7 +1058,7 @@ body.is-loading {
 
 .portal {
   display: block;
-  background-color: var(--paper);
+  background-color: var(--canvas-raised);
   background-image:
     repeating-linear-gradient(0deg, rgba(240, 239, 244, 0.045) 0 1px, transparent 1px 44px),
     repeating-linear-gradient(90deg, rgba(240, 239, 244, 0.045) 0 1px, transparent 1px 44px);
@@ -690,7 +1079,7 @@ body.is-loading {
 }
 
 .portal__top .label {
-  color: var(--slate);
+  color: var(--text-secondary);
 }
 
 .portal__arr {
@@ -725,6 +1114,12 @@ body.is-loading {
 .portal__x svg {
   width: 100%;
   height: 100%;
+  /* This mark sits inside .portal__title, which is .lit type. It used to be
+     painted with the brand gradient, which made it the one thing in that
+     headline wearing the light instead of receiving it. Drawn at --lit-base
+     it matches exactly what the letters either side of it sit at before a
+     beam reaches them. */
+  fill: var(--lit-base);
   transition: transform 0.6s var(--ease-out);
 }
 
@@ -741,7 +1136,7 @@ body.is-loading {
 }
 
 .portal__bottom .label {
-  color: var(--slate);
+  color: var(--text-secondary);
 }
 
 /* ---------------- Process ---------------- */
@@ -763,7 +1158,7 @@ body.is-loading {
   left: 0;
   right: 0;
   height: 1px;
-  background: var(--ink);
+  background: var(--border-strong);
   transform-origin: left center;
 }
 
@@ -773,7 +1168,7 @@ body.is-loading {
   line-height: 1;
   font-weight: 400;
   color: transparent;
-  -webkit-text-stroke: 1px var(--ash);
+  -webkit-text-stroke: 1px var(--text-muted);
   margin-bottom: clamp(var(--sp-5), 4vw, var(--sp-6));
 }
 
@@ -783,7 +1178,7 @@ body.is-loading {
 }
 
 .process__body {
-  color: var(--slate);
+  color: var(--text-secondary);
   max-width: 30ch;
 }
 
@@ -792,7 +1187,7 @@ body.is-loading {
 .section--panel {
   margin-top: var(--section-gap);
   padding-block: var(--section-gap);
-  background: var(--stone);
+  background: var(--canvas-panel);
 }
 
 .brief__grid {
@@ -814,40 +1209,69 @@ body.is-loading {
   align-self: flex-start;
 }
 
-/* ---------------- Footer ---------------- */
+/* ---------------- Footer ----------------
+
+   Composition
+   The old footer was a lighter panel carrying a large X painted with the
+   brand gradient. Both of those were wrong. The panel made the page end on
+   a slab that read as a separate component, and the painted mark broke the
+   one law this site has: the gradient is cast by the rig or it is not used.
+   Two controls of near-equal weight sat under the statement, so there was
+   no primary action, and the link index below them was three identical
+   columns of grey, which buried the outbound channels among the sitemap.
+
+   What it is now: the same void the rest of the page sits on, closed with a
+   hairline. The mark is raised out of that void instead of painted onto it,
+   large and quiet, behind the statement. One filled control, which is the
+   only filled thing in the whole footer. Then the apparatus, in the order
+   you would want it: where else to go, then who made this, then the legal
+   footing. It ends rather than restarts.
+   ------------------------------------------------------------------ */
 
 .footer {
+  /* One source for the mark's size. The statement reserves exactly this much
+     room on its right, so the two can never collide at any viewport rather
+     than merely happening not to at the widths anyone checked. */
+  --footer-mark: clamp(150px, 24vw, 380px);
   margin-top: var(--section-gap);
-  background: var(--ink);
-  color: var(--parchment);
+  /* The same ground as the page. A raised panel here read as a slab bolted
+     on the bottom; a hairline is enough to say the document has ended. */
+  background: var(--canvas);
+  border-top: var(--hairline);
+  color: var(--text);
 }
 
 .footer ::selection {
   background: var(--brand-a);
-  color: var(--paper);
+  color: var(--canvas);
 }
 
 .footer__grid {
   display: flex;
   flex-direction: column;
-  padding-block: clamp(76px, 10vw, 140px) var(--sp-5);
+  padding-block: clamp(76px, 10vw, 140px) clamp(var(--sp-5), 3vw, var(--sp-6));
 }
 
 .footer__chapter {
-  color: var(--type-3);
+  color: var(--text-muted);
   margin-bottom: clamp(var(--sp-6), 6vw, var(--sp-7));
 }
 
 .footer__stage {
   position: relative;
+  padding-right: calc(var(--footer-mark) + var(--sp-5));
 }
 
+/* The mark, raised out of the void rather than painted on it. It carries no
+   colour of its own: --canvas-raised is one step off the background, so it
+   reads the way an emboss reads, and the hairline gives the edge enough
+   definition to survive on a dim screen. */
 .footer__x {
   position: absolute;
   right: 0;
   top: 50%;
   transform: translateY(-52%);
-  width: clamp(160px, 22vw, 360px);
+  width: var(--footer-mark);
   aspect-ratio: 1;
   pointer-events: none;
 }
@@ -855,6 +1279,12 @@ body.is-loading {
 .footer__x-svg {
   width: 100%;
   height: 100%;
+  fill: var(--canvas-raised);
+  stroke: var(--border);
+  /* The mark is drawn in a 404 unit viewBox, so this resolves to roughly a
+     2px edge at the largest size. Any heavier and it stops reading as a
+     raised face and starts reading as an outlined drawing of the logo. */
+  stroke-width: 2.4;
 }
 
 .footer__title {
@@ -866,8 +1296,16 @@ body.is-loading {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--sp-5);
+  gap: var(--sp-4) var(--sp-5);
   margin-top: clamp(var(--sp-6), 6vw, var(--sp-7));
+}
+
+.footer__ctas-note {
+  font-size: var(--text-body-sm);
+  color: var(--text-secondary);
+  max-width: 38ch;
+  /* Otherwise this lands as a full line and one orphaned word. */
+  text-wrap: balance;
 }
 
 .footer__rule {
@@ -876,24 +1314,63 @@ body.is-loading {
 
 .footer__meta {
   display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
   justify-content: space-between;
-  gap: var(--sp-4);
+  gap: var(--sp-3) var(--sp-5);
   padding-top: var(--sp-4);
 }
 
 .footer__meta .label {
-  color: var(--type-3);
+  color: var(--text-muted);
 }
 
 .footer__meta-right {
   text-align: right;
 }
 
+/* Utility, not navigation. It sits at the same weight as the colophon so it
+   is findable without ever competing with the action at the top. */
+.footer__utility {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3) var(--sp-4);
+}
+
+/* When measurement is switched off, consent.ts removes the only <li> in here
+   and leaves the list itself behind, which a screen reader then announces as
+   an empty list on all sixteen routes. The list is only ever a container for
+   utility controls, so with nothing in it there is nothing to announce.
+
+   :empty cannot do this. The <li> sits on its own indented line in the
+   partial, so removing it leaves two whitespace text nodes behind and :empty
+   only matches an element with no child nodes at all, whitespace included.
+
+   The condition that actually matters is "holds nothing anyone can use", and
+   that covers both ways this list ends up empty: the <li> removed outright by
+   consent.ts, or the <li> still present with its link left hidden because the
+   consent module that reveals it is not on the page. */
+.footer__utility:not(:has(a:not([hidden]))) {
+  display: none;
+}
+
+.footer__utility a {
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: color var(--dur-fast) ease;
+}
+
+.footer__utility a:hover {
+  color: var(--text);
+}
+
 /* ============================================================
    Responsive
    ============================================================ */
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .studio__grid,
   .brief__grid {
     grid-template-columns: 1fr;
@@ -950,15 +1427,6 @@ body.is-loading {
 }
 
 @media (max-width: 760px) {
-  .nav__links {
-    display: none;
-  }
-
-  .hero__x {
-    right: -12%;
-    top: 38%;
-    width: clamp(220px, 52vw, 320px);
-  }
 
   .hero__foot {
     flex-direction: column;
@@ -995,8 +1463,22 @@ body.is-loading {
     gap: var(--sp-4);
   }
 
-  .footer__meta .label:nth-child(2) {
-    display: none;
+  /* The control carries the full column here rather than sitting as a small
+     tab in a wide empty row, and it clears 44px comfortably. */
+  .footer__ctas .pill {
+    width: 100%;
+    justify-content: space-between;
+    min-height: 52px;
+  }
+
+  .footer__meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-4);
+  }
+
+  .footer__meta-right {
+    text-align: left;
   }
 
   .portal__bottom {
@@ -1004,11 +1486,21 @@ body.is-loading {
     row-gap: var(--sp-2);
   }
 
+  /* The mark stays behind the statement rather than becoming a block in the
+     column. Stacked, it cost about 160px of height sitting between the
+     statement and the button that answers it, which is the last place on the
+     site worth putting a decoration. Behind the type it costs nothing, and
+     the statement still lands directly on its action.
+     Where the type crosses the mark the ground is #101014 instead of
+     #09090b, which is 16.2:1 against the text, so nothing about legibility
+     depends on where it sits. */
+  .footer__stage {
+    padding-right: 0;
+  }
+
   .footer__x {
-    position: relative;
-    top: auto;
-    right: auto;
-    transform: none;
-    margin-bottom: var(--sp-5);
+    right: calc(var(--sp-3) * -1);
+    width: clamp(150px, 46vw, 210px);
+    opacity: 0.85;
   }
 }

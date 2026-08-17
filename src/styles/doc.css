@@ -42,8 +42,8 @@
   right: 0;
   bottom: 0;
   z-index: 90;
-  background: var(--paper);
-  border-top: 1px solid var(--ash);
+  background: var(--canvas-raised);
+  border-top: 1px solid var(--border);
   transform: translateY(101%);
   transition: transform 0.5s var(--ease-inout);
 }
@@ -64,7 +64,7 @@
 }
 
 .consent__title {
-  color: var(--slate);
+  color: var(--text-secondary);
   margin-bottom: 6px;
 }
 
@@ -75,7 +75,7 @@
 }
 
 .consent__body a {
-  background-image: linear-gradient(var(--ink), var(--ink));
+  background-image: linear-gradient(var(--text), var(--text));
   background-repeat: no-repeat;
   background-size: 100% 1px;
   background-position: left calc(100% - 1px);
@@ -132,8 +132,8 @@
   left: 50%;
   transform: translate(-50%, -120%);
   z-index: 200;
-  background: var(--ink);
-  color: var(--parchment);
+  background: var(--interactive);
+  color: var(--interactive-text);
   font-size: var(--text-body-sm);
   font-weight: 500;
   padding: 10px var(--sp-4);
@@ -144,7 +144,7 @@
 .skip-link:focus-visible {
   transform: translate(-50%, 0);
   outline-offset: -4px;
-  outline-color: var(--parchment);
+  outline-color: var(--canvas);
 }
 
 /* ---------------- Breadcrumbs ---------------- */
@@ -164,18 +164,18 @@
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
-  color: var(--slate);
+  color: var(--text-secondary);
 }
 
 .crumbs li + li::before {
   content: '';
   width: 9px;
   height: 1px;
-  background: var(--ash);
+  background: var(--border);
 }
 
 .crumbs a {
-  background-image: linear-gradient(var(--slate), var(--slate));
+  background-image: linear-gradient(var(--text-secondary), var(--text-secondary));
   background-repeat: no-repeat;
   background-size: 0% 1px;
   background-position: left calc(100% - 1px);
@@ -183,12 +183,12 @@
 }
 
 .crumbs a:hover {
-  color: var(--ink);
+  color: var(--text);
   background-size: 100% 1px;
 }
 
 .crumbs [aria-current='page'] {
-  color: var(--ink);
+  color: var(--text);
 }
 
 /* ---------------- Document head ---------------- */
@@ -198,7 +198,7 @@
 }
 
 .doc__eyebrow {
-  color: var(--slate);
+  color: var(--text-secondary);
   margin-bottom: var(--sp-4);
 }
 
@@ -215,7 +215,7 @@
   font-size: var(--text-subheading);
   line-height: 1.28;
   letter-spacing: 0.005em;
-  color: var(--ink);
+  color: var(--text);
   max-width: 34ch;
   margin-top: clamp(var(--sp-5), 3vw, var(--sp-6));
 }
@@ -243,7 +243,7 @@
   line-height: 1.4;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--slate);
+  color: var(--text-secondary);
 }
 
 .doc__facts dd {
@@ -253,13 +253,153 @@
 
 /* ---------------- Two-column body ---------------- */
 
+/* The reading grid.
+
+   The old 3fr/8fr split sized the prose track from the viewport and then
+   capped the text inside it at a measure, so every pixel the window gained
+   past that cap became a void running the whole length of the page. Here the
+   measure IS the track: the prose column is sized in rem, so it stops growing
+   when reading comfort says it should, and the slack collects in a third
+   track that reads as an outer margin instead of a hole in the text.
+
+   The index keeps the page's left edge, so it stays aligned with the
+   breadcrumb and title above it. */
 .doc__grid {
   display: grid;
-  grid-template-columns: 3fr 8fr;
-  gap: var(--col-gap);
+  grid-template-columns:
+    minmax(0, 14rem)
+    minmax(0, clamp(31rem, 44vw, 37rem))
+    minmax(0, 1fr);
+  gap: clamp(var(--sp-4), 3vw, var(--sp-6));
   align-items: start;
   border-top: var(--hairline);
   padding-top: clamp(var(--sp-5), 4vw, var(--sp-6));
+}
+
+/* ============================================================
+   The capability pages
+
+   Five pages built from one template, and until now they rendered
+   identically: same masthead, same column, same light. The copy already
+   tells them apart (one mark drawn until it holds, a manual not a monument)
+   and it already carries a numbered set, 01 through 05. The design did not
+   use either fact.
+
+   Three things happen here, and only on these five. About, Process, FAQ,
+   Journal and the two policy pages share the .doc class and are deliberately
+   left alone, which is why this is scoped to a modifier rather than written
+   against .doc.
+   ============================================================ */
+
+/* ---- 1. The folio ----
+   A numbered chapter opens with its number. It hangs in the same 14rem
+   column the index occupies further down, so the masthead and the body share
+   one spine instead of the left column starting halfway down the page.
+   It repeats the number already in the eyebrow, carries no information of
+   its own, and is hidden from assistive tech. */
+
+.doc__ord {
+  font-size: clamp(40px, 7vw, 104px);
+  line-height: 0.8;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  /* One step off the ground, the same value the footer mark is cut from, so
+     the number sits in the page rather than on it. */
+  color: var(--canvas-raised);
+  -webkit-text-stroke: 1px var(--border-strong);
+  user-select: none;
+}
+
+/* The folio exists to give the left margin a spine. Below the width where
+   the document has a left margin at all, it has no job, and stacked directly
+   above the eyebrow it just repeats the number that line already says. So it
+   goes. The eyebrow still carries the number, and nothing is lost: it is
+   decorative and already hidden from assistive tech.
+
+   Note the head grid lives in the min-width block below, not here. Writing it
+   unscoped was the bug in the first version of this: a 14rem track stayed
+   open on a 375px screen and left the h1 a 92px column to set itself in. */
+@media (max-width: 900px) {
+  .doc__ord {
+    display: none;
+  }
+}
+
+/* ---- 2. Light discipline ----
+   The rig is position: fixed, so on a 7,000px document every paragraph
+   drifts under a beam for the whole length of the page. It never fails
+   contrast (the worst case is 4.9:1 on the 12px labels, and body copy stays
+   above 10:1) but it is a wash of moving colour behind text that is there to
+   be read, and it makes the light look like an overlay rather than like
+   lighting, because it belongs to nothing on screen.
+
+   Anchoring it to the top of the document instead means the light falls on
+   the arrival, which is the one part of these pages that is display type,
+   and the reading body below is calm dark paper. That is also what
+   base.css already says the rig is for: body copy is never lit. */
+
+@supports selector(:has(*)) {
+  body:has(.doc--capability) .room,
+  body:has(.doc--capability) .gobo {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 118vh;
+  }
+}
+
+/* ---- 3. The width ----
+   At 1440 the third column held about 430px of nothing, while the spec
+   tables inside the reading column were narrow enough to need sideways
+   scrolling. The reading measure is not the thing that wanted the space.
+   So the prose column takes the full remaining width and the measure is
+   re-imposed on the things that are read, leaving tables free to use what is
+   actually there. Below 900px the grid is one column already and all of this
+   collapses to the same layout as before. */
+
+@media (min-width: 901px) {
+  /* The masthead takes the same two tracks as the body below it, so the folio
+     hangs in the very column the index will occupy and the page gains one
+     spine that runs its whole length. */
+  .doc--capability .doc__head {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 14rem)
+      minmax(0, 1fr);
+    column-gap: clamp(var(--sp-4), 3vw, var(--sp-6));
+    align-items: start;
+  }
+
+  .doc--capability .doc__head > :not(.doc__ord) {
+    grid-column: 2;
+  }
+
+  .doc--capability .doc__ord {
+    grid-column: 1;
+    grid-row: 1 / span 4;
+  }
+
+  .doc--capability .doc__grid {
+    grid-template-columns:
+      minmax(0, 14rem)
+      minmax(0, 1fr);
+  }
+
+  .doc--capability .doc__prose {
+    max-width: none;
+  }
+
+  /* The measure, re-imposed where it belongs: on the things that are read,
+     not on the sections holding them. Capping the sections too was the whole
+     bug in the first version of this, because a capped section bounds
+     everything inside it and the tables could never use the room. */
+  .doc--capability .doc__section > * {
+    max-width: 37rem;
+  }
+
+  /* And released where it does not. */
+  .doc--capability .doc__section > .spec-wrap {
+    max-width: none;
+  }
 }
 
 /* Grid and flex children default to min-width:auto, which refuses to shrink
@@ -281,7 +421,7 @@
 }
 
 .doc__index-head {
-  color: var(--slate);
+  color: var(--text-secondary);
   padding-bottom: var(--sp-3);
   border-bottom: var(--hairline);
 }
@@ -289,7 +429,6 @@
 .doc__index ol {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
   counter-reset: idx;
 }
 
@@ -297,13 +436,19 @@
   counter-increment: idx;
 }
 
+/* These are standalone jump links, not links inside a sentence, so the target
+   size guidance applies to them and 29px did not meet it. The gap on the list
+   comes off at the same time: the height now belongs to the target rather
+   than to the space between targets, which is the same correction the footer
+   columns got. */
 .doc__index a {
   display: grid;
   grid-template-columns: 28px 1fr;
+  align-items: center;
   gap: var(--sp-2);
+  min-height: 44px;
   font-size: var(--text-body-sm);
-  color: var(--slate);
-  padding-block: 3px;
+  color: var(--text-secondary);
   transition: color var(--dur-fast) ease;
 }
 
@@ -317,11 +462,15 @@
 
 .doc__index a:hover,
 .doc__index a.is-current {
-  color: var(--ink);
+  color: var(--text);
 }
 
 .doc__prose {
-  max-width: 68ch;
+  /* Single-column measure, matched to the grid track above so the reading
+     width does not change when the layout collapses. Set in rem, not ch:
+     Satoshi's zero is wide, so 68ch renders about 79 characters here, well
+     past a comfortable line. */
+  max-width: 37rem;
 }
 
 /* ---------------- Prose ---------------- */
@@ -365,12 +514,12 @@
 
 .prose em {
   font-style: normal;
-  color: var(--slate);
+  color: var(--text-secondary);
 }
 
 /* Inline links must be visible without relying on colour alone. */
 .prose a:not(.pill):not(.ghost) {
-  background-image: linear-gradient(var(--ink), var(--ink));
+  background-image: linear-gradient(var(--text), var(--text));
   background-repeat: no-repeat;
   background-size: 100% 1px;
   background-position: left calc(100% - 1px);
@@ -385,14 +534,14 @@
 /* Running lists in the prose get the dash-and-number treatment. Lists that
    are really components — .checklist, .entries, .related__list — bring their
    own layout, so they are excluded here rather than having to undo it. */
-.prose :is(ul, ol):not(.checklist, .entries, .related__list) {
+.prose :is(ul, ol):not(.checklist, .entries, .related__list, .journey) {
   margin-top: var(--sp-4);
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
 }
 
-.prose :is(ul, ol):not(.checklist, .entries, .related__list) > li {
+.prose :is(ul, ol):not(.checklist, .entries, .related__list, .journey) > li {
   position: relative;
   padding-left: var(--sp-4);
 }
@@ -404,7 +553,7 @@
   top: 0.72em;
   width: 7px;
   height: 1px;
-  background: var(--ink);
+  background: var(--text-secondary);
 }
 
 .prose ol:not(.checklist, .entries, .related__list) {
@@ -425,7 +574,7 @@
   font-weight: 500;
   letter-spacing: var(--tracking-label);
   line-height: 2.4;
-  color: var(--slate);
+  color: var(--text-secondary);
 }
 
 /* ---------------- The answer block ----------------
@@ -434,8 +583,8 @@
    Machines lift this; people read it and stop. */
 
 .answer {
-  background: var(--paper);
-  border-left: 2px solid var(--ink);
+  background: var(--canvas-raised);
+  border-left: 2px solid var(--text-muted);
   padding: var(--sp-4) var(--sp-5);
   margin-bottom: var(--sp-5);
 }
@@ -456,6 +605,29 @@
   overflow-x: auto;
   margin-top: var(--sp-5);
   border-top: var(--hairline);
+  /* A table narrower than its container shows nothing; one that overflows
+     fades at the right edge, so the reader can see there is more to scroll
+     to. The fade tracks the scroll position, so it disappears at the end
+     rather than implying content that is not there. */
+  background:
+    linear-gradient(to right, var(--canvas) 30%, transparent) left / 40px 100% no-repeat,
+    linear-gradient(to left, var(--canvas) 30%, transparent) right / 40px 100% no-repeat;
+  background-attachment: local, local;
+}
+
+/* Only a table that genuinely overflows becomes a focusable scroll region,
+   so the tab order gains a stop only where there is something to reach.
+   The class is set at runtime by src/lib/tables.ts. */
+.spec-wrap--scrollable:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Some browsers focus a scroller without :focus-visible matching, so the
+   plain :focus case needs a ring too, or the region can take focus silently. */
+.spec-wrap--scrollable:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 
 .spec {
@@ -479,7 +651,7 @@
   font-weight: 500;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--slate);
+  color: var(--text-secondary);
   white-space: nowrap;
 }
 
@@ -487,7 +659,7 @@
   font-size: var(--text-body-sm);
   letter-spacing: 0.01em;
   text-transform: none;
-  color: var(--ink);
+  color: var(--text);
   font-weight: 500;
 }
 
@@ -509,7 +681,7 @@
 }
 
 .checklist li span:last-child {
-  color: var(--slate);
+  color: var(--text-secondary);
   font-size: var(--text-caption);
   font-weight: 500;
   letter-spacing: var(--tracking-label);
@@ -527,24 +699,86 @@
   border-top: var(--hairline);
 }
 
+/* Each question is a native <details>. The browser supplies the expanded and
+   collapsed semantics, keyboard operation with Enter and Space, and find-in-page
+   opening the right answer. No JavaScript is involved, so an answer is never
+   unreachable if a script fails. */
 .faq__item {
   border-bottom: var(--hairline);
-  padding-block: clamp(var(--sp-5), 3vw, var(--sp-6));
-  display: grid;
-  grid-template-columns: 3fr 8fr;
-  gap: var(--col-gap);
-  align-items: start;
 }
 
 .faq__q {
+  /* the whole row is the control */
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding-block: clamp(var(--sp-4), 2.4vw, var(--sp-5));
+  min-height: 44px;
+  cursor: pointer;
+  list-style: none;
+  transition: color var(--dur-fast) ease;
+}
+
+.faq__q::-webkit-details-marker { display: none; }
+
+/* Scoped through .faq__q so it outranks `.doc__section h3`, which otherwise
+   adds its section-heading margins inside the summary and inflates every
+   row to about 129px. */
+.faq__q .faq__q-text {
   font-size: var(--text-body);
   font-weight: 500;
-  line-height: 1.3;
+  line-height: 1.35;
   text-wrap: balance;
+  margin: 0;
+}
+
+/* The marker states open and closed by SHAPE, not by colour: a plus closes
+   into a minus. The <details> element carries the real semantics for assistive
+   tech, so this is only the visible echo of it. */
+.faq__marker {
+  position: relative;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin-top: 0.25em;
+}
+
+.faq__marker::before,
+.faq__marker::after {
+  content: '';
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 1px;
+  background: var(--text-secondary);
+  transition: transform 180ms var(--ease-out), background-color var(--dur-fast) ease;
+}
+
+.faq__marker::after { transform: rotate(90deg); }
+
+.faq__item[open] .faq__marker::after { transform: rotate(0deg); }
+
+@media (hover: hover) {
+  .faq__q:hover .faq__q-text { color: var(--text); }
+  .faq__q:hover .faq__marker::before,
+  .faq__q:hover .faq__marker::after { background: var(--text); }
+}
+
+.faq__q:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+  border-radius: 2px;
 }
 
 .faq__a {
-  max-width: 68ch;
+  max-width: 37rem;
+  padding-bottom: clamp(var(--sp-4), 2.4vw, var(--sp-5));
+  color: var(--text-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq__marker::before,
+  .faq__marker::after { transition: none; }
 }
 
 .faq__a p {
@@ -590,12 +824,12 @@
 }
 
 .qa__a {
-  color: var(--slate);
+  color: var(--text-secondary);
 }
 
 .qa__a a {
-  color: var(--ink);
-  background-image: linear-gradient(var(--ink), var(--ink));
+  color: var(--text);
+  background-image: linear-gradient(var(--text), var(--text));
   background-repeat: no-repeat;
   background-size: 100% 1px;
   background-position: left calc(100% - 1px);
@@ -637,7 +871,7 @@
 }
 
 .related__link:hover {
-  background-color: var(--paper);
+  background-color: var(--canvas-raised);
 }
 
 .related__name {
@@ -652,7 +886,7 @@
 }
 
 .related__desc {
-  color: var(--slate);
+  color: var(--text-secondary);
   align-self: center;
   max-width: 46ch;
 }
@@ -678,7 +912,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-4);
-  color: var(--slate);
+  color: var(--text-secondary);
   margin-top: var(--sp-5);
 }
 
@@ -702,11 +936,11 @@
 }
 
 .entries a:hover {
-  background-color: var(--paper);
+  background-color: var(--canvas-raised);
 }
 
 .entries .label {
-  color: var(--slate);
+  color: var(--text-secondary);
 }
 
 .entries__name {
@@ -723,7 +957,7 @@
 
 .entries__desc {
   font-size: var(--text-body-sm);
-  color: var(--slate);
+  color: var(--text-secondary);
   align-self: center;
   max-width: 44ch;
 }
@@ -748,7 +982,7 @@
 .doc__cta {
   margin-top: var(--section-gap);
   padding-block: clamp(var(--sp-6), 6vw, var(--sp-7));
-  background: var(--stone);
+  background: var(--canvas-panel);
 }
 
 .doc__cta-grid {
@@ -766,8 +1000,11 @@
   max-width: 52ch;
 }
 
+/* The last action on a document page, and it was 39px. Same floor as the
+   footer's control. */
 .doc__cta-copy .pill {
   align-self: flex-start;
+  min-height: 44px;
 }
 
 /* ---------------- 404 ---------------- */
@@ -786,7 +1023,7 @@
 }
 
 .lost__code {
-  color: var(--slate);
+  color: var(--text-secondary);
 }
 
 .lost__links {
@@ -798,35 +1035,147 @@
 
 /* ---------------- Footer index ---------------- */
 
+/* Two columns of pages on this site, then one column of places you leave
+   for. The third is given a third of the row on its own so the outbound
+   channels are never mistaken for more sitemap. */
 .footer__index {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr);
   gap: var(--col-gap);
   padding-block: clamp(var(--sp-5), 4vw, var(--sp-6));
 }
 
 .footer__col-head {
-  color: var(--type-3);
+  color: var(--text-muted);
   margin-bottom: var(--sp-4);
 }
 
+/* No gap: each row already carries its own 44px of height, so a gap on top
+   of that spaces the index out into a list of isolated words rather than a
+   column you can read down. */
 .footer__col ul {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-3);
 }
 
 .footer__col a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  /* 44px of target even though the type is 15px. The links are stacked, so
+     without this the gap between them is the only thing standing between a
+     thumb and the wrong page. */
+  min-height: 44px;
   font-size: var(--text-body-sm);
-  background-image: linear-gradient(var(--parchment), var(--parchment));
-  background-repeat: no-repeat;
-  background-size: 0% 1px;
-  background-position: left calc(100% - 1px);
-  transition: background-size var(--dur-fast) var(--ease-out);
+  color: var(--text-secondary);
+  transition: color var(--dur-fast) ease;
+}
+
+/* The underline was drawn in --canvas, which was the page colour when this
+   was written for the light world. On the dark ground that is a near-black
+   line on a near-black field, so the hover state existed but could not be
+   seen. It is drawn in the text colour now. */
+.footer__col a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(50% - 0.85em);
+  height: 1px;
+  background: var(--text);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 
 .footer__col a:hover {
-  background-size: 100% 1px;
+  color: var(--text);
+}
+
+.footer__col a:hover::after {
+  transform: scaleX(1);
+}
+
+/* ---- Outbound channels ----
+   These are destinations rather than pages, so each one states where it
+   goes and what it is for, on its own line, with the leaving arrow. That is
+   what makes the Fiverr channel legible as a real second way to hire the
+   studio rather than the third grey item in a list of nine. */
+
+.footer__col--channels ul {
+  gap: 0;
+}
+
+.footer__col--channels a {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  column-gap: var(--sp-4);
+  row-gap: 2px;
+  min-height: 64px;
+  padding-block: var(--sp-3);
+  border-top: var(--hairline);
+  align-content: center;
+}
+
+.footer__col--channels li:last-child a {
+  border-bottom: var(--hairline);
+}
+
+/* The sliding underline belongs to the two sitemap columns. A channel row
+   is bounded by its own rules, so it lights up instead. */
+.footer__col--channels a::after {
+  content: none;
+}
+
+.footer__channel-name {
+  font-size: var(--text-body);
+  color: var(--text);
+}
+
+.footer__channel-note {
+  grid-column: 1;
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.footer__channel-arr {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  width: 12px;
+  height: 12px;
+  color: var(--text-muted);
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) ease;
+}
+
+.footer__col--channels a:hover .footer__channel-arr {
+  color: var(--text);
+  transform: translate(2px, -2px);
+}
+
+.footer__col--channels a:hover .footer__channel-note {
+  color: var(--text-secondary);
+}
+
+/* The hover states stay, they just stop travelling. Both of these move a
+   transform, which is the part worth removing here; the colour change is
+   what actually carries the feedback and it survives. */
+@media (prefers-reduced-motion: reduce) {
+  .footer__col a,
+  .footer__col a::after,
+  .footer__channel-arr {
+    transition: none;
+  }
+
+  .footer__col a:hover .footer__channel-arr,
+  .footer__col--channels a:hover .footer__channel-arr {
+    transform: none;
+  }
 }
 
 .footer__rule--tight {
@@ -837,7 +1186,7 @@
    Responsive
    ============================================================ */
 
-@media (max-width: 1024px) {
+@media (max-width: 900px) {
   .doc__grid {
     grid-template-columns: 1fr;
     gap: var(--sp-6);
@@ -854,10 +1203,6 @@
     gap: var(--sp-3) var(--sp-5);
   }
 
-  .faq__item {
-    grid-template-columns: 1fr;
-    gap: var(--sp-3);
-  }
 
   .related__link {
     grid-template-columns: 1fr 48px;
@@ -899,9 +1244,15 @@
     max-width: 100%;
   }
 
+  /* Two sitemap columns keep the top row; the channels take a full row of
+     their own underneath, which is where they read best anyway. */
   .footer__index {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: var(--sp-6);
+  }
+
+  .footer__col--channels {
+    grid-column: 1 / -1;
   }
 }
 
@@ -943,4 +1294,161 @@
     grid-template-columns: 1fr;
     row-gap: var(--sp-5);
   }
+}
+
+/* ============================================================
+   Print
+
+   The interior pages are the ones people actually print or save as PDF, and
+   the dark palette does not survive the trip: secondary text is a pale grey
+   chosen to sit on near-black, and every raised surface is a dark panel. On
+   white paper the lede came out at roughly 2:1 and the quoted answer printed
+   as a black slab. Everything below puts ink back on paper.
+   ============================================================ */
+
+@media print {
+  .doc__lede,
+  .doc__eyebrow,
+  .doc__index,
+  .doc__index a,
+  /* .crumbs, not .breadcrumb. The class was renamed in the markup and this
+     print selector was left pointing at the old name, so the current-page
+     crumb kept its screen colour and printed as near-white text on white
+     paper: present in the document, invisible on the sheet. */
+  .crumbs,
+  .crumbs *,
+  .prose,
+  .prose p,
+  .prose li,
+  .prose h2,
+  .prose h3,
+  .prose strong,
+  .prose em,
+  .label,
+  .spec,
+  .spec th,
+  .spec td,
+  figcaption {
+    color: #000 !important;
+  }
+
+  /* Raised surfaces are dark panels on screen. On paper they become plain
+     stock with a rule, so the structure survives without the ink. */
+  .answer,
+  .spec-wrap,
+  .doc__cta,
+  .faq__item {
+    background: #fff !important;
+    background-image: none !important;
+    border-color: #999 !important;
+  }
+
+  .answer {
+    border-left: 2px solid #000 !important;
+  }
+
+  .spec th,
+  .spec td {
+    border-color: #999 !important;
+  }
+
+  /* A scrollable table cannot scroll on paper, so let it wrap and print whole. */
+  .spec-wrap { overflow: visible !important; }
+  .spec { min-width: 0 !important; }
+
+  /* Keep the reading column full width on the sheet rather than leaving the
+     screen layout's outer margin baked into the print. */
+  .doc__grid { display: block !important; }
+  .doc__prose { max-width: none !important; }
+  .doc__index { display: none !important; }
+}
+
+/* ============================================================
+   Process: the stage journey
+
+   Sequence is carried by the ordinal words themselves ("Stage one" through
+   "Stage four") and by reading order, not by connecting lines, arrows,
+   colour or motion. Turn every decoration off and the order still reads.
+   ============================================================ */
+
+.journey {
+  list-style: none;
+  margin: clamp(var(--sp-5), 4vw, var(--sp-6)) 0;
+  padding: 0;
+  display: grid;
+  border-top: var(--hairline);
+}
+
+/* Real borders rather than a coloured gap: a background showing through the
+   gutter leaves grey bands wherever a cell's padding does not reach the edge. */
+.journey__stage {
+  border-bottom: var(--hairline);
+}
+
+.journey__link {
+  display: grid;
+  gap: var(--sp-2);
+  padding: clamp(var(--sp-4), 2.2vw, var(--sp-5)) 0;
+  min-height: 44px;
+  align-content: start;
+}
+
+.journey__num {
+  /* Held at a literal 12px rather than the caption token. This text states the
+     sequence, so it is content rather than a label, and it must stay on the
+     12px floor whatever the label token is later tuned to. */
+  font-size: 12px;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.journey__name {
+  font-size: var(--text-body);
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--text);
+}
+
+.journey__note {
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+  color: var(--text-secondary);
+  max-width: 34ch;
+}
+
+@media (hover: hover) {
+  .journey__link:hover .journey__name { color: var(--lamp-a); }
+}
+
+.journey__link:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+/* Four across once there is room for four readable columns. Below that it
+   stays a single vertical flow, which is the natural shape on a phone rather
+   than a desktop diagram squeezed sideways. */
+@media (min-width: 900px) {
+  .journey {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .journey__stage:nth-child(even) {
+    border-left: var(--hairline);
+  }
+
+  .journey__stage:nth-child(even) .journey__link {
+    padding-left: var(--sp-5);
+  }
+
+  .journey__link {
+    padding-block: clamp(var(--sp-4), 2vw, var(--sp-5));
+    padding-right: var(--sp-5);
+  }
+}
+
+@media print {
+  .journey, .journey__stage { border-color: #999 !important; }
+  .journey__num, .journey__name, .journey__note { color: #000 !important; }
 }

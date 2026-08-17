@@ -7,61 +7,83 @@
    The mark measures as one shape, drawn once, placed twice, rotated 180
    degrees: its counter matches itself under rotation at 22 of 22 sampled
    points, 90 degrees fits only 19 of 30, and it has no mirror symmetry.
-   So the page carries two light sources, locked exactly opposite each other
+   So the page carries two light sources locked exactly opposite each other
    through the centre, which is that symmetry used as a lighting rig. Light
    is thrown in hard wedges on the mark's 45 degree diagonals, never as soft
    bloom, because there is no softness anywhere in the drawing.
 
-   Colour is therefore a property of the room, not of any element.
-
-   NAMING. The role names below are canonical. The older parchment/ink names
-   are kept as aliases so the whole style system flips from this one file;
-   they are roles now, not descriptions. New code should use the role names.
+   NAMING
+   Every token below states its role. There are no colour-named aliases,
+   because those are what silently inverted the footer into a white slab
+   when the site went dark: a rule saying "background: ink" still read as
+   correct while ink had quietly become the lightest colour in the system.
+   A token now says what it is FOR, so it cannot be right in name and wrong
+   on screen.
    ============================================================ */
 
 :root {
-  /* ---- The room ---- */
-  --canvas: #09090b;          /* the void. matches portfolio.xstudioz.com */
-  --surface: #0f0f13;         /* a plane lifted just off the void */
-  --panel: #141419;           /* a second, quieter plane */
-  --line: #232329;            /* hairlines. structure you feel more than see */
+  /* ---- Ground ---- */
+  --canvas: #09090b;          /* the void. matches portfolio.xstudioz.com  */
+  --canvas-raised: #101014;   /* a plane lifted just off the void          */
+  --canvas-panel: #16161c;    /* a second, quieter plane. also the footer  */
 
-  /* ---- Type on the void ---- */
-  --type: #f0eff4;            /* primary. 17.6:1 on canvas */
-  --type-2: #9c9caa;          /* secondary. 7.4:1 on canvas, AA at body sizes */
-  --type-3: #6e6e7d;          /* furniture and micro-labels only */
+  /* ---- Text. Every role below passes WCAG AA on all three grounds. ---- */
+  --text: #f2f1f6;            /* primary          17.7:1 on canvas */
+  --text-secondary: #a9a9b6;  /* supporting copy   8.6:1 on canvas */
+  --text-muted: #8a8a97;      /* furniture, micro-labels  5.8:1    */
+
+  /* ---- Structure. Decorative only: never the sole carrier of meaning. ---- */
+  --border: #23232b;          /* hairlines you feel more than see  */
+  --border-strong: #3a3a45;   /* rules and outlines that hold shape */
+
+  /* ---- Interactive ---- */
+  --interactive: var(--text);         /* the fill a control takes on hover */
+  --interactive-text: var(--canvas);  /* the text colour on that fill      */
+  --focus: #f2f1f6;                   /* focus ring, on every ground       */
 
   /* ---- The two lamps ---- */
-  --lamp-a: #e634be;          /* brand magenta, emits as drawn */
+  --lamp-a: #e634be;          /* brand magenta, emits as drawn. 5.3:1 as text */
   --lamp-b: #6d1fc4;          /* brand violet, raised to a luminance that
-                                 can behave as a light rather than a shadow */
-  --brand-a: var(--lamp-a);
-  --brand-b: #38016c;         /* the true brand violet, for flat fills */
-  --gradient-x: linear-gradient(90deg, var(--lamp-a), var(--brand-b));
+                                 can behave as a light rather than a shadow  */
+  --brand-a: var(--lamp-a);   /* flat brand fills (marks, selection)         */
+  --brand-b: #38016c;         /* the true brand violet                       */
+
+  /* Lit type sits at --lit-base when no beam is on it and screens UP toward
+     the lamps when one is: 10.2:1 unlit, rising under each lamp, so light
+     always adds contrast rather than spending it.
+     The base is the whole trick. Screen against a near-white base is
+     near-white, which is why the first version of this rig moved the headline
+     by 14/255 and did nothing. Too dark and the headline becomes the dimmest
+     thing on the page, which inverts the hierarchy. This value is the balance:
+     crisp enough to lead the page, with 63/255 of headroom for the magenta
+     lamp to register and 45/255 for the violet. */
+  --lit-base: #b9b9c4;
 
   /* The wedge pair. One angle drives the whole document. */
   --wedge: 21deg;             /* half-width of each beam */
-  --lamp-strength: 0.46;
-
-  /* ---- Legacy aliases: keep the cascade working ---- */
-  --parchment: var(--canvas);
-  --ink: var(--type);
-  --paper: var(--surface);
-  --stone: var(--panel);
-  --ash: var(--line);
-  --slate: var(--type-2);
-  --parchment-70: rgba(9, 9, 11, 0.72);
+  --lamp-strength: 0.42;
 
   /* Type — Satoshi carries everything */
   --font-sans: 'Satoshi', 'Satoshi Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
-  --text-caption: 11px;
+  /* 12px, not 11px. Every consumer of this token labels something: section
+     eyebrows, index heads, table headers, facts labels, checklist tags and
+     list numerals all carry information rather than decorate. Raising the
+     token is the smallest system-level fix; the alternative was six separate
+     overrides that would drift apart. Uppercase at wide tracking reads the
+     same at 12 as at 11, so nothing about the editorial character changes. */
+  --text-caption: 12px;
   --text-body-sm: 15px;
   --text-body: 18px;
   --text-subheading: clamp(26px, 2.6vw, 34px);
   --text-heading-sm: clamp(30px, 3.6vw, 46px);
   --text-heading: clamp(40px, 5.4vw, 70px);
-  --text-display: clamp(44px, 7.8vw, 124px);
+
+  /* Display is capped by the measure it has to fit inside, not by a number
+     picked by eye. The longest hero line needs 11.15x its own font-size, so
+     dividing the usable column by 11.4 guarantees it can never take a fourth
+     line, at any viewport, however wide the container later becomes. */
+  --text-display: clamp(44px, 7.4vw, calc((var(--page-max) - 2 * var(--gutter)) / 11.4));
 
   --leading-tight: 0.88;
   --leading-solid: 1;
@@ -81,10 +103,14 @@
   --sp-8: 119px;
   --section-gap: clamp(76px, 11vw, 152px);
 
-  /* Layout */
-  --page-max: 1400px;
-  --gutter: clamp(20px, 4vw, 56px);
+  /* ---- Layout ----
+     One container law for every breakpoint. It holds 1400 through the laptop
+     range, then keeps growing to 1560 so a 1920 screen is a composition
+     rather than a 1400 slab marooned in 520px of dead space. */
+  --page-max: min(1560px, max(1400px, 82vw));
+  --gutter: clamp(20px, 4vw, 64px);
   --col-gap: var(--sp-4);
+  --measure: 68ch;            /* the reading column ceiling */
 
   /* Radii — interactive elements only; surfaces stay sharp */
   --radius-ui: 10px;
@@ -96,5 +122,5 @@
   --dur-med: 0.6s;
 
   /* Hairlines */
-  --hairline: 1px solid var(--line);
+  --hairline: 1px solid var(--border);
 }

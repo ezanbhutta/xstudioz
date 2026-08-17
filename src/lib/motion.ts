@@ -58,14 +58,34 @@ export function initNav(lenis: Lenis | null): void {
   let suppressed = false;
   let lastY = window.scrollY;
 
+  /* The scroll handler runs on every frame Lenis produces, so it holds the two
+     class states itself and only touches the DOM when one actually flips.
+     Calling classList.toggle/add/remove unconditionally meant a style
+     invalidation on the header sixty times a second to re-assert values that
+     were already correct. */
+  let scrolled: boolean | null = null;
+  let hidden: boolean | null = null;
+
+  const setScrolled = (next: boolean) => {
+    if (scrolled === next) return;
+    scrolled = next;
+    nav.classList.toggle('nav--scrolled', next);
+  };
+
+  const setHidden = (next: boolean) => {
+    if (hidden === next) return;
+    hidden = next;
+    nav.classList.toggle('nav--hidden', next);
+  };
+
   const onScroll = (y: number) => {
-    nav.classList.toggle('nav--scrolled', y > 24);
+    setScrolled(y > 24);
     if (suppressed) {
       lastY = y;
       return;
     }
-    if (y > 480 && y > lastY + 4) nav.classList.add('nav--hidden');
-    else if (y < lastY - 4) nav.classList.remove('nav--hidden');
+    if (y > 480 && y > lastY + 4) setHidden(true);
+    else if (y < lastY - 4) setHidden(false);
     lastY = y;
   };
   onScroll(window.scrollY);
@@ -74,7 +94,10 @@ export function initNav(lenis: Lenis | null): void {
   else window.addEventListener('scroll', () => onScroll(window.scrollY), { passive: true });
 
   // Keyboard focus inside the header must always bring it back on screen
-  nav.addEventListener('focusin', () => nav.classList.remove('nav--hidden'));
+  // Through setHidden, not the DOM directly: writing the class behind the
+  // cache's back would leave it believing the header is still hidden, and the
+  // next scroll frame would decline to show it again.
+  nav.addEventListener('focusin', () => setHidden(false));
 
   /* Same-document hash links go through Lenis so easing stays consistent,
      keep the URL hash honest, and hand focus to the target section.
@@ -99,7 +122,7 @@ export function initNav(lenis: Lenis | null): void {
       };
 
       suppressed = true;
-      nav.classList.remove('nav--hidden');
+      setHidden(false);
       if (lenis) {
         lenis.scrollTo(target, { offset: 0, duration: 1.4, onComplete: finish });
       } else {
@@ -117,7 +140,19 @@ export function initNav(lenis: Lenis | null): void {
    reads the full document.
    ------------------------------------------------------------ */
 
-export function initCommonReveals(scope: ParentNode = document): void {
+export interface CommonRevealOptions {
+  /* The cover fires its headline reveals five percent earlier than the
+     interior pages do. That difference predates this file: the cover carried
+     its own forked copy of these reveals and the two drifted. It is preserved
+     rather than quietly normalised, because collapsing the fork was supposed
+     to change no behaviour. Pass nothing and you get the interior timing. */
+  headlineStart?: string;
+}
+
+export function initCommonReveals(
+  scope: ParentNode = document,
+  { headlineStart = 'top 90%' }: CommonRevealOptions = {}
+): void {
   if (prefersReduced) return;
 
   scope.querySelectorAll<HTMLElement>('.line__in').forEach((el) => {
@@ -126,6 +161,13 @@ export function initCommonReveals(scope: ParentNode = document): void {
   });
 
   scope.querySelectorAll<HTMLElement>('h1, h2, .footer__title').forEach((block) => {
+    /* The hero's own h1 is choreographed by the cover's entrance timeline, so
+       it must not also pick up a scroll trigger here. Without this the two
+       would both own the same .line__in transform and fight over it on load:
+       the trigger fires immediately, because the hero is at the top of the
+       page, at the same moment the entrance is tweening the same elements. */
+    if (block.closest('.hero')) return;
+
     const lines = block.querySelectorAll<HTMLElement>('.line__in');
     if (!lines.length) return;
     gsap.to(lines, {
@@ -133,7 +175,7 @@ export function initCommonReveals(scope: ParentNode = document): void {
       duration: 1.1,
       ease: EASE,
       stagger: 0.09,
-      scrollTrigger: { trigger: block, start: 'top 90%', once: true },
+      scrollTrigger: { trigger: block, start: headlineStart, once: true },
     });
   });
 
@@ -220,7 +262,6 @@ export function applyStaticScroll(): void {
   if (target <= 0) return;
   document.body.style.transform = `translateY(-${target}px)`;
   document.getElementById('nav')?.style.setProperty('display', 'none');
-  document.querySelector<HTMLElement>('.furniture')?.style.setProperty('display', 'none');
 }
 
 export { gsap, ScrollTrigger };
