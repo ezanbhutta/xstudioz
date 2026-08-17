@@ -1,0 +1,852 @@
+/* ============================================================
+   XStudioz — Interior documents
+   The cover is a poster. These are pages of the same manual:
+   a numbered section, a measured column of prose, hairlines
+   doing the work that boxes would do elsewhere.
+   ============================================================ */
+
+/* ---------------- Preloader failsafe ----------------
+   The inline <head> script opts the first visit into the loader overlay,
+   but only the module bundle takes it away again. If that bundle 404s,
+   throws, or never arrives, the overlay would cover the page forever —
+   for a reader and for any renderer that runs JS.
+
+   So the overlay removes itself. On a healthy load GSAP has cleared it
+   after roughly two seconds and this never becomes visible; it exists
+   purely so that a broken bundle degrades to a readable page.
+
+   Declared here rather than in components.css only because this file is
+   imported last, so it wins without needing !important. */
+
+.show-loader .loader {
+  animation: xz-loader-bail 0.4s 5s forwards;
+}
+
+@keyframes xz-loader-bail {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+/* ---------------- Skip link ---------------- */
+
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -120%);
+  z-index: 200;
+  background: var(--ink);
+  color: var(--parchment);
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  padding: 10px var(--sp-4);
+  border-radius: 0 0 var(--radius-ui) var(--radius-ui);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.skip-link:focus-visible {
+  transform: translate(-50%, 0);
+  outline-offset: -4px;
+  outline-color: var(--parchment);
+}
+
+/* ---------------- Breadcrumbs ---------------- */
+
+.crumbs {
+  padding-top: calc(92px + var(--sp-5));
+}
+
+.crumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.crumbs li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  color: var(--slate);
+}
+
+.crumbs li + li::before {
+  content: '';
+  width: 9px;
+  height: 1px;
+  background: var(--ash);
+}
+
+.crumbs a {
+  background-image: linear-gradient(var(--slate), var(--slate));
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  background-position: left calc(100% - 1px);
+  transition: background-size var(--dur-fast) var(--ease-out), color var(--dur-fast) ease;
+}
+
+.crumbs a:hover {
+  color: var(--ink);
+  background-size: 100% 1px;
+}
+
+.crumbs [aria-current='page'] {
+  color: var(--ink);
+}
+
+/* ---------------- Document head ---------------- */
+
+.doc__head {
+  padding-block: clamp(var(--sp-5), 4vw, var(--sp-7)) clamp(var(--sp-6), 5vw, var(--sp-7));
+}
+
+.doc__eyebrow {
+  color: var(--slate);
+  margin-bottom: var(--sp-4);
+}
+
+.doc__title {
+  font-size: var(--text-heading);
+  font-weight: 400;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  max-width: 17ch;
+  text-wrap: balance;
+}
+
+.doc__lede {
+  font-size: var(--text-subheading);
+  line-height: 1.28;
+  letter-spacing: 0.005em;
+  color: var(--ink);
+  max-width: 34ch;
+  margin-top: clamp(var(--sp-5), 3vw, var(--sp-6));
+}
+
+/* Key facts sit as a spec strip under the title — the same
+   language as the mark's construction notes on the cover. */
+.doc__facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--col-gap);
+  margin-top: clamp(var(--sp-6), 5vw, var(--sp-7));
+  border-top: var(--hairline);
+  padding-top: var(--sp-4);
+}
+
+.doc__facts div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.doc__facts dt {
+  font-size: var(--text-caption);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--slate);
+}
+
+.doc__facts dd {
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+}
+
+/* ---------------- Two-column body ---------------- */
+
+.doc__grid {
+  display: grid;
+  grid-template-columns: 3fr 8fr;
+  gap: var(--col-gap);
+  align-items: start;
+  border-top: var(--hairline);
+  padding-top: clamp(var(--sp-5), 4vw, var(--sp-6));
+}
+
+/* Grid and flex children default to min-width:auto, which refuses to shrink
+   below their content. A wide .spec table would otherwise push this column
+   past the viewport instead of scrolling inside its own .spec-wrap. */
+.doc__grid > *,
+.qa__grid > *,
+.doc__cta-grid > *,
+.faq__item > * {
+  min-width: 0;
+}
+
+.doc__index {
+  position: sticky;
+  top: 96px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.doc__index-head {
+  color: var(--slate);
+  padding-bottom: var(--sp-3);
+  border-bottom: var(--hairline);
+}
+
+.doc__index ol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  counter-reset: idx;
+}
+
+.doc__index li {
+  counter-increment: idx;
+}
+
+.doc__index a {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: var(--sp-2);
+  font-size: var(--text-body-sm);
+  color: var(--slate);
+  padding-block: 3px;
+  transition: color var(--dur-fast) ease;
+}
+
+.doc__index a::before {
+  content: counter(idx, decimal-leading-zero);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  line-height: 1.9;
+}
+
+.doc__index a:hover,
+.doc__index a.is-current {
+  color: var(--ink);
+}
+
+.doc__prose {
+  max-width: 68ch;
+}
+
+/* ---------------- Prose ---------------- */
+
+.doc__section + .doc__section {
+  margin-top: clamp(var(--sp-6), 6vw, var(--sp-7));
+}
+
+.doc__section > h2 {
+  font-size: var(--text-heading-sm);
+  font-weight: 400;
+  line-height: var(--leading-solid);
+  letter-spacing: 0.005em;
+  text-wrap: balance;
+  margin-bottom: var(--sp-5);
+}
+
+.doc__section h3 {
+  font-size: var(--text-body);
+  font-weight: 500;
+  line-height: 1.35;
+  margin-top: var(--sp-5);
+  margin-bottom: var(--sp-3);
+}
+
+.prose p,
+.prose li {
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: 0.01em;
+}
+
+.prose p + p,
+.prose :is(ul, ol, table, .spec-wrap, .checklist, .answer) + p {
+  margin-top: var(--sp-4);
+}
+
+.prose strong {
+  font-weight: 500;
+}
+
+.prose em {
+  font-style: normal;
+  color: var(--slate);
+}
+
+/* Inline links must be visible without relying on colour alone. */
+.prose a:not(.pill):not(.ghost) {
+  background-image: linear-gradient(var(--ink), var(--ink));
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: left calc(100% - 1px);
+  transition: background-size var(--dur-fast) var(--ease-out), color var(--dur-fast) ease;
+}
+
+.prose a:not(.pill):not(.ghost):hover {
+  color: var(--brand-a);
+  background-image: linear-gradient(var(--brand-a), var(--brand-a));
+}
+
+/* Running lists in the prose get the dash-and-number treatment. Lists that
+   are really components — .checklist, .entries, .related__list — bring their
+   own layout, so they are excluded here rather than having to undo it. */
+.prose :is(ul, ol):not(.checklist, .entries, .related__list) {
+  margin-top: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.prose :is(ul, ol):not(.checklist, .entries, .related__list) > li {
+  position: relative;
+  padding-left: var(--sp-4);
+}
+
+.prose ul:not(.checklist, .entries, .related__list) > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 7px;
+  height: 1px;
+  background: var(--ink);
+}
+
+.prose ol:not(.checklist, .entries, .related__list) {
+  counter-reset: n;
+}
+
+.prose ol:not(.checklist, .entries, .related__list) > li {
+  counter-increment: n;
+  padding-left: var(--sp-6);
+}
+
+.prose ol:not(.checklist, .entries, .related__list) > li::before {
+  content: counter(n, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  line-height: 2.4;
+  color: var(--slate);
+}
+
+/* ---------------- The answer block ----------------
+   The first thing under a question: a complete, quotable answer
+   in one or two sentences. Everything after it is the reasoning.
+   Machines lift this; people read it and stop. */
+
+.answer {
+  background: var(--paper);
+  border-left: 2px solid var(--ink);
+  padding: var(--sp-4) var(--sp-5);
+  margin-bottom: var(--sp-5);
+}
+
+.answer p {
+  font-size: var(--text-body);
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+}
+
+.answer p + p {
+  margin-top: var(--sp-3);
+}
+
+/* ---------------- Spec tables ---------------- */
+
+.spec-wrap {
+  overflow-x: auto;
+  margin-top: var(--sp-5);
+  border-top: var(--hairline);
+}
+
+.spec {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.spec th,
+.spec td {
+  padding: var(--sp-3) var(--sp-4) var(--sp-3) 0;
+  border-bottom: var(--hairline);
+  vertical-align: top;
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+}
+
+.spec th {
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--slate);
+  white-space: nowrap;
+}
+
+.spec tbody th {
+  font-size: var(--text-body-sm);
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* ---------------- Deliverables checklist ---------------- */
+
+.checklist {
+  margin-top: var(--sp-5);
+  border-top: var(--hairline);
+}
+
+.checklist li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--sp-4);
+  align-items: baseline;
+  padding-block: var(--sp-3);
+  border-bottom: var(--hairline);
+  font-size: var(--text-body-sm);
+}
+
+.checklist li span:last-child {
+  color: var(--slate);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  text-align: right;
+}
+
+/* ---------------- FAQ ---------------- */
+
+.faq {
+  margin-top: var(--section-gap);
+}
+
+.faq__list {
+  border-top: var(--hairline);
+}
+
+.faq__item {
+  border-bottom: var(--hairline);
+  padding-block: clamp(var(--sp-5), 3vw, var(--sp-6));
+  display: grid;
+  grid-template-columns: 3fr 8fr;
+  gap: var(--col-gap);
+  align-items: start;
+}
+
+.faq__q {
+  font-size: var(--text-body);
+  font-weight: 500;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+.faq__a {
+  max-width: 68ch;
+}
+
+.faq__a p {
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+}
+
+.faq__a p + p {
+  margin-top: var(--sp-3);
+}
+
+/* ---------------- Cover: the questions section ----------------
+   Same 5/1/5 measure as the studio and brief frames, so the cover keeps
+   one column rhythm the whole way down. */
+
+.qa__grid {
+  display: grid;
+  grid-template-columns: 5fr 1fr 5fr;
+  gap: var(--col-gap);
+  align-items: start;
+}
+
+.qa__statement {
+  grid-column: 1;
+}
+
+.qa__list {
+  grid-column: 3;
+  max-width: 56ch;
+  border-top: var(--hairline);
+}
+
+.qa__item {
+  padding-block: var(--sp-5);
+  border-bottom: var(--hairline);
+}
+
+.qa__q {
+  font-weight: 500;
+  line-height: 1.35;
+  margin-bottom: var(--sp-3);
+  text-wrap: balance;
+}
+
+.qa__a {
+  color: var(--slate);
+}
+
+.qa__a a {
+  color: var(--ink);
+  background-image: linear-gradient(var(--ink), var(--ink));
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: left calc(100% - 1px);
+  transition: background-size var(--dur-fast) var(--ease-out), color var(--dur-fast) ease;
+}
+
+.qa__a a:hover {
+  color: var(--brand-a);
+  background-image: linear-gradient(var(--brand-a), var(--brand-a));
+}
+
+.qa__more {
+  padding-top: var(--sp-5);
+}
+
+/* ---------------- Related / next ---------------- */
+
+.related {
+  margin-top: var(--section-gap);
+}
+
+.related__list {
+  border-bottom: var(--hairline);
+}
+
+.related__row {
+  border-top: var(--hairline);
+}
+
+.related__link {
+  display: grid;
+  grid-template-columns: 1fr 1fr 48px;
+  align-items: baseline;
+  gap: var(--col-gap);
+  padding-block: var(--sp-5);
+  margin-inline: calc(-1 * var(--gutter));
+  padding-inline: var(--gutter);
+  transition: background-color var(--dur-fast) ease;
+}
+
+.related__link:hover {
+  background-color: var(--paper);
+}
+
+.related__name {
+  font-size: var(--text-subheading);
+  font-weight: 400;
+  line-height: var(--leading-solid);
+  transition: transform 0.45s var(--ease-out);
+}
+
+.related__link:hover .related__name {
+  transform: translateX(12px);
+}
+
+.related__desc {
+  color: var(--slate);
+  align-self: center;
+  max-width: 46ch;
+}
+
+.related__arr {
+  width: 18px;
+  height: 12px;
+  justify-self: end;
+  align-self: center;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity var(--dur-fast) ease, transform 0.45s var(--ease-out);
+}
+
+.related__link:hover .related__arr {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ---------------- Journal ---------------- */
+
+.entry__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  color: var(--slate);
+  margin-top: var(--sp-5);
+}
+
+.entries {
+  border-bottom: var(--hairline);
+}
+
+.entries li {
+  border-top: var(--hairline);
+}
+
+.entries a {
+  display: grid;
+  grid-template-columns: 120px 1fr 1fr 48px;
+  gap: var(--col-gap);
+  align-items: baseline;
+  padding-block: var(--sp-5);
+  margin-inline: calc(-1 * var(--gutter));
+  padding-inline: var(--gutter);
+  transition: background-color var(--dur-fast) ease;
+}
+
+.entries a:hover {
+  background-color: var(--paper);
+}
+
+.entries .label {
+  color: var(--slate);
+}
+
+.entries__name {
+  font-size: var(--text-subheading);
+  font-weight: 400;
+  line-height: var(--leading-solid);
+  text-wrap: balance;
+  transition: transform 0.45s var(--ease-out);
+}
+
+.entries a:hover .entries__name {
+  transform: translateX(10px);
+}
+
+.entries__desc {
+  font-size: var(--text-body-sm);
+  color: var(--slate);
+  align-self: center;
+  max-width: 44ch;
+}
+
+.entries__arr {
+  width: 18px;
+  height: 12px;
+  justify-self: end;
+  align-self: center;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity var(--dur-fast) ease, transform 0.45s var(--ease-out);
+}
+
+.entries a:hover .entries__arr {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ---------------- Closing call to action ---------------- */
+
+.doc__cta {
+  margin-top: var(--section-gap);
+  padding-block: clamp(var(--sp-6), 6vw, var(--sp-7));
+  background: var(--stone);
+}
+
+.doc__cta-grid {
+  display: grid;
+  grid-template-columns: 5fr 1fr 5fr;
+  gap: var(--col-gap);
+  align-items: start;
+}
+
+.doc__cta-copy {
+  grid-column: 3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+  max-width: 52ch;
+}
+
+.doc__cta-copy .pill {
+  align-self: flex-start;
+}
+
+/* ---------------- 404 ---------------- */
+
+.lost {
+  min-height: 76svh;
+  display: flex;
+  align-items: center;
+}
+
+.lost__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+  padding-top: 92px;
+}
+
+.lost__code {
+  color: var(--slate);
+}
+
+.lost__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-5);
+  margin-top: var(--sp-4);
+}
+
+/* ---------------- Footer index ---------------- */
+
+.footer__index {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--col-gap);
+  padding-block: clamp(var(--sp-5), 4vw, var(--sp-6));
+}
+
+.footer__col-head {
+  color: rgba(229, 228, 224, 0.55);
+  margin-bottom: var(--sp-4);
+}
+
+.footer__col ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.footer__col a {
+  font-size: var(--text-body-sm);
+  background-image: linear-gradient(var(--parchment), var(--parchment));
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  background-position: left calc(100% - 1px);
+  transition: background-size var(--dur-fast) var(--ease-out);
+}
+
+.footer__col a:hover {
+  background-size: 100% 1px;
+}
+
+.footer__rule--tight {
+  margin-top: 0;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .doc__grid {
+    grid-template-columns: 1fr;
+    gap: var(--sp-6);
+  }
+
+  .doc__index {
+    position: static;
+    top: auto;
+  }
+
+  .doc__index ol {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--sp-3) var(--sp-5);
+  }
+
+  .faq__item {
+    grid-template-columns: 1fr;
+    gap: var(--sp-3);
+  }
+
+  .related__link {
+    grid-template-columns: 1fr 48px;
+    grid-template-areas:
+      'name arr'
+      'desc arr';
+    row-gap: var(--sp-2);
+  }
+
+  .related__name { grid-area: name; }
+  .related__desc { grid-area: desc; }
+  .related__arr { grid-area: arr; }
+
+  .entries a {
+    grid-template-columns: 1fr 48px;
+    grid-template-areas:
+      'date arr'
+      'name arr'
+      'desc arr';
+    row-gap: var(--sp-2);
+  }
+
+  .entries .label { grid-area: date; }
+  .entries__name { grid-area: name; }
+  .entries__desc { grid-area: desc; }
+  .entries__arr { grid-area: arr; }
+}
+
+@media (max-width: 900px) {
+  .doc__cta-grid,
+  .qa__grid {
+    grid-template-columns: 1fr;
+    gap: var(--sp-5);
+  }
+
+  .doc__cta-copy,
+  .qa__list {
+    grid-column: 1;
+    max-width: 100%;
+  }
+
+  .footer__index {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: var(--sp-6);
+  }
+}
+
+@media (max-width: 760px) {
+  .doc__facts {
+    grid-template-columns: 1fr;
+    gap: var(--sp-4);
+  }
+
+  .doc__title {
+    max-width: 100%;
+  }
+
+  .doc__lede {
+    max-width: 100%;
+  }
+
+  .related__arr,
+  .entries__arr {
+    display: none;
+  }
+
+  .related__link,
+  .entries a {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'name'
+      'desc';
+  }
+
+  .entries a {
+    grid-template-areas:
+      'date'
+      'name'
+      'desc';
+  }
+
+  .footer__index {
+    grid-template-columns: 1fr;
+    row-gap: var(--sp-5);
+  }
+}

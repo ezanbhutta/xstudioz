@@ -1,6 +1,9 @@
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/components.css';
+/* The cover shares the interior pages' skip link, footer index and
+   question blocks, so it needs their styles too. */
+import './styles/doc.css';
 
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -9,8 +12,22 @@ import Lenis from 'lenis';
 gsap.registerPlugin(ScrollTrigger);
 
 const staticMode = new URLSearchParams(window.location.search).has('static');
+
+/* A viewport this shape belongs to a rendering engine, not a person.
+   Google's web rendering service and most social-card renderers either
+   expand the viewport to an enormous height instead of scrolling, or report
+   no height at all. Either way a scroll-triggered reveal may never fire and
+   the content would sit at opacity 0 forever. Serving them the static page
+   is deterministic where waiting on a ScrollTrigger is not. Both bounds sit
+   far outside any real display, and a false positive costs nothing but the
+   animation. */
+const viewportH = window.innerHeight;
+const rendererViewport = viewportH < 240 || viewportH > 3500;
+
 const prefersReduced =
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches || staticMode;
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+  staticMode ||
+  rendererViewport;
 const EASE = 'expo.out';
 const EASE_INOUT = 'power4.inOut';
 
@@ -57,10 +74,19 @@ function initNav(): void {
 
   // In-page anchors go through Lenis so easing stays consistent,
   // keep the URL hash honest, and hand focus to the target section.
-  document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => {
+  //
+  // The shared nav links to /#capabilities rather than #capabilities, because
+  // that anchor has to resolve from the interior pages too. So match on any
+  // link carrying a hash and keep only the ones pointing at this very
+  // document — everywhere else the browser should just navigate.
+  document.querySelectorAll<HTMLAnchorElement>('a[href*="#"]').forEach((a) => {
+    const url = new URL(a.href, window.location.href);
+    if (url.origin !== window.location.origin) return;
+    if (url.pathname !== window.location.pathname) return;
+    if (!url.hash || url.hash === '#') return;
+
     a.addEventListener('click', (ev) => {
-      const id = a.getAttribute('href');
-      if (!id || id === '#') return;
+      const id = url.hash;
       const target = document.querySelector<HTMLElement>(id);
       if (!target) return;
       ev.preventDefault();
@@ -220,6 +246,22 @@ function initReveals(): void {
     );
   }
 
+  // Process — the step rules draw in sequence before the steps rise
+  const processRules = document.querySelectorAll<HTMLElement>('.process__rule');
+  if (processRules.length) {
+    gsap.fromTo(
+      processRules,
+      { scaleX: 0 },
+      {
+        scaleX: 1,
+        duration: 1,
+        ease: EASE_INOUT,
+        stagger: 0.14,
+        scrollTrigger: { trigger: '.process__steps', start: 'top 85%', once: true },
+      }
+    );
+  }
+
   // Hero X — slow parallax drift on the inner svg; the wrapper stays free
   // for the entrance tween so the two never fight over one transform.
   const heroXInner = document.querySelector<HTMLElement>('.hero__x-svg');
@@ -247,6 +289,49 @@ function initReveals(): void {
       scrollTrigger: { trigger: '.hero', start: '4% top', toggleActions: 'play none none reverse' },
     });
   }
+}
+
+/* ------------------------------------------------------------
+   The Mark — spec rows light up their construction guides
+   ------------------------------------------------------------ */
+function initAnatomyLink(): void {
+  const grid = document.querySelector<HTMLElement>('.anatomy__grid');
+  if (!grid || !window.matchMedia('(hover: hover)').matches) return;
+
+  grid.querySelectorAll<HTMLElement>('[data-spec]').forEach((row) => {
+    row.addEventListener('mouseenter', () =>
+      grid.setAttribute('data-active-spec', row.getAttribute('data-spec') || '')
+    );
+    row.addEventListener('mouseleave', () => grid.removeAttribute('data-active-spec'));
+  });
+}
+
+/* ------------------------------------------------------------
+   Hero X — answers the pointer with a few quiet degrees
+   ------------------------------------------------------------ */
+function initHeroPointer(): void {
+  if (prefersReduced || !window.matchMedia('(pointer: fine)').matches) return;
+
+  const hero = document.querySelector<HTMLElement>('.hero');
+  const x = document.querySelector<HTMLElement>('[data-hero-x]');
+  if (!hero || !x) return;
+
+  const rotTo = gsap.quickTo(x, 'rotation', { duration: 1.1, ease: 'power3.out' });
+  const yTo = gsap.quickTo(x, 'y', { duration: 1.1, ease: 'power3.out' });
+
+  hero.addEventListener('pointermove', (e) => {
+    if (!heroReady) return;
+    const nx = e.clientX / window.innerWidth - 0.5;
+    const ny = e.clientY / window.innerHeight - 0.5;
+    rotTo(nx * 6);
+    yTo(ny * 14);
+  });
+
+  hero.addEventListener('pointerleave', () => {
+    if (!heroReady) return;
+    rotTo(0);
+    yTo(0);
+  });
 }
 
 /* ------------------------------------------------------------
@@ -317,11 +402,16 @@ function initFolio(): void {
 /* ------------------------------------------------------------
    Hero entrance — runs once the loader clears
    ------------------------------------------------------------ */
+let heroReady = false;
+
 function heroIntro(): void {
-  if (prefersReduced) return;
+  if (prefersReduced) {
+    heroReady = true;
+    return;
+  }
 
   gsap
-    .timeline({ defaults: { ease: EASE } })
+    .timeline({ defaults: { ease: EASE }, onComplete: () => (heroReady = true) })
     .fromTo(
       '.hero__rule-top, .hero__rule-bot',
       { scaleX: 0 },
@@ -395,6 +485,8 @@ function boot(): void {
   initNav();
   initReveals();
   initFolio();
+  initAnatomyLink();
+  initHeroPointer();
   initLoader(() => {
     heroIntro();
     // Trigger positions were measured while the loader froze the scrollbar
@@ -402,6 +494,25 @@ function boot(): void {
   });
 
   document.fonts?.ready.then(() => ScrollTrigger.refresh());
+
+  // No code path may leave readable text sitting at opacity 0. Only
+  // elements already at or above the fold are forced — those should have
+  // played on load, so if they are still hidden seconds later their trigger
+  // mismeasured. Anything genuinely below the fold is left alone, so a
+  // reader who lingers before scrolling still gets the animation.
+  if (!prefersReduced) {
+    window.setTimeout(() => {
+      const fold = window.innerHeight;
+      ScrollTrigger.getAll().forEach((st) => {
+        if (st.progress > 0) return;
+        const el = st.trigger as HTMLElement | null;
+        if (!el) return;
+        if (fold === 0 || el.getBoundingClientRect().top < fold) {
+          st.animation?.progress(1);
+        }
+      });
+    }, 4000);
+  }
 
   // QA helper: /?static&scroll=1200 shifts the page up by a fixed offset
   // (headless screenshots can't scroll reliably, so we translate instead)

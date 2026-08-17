@@ -433,9 +433,14 @@ body.is-loading {
   height: auto;
 }
 
+/* The dim/highlight below rides on SVG paint opacities
+   (stroke-opacity / fill-opacity) rather than `opacity`, because the
+   scroll reveal leaves inline opacity on these elements and GSAP never
+   writes the paint channels — the two systems stay out of each other's way. */
 .anatomy__fig .guide {
   stroke: var(--ash);
   stroke-width: 1;
+  transition: stroke 0.35s ease, stroke-opacity 0.35s ease, stroke-width 0.35s ease;
 }
 
 .anatomy__fig .guide--notch {
@@ -444,6 +449,44 @@ body.is-loading {
 
 .anatomy__x {
   fill: var(--ink);
+  transition: fill-opacity 0.35s ease;
+}
+
+/* Spec rows converse with the figure: hovering one lights its guides */
+.anatomy__grid[data-active-spec] .guide {
+  stroke-opacity: 0.18;
+}
+
+.anatomy__grid[data-active-spec] .anatomy__x {
+  fill-opacity: 0.22;
+}
+
+.anatomy__grid[data-active-spec='terminals'] .guide[data-g='terminals'],
+.anatomy__grid[data-active-spec='geometry'] .guide[data-g='geometry'],
+.anatomy__grid[data-active-spec='notch'] .guide[data-g='notch'] {
+  stroke-opacity: 1;
+  stroke: var(--brand-a);
+  stroke-width: 1.5;
+}
+
+.anatomy__grid[data-active-spec='color'] .anatomy__x {
+  fill-opacity: 1;
+  fill: url(#xg);
+}
+
+.anatomy__specs li {
+  transition: padding-left 0.35s var(--ease-out);
+}
+
+@media (hover: hover) {
+  .anatomy__specs li:hover {
+    padding-left: 10px;
+  }
+
+  /* brand-b keeps AA contrast on parchment at 11px; brand-a does not */
+  .anatomy__specs li:hover .label {
+    color: var(--brand-b);
+  }
 }
 
 .anatomy__cap {
@@ -573,6 +616,38 @@ body.is-loading {
   transform: translateX(0);
 }
 
+/* A ghost of the row's number surfaces behind the content on hover */
+.caps__ghost {
+  position: absolute;
+  right: calc(var(--gutter) + 40px);
+  top: 50%;
+  transform: translateY(-46%) translateX(24px);
+  font-size: clamp(80px, 8vw, 132px);
+  line-height: 1;
+  color: transparent;
+  /* slate stroke survives the white hover surface; ash washes out on paper */
+  -webkit-text-stroke: 1px var(--slate);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.6s var(--ease-out);
+  z-index: 0;
+}
+
+@media (hover: hover) {
+  .caps__link:hover .caps__ghost {
+    opacity: 0.6;
+    transform: translateY(-46%) translateX(0);
+  }
+}
+
+.caps__num,
+.caps__name,
+.caps__desc,
+.caps__arr {
+  position: relative;
+  z-index: 1;
+}
+
 /* ---------------- Work / Archive portal ---------------- */
 
 .work__grid {
@@ -678,8 +753,18 @@ body.is-loading {
 }
 
 .process__step {
-  border-top: 1px solid var(--ink);
+  position: relative;
   padding-top: var(--sp-4);
+}
+
+.process__rule {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--ink);
+  transform-origin: left center;
 }
 
 .process__num {

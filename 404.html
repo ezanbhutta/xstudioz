@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!--@head-->
+</head>
+<body>
+
+  <!--@include:svg-defs-->
+  <!--@include:nav-->
+
+  <main id="top">
+    <section class="lost">
+      <div class="container lost__grid">
+
+        <p class="label lost__code">Error 404 — page not found</p>
+
+        <h1 class="doc__title">
+          <span class="line"><span class="line__in">This section was</span></span>
+          <span class="line"><span class="line__in">never printed.</span></span>
+        </h1>
+
+        <p class="body" data-reveal="fade">
+          The address you followed does not match anything in this document.
+          Either it was renamed, or it was never here. The links below are
+          current.
+        </p>
+
+        <div class="lost__links" data-reveal="fade">
+          <a class="pill" href="/">
+            <span>Back to the cover</span>
+            <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+          </a>
+          <a class="ghost" href="/logo-design/">
+            <span>Logo design</span>
+            <svg class="ghost__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+          </a>
+          <a class="ghost" href="/faq/">
+            <span>Common questions</span>
+            <svg class="ghost__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+          </a>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!--@include:footer-->
+
+  <script type="module" src="/src/page.ts"></script>
+</body>
+</html>

@@ -1,21 +1,153 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>XStudioz — Brand Design Studio</title>
-  <meta name="description" content="XStudioz is an independent brand design studio. Logos, identities, and the systems that carry them — designed properly, for founders worldwide." />
-  <meta property="og:title" content="XStudioz — Brand Design Studio" />
-  <meta property="og:description" content="A logo is a mark. A brand is a promise. We design both." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://xstudioz.com" />
-  <meta property="og:image" content="https://xstudioz.com/og.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="preload" href="/fonts/Satoshi-400.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="/fonts/Satoshi-500.woff2" as="font" type="font/woff2" crossorigin />
+  <!--@head-->
+
+  <!-- Studio-level entity detail that only the cover asserts: the service
+       catalogue. Declared here rather than in the shared head so each
+       service is stated once, on the page that lists all five. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "OfferCatalog",
+        "@id": "https://xstudioz.com/#offercatalog",
+        "name": "Brand design services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://xstudioz.com/#service-logo-design",
+              "name": "Logo Design",
+              "description": "A single custom mark, drawn and refined until it holds at every size, delivered with full vector masters and usage rules.",
+              "url": "https://xstudioz.com/logo-design/",
+              "serviceType": "Logo design",
+              "provider": {
+                "@id": "https://xstudioz.com/#organization"
+              },
+              "areaServed": {
+                "@type": "Place",
+                "name": "Worldwide"
+              }
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://xstudioz.com/#service-brand-identity",
+              "name": "Brand Identity",
+              "description": "A complete visual system — colour, typography, layout and voice — with the rules that keep it consistent everywhere.",
+              "url": "https://xstudioz.com/brand-identity/",
+              "serviceType": "Brand identity design",
+              "provider": {
+                "@id": "https://xstudioz.com/#organization"
+              },
+              "areaServed": {
+                "@type": "Place",
+                "name": "Worldwide"
+              }
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://xstudioz.com/#service-brand-guidelines",
+              "name": "Brand Guidelines",
+              "description": "The document a brand lives by, written in plain language so a team can actually apply it.",
+              "url": "https://xstudioz.com/brand-guidelines/",
+              "serviceType": "Brand guidelines",
+              "provider": {
+                "@id": "https://xstudioz.com/#organization"
+              },
+              "areaServed": {
+                "@type": "Place",
+                "name": "Worldwide"
+              }
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://xstudioz.com/#service-social-media-kits",
+              "name": "Social Media Kits",
+              "description": "Editable templates and profile assets sized for every platform, so everything published stays recognisably one brand.",
+              "url": "https://xstudioz.com/social-media-kits/",
+              "serviceType": "Social media design",
+              "provider": {
+                "@id": "https://xstudioz.com/#organization"
+              },
+              "areaServed": {
+                "@type": "Place",
+                "name": "Worldwide"
+              }
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://xstudioz.com/#service-stationery",
+              "name": "Stationery & Collateral",
+              "description": "Business cards, letterheads, invoices and decks, drawn as part of the identity and supplied print-ready.",
+              "url": "https://xstudioz.com/stationery/",
+              "serviceType": "Stationery design",
+              "provider": {
+                "@id": "https://xstudioz.com/#organization"
+              },
+              "areaServed": {
+                "@type": "Place",
+                "name": "Worldwide"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://xstudioz.com/#organization",
+        "hasOfferCatalog": {
+          "@id": "https://xstudioz.com/#offercatalog"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://xstudioz.com/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is the difference between a logo and a brand identity?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A logo is one asset — a single mark. A brand identity is the system it sits inside: colour, typography, layout, imagery and voice, plus the rules that keep them consistent. A logo tells people who you are once. An identity keeps telling them, in every place you show up. The long version."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What files will I receive?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Vector masters — SVG, EPS and PDF — plus raster exports for the web and for presentations, a favicon set, and written usage rules. The vectors are the actual artwork; everything else is generated from them. If a designer gives you only PNGs, you do not own a usable logo. Which files, and why."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do I own the work when it is finished?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Full ownership of the final work transfers to you in writing on final payment, source files included. This is worth checking elsewhere too — it is not automatic, and paying an invoice is not the same as being given the rights."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
   <script>
     try {
       if (!sessionStorage.getItem('xz-seen')) {
@@ -27,27 +159,7 @@
 </head>
 <body>
 
-  <!-- Shared vector definitions: the X mark, brand gradient, arrow + chevron glyphs -->
-  <svg class="svg-defs" aria-hidden="true" focusable="false">
-    <defs>
-      <linearGradient id="xg" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0" stop-color="#e634be" />
-        <stop offset="1" stop-color="#38016c" />
-      </linearGradient>
-      <symbol id="xmark" viewBox="758 335 404 404">
-        <path d="M1041.4,732c-3.7,0-7.4-1.4-10.2-4.3l-51.9-51.9c-2.9-2.9-4.5-7.1-4.2-11.3l1.8-24.8-88,88c-5.6,5.6-14.8,5.6-20.5,0l-96.1-96.1c-2.7-2.7-4.3-6.4-4.3-10.2s1.6-7.5,4.3-10.2l71.1-71.1-71.1-71.1c-2.7-2.7-4.3-6.4-4.3-10.2s1.6-7.5,4.3-10.2l96.1-96.1c5.6-5.6,14.8-5.6,20.5,0l51.9,51.9c2.9,2.9,4.5,7.1,4.2,11.3l-1.8,24.8,88-88c2.7-2.7,6.4-4.3,10.2-4.3h0c3.8,0,7.5,1.6,10.2,4.3l96.1,96.1c5.6,5.6,5.6,14.8,0,20.5l-71.1,71.1,71.1,71.1c5.6,5.6,5.6,14.8,0,20.5l-96.1,96.1c-2.9,2.9-6.5,4.3-10.2,4.3ZM803.1,621.4l75.6,75.6,105.3-105.3c4.3-4.3,10.8-5.5,16.3-2.9,5.5,2.5,8.8,8.2,8.4,14.2l-4.2,57,37,37,75.6-75.6-71.1-71.1c-5.6-5.6-5.6-14.8,0-20.5l71.1-71.1-75.6-75.6-105.2,105.2c-4.3,4.3-10.8,5.5-16.3,2.9s-8.8-8.2-8.4-14.2l4.2-57-37-37-75.6,75.6,71.1,71.1c5.6,5.6,5.6,14.8,0,20.5l-71.1,71.1h0Z" />
-      </symbol>
-      <symbol id="arr-ne" viewBox="0 0 16 16">
-        <path d="M3 13 L12.6 3.4 M5.4 3 H13 V10.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
-      </symbol>
-      <symbol id="arr-e" viewBox="0 0 18 12">
-        <path d="M1 6 H16 M11 1.4 L15.6 6 L11 10.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
-      </symbol>
-      <symbol id="chev-s" viewBox="0 0 14 9">
-        <path d="M1.5 1.5 L7 7 L12.5 1.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
-      </symbol>
-    </defs>
-  </svg>
+  <!--@include:svg-defs-->
 
   <!-- Preloader -->
   <div class="loader" id="loader" aria-hidden="true">
@@ -68,25 +180,7 @@
     <p class="furniture__folio label"><span id="folio">The Cover</span></p>
   </div>
 
-  <header class="nav" id="nav">
-    <div class="container nav__row">
-      <a class="nav__brand" href="#top" aria-label="XStudioz — home">
-        <svg class="nav__mark" aria-hidden="true"><use href="#xmark" /></svg>
-        <span class="nav__name">XStudioz</span>
-      </a>
-      <nav class="nav__links" aria-label="Primary">
-        <a class="nav__link" href="#mark">The Mark</a>
-        <a class="nav__link" href="#studio">The Studio</a>
-        <a class="nav__link" href="#capabilities">Capabilities</a>
-        <a class="nav__link" href="#work">The Archive</a>
-        <a class="nav__link" href="#process">The Process</a>
-      </nav>
-      <a class="pill nav__cta" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
-        <span>Start a project</span>
-        <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
-      </a>
-    </div>
-  </header>
+  <!--@include:nav-->
 
   <main id="top">
 
@@ -145,16 +239,16 @@
           <figure class="anatomy__plate" data-anatomy>
             <svg class="anatomy__fig" viewBox="0 0 720 720" role="img" aria-label="Construction diagram of the XStudioz mark: concentric guides, 45-degree axes and clearspace boundaries around the X">
               <!-- clearspace -->
-              <rect class="guide" x="70" y="70" width="580" height="580" fill="none" stroke-dasharray="4 6" pathLength="1" />
+              <rect class="guide" data-g="terminals" x="70" y="70" width="580" height="580" fill="none" stroke-dasharray="4 6" pathLength="1" />
               <!-- inscribing circles -->
-              <circle class="guide" cx="360" cy="360" r="235" fill="none" pathLength="1" />
-              <circle class="guide" cx="360" cy="360" r="150" fill="none" pathLength="1" />
+              <circle class="guide" data-g="terminals" cx="360" cy="360" r="235" fill="none" pathLength="1" />
+              <circle class="guide" data-g="terminals" cx="360" cy="360" r="150" fill="none" pathLength="1" />
               <!-- axes -->
-              <line class="guide" x1="360" y1="40" x2="360" y2="680" pathLength="1" />
-              <line class="guide" x1="40" y1="360" x2="680" y2="360" pathLength="1" />
+              <line class="guide" data-g="geometry" x1="360" y1="40" x2="360" y2="680" pathLength="1" />
+              <line class="guide" data-g="geometry" x1="40" y1="360" x2="680" y2="360" pathLength="1" />
               <!-- 45° diagonals -->
-              <line class="guide" x1="130" y1="130" x2="590" y2="590" pathLength="1" />
-              <line class="guide" x1="590" y1="130" x2="130" y2="590" pathLength="1" />
+              <line class="guide" data-g="geometry" x1="130" y1="130" x2="590" y2="590" pathLength="1" />
+              <line class="guide" data-g="geometry" x1="590" y1="130" x2="130" y2="590" pathLength="1" />
               <!-- dimension ticks -->
               <line class="guide guide--tick" x1="70" y1="700" x2="650" y2="700" pathLength="1" />
               <line class="guide guide--tick" x1="70" y1="694" x2="70" y2="706" pathLength="1" />
@@ -162,7 +256,7 @@
               <!-- the mark -->
               <use class="anatomy__x" href="#xmark" x="163" y="163" width="394" height="394" />
               <!-- the notch highlight -->
-              <circle class="guide guide--notch" cx="378" cy="440" r="32" fill="none" pathLength="1" />
+              <circle class="guide guide--notch" data-g="notch" cx="378" cy="440" r="32" fill="none" pathLength="1" />
             </svg>
             <figcaption class="anatomy__cap">
               <span class="label">Fig. 01 — Primary mark, construction</span>
@@ -183,10 +277,10 @@
               applied everywhere.
             </p>
             <ul class="anatomy__specs" data-reveal="fade">
-              <li><span class="label">Terminals</span><span class="body-sm">Rounded, outside only</span></li>
-              <li><span class="label">Geometry</span><span class="body-sm">45° construction</span></li>
-              <li><span class="label">Signature</span><span class="body-sm">The notch — one deliberate break</span></li>
-              <li><span class="label">Color</span><span class="body-sm">Signal gradient, #E634BE → #38016C</span></li>
+              <li data-spec="terminals"><span class="label">Terminals</span><span class="body-sm">Rounded, outside only</span></li>
+              <li data-spec="geometry"><span class="label">Geometry</span><span class="body-sm">45° construction</span></li>
+              <li data-spec="notch"><span class="label">Signature</span><span class="body-sm">The notch — one deliberate break</span></li>
+              <li data-spec="color"><span class="label">Color</span><span class="body-sm">Signal gradient, #E634BE → #38016C</span></li>
             </ul>
           </div>
         </div>
@@ -238,44 +332,49 @@
         <h2 class="sr-only">Capabilities</h2>
         <ul class="caps__list">
           <li class="caps__row" data-cap>
-            <a class="caps__link" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
+            <a class="caps__link" href="/logo-design/">
               <span class="caps__num label">01</span>
+              <span class="caps__ghost" aria-hidden="true">01</span>
               <span class="caps__name heading-sm">Logo Design</span>
               <span class="caps__desc body-sm">One mark, drawn until it holds. Concepts presented properly — never thumbnails in a grid.</span>
               <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
-            <span class="sr-only"> (opens in a new tab)</span></a>
+            </a>
           </li>
           <li class="caps__row" data-cap>
-            <a class="caps__link" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
+            <a class="caps__link" href="/brand-identity/">
               <span class="caps__num label">02</span>
+              <span class="caps__ghost" aria-hidden="true">02</span>
               <span class="caps__name heading-sm">Brand Identity</span>
               <span class="caps__desc body-sm">Color, type, voice, and the rules that hold them together across everything you ship.</span>
               <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
-            <span class="sr-only"> (opens in a new tab)</span></a>
+            </a>
           </li>
           <li class="caps__row" data-cap>
-            <a class="caps__link" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
+            <a class="caps__link" href="/brand-guidelines/">
               <span class="caps__num label">03</span>
+              <span class="caps__ghost" aria-hidden="true">03</span>
               <span class="caps__name heading-sm">Brand Guidelines</span>
               <span class="caps__desc body-sm">The document your brand lives by — written so your team can actually use it.</span>
               <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
-            <span class="sr-only"> (opens in a new tab)</span></a>
+            </a>
           </li>
           <li class="caps__row" data-cap>
-            <a class="caps__link" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
+            <a class="caps__link" href="/social-media-kits/">
               <span class="caps__num label">04</span>
+              <span class="caps__ghost" aria-hidden="true">04</span>
               <span class="caps__name heading-sm">Social Media Kits</span>
               <span class="caps__desc body-sm">Templates and systems that keep every post unmistakably yours.</span>
               <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
-            <span class="sr-only"> (opens in a new tab)</span></a>
+            </a>
           </li>
           <li class="caps__row" data-cap>
-            <a class="caps__link" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
+            <a class="caps__link" href="/stationery/">
               <span class="caps__num label">05</span>
+              <span class="caps__ghost" aria-hidden="true">05</span>
               <span class="caps__name heading-sm">Stationery &amp; Collateral</span>
               <span class="caps__desc body-sm">Cards, letterheads, decks — the brand you can put in someone’s hand.</span>
               <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
-            <span class="sr-only"> (opens in a new tab)</span></a>
+            </a>
           </li>
         </ul>
       </div>
@@ -333,21 +432,25 @@
         <h2 class="sr-only">The process</h2>
         <ol class="process__steps">
           <li class="process__step" data-reveal="fade">
+            <i class="process__rule" aria-hidden="true"></i>
             <span class="process__num">01</span>
             <h3 class="process__name body">Brief</h3>
             <p class="process__body body-sm">Tell us what you’re building. We ask questions until we understand it as well as you do.</p>
           </li>
           <li class="process__step" data-reveal="fade">
+            <i class="process__rule" aria-hidden="true"></i>
             <span class="process__num">02</span>
             <h3 class="process__name body">Directions</h3>
             <p class="process__body body-sm">Distinct concepts, each with a point of view — presented in context, not as a contact sheet.</p>
           </li>
           <li class="process__step" data-reveal="fade">
+            <i class="process__rule" aria-hidden="true"></i>
             <span class="process__num">03</span>
             <h3 class="process__name body">Refinement</h3>
             <p class="process__body body-sm">Focused rounds of revision until the mark sits exactly right. You’ll always know what changed and why.</p>
           </li>
           <li class="process__step" data-reveal="fade">
+            <i class="process__rule" aria-hidden="true"></i>
             <span class="process__num">04</span>
             <h3 class="process__name body">Delivery</h3>
             <p class="process__body body-sm">Vector masters, print-ready files, and web exports — packaged, named sensibly, and explained in plain language.</p>
@@ -356,11 +459,75 @@
       </div>
     </section>
 
-    <!-- ================= 05 — WHERE WE WORK ================= -->
-    <section class="brief section--panel" id="brief" data-folio="Sec. 06 — The Brief" aria-label="Start a project">
+    <!-- ================= 05 — QUESTIONS =================
+         The cover is a poster, and posters answer nothing. These three are
+         the questions every brief arrives carrying, answered plainly enough
+         to stand on their own if lifted out of the page. The long versions
+         live at /faq/. -->
+    <section class="qa section" id="questions" data-folio="Sec. 06 — Questions" aria-label="Common questions">
       <div class="container">
         <div class="section__head">
-          <p class="label" data-reveal="fade">Sec. 06 — The Brief</p>
+          <p class="label" data-reveal="fade">Sec. 06 — Questions</p>
+          <div class="rule-notch" data-rule-notch><i></i><i></i><i></i></div>
+        </div>
+
+        <div class="qa__grid">
+          <h2 class="qa__statement heading-sm">
+            <span class="line"><span class="line__in">Asked before</span></span>
+            <span class="line"><span class="line__in">every brief.</span></span>
+          </h2>
+
+          <div class="qa__list">
+            <div class="qa__item" data-reveal="fade">
+              <h3 class="qa__q body">What is the difference between a logo and a brand identity?</h3>
+              <p class="qa__a body-sm">
+                A logo is one asset — a single mark. A brand identity is the
+                system it sits inside: colour, typography, layout, imagery and
+                voice, plus the rules that keep them consistent. A logo tells
+                people who you are once. An identity keeps telling them, in
+                every place you show up.
+                <a href="/journal/logo-vs-brand-identity/">The long version</a>.
+              </p>
+            </div>
+
+            <div class="qa__item" data-reveal="fade">
+              <h3 class="qa__q body">What files will I receive?</h3>
+              <p class="qa__a body-sm">
+                Vector masters — SVG, EPS and PDF — plus raster exports for the
+                web and for presentations, a favicon set, and written usage
+                rules. The vectors are the actual artwork; everything else is
+                generated from them. If a designer gives you only PNGs, you do
+                not own a usable logo.
+                <a href="/journal/logo-file-formats/">Which files, and why</a>.
+              </p>
+            </div>
+
+            <div class="qa__item" data-reveal="fade">
+              <h3 class="qa__q body">Do I own the work when it is finished?</h3>
+              <p class="qa__a body-sm">
+                Yes. Full ownership of the final work transfers to you in
+                writing on final payment, source files included. This is worth
+                checking elsewhere too — it is not automatic, and paying an
+                invoice is not the same as being given the rights.
+              </p>
+            </div>
+
+            <p class="qa__more" data-reveal="fade">
+              <a class="ghost" href="/faq/">
+                <span>Everything else people ask</span>
+                <svg class="ghost__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 06 — WHERE WE WORK ================= -->
+    <section class="brief section--panel" id="brief" data-folio="Sec. 07 — The Brief" aria-label="Start a project">
+      <div class="container">
+        <div class="section__head">
+          <p class="label" data-reveal="fade">Sec. 07 — The Brief</p>
           <div class="rule-notch" data-rule-notch><i></i><i></i><i></i></div>
         </div>
 
@@ -385,42 +552,11 @@
       </div>
     </section>
 
-    <!-- ================= FOOTER / FINAL FRAME ================= -->
-    <footer class="footer" id="contact" data-folio="Colophon" aria-label="Contact">
-      <div class="container footer__grid">
-        <p class="label footer__chapter">Colophon — The last page</p>
-        <div class="footer__stage">
-          <div class="footer__x" aria-hidden="true">
-            <svg class="footer__x-svg"><use href="#xmark" fill="url(#xg)" /></svg>
-          </div>
-          <p class="footer__title display">
-            <span class="line"><span class="line__in">Let’s make</span></span>
-            <span class="line"><span class="line__in">your mark.</span></span>
-          </p>
-        </div>
-
-        <div class="footer__ctas">
-          <a class="pill pill--invert" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
-            <span>Start a project</span>
-            <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
-          </a>
-          <a class="ghost ghost--invert" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
-            <span>Browse the archive</span>
-            <svg class="ghost__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
-          <span class="sr-only"> (opens in a new tab)</span></a>
-        </div>
-
-        <div class="rule rule--invert footer__rule" data-rule></div>
-
-        <div class="footer__meta">
-          <p class="label">© 2026 XStudioz</p>
-          <p class="label">Set in Satoshi, on parchment, in-house</p>
-          <p class="label footer__meta-right">End of document — start of yours</p>
-        </div>
-      </div>
-    </footer>
-
   </main>
+
+  <!-- The colophon closes the document, so it sits outside <main> —
+       it is the site's footer, not the article's. -->
+  <!--@include:footer-->
 
   <script type="module" src="/src/main.ts"></script>
 </body>

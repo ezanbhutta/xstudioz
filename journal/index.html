@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!--@head-->
+
+  <!-- The index declares the collection and what it contains. Each article
+       declares itself; here we only state that the three belong together. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "_comment": "Same @id as the WebPage the build injects, so this refines that node rather than declaring a second page entity for the same URL. hasPart holds bare references — each article page is the single source of truth for its own properties.",
+        "@type": "CollectionPage",
+        "@id": "https://xstudioz.com/journal/#webpage",
+        "hasPart": [
+          { "@id": "https://xstudioz.com/journal/what-a-logo-costs/#article" },
+          { "@id": "https://xstudioz.com/journal/logo-vs-brand-identity/#article" },
+          { "@id": "https://xstudioz.com/journal/logo-file-formats/#article" }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <!--@include:svg-defs-->
+  <!--@include:nav-->
+
+  <main id="top">
+    <article class="doc">
+      <div class="container">
+
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="/">XStudioz</a></li>
+            <li><span aria-current="page">Journal</span></li>
+          </ol>
+        </nav>
+
+        <header class="doc__head">
+          <p class="label doc__eyebrow">Sec. 08 — Journal</p>
+          <h1 class="doc__title">
+            <span class="line"><span class="line__in">The questions</span></span>
+            <span class="line"><span class="line__in">founders ask first.</span></span>
+          </h1>
+          <p class="doc__lede" data-reveal="fade">
+            Working notes from the studio. Each one answers a question founders
+            put to us before they commission anything — what it costs, what it
+            covers, and what should be in the folder at the end.
+          </p>
+        </header>
+
+        <h2 class="sr-only">Articles</h2>
+        <ul class="entries">
+          <li>
+            <a href="/journal/what-a-logo-costs/">
+              <span class="label">17 August 2026</span>
+              <span class="entries__name">What a logo actually costs, and why</span>
+              <span class="entries__desc">Why the same deliverable ranges from $5 to $50,000, and what actually changes between them.</span>
+              <svg class="entries__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+            </a>
+          </li>
+          <li>
+            <a href="/journal/logo-vs-brand-identity/">
+              <span class="label">17 August 2026</span>
+              <span class="entries__name">Logo vs brand identity: where the line sits</span>
+              <span class="entries__desc">One is a single asset. The other is the system that tells you what to do with it.</span>
+              <svg class="entries__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+            </a>
+          </li>
+          <li>
+            <a href="/journal/logo-file-formats/">
+              <span class="label">17 August 2026</span>
+              <span class="entries__name">Which logo files you should receive</span>
+              <span class="entries__desc">SVG, EPS, PDF, PNG — which ones you must own, and the red flags that mean you were handed the wrong thing.</span>
+              <svg class="entries__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+            </a>
+          </li>
+        </ul>
+
+        <div class="doc__prose prose" style="margin-top: var(--sp-5)">
+          <section class="doc__section" id="what">
+            <h2>What this journal is for</h2>
+
+            <div class="answer">
+              <p>
+                The journal is where the studio writes down the answers it gives
+                most often: what a logo actually costs and why the range is so
+                wide, where the line between a logo and a brand identity sits,
+                and which files you should own once a project is finished. Each
+                note is written to be useful whether or not you ever work with
+                us.
+              </p>
+            </div>
+
+            <p>
+              These start as emails. Someone asks why one
+              quote is forty dollars and another is four thousand for what looks
+              like the same thing. Someone else asks whether the folder they
+              were sent counts as delivery, or what a brand identity contains
+              that a logo does not. The reply gets written once, properly, and
+              then put here so the next person does not have to ask.
+            </p>
+            <p>
+              These are written by people who sell design, and you should read
+              them with that in mind. Where our interest and yours might pull in
+              different directions — on scope, on how much a company actually
+              needs at its stage — we have tried to say so on the page rather
+              than let it sit underneath the argument.
+            </p>
+            <p>
+              If you are starting from nothing, read them in the order above.
+              The first explains why the market's price range is so wide and
+              what genuinely changes across it. The second draws the line
+              between a mark and the system around it, which is the decision
+              most often made by accident. The third is a checklist for the end
+              of a project — the files you should have in hand before the final
+              invoice is paid.
+            </p>
+            <p>
+              The one thing you will not find here is a price list. Scope
+              determines cost, and scope comes out of the brief, so work is
+              quoted per project once we have read what you are building. What
+              each engagement covers is set out on the
+              <a href="/logo-design/">logo design</a> and
+              <a href="/brand-identity/">brand identity</a> pages, and the work
+              itself runs through
+              <a href="/process/">four stages — brief, directions, refinement, delivery</a>.
+            </p>
+            <p>
+              Shorter questions — ownership, revisions, file formats, what
+              happens if none of the directions land — are answered in
+              <a href="/faq/">the FAQ</a>. If you would rather know how the
+              studio is set up and who you would actually be dealing with, that
+              is on <a href="/about/">the studio page</a>. Finished work lives
+              at
+              <a href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">the portfolio<span class="sr-only"> (opens in a new tab)</span></a>.
+            </p>
+            <p>
+              New notes go up when a question has come up often enough to be
+              worth writing down properly. There is no schedule, and there is no
+              list to join.
+            </p>
+          </section>
+        </div>
+
+        <section class="related" aria-labelledby="related-head">
+          <p class="label doc__eyebrow" id="related-head">Elsewhere in the manual</p>
+          <ul class="related__list">
+            <li class="related__row">
+              <a class="related__link" href="/logo-design/">
+                <span class="related__name">Logo Design</span>
+                <span class="related__desc body-sm">One mark, drawn until it holds — with vector masters, every format, and written usage rules.</span>
+                <svg class="related__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+              </a>
+            </li>
+            <li class="related__row">
+              <a class="related__link" href="/brand-identity/">
+                <span class="related__name">Brand Identity</span>
+                <span class="related__desc body-sm">The system around the mark — colour, typography, voice, and the rules that hold them together.</span>
+                <svg class="related__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+              </a>
+            </li>
+            <li class="related__row">
+              <a class="related__link" href="/faq/">
+                <span class="related__name">FAQ</span>
+                <span class="related__desc body-sm">Straight answers to the questions that come up on almost every project.</span>
+                <svg class="related__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+              </a>
+            </li>
+          </ul>
+        </section>
+
+      </div>
+
+      <section class="doc__cta">
+        <div class="container doc__cta-grid">
+          <h2 class="heading-sm">
+            <span class="line"><span class="line__in">Every brand here</span></span>
+            <span class="line"><span class="line__in">started as an email.</span></span>
+          </h2>
+          <div class="doc__cta-copy">
+            <p class="body" data-reveal="fade">
+              If a note here answered part of the question but not the part you
+              needed, write. Tell us what you’re building — the name, the
+              audience, the ambition. We read every brief ourselves and reply
+              with how we’d approach it, what it costs, and when you’ll have it.
+            </p>
+            <a class="pill" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz" data-reveal="fade">
+              <span>inquire@xstudioz.com</span>
+              <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <!--@include:footer-->
+
+  <script type="module" src="/src/page.ts"></script>
+</body>
+</html>

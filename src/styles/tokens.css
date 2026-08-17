@@ -28,9 +28,9 @@
   --text-subheading: clamp(26px, 2.6vw, 34px);
   --text-heading-sm: clamp(30px, 3.6vw, 46px);
   --text-heading: clamp(40px, 5.4vw, 70px);
-  --text-display: clamp(44px, 7.6vw, 112px);
+  --text-display: clamp(44px, 7.8vw, 124px);
 
-  --leading-tight: 0.92;
+  --leading-tight: 0.88;
   --leading-solid: 1;
   --leading-body: 1.5;
 

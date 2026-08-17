@@ -1,0 +1,71 @@
+# ============================================================
+# XStudioz — server rules
+#
+# Lives in public/ so Vite copies it into dist/ on every build and
+# Hostinger re-emits it into the docroot on every deploy. A file
+# placed by hand through the file manager does not survive that.
+#
+# Hostinger runs LiteSpeed, which reads .htaccess natively but
+# ignores <IfModule> guards and mod_deflate directives — it handles
+# gzip/Brotli itself. Rules are therefore written unguarded.
+# LiteSpeed also ignores directives it does not recognise instead of
+# erroring, so every rule below must be verified with curl after a
+# deploy rather than assumed to be live.
+# ============================================================
+
+RewriteEngine On
+
+# ---- One canonical host ----
+
+# Force HTTPS.
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://xstudioz.com%{REQUEST_URI} [L,R=301]
+
+# Strip www, so a single URL owns each page.
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+
+# ---- One canonical URL per page ----
+#
+# /index.html currently serves a byte-identical 200 copy of / and is the
+# variant Google actually indexed. Matching on THE_REQUEST reads the raw
+# request line, so internal rewrites to index.html cannot re-trigger this
+# and loop.
+RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.html[\s?] [NC]
+RewriteRule ^ /%1 [L,R=301]
+
+# ---- Errors ----
+#
+# A missing page must answer 404. If this ever returns 200 with homepage
+# content, Hostinger has injected an SPA fallback rewrite ahead of these
+# rules — check the deployed .htaccess in hPanel and remove it.
+ErrorDocument 404 /404.html
+
+# ---- Response headers ----
+
+Header always set X-Content-Type-Options "nosniff"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
+
+# ---- Caching ----
+#
+# Vite fingerprints asset filenames, so those are immutable. HTML must
+# revalidate or a deploy goes unseen behind a stale cache.
+<FilesMatch "\.(?:js|css|woff2)$">
+  Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>
+
+<FilesMatch "\.(?:png|jpg|jpeg|webp|avif|svg|ico)$">
+  Header set Cache-Control "public, max-age=2592000"
+</FilesMatch>
+
+<FilesMatch "\.(?:html|xml|txt|webmanifest)$">
+  Header set Cache-Control "public, max-age=0, must-revalidate"
+</FilesMatch>
+
+# ---- MIME types ----
+
+AddType image/svg+xml .svg
+AddType font/woff2 .woff2
+AddType application/manifest+json .webmanifest
