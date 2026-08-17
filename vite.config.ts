@@ -54,7 +54,6 @@ function graphFor(page: PageDef): object {
     '@type': 'Organization',
     '@id': orgId,
     name: SITE.name,
-    legalName: SITE.legalName,
     url: `${SITE.origin}/`,
     email: SITE.email,
     description: SITE.blurb,
@@ -384,9 +383,9 @@ function llmsTxt(): string {
   const blocks = [
     `# ${SITE.name}\n`,
     `> ${SITE.blurb}\n`,
-    `${SITE.name} is a small, independent studio. Clients work directly with the designers — there are no account managers and no hand-offs. Every engagement runs through four stages: brief, directions, refinement, delivery. Enquiries go to ${SITE.email}.\n`,
+    `${SITE.name} is a small, independent brand design agency. Clients work directly with the designers — there are no account managers and no hand-offs. Every engagement runs through four stages: brief, directions, refinement, delivery. Enquiries go to ${SITE.email}.\n`,
     group('Services', (p) => services.includes(p.route)),
-    group('Studio', (p) => ['/', '/about/', '/process/', '/faq/'].includes(p.route)),
+    group('Agency', (p) => ['/', '/about/', '/process/', '/faq/'].includes(p.route)),
     group('Journal', (p) => p.route.startsWith('/journal/')),
   ];
 

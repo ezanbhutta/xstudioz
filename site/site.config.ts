@@ -8,7 +8,6 @@
 export const SITE = {
   origin: 'https://xstudioz.com',
   name: 'XStudioz',
-  legalName: 'XStudioz',
   tagline: 'Independent brand design agency',
   /* One sentence, used wherever a neutral description of the agency is needed. */
   blurb:
@@ -218,7 +217,7 @@ export const PAGES: PageDef[] = [
     title: 'About XStudioz | Independent Brand Design Agency',
     description:
       'XStudioz is a small independent brand design agency. You work directly with the people who draw, with no account managers and nobody to pass your work to.',
-    label: 'The Studio',
+    label: 'The Agency',
     entry: 'page',
     priority: 0.7,
     changefreq: 'yearly',
