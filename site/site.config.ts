@@ -25,12 +25,19 @@ export const SITE = {
   /* Verified external profiles. Every URL here becomes an Organization
      `sameAs` edge, which is how search engines and LLMs resolve the string
      "XStudioz" to a single real entity rather than to one of the several
-     similarly named design companies it currently competes with in search.
+     similarly named design companies it currently outranks it for its own
+     name.
 
-     Only add URLs that have been opened and confirmed to resolve.
-     Still worth adding when they exist: LinkedIn company page, Behance,
-     Dribbble, Instagram. */
-  sameAs: ['https://www.fiverr.com/x_studioz'] as string[],
+     Both entries below were fetched and confirmed live, and confirmed as
+     owned by the agency. Nothing goes in this list on a name match alone:
+     several unrelated accounts use the string "xstudioz".
+
+     Not listed on purpose: portfolio.xstudioz.com is our own subdomain
+     rather than an external profile, and is already linked from every page. */
+  sameAs: [
+    'https://www.fiverr.com/x_studioz',
+    'https://www.behance.net/xstudioz',
+  ] as string[],
   founded: '2024',
   /* Global agency, deliberately no postal address. areaServed is the world. */
   areaServed: 'Worldwide',
