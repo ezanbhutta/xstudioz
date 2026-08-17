@@ -806,7 +806,7 @@
 }
 
 .footer__col-head {
-  color: rgba(229, 228, 224, 0.55);
+  color: var(--type-3);
   margin-bottom: var(--sp-4);
 }
 

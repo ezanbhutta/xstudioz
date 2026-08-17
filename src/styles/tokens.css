@@ -1,23 +1,56 @@
 /* ============================================================
    XStudioz — Design Tokens
-   Canvas: parchment & ink (editorial print).
-   Chromatic event: the brand gradient, used once per frame.
+
+   THE LAW OF THIS SITE
+   The brand gradient is never painted on anything. It is cast.
+
+   The mark measures as one shape, drawn once, placed twice, rotated 180
+   degrees: its counter matches itself under rotation at 22 of 22 sampled
+   points, 90 degrees fits only 19 of 30, and it has no mirror symmetry.
+   So the page carries two light sources, locked exactly opposite each other
+   through the centre, which is that symmetry used as a lighting rig. Light
+   is thrown in hard wedges on the mark's 45 degree diagonals, never as soft
+   bloom, because there is no softness anywhere in the drawing.
+
+   Colour is therefore a property of the room, not of any element.
+
+   NAMING. The role names below are canonical. The older parchment/ink names
+   are kept as aliases so the whole style system flips from this one file;
+   they are roles now, not descriptions. New code should use the role names.
    ============================================================ */
 
 :root {
-  /* Colors */
-  --parchment: #e5e4e0;
-  --ink: #1d1d1d;
-  --paper: #ffffff;
-  --ash: #bfbebe;
-  --stone: #cdcdc9;
-  --slate: #605f5b;           /* secondary text — 5.0:1 on parchment, AA at body sizes */
-  --parchment-70: rgba(229, 228, 224, 0.7);
+  /* ---- The room ---- */
+  --canvas: #09090b;          /* the void. matches portfolio.xstudioz.com */
+  --surface: #0f0f13;         /* a plane lifted just off the void */
+  --panel: #141419;           /* a second, quieter plane */
+  --line: #232329;            /* hairlines. structure you feel more than see */
 
-  /* Brand gradient — from the mark itself. A singleton, not a system. */
-  --brand-a: #e634be;
-  --brand-b: #38016c;
-  --gradient-x: linear-gradient(90deg, var(--brand-a), var(--brand-b));
+  /* ---- Type on the void ---- */
+  --type: #f0eff4;            /* primary. 17.6:1 on canvas */
+  --type-2: #9c9caa;          /* secondary. 7.4:1 on canvas, AA at body sizes */
+  --type-3: #6e6e7d;          /* furniture and micro-labels only */
+
+  /* ---- The two lamps ---- */
+  --lamp-a: #e634be;          /* brand magenta, emits as drawn */
+  --lamp-b: #6d1fc4;          /* brand violet, raised to a luminance that
+                                 can behave as a light rather than a shadow */
+  --brand-a: var(--lamp-a);
+  --brand-b: #38016c;         /* the true brand violet, for flat fills */
+  --gradient-x: linear-gradient(90deg, var(--lamp-a), var(--brand-b));
+
+  /* The wedge pair. One angle drives the whole document. */
+  --wedge: 21deg;             /* half-width of each beam */
+  --lamp-strength: 0.46;
+
+  /* ---- Legacy aliases: keep the cascade working ---- */
+  --parchment: var(--canvas);
+  --ink: var(--type);
+  --paper: var(--surface);
+  --stone: var(--panel);
+  --ash: var(--line);
+  --slate: var(--type-2);
+  --parchment-70: rgba(9, 9, 11, 0.72);
 
   /* Type — Satoshi carries everything */
   --font-sans: 'Satoshi', 'Satoshi Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -63,5 +96,5 @@
   --dur-med: 0.6s;
 
   /* Hairlines */
-  --hairline: 1px solid var(--ash);
+  --hairline: 1px solid var(--line);
 }

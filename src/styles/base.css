@@ -198,7 +198,7 @@ button {
 }
 
 .rule--invert {
-  background: rgba(229, 228, 224, 0.25);
+  background: var(--line);
 }
 
 /* Notched rule — the mark's diagonal cut, carried into structure.
@@ -250,4 +250,100 @@ button {
   html {
     scroll-behavior: auto;
   }
+}
+
+/* ============================================================
+   THE LIGHTING RIG
+
+   One angle, --rot, drives every lit surface in the document. The rig is
+   two wedges locked 180 degrees apart, which is the mark's own symmetry.
+   It runs on a registered custom property so the whole thing animates on
+   the compositor with no JavaScript at all. Browsers without @property
+   simply get the rig at its initial angle, which is a valid composition.
+   ============================================================ */
+
+@property --rot {
+  syntax: '<angle>';
+  inherits: true;
+  initial-value: 38deg;
+}
+
+@keyframes rig-turn {
+  to { --rot: 398deg; }
+}
+
+html {
+  --rot: 38deg;
+  animation: rig-turn 120s linear infinite;
+}
+
+/* The room. The only light in the document. */
+.room {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    conic-gradient(from var(--rot) at 50% 50%,
+      var(--lamp-a) 0deg var(--wedge), transparent var(--wedge) 180deg,
+      var(--lamp-b) 180deg calc(180deg + var(--wedge)), transparent calc(180deg + var(--wedge)) 360deg);
+  opacity: var(--lamp-strength);
+  filter: saturate(1.1);
+  /* the beams fall off with distance, and never reach the reading column edges */
+  -webkit-mask-image: radial-gradient(78vmax 78vmax at 50% 50%, #000 10%, transparent 76%);
+  mask-image: radial-gradient(78vmax 78vmax at 50% 50%, #000 10%, transparent 76%);
+}
+
+/* The gobo. The mark is never drawn: it stands in the beams and throws
+   its shadow, so what you see is an X of void inside the light. */
+.gobo {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+}
+
+.gobo svg {
+  width: min(62vmin, 620px);
+  height: auto;
+  overflow: visible;
+  transform: rotate(calc(var(--rot) * -0.28));
+}
+
+.gobo path { fill: var(--canvas); }
+
+/* Anything above the rig */
+body > header,
+body > main,
+body > footer,
+body > .furniture { position: relative; z-index: 1; }
+
+/* A lit surface samples the same rig, so every lit thing in the document
+   is lit by one room rather than decorated element by element.
+   Display sizes only: body copy is never lit, so reading never depends on
+   where the beams happen to be pointing. */
+.lit {
+  background-image:
+    conic-gradient(from var(--rot) at 50% 50%,
+      var(--lamp-a) 0deg var(--wedge), transparent var(--wedge) 180deg,
+      var(--lamp-b) 180deg calc(180deg + var(--wedge)), transparent calc(180deg + var(--wedge)) 360deg),
+    linear-gradient(0deg, var(--type), var(--type));
+  background-attachment: fixed, fixed;
+  background-blend-mode: screen, normal;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { animation: none; }
+}
+
+/* No JS, no @property support, or the rig failing for any reason: the page
+   is still a dark site with white type. Nothing depends on the rig. */
+@supports not (background: conic-gradient(from 0deg, red, blue)) {
+  .room, .gobo { display: none; }
+  .lit { background: none; color: var(--type); }
 }

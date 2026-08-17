@@ -274,7 +274,7 @@ body.is-loading {
 }
 
 .pill--invert {
-  border-color: rgba(229, 228, 224, 0.4);
+  border-color: var(--line);
   color: var(--parchment);
 }
 
@@ -423,8 +423,8 @@ body.is-loading {
   grid-column: 1;
   background-color: var(--paper);
   background-image:
-    repeating-linear-gradient(0deg, rgba(29, 29, 29, 0.04) 0 1px, transparent 1px 44px),
-    repeating-linear-gradient(90deg, rgba(29, 29, 29, 0.04) 0 1px, transparent 1px 44px);
+    repeating-linear-gradient(0deg, rgba(240, 239, 244, 0.045) 0 1px, transparent 1px 44px),
+    repeating-linear-gradient(90deg, rgba(240, 239, 244, 0.045) 0 1px, transparent 1px 44px);
   padding: clamp(var(--sp-4), 3vw, var(--sp-6));
 }
 
@@ -671,8 +671,8 @@ body.is-loading {
   display: block;
   background-color: var(--paper);
   background-image:
-    repeating-linear-gradient(0deg, rgba(29, 29, 29, 0.04) 0 1px, transparent 1px 44px),
-    repeating-linear-gradient(90deg, rgba(29, 29, 29, 0.04) 0 1px, transparent 1px 44px);
+    repeating-linear-gradient(0deg, rgba(240, 239, 244, 0.045) 0 1px, transparent 1px 44px),
+    repeating-linear-gradient(90deg, rgba(240, 239, 244, 0.045) 0 1px, transparent 1px 44px);
 }
 
 .portal__inner {
@@ -834,7 +834,7 @@ body.is-loading {
 }
 
 .footer__chapter {
-  color: rgba(229, 228, 224, 0.55);
+  color: var(--type-3);
   margin-bottom: clamp(var(--sp-6), 6vw, var(--sp-7));
 }
 
@@ -882,7 +882,7 @@ body.is-loading {
 }
 
 .footer__meta .label {
-  color: rgba(229, 228, 224, 0.55);
+  color: var(--type-3);
 }
 
 .footer__meta-right {

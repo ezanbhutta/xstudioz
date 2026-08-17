@@ -4,8 +4,8 @@
     {
       "name": "xstudioz-dev",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["vite", "--port", "5178", "--strictPort"],
-      "port": 5178
+      "runtimeArgs": ["vite"],
+      "autoPort": true
     },
     {
       "name": "xstudioz-dev-alt",
