@@ -210,7 +210,10 @@ function headFor(page: PageDef): string {
     `<meta name="robots" content="${robots}" />`,
     `<meta name="author" content="${esc(SITE.name)}" />`,
     '<meta name="format-detection" content="telephone=no" />',
-    '<meta name="color-scheme" content="light" />',
+    /* The canvas is #09090b. Declaring light here made the browser render its
+       own UI in light mode on a dark page: light scrollbars, light form
+       controls, and a white flash before the stylesheet paints. */
+    '<meta name="color-scheme" content="dark" />',
     `<meta name="theme-color" content="${SITE.themeColor}" />`,
 
     /* Open Graph */

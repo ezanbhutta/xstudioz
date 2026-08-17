@@ -1,5 +1,5 @@
-# XStudioz — https://xstudioz.com
-# An independent brand design studio. Logos, brand identities,
+# XStudioz. https://xstudioz.com
+# An independent brand design agency. Logos, brand identities,
 # and the systems that carry them.
 
 # Everything here is public and meant to be read, by people and machines
@@ -11,7 +11,7 @@ Allow: /
 
 # --- AI assistants ---
 # Declared explicitly rather than left to the wildcard, because this is a
-# deliberate decision and not an oversight: this studio wants to be read,
+# deliberate decision and not an oversight: this agency wants to be read,
 # quoted and cited by answer engines. Tokens below are the current
 # published ones — `anthropic-ai` is retired and intentionally absent.
 

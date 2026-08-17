@@ -19,7 +19,10 @@ export const SITE = {
   lang: 'en',
   /* Chromatic event of the brand, used for theme-color and schema. */
   brandColor: '#e634be',
-  themeColor: '#e5e4e0',
+  /* Must track --canvas in tokens.css. This is the colour a mobile browser
+     paints its own chrome with, so a stale value frames a dark page in the
+     old parchment. */
+  themeColor: '#09090b',
   ogImage: '/og.png',
   ogImageAlt: 'XStudioz. A logo is a mark, a brand is a promise.',
   /* Verified external profiles. Every URL here becomes an Organization
