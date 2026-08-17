@@ -121,7 +121,13 @@ body.is-loading {
   padding-block: var(--sp-3);
 }
 
-.nav__cta {
+/* The end of the row. One grid cell holding the switch, the call to action
+   and the menu control, so the number of things in here is free to change
+   without the three column grid wrapping onto a second line. */
+.nav__end {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
   justify-self: end;
 }
 
@@ -216,7 +222,6 @@ body.is-loading {
   display: none;              /* desktop shows the links instead */
   align-items: center;
   gap: 10px;
-  justify-self: end;
   /* a 44px target, with the padding doing the work rather than a fixed box
      so the label stays on the type baseline */
   min-height: 44px;
@@ -1502,5 +1507,56 @@ html.nav-open {
     right: calc(var(--sp-3) * -1);
     width: clamp(150px, 46vw, 210px);
     opacity: 0.85;
+  }
+}
+
+/* ---------------- The light switch ---------------- */
+
+/* Sized and targeted like the menu control it sits beside, so the header row
+   keeps one rhythm and the control clears 44px on its own without the hit
+   area the other three header controls borrow. */
+/* The target is a hit area, not a box, for the same reason the other header
+   controls use one: a 44px control in this row pushed the header from 63px to
+   74px on every page. The glyph keeps its size and the reach is added around
+   it. */
+.nav__theme {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: var(--radius-ui);
+  color: var(--text);
+}
+
+.nav__theme::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+
+/* A circle split down the middle: the half that is filled is the room you are
+   not in. Drawn rather than iconed, so it themes itself with everything else
+   and there is no asset to keep in sync. */
+.nav__theme-glyph {
+  width: 17px;
+  height: 17px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+  transition: transform var(--dur-med) var(--ease-inout);
+}
+
+.nav__theme:hover .nav__theme-glyph {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav__theme-glyph {
+    transition: none;
   }
 }

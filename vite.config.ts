@@ -209,10 +209,13 @@ function headFor(page: PageDef): string {
     `<meta name="robots" content="${robots}" />`,
     `<meta name="author" content="${esc(SITE.name)}" />`,
     '<meta name="format-detection" content="telephone=no" />',
-    /* The canvas is #09090b. Declaring light here made the browser render its
-       own UI in light mode on a dark page: light scrollbars, light form
-       controls, and a white flash before the stylesheet paints. */
-    '<meta name="color-scheme" content="dark" />',
+    /* Both, now that both exist. This was pinned to dark for a long time
+       because declaring light on a page that only had a dark palette made the
+       browser render its own UI the wrong way round: light scrollbars and
+       form controls on a dark page, and a white flash before the stylesheet
+       painted. With a real daylight palette in the tokens the reason is gone,
+       and the browser should follow the same preference the CSS does. */
+    '<meta name="color-scheme" content="light dark" />',
     `<meta name="theme-color" content="${SITE.themeColor}" />`,
 
     /* Open Graph */
@@ -234,6 +237,21 @@ function headFor(page: PageDef): string {
     `<meta name="twitter:description" content="${esc(page.description)}" />`,
     `<meta name="twitter:image" content="${abs(SITE.ogImage)}" />`,
     `<meta name="twitter:image:alt" content="${esc(SITE.ogImageAlt)}" />`,
+
+    /* The theme, resolved before the first paint.
+
+       The CSS already handles this on its own: the daylight palette is behind
+       a prefers-color-scheme query, so with scripting off the operating
+       system's preference still decides and nothing here is required. What
+       this adds is the remembered choice. Without it, someone who picked the
+       theme that opposes their OS would watch the page paint in the wrong one
+       and swap, on every navigation.
+
+       It is deliberately the smallest thing that can work: one attribute, set
+       synchronously in <head> before any stylesheet paints, wrapped in a try
+       because a blocked localStorage must not take the document down with it. */
+    '<script>try{var t=localStorage.getItem("xz-theme");if(t==="light"||t==="dark")' +
+      'document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>',
 
     /* Icons and manifest */
     '<link rel="icon" type="image/svg+xml" href="/favicon.svg" />',

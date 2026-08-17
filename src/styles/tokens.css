@@ -59,6 +59,19 @@
      lamp to register and 45/255 for the violet. */
   --lit-base: #b9b9c4;
 
+  /* The mark standing in the beams. Its body sits below the room so it has a
+     silhouette of its own, and its edge sits above the room so the contour
+     reads when no beam is on it. Both are greys: the mark never wears the
+     brand colour, it only ever interrupts it. */
+  --gobo-body: #050507;
+  --gobo-rim: #191920;
+
+  /* How the light combines with what is under it. In the void a beam
+     screens up toward white; on paper it multiplies down toward the
+     lamp's own colour, which is what shadow does. */
+  --room-blend: normal;
+  --lit-blend: screen;
+
   /* The wedge pair. One angle drives the whole document. */
   --wedge: 21deg;             /* half-width of each beam */
   --lamp-strength: 0.42;
@@ -123,4 +136,101 @@
 
   /* Hairlines */
   --hairline: 1px solid var(--border);
+
+  /* ============================================================
+     THE OTHER HALF OF THE ROOM
+
+     Daylight values, parked here under --l-* so every colour in the system
+     has exactly one home. The two mapping blocks below only ever point the
+     real token at one of these, so a value can never drift between the
+     place that sets it and the place that overrides it.
+
+     This is not an inversion of the dark palette. A dark room and a lit room
+     are different rooms: contrast ratios are matched role for role, but the
+     surfaces step the other way, because on paper a plane lifts toward the
+     light and in a void it lifts toward whatever is illuminating it.
+     ============================================================ */
+
+  --l-canvas: #f6f5f8;        /* paper, with the faintest violet in it     */
+  --l-canvas-raised: #ffffff; /* a plane lifted toward the light           */
+  --l-canvas-panel: #edecf1;  /* a quieter plane, set back                 */
+
+  --l-text: #16151a;          /* 16.4:1 on paper */
+  --l-text-secondary: #4a4854;/*  8.6:1          */
+  --l-text-muted: #64616f;    /*  5.6:1          */
+
+  --l-border: #e2e0e8;
+  --l-border-strong: #c4c1cf;
+
+  --l-focus: #16151a;         /* the ring has to be dark to exist here */
+
+  /* Multiply is far more assertive on paper than screen is in a void, so the
+     same two lamps are held back to roughly half strength. */
+  --l-lamp-strength: 0.2;
+
+  /* Ink that darkens further under a beam, so light adds contrast here for
+     the same reason it does in the dark: 9.5:1 unlit, deeper under a lamp. */
+  --l-lit-base: #3a3745;
+
+  /* The mark is an object in a lit room now, so it is fractionally darker
+     than the paper rather than fractionally darker than the void, and the
+     wedges sweeping past it read as the shadow it throws. */
+  --l-gobo-body: #efedf3;
+  --l-gobo-rim: #d5d2de;
+
+  /* Magenta at 3.4:1 behind selected text is too thin to read on paper, so
+     daylight selects on the deep violet instead. */
+  --selection-bg: var(--brand-a);
+  --selection-text: var(--canvas-raised);
+  --l-selection-bg: #38016c;
+  --l-selection-text: #ffffff;
+}
+
+/* One mapping, used twice. An explicit choice wins outright; otherwise the
+   operating system's preference decides, which is also what keeps this
+   working with no JavaScript at all. */
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --canvas: var(--l-canvas);
+  --canvas-raised: var(--l-canvas-raised);
+  --canvas-panel: var(--l-canvas-panel);
+  --text: var(--l-text);
+  --text-secondary: var(--l-text-secondary);
+  --text-muted: var(--l-text-muted);
+  --border: var(--l-border);
+  --border-strong: var(--l-border-strong);
+  --focus: var(--l-focus);
+  --lamp-strength: var(--l-lamp-strength);
+  --lit-base: var(--l-lit-base);
+  --gobo-body: var(--l-gobo-body);
+  --gobo-rim: var(--l-gobo-rim);
+  --selection-bg: var(--l-selection-bg);
+  --selection-text: var(--l-selection-text);
+  --room-blend: multiply;
+  --lit-blend: multiply;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    color-scheme: light;
+
+    --canvas: var(--l-canvas);
+    --canvas-raised: var(--l-canvas-raised);
+    --canvas-panel: var(--l-canvas-panel);
+    --text: var(--l-text);
+    --text-secondary: var(--l-text-secondary);
+    --text-muted: var(--l-text-muted);
+    --border: var(--l-border);
+    --border-strong: var(--l-border-strong);
+    --focus: var(--l-focus);
+    --lamp-strength: var(--l-lamp-strength);
+    --lit-base: var(--l-lit-base);
+    --gobo-body: var(--l-gobo-body);
+    --gobo-rim: var(--l-gobo-rim);
+    --selection-bg: var(--l-selection-bg);
+    --selection-text: var(--l-selection-text);
+    --room-blend: multiply;
+    --lit-blend: multiply;
+  }
 }

@@ -15,18 +15,33 @@
       <a class="nav__link" href="/faq/">FAQ</a>
     </nav>
 
-    <a class="pill nav__cta" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
-      <span>Start a project</span>
-      <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
-    </a>
+    <!-- The row is a three column grid: brand, links, and this. Everything
+         that sits at the end shares this one cell, so adding a control here
+         never pushes the grid into a second row. -->
+    <div class="nav__end">
+      <!-- Light switch. The glyph is a circle split down the middle, which is
+           the one theme control that needs no icon file and no explanation.
+           It starts hidden and src/lib/theme.ts reveals it, so a document
+           whose scripts never arrive does not show a control that cannot
+           work. -->
+      <button class="nav__theme" type="button" hidden>
+        <span class="nav__theme-glyph" aria-hidden="true"></span>
+        <span class="sr-only" data-theme-label>Switch to light mode</span>
+      </button>
 
-    <!-- Below the desktop band this replaces the links and the CTA.
-         The glyph is two hairlines that cross into the studio's own mark
-         when the menu opens: no icon file, no dependency. -->
-    <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu">
-      <span class="nav__toggle-word">Menu</span>
-      <span class="nav__toggle-glyph" aria-hidden="true"><i></i><i></i></span>
-    </button>
+      <a class="pill nav__cta" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
+        <span>Start a project</span>
+        <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+      </a>
+
+      <!-- Below the desktop band this replaces the links and the CTA.
+           The glyph is two hairlines that cross into the studio's own mark
+           when the menu opens: no icon file, no dependency. -->
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu">
+        <span class="nav__toggle-word">Menu</span>
+        <span class="nav__toggle-glyph" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -59,3 +74,4 @@
 </dialog>
 
 <script type="module" src="/src/lib/nav.ts"></script>
+<script type="module" src="/src/lib/theme.ts"></script>

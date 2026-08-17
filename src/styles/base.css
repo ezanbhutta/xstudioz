@@ -62,8 +62,8 @@ body {
 }
 
 ::selection {
-  background: var(--brand-a);
-  color: var(--canvas-raised);
+  background: var(--selection-bg);
+  color: var(--selection-text);
 }
 
 img,
@@ -294,13 +294,33 @@ html {
       var(--lamp-b) 180deg calc(180deg + var(--wedge)), transparent calc(180deg + var(--wedge)) 360deg);
   opacity: var(--lamp-strength);
   filter: saturate(1.1);
+  /* In the void the wedges are the only light there is, so they simply sit on
+     the ground and add to it. On paper the page is already lit, so a beam
+     cannot add anything: what a lamp produces in a lit room is shadow. The
+     blend mode is the whole inversion, and it is why light mode is the same
+     rig rather than a second one. */
+  mix-blend-mode: var(--room-blend, normal);
   /* the beams fall off with distance, and never reach the reading column edges */
   -webkit-mask-image: radial-gradient(78vmax 78vmax at 50% 50%, #000 10%, transparent 76%);
   mask-image: radial-gradient(78vmax 78vmax at 50% 50%, #000 10%, transparent 76%);
 }
 
-/* The gobo. The mark is never drawn: it stands in the beams and throws
-   its shadow, so what you see is an X of void inside the light. */
+/* The gobo. The mark is never drawn: it stands in the beams and throws its
+   shadow, so what you see is an X of void inside the light.
+
+   That was the intent, and for a long time it did not happen. The mark was
+   centred with place-items, and the room casts its wedges from at 50% 50%,
+   so the mark's centre and the lamp's origin were the same point. The mark
+   was sitting on the vertex, where both beams have no width at all, and a
+   shape standing inside a light source blocks nothing. What read on screen
+   was two wedges pinching to a point, with no way to tell what was doing the
+   pinching. It was also filled in exactly the page colour with no edge, so
+   even where it did overlap a beam there was no contour to recognise.
+
+   Three things fix it, and they are all physical rather than decorative:
+   the mark stands away from the lamp so the beams cross it broadside, it is
+   darker than the room it stands in, and its edge catches enough light to
+   read as a silhouette when nothing is behind it. */
 .gobo {
   position: fixed;
   inset: 0;
@@ -311,13 +331,26 @@ html {
 }
 
 .gobo svg {
-  width: min(62vmin, 620px);
+  width: min(58vmin, 580px);
   height: auto;
   overflow: visible;
-  transform: rotate(calc(var(--rot) * -0.28));
+  /* Off the vertex. Translate first, then rotate, so the mark turns about
+     its own centre in its new position rather than orbiting the lamp. It
+     bleeds off the right edge on purpose: an object lit from one side, not a
+     motif centred in a frame. */
+  transform: translate(34%, -12%) rotate(calc(var(--rot) * -0.28));
 }
 
-.gobo path { fill: var(--canvas); }
+.gobo path {
+  /* Its own darkness, one step below the room, so the silhouette exists even
+     with no beam on it. */
+  fill: var(--gobo-body);
+  /* The contour picks up the room. Painted under the fill so it reads as an
+     outer edge rather than eating into the drawing. */
+  stroke: var(--gobo-rim);
+  stroke-width: 2;
+  paint-order: stroke fill;
+}
 
 /* Anything above the rig */
 body > header,
@@ -342,7 +375,7 @@ body > footer { position: relative; z-index: 1; }
   background-size: 220vmax 220vmax, auto;
   background-position: center center;
   background-repeat: no-repeat;
-  background-blend-mode: screen, normal;
+  background-blend-mode: var(--lit-blend, screen), normal;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
