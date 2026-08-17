@@ -43,6 +43,48 @@ export const SITE = {
   areaServed: 'Worldwide',
 };
 
+/* ------------------------------------------------------------
+   Measurement
+
+   Nothing here runs until `enabled` is true, and nothing sets a cookie
+   until the visitor actively accepts. The interlock is deliberate: the
+   agency is UK based, so PECR applies, and PECR wants consent BEFORE
+   a non-essential cookie is written rather than after.
+
+   `enabled` stays false until the privacy and cookie policies exist at
+   the paths below, because a consent banner that links to a missing
+   page is worse than no banner. Flip it in one place when they are live.
+   ------------------------------------------------------------ */
+
+export const ANALYTICS = {
+  enabled: false,
+
+  /* Google Analytics 4. Loaded with Consent Mode v2 defaulting to denied,
+     so the tag is present but writes no cookie until consent is granted. */
+  ga4Id: 'G-RTWEXCM20Y',
+
+  /* Microsoft Clarity. Not loaded at all until consent is granted.
+     Clarity drops five third-party Microsoft cookies including MUID, which
+     Microsoft documents as serving advertising, so it is held back further
+     than GA4 rather than merely consent-moded. Microsoft also began
+     enforcing consent signals for UK visitors on 31 October 2025. */
+  clarityId: 'y3qvzdsn1o',
+
+  /* The banner links here. Both must exist before `enabled` goes true. */
+  privacyPath: '/privacy/',
+  cookiePath: '/cookies/',
+
+  /* Scroll depth is only measured on these routes. Sending it sitewide
+     would multiply event volume for no insight. */
+  scrollRoutes: [
+    '/logo-design/',
+    '/brand-identity/',
+    '/brand-guidelines/',
+    '/social-media-kits/',
+    '/stationery/',
+  ] as string[],
+};
+
 export type Entry = 'home' | 'page';
 
 export interface PageDef {

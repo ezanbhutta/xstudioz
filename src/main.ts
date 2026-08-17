@@ -9,6 +9,9 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 
+import { initConsent } from './lib/consent';
+import { initAnalytics } from './lib/analytics';
+
 gsap.registerPlugin(ScrollTrigger);
 
 const staticMode = new URLSearchParams(window.location.search).has('static');
@@ -481,6 +484,10 @@ function initLoader(onDone: () => void): void {
    Boot
    ------------------------------------------------------------ */
 function boot(): void {
+  // Consent first, so nothing measures before a choice exists.
+  initConsent();
+  initAnalytics();
+
   initLenis();
   initNav();
   initReveals();

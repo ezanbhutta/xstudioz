@@ -18,8 +18,14 @@ import {
   applyStaticScroll,
   ScrollTrigger,
 } from './lib/motion';
+import { initConsent } from './lib/consent';
+import { initAnalytics } from './lib/analytics';
 
 function boot(): void {
+  // Consent first, so nothing measures before a choice exists.
+  initConsent();
+  initAnalytics();
+
   const lenis = initLenis();
   initNav(lenis);
   initCommonReveals();

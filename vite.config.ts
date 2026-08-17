@@ -3,7 +3,7 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { SITE, PAGES, INDEXABLE, abs, type PageDef } from './site/site.config.ts';
+import { SITE, PAGES, INDEXABLE, ANALYTICS, abs, type PageDef } from './site/site.config.ts';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const BUILD_DATE = new Date().toISOString().slice(0, 10);
@@ -144,6 +144,48 @@ function graphFor(page: PageDef): object {
    but their own extras, so 14 documents cannot drift apart.
    ------------------------------------------------------------ */
 
+/* ------------------------------------------------------------
+   Measurement head block
+
+   Order is load-bearing. The Consent Mode v2 defaults must execute
+   BEFORE gtag.js arrives, otherwise the tag has already decided it may
+   store, and a later update does not undo the cookie it wrote. So the
+   inline defaults are emitted first and gtag.js is loaded async after.
+
+   Everything defaults to denied. In that state GA4 still runs but writes
+   no cookie, sending cookieless pings instead, which is what keeps this
+   the right side of PECR while still giving Google modelled conversions.
+
+   Clarity is deliberately NOT here. It only appears after an accept,
+   injected by src/lib/consent.ts.
+   ------------------------------------------------------------ */
+
+function analyticsHead(): string[] {
+  if (!ANALYTICS.enabled || !ANALYTICS.ga4Id) return [];
+
+  const bootstrap = [
+    'window.dataLayer=window.dataLayer||[];',
+    'function gtag(){dataLayer.push(arguments);}',
+    "gtag('consent','default',{",
+    "'ad_storage':'denied',",
+    "'ad_user_data':'denied',",
+    "'ad_personalization':'denied',",
+    "'analytics_storage':'denied',",
+    "'personalization_storage':'denied',",
+    "'functionality_storage':'granted',",
+    "'security_storage':'granted',",
+    "'wait_for_update':500",
+    '});',
+    "gtag('js',new Date());",
+    `gtag('config','${ANALYTICS.ga4Id}');`,
+  ].join('');
+
+  return [
+    `<script>${bootstrap}</script>`,
+    `<script async src="https://www.googletagmanager.com/gtag/js?id=${ANALYTICS.ga4Id}"></script>`,
+  ];
+}
+
 function headFor(page: PageDef): string {
   const url = abs(page.route);
   const ogType = page.ogType ?? 'website';
@@ -203,6 +245,9 @@ function headFor(page: PageDef): string {
 
     /* Entity graph */
     `<script type="application/ld+json">${JSON.stringify(graphFor(page))}</script>`,
+
+    /* Measurement. Absent entirely until ANALYTICS.enabled is true. */
+    ...analyticsHead(),
   ]
     .map((line) => `  ${line}`)
     .join('\n');
@@ -350,6 +395,29 @@ function llmsTxt(): string {
 export default defineConfig({
   appType: 'mpa',
   plugins: [xzHtml(), xzSeoFiles()],
+
+  /* The client gets only the measurement settings it actually needs, inlined
+     at build time as a literal. Two reasons this is not a plain import of
+     site.config:
+
+     1. Importing that module from client code would ship the entire PAGES
+        manifest to every visitor. It cost about 10KB before this was moved.
+     2. As a literal, `null` when disabled, every guard in consent.ts and
+        analytics.ts folds to a constant and the bundler removes the code and
+        the IDs entirely. Disabled then means genuinely absent, not merely
+        inert with the measurement IDs still sitting in the bundle. */
+  define: {
+    __XZ_MEASURE__: JSON.stringify(
+      ANALYTICS.enabled
+        ? {
+            clarityId: ANALYTICS.clarityId,
+            privacyPath: ANALYTICS.privacyPath,
+            cookiePath: ANALYTICS.cookiePath,
+            scrollRoutes: ANALYTICS.scrollRoutes,
+          }
+        : null
+    ),
+  },
   build: {
     rollupOptions: {
       input: Object.fromEntries(

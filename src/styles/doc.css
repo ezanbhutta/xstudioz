@@ -30,6 +30,100 @@
   }
 }
 
+/* ---------------- Consent banner ----------------
+   Built by JS only when a choice has not been made, so a returning
+   visitor never receives the markup. Sits on the paper surface with
+   a hairline, like every other panel in the manual, rather than
+   arriving as a coloured slab from another design system. */
+
+.consent {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 90;
+  background: var(--paper);
+  border-top: 1px solid var(--ash);
+  transform: translateY(101%);
+  transition: transform 0.5s var(--ease-inout);
+}
+
+.consent--in {
+  transform: translateY(0);
+}
+
+.consent__inner {
+  width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: var(--sp-4) var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-5);
+}
+
+.consent__title {
+  color: var(--slate);
+  margin-bottom: 6px;
+}
+
+.consent__body {
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+  max-width: 68ch;
+}
+
+.consent__body a {
+  background-image: linear-gradient(var(--ink), var(--ink));
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: left calc(100% - 1px);
+  transition: background-size var(--dur-fast) var(--ease-out), color var(--dur-fast) ease;
+}
+
+.consent__body a:hover {
+  color: var(--brand-a);
+  background-image: linear-gradient(var(--brand-a), var(--brand-a));
+}
+
+.consent__actions {
+  display: flex;
+  gap: var(--sp-3);
+  flex-shrink: 0;
+}
+
+/* Decline is styled identically to Accept. Making refusal visually
+   quieter than acceptance is exactly the dark pattern regulators
+   look for, so the two stay the same weight. */
+.consent__btn {
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .consent {
+    transition: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .consent__inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-4);
+  }
+
+  .consent__actions {
+    justify-content: stretch;
+  }
+
+  .consent__btn {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
 /* ---------------- Skip link ---------------- */
 
 .skip-link {
