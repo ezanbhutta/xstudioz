@@ -62,8 +62,8 @@ body {
 }
 
 ::selection {
-  background: var(--brand-a);
-  color: var(--canvas-raised);
+  background: var(--selection-bg);
+  color: var(--selection-text);
 }
 
 img,
@@ -156,6 +156,11 @@ button {
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-display);
   text-transform: uppercase;
+  /* Kerning pairs are worth more at 120px than anywhere else on the page, and
+     the browser only applies them by default below a size threshold in some
+     engines. Asked for explicitly here. */
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures contextual;
 }
 
 /* ---------- Layout primitives ---------- */
@@ -221,9 +226,16 @@ button {
 .line {
   display: block;
   overflow: hidden;
-  /* extend the mask window past the baseline so descenders never clip */
-  padding-bottom: 0.09em;
-  margin-bottom: -0.09em;
+  /* The window has to clear the font's own descender, and 0.09em did not.
+     Satoshi's descender ink reaches 0.223em below the baseline. With display
+     leading at 0.88 the half-leading is negative (-0.06em), so the old
+     padding left 0.03em of room for 0.223em of letter: every g, y, p, q, j
+     and comma lost 86 percent of its tail, which at a 70px heading is 13.5px
+     sliced off. Measured from the font rather than guessed at:
+       0.223 descender + 0.06 negative half-leading = 0.283, rounded to 0.3.
+     The negative margin cancels it again so nothing below moves. */
+  padding-bottom: 0.3em;
+  margin-bottom: -0.3em;
 }
 .line__in {
   display: block;
@@ -277,7 +289,6 @@ html {
    duration, same linear timing, all started at page load off one document
    timeline. Nothing about the composition changes. */
 .room,
-.gobo,
 .lit {
   animation: rig-turn 120s linear infinite;
 }
@@ -294,30 +305,17 @@ html {
       var(--lamp-b) 180deg calc(180deg + var(--wedge)), transparent calc(180deg + var(--wedge)) 360deg);
   opacity: var(--lamp-strength);
   filter: saturate(1.1);
+  /* In the void the wedges are the only light there is, so they simply sit on
+     the ground and add to it. On paper the page is already lit, so a beam
+     cannot add anything: what a lamp produces in a lit room is shadow. The
+     blend mode is the whole inversion, and it is why light mode is the same
+     rig rather than a second one. */
+  mix-blend-mode: var(--room-blend, normal);
   /* the beams fall off with distance, and never reach the reading column edges */
   -webkit-mask-image: radial-gradient(78vmax 78vmax at 50% 50%, #000 10%, transparent 76%);
   mask-image: radial-gradient(78vmax 78vmax at 50% 50%, #000 10%, transparent 76%);
 }
 
-/* The gobo. The mark is never drawn: it stands in the beams and throws
-   its shadow, so what you see is an X of void inside the light. */
-.gobo {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  display: grid;
-  place-items: center;
-}
-
-.gobo svg {
-  width: min(62vmin, 620px);
-  height: auto;
-  overflow: visible;
-  transform: rotate(calc(var(--rot) * -0.28));
-}
-
-.gobo path { fill: var(--canvas); }
 
 /* Anything above the rig */
 body > header,
@@ -342,7 +340,7 @@ body > footer { position: relative; z-index: 1; }
   background-size: 220vmax 220vmax, auto;
   background-position: center center;
   background-repeat: no-repeat;
-  background-blend-mode: screen, normal;
+  background-blend-mode: var(--lit-blend, screen), normal;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -353,14 +351,13 @@ body > footer { position: relative; z-index: 1; }
   /* The rig holds still at its initial angle, which is a composition in its
      own right rather than a broken state. */
   .room,
-  .gobo,
   .lit { animation: none; }
 }
 
 /* If the rig cannot render, the page is still a dark site with white type.
    Nothing on it depends on the light. */
 @supports not (background: conic-gradient(from 0deg, red, blue)) {
-  .room, .gobo { display: none; }
+  .room { display: none; }
 }
 
 @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
@@ -372,12 +369,11 @@ body > footer { position: relative; z-index: 1; }
 }
 
 /* ---------- Print ----------
-   The rig is light, and light does not print. Without this the gobo lays a
-   solid black X across the sheet and every .lit heading prints as nothing,
-   because clipped-to-text backgrounds do not survive the print pipeline. */
+   The rig is light, and light does not print. Without this every .lit heading
+   prints as nothing, because clipped-to-text backgrounds do not survive the
+   print pipeline. */
 @media print {
   .room,
-  .gobo,
   .lit { animation: none !important; }
 
   /* Screen chrome does not belong on paper. The header is position: fixed, so
@@ -400,8 +396,7 @@ body > footer { position: relative; z-index: 1; }
     border-top: 1px solid #999 !important;
   }
 
-  .room,
-  .gobo {
+  .room {
     display: none !important;
   }
 

@@ -176,36 +176,42 @@
 
     <!-- ================= HERO ================= -->
     <section class="hero" aria-label="Introduction">
-      <!-- One beam crosses the statement as the page opens, then dies.
-           The ambient rig behind it carries the calm state afterwards. -->
-      <div class="hero__sweep" aria-hidden="true"></div>
+      <!-- The kinetic event. A hard-edged bar of the two lamps crosses the
+           statement once, left to right, in the first second, then collapses
+           to the short brand rule that stays under the payoff line. It is a
+           cut of light, not a glow: no blur, no bloom, nothing that lingers
+           moving. Pure CSS, so it runs whether or not the bundle arrives. -->
+      <div class="hero__strike" aria-hidden="true"></div>
+
 
       <div class="container hero__grid">
 
-        <div class="hero__lead">
-          <p class="label" data-reveal="fade">XStudioz &middot; Independent brand design agency</p>
-          <div class="rule hero__rule-top" data-rule></div>
-        </div>
+        <p class="label hero__eyebrow" data-reveal="fade">XStudioz &middot; Independent brand design agency</p>
 
-        <div class="hero__core">
-          <h1 class="hero__title display lit">
-            <span class="line"><span class="line__in">A logo is a mark.</span></span>
-            <span class="line"><span class="line__in">A brand is a promise.</span></span>
-            <span class="line"><span class="line__in">We design both.</span></span>
-          </h1>
+        <!-- The statement is a crescendo, not three equal lines. Each one is
+             set larger than the last, so the type itself carries the argument:
+             a fact, then a claim, then the payoff at full scale. Only the last
+             line is lit, so the light lands on the sentence that matters and
+             the first two stay crisp white. -->
+        <h1 class="hero__title">
+          <span class="line hero__line hero__line--1"><span class="line__in">A logo is a mark.</span></span>
+          <span class="line hero__line hero__line--2"><span class="line__in">A brand is a promise.</span></span>
+          <span class="line hero__line hero__line--3"><span class="line__in">We design both.</span></span>
+        </h1>
 
-          <div class="hero__say">
-            <p class="hero__lede" data-reveal="fade">
-              XStudioz is an independent brand design agency for founders who take their brand
-              seriously. We draw logos, identities and the systems that carry them, wherever you are building.
-            </p>
-            <p class="hero__act" data-reveal="fade">
-              <a class="pill hero__cta" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
-                <span>Start a project</span>
-                <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
-              </a>
-            </p>
-          </div>
+        <!-- Lede and action are one cluster on a shared hairline rather than
+             two things floating near each other. -->
+        <div class="hero__cluster">
+          <p class="hero__lede" data-reveal="fade">
+            XStudioz is an independent brand design agency for founders who take their brand
+            seriously. We draw logos, identities and the systems that carry them, wherever you are building.
+          </p>
+          <p class="hero__act" data-reveal="fade">
+            <a class="pill pill--solid hero__cta" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
+              <span>Start a project</span>
+              <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+            </a>
+          </p>
         </div>
 
         <div class="hero__foot">

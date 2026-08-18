@@ -205,7 +205,9 @@
 .doc__title {
   font-size: var(--text-heading);
   font-weight: 400;
-  line-height: var(--leading-tight);
+  /* Sentence case, so it needs the leading that clears a descender rather
+     than the uppercase one. */
+  line-height: var(--leading-tight-mixed);
   letter-spacing: var(--tracking-display);
   max-width: 17ch;
   text-wrap: balance;
@@ -339,8 +341,7 @@
    base.css already says the rig is for: body copy is never lit. */
 
 @supports selector(:has(*)) {
-  body:has(.doc--capability) .room,
-  body:has(.doc--capability) .gobo {
+  body:has(.doc--capability) .room {
     position: absolute;
     inset: 0 0 auto 0;
     height: 118vh;

@@ -87,3 +87,9 @@ if ('ResizeObserver' in window) {
 
 // Fonts land after first paint and change the measured width.
 document.fonts?.ready.then(apply);
+
+/* Marks this file as a module. It is loaded as one, but without an import
+   or an export TypeScript treats it as a global script, and the three
+   modules the nav loads then share a single scope: two of them declaring
+   a function called apply is enough to fail the build. */
+export {};

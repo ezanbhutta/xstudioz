@@ -121,7 +121,13 @@ body.is-loading {
   padding-block: var(--sp-3);
 }
 
-.nav__cta {
+/* The end of the row. One grid cell holding the switch, the call to action
+   and the menu control, so the number of things in here is free to change
+   without the three column grid wrapping onto a second line. */
+.nav__end {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
   justify-self: end;
 }
 
@@ -216,7 +222,6 @@ body.is-loading {
   display: none;              /* desktop shows the links instead */
   align-items: center;
   gap: 10px;
-  justify-self: end;
   /* a 44px target, with the padding doing the work rather than a fixed box
      so the label stays on the type baseline */
   min-height: 44px;
@@ -576,65 +581,131 @@ html.nav-open {
 
 /* ---------------- Hero ----------------
 
-   Composition
-   The old hero pinned its content to the bottom of a 100svh box, so every
-   viewport taller than about 900px opened on several hundred pixels of
-   nothing. This is a three-row grid instead: an eyebrow that sits on the
-   header, a core that is centred in whatever space is left, and a foot that
-   holds the scroll cue. The centre row is the whole fix. It cannot leave a
-   void above the statement, because the free space is always divided evenly
-   around it, at any height from 600 to 1400.
+   What was here before: a label, three lines of statement at one size, and a
+   lede and a button sitting near each other in the lower left. It filled the
+   viewport without composing it. The statement was set entirely in the lit
+   treatment, which bases at #b9b9c4, so the largest type on the site was also
+   grey; at 375 it broke to six lines with "BOTH." alone on the last one; and
+   the action floated in the middle of the row with nothing to align to.
 
-   Reading order on every size: statement, then context, then the action.
+   What it is now:
+
+   1. A crescendo. Three lines at three sizes, so the type carries the
+      argument: a fact, a claim, then the payoff at full scale. Only the last
+      line samples the light, which puts the brand exactly on the sentence
+      that earns it and lets the first two stay crisp white.
+   2. Asymmetry with a reason. The statement holds the left two thirds; the
+      mark is cropped hard by the right edge. Nothing is centred.
+   3. One kinetic event. A hard bar of both lamps crosses the statement once
+      and collapses into the rule under the payoff line. Then it is over.
+   4. A real grid. Four rows that divide the viewport, so there is no dead
+      band at any height.
    ------------------------------------------------------------------ */
 
 .hero {
   position: relative;
   min-height: 100svh;
   display: flex;
-  overflow-x: clip;
+  overflow: clip;
 }
 
 .hero__grid {
-  flex: 1;
-  display: grid;
-  /* eyebrow / breathing space / statement + action / breathing space / foot */
-  grid-template-rows: auto 1fr auto;
-  /* clears the fixed header without guessing: nav row is 44px of control
-     plus its own padding */
-  padding-top: clamp(84px, 9vh, 108px);
-  padding-bottom: clamp(var(--sp-4), 3vh, var(--sp-5));
-  gap: clamp(var(--sp-5), 4vh, var(--sp-7));
-}
-
-.hero__lead .rule {
-  margin-top: var(--sp-3);
-}
-
-/* The core is centred in the free row, which is what removes the dead space.
-   min-height:0 lets it shrink rather than overflow on a 600px-tall window. */
-.hero__core {
-  align-self: center;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(var(--sp-5), 4.5vh, var(--sp-7));
-}
-
-.hero__title {
   position: relative;
   z-index: 2;
-  max-width: 22ch;
+  display: grid;
+  /* eyebrow / statement / cluster / foot. The statement row takes the slack,
+     so the composition breathes from the middle rather than leaving a void at
+     the bottom the way a bottom-pinned hero does. */
+  grid-template-rows: auto 1fr auto auto;
+  align-content: stretch;
+  width: 100%;
+  padding-block: clamp(var(--sp-6), 11vh, var(--sp-8)) var(--sp-5);
+  row-gap: clamp(var(--sp-5), 4vh, var(--sp-7));
 }
 
-/* Context and action share the lower line of the core. The lede is held to a
-   readable measure and the action sits at its end, so the eye finishes the
-   sentence and lands on the button. */
-.hero__say {
+.hero__eyebrow {
+  color: var(--text-secondary);
+  /* Balanced only where it actually has to wrap. A measure tight enough to
+     stop "AGENCY" dropping alone at 375 was forcing a break at 1440, where
+     the line fits easily. */
+  text-wrap: balance;
+}
+
+/* ---- The statement ---- */
+
+.hero__title {
+  align-self: center;
+  font-weight: 400;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* One measure per line, set so each breaks where it should at every width
+   rather than wherever the box happens to end. */
+.hero__line {
+  display: block;
+  color: var(--text);
+}
+
+/* The crescendo. Three steps, each derived from the container rather than
+   picked by eye, so the longest line of each tier can never take an extra
+   row: line 2 is the longest string, so it sets the ceiling. */
+.hero__line--1 {
+  font-size: clamp(30px, 4.6vw, calc((var(--page-max) - 2 * var(--gutter)) / 17.5));
+  line-height: 1.02;
+  letter-spacing: clamp(-1.1px, -0.012em, -0.2px);
+  color: var(--text-secondary);
+}
+
+.hero__line--2 {
+  font-size: clamp(38px, 6vw, calc((var(--page-max) - 2 * var(--gutter)) / 13.4));
+  line-height: 0.98;
+  letter-spacing: clamp(-1.6px, -0.015em, -0.3px);
+}
+
+/* The brightest line as well as the largest. It was set in the lit treatment
+   at first, which bases at #b9b9c4, so the payoff arrived as the dimmest thing
+   in the composition and the crescendo ran backwards. Brightness now climbs
+   with scale; the brand light is carried by the strike and the rule it leaves
+   behind, which is where it belongs. */
+.hero__line--3 {
+  font-size: clamp(52px, 9.2vw, calc((var(--page-max) - 2 * var(--gutter)) / 8.6));
+  line-height: 0.92;
+  color: var(--text);
+  /* Tighter than the smaller tiers, because tracking is optical: the same em
+     value that suits 38px reads loose at 160px. Clamped in px so the
+     correction actually scales with the rendered size instead of staying a
+     fixed proportion of it. */
+  letter-spacing: clamp(-3.4px, -0.022em, -0.5px);
+}
+
+/* The rule the strike collapses into. It belongs to the payoff line. */
+.hero__line--3::after {
+  content: '';
+  display: block;
+  width: clamp(90px, 12vw, 190px);
+  height: 2px;
+  margin-top: clamp(var(--sp-3), 2vh, var(--sp-4));
+  background: linear-gradient(90deg, var(--lamp-a), var(--lamp-b));
+  transform-origin: left center;
+  animation: hero-rule 900ms var(--ease-out) 820ms both;
+}
+
+@keyframes hero-rule {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* ---- The cluster ---- */
+
+.hero__cluster {
   display: grid;
-  grid-template-columns: minmax(0, 46ch) auto;
+  grid-template-columns: minmax(0, 38ch) auto;
   align-items: end;
-  gap: clamp(var(--sp-4), 3vw, var(--sp-6));
+  justify-content: space-between;
+  gap: var(--sp-5);
+  border-top: var(--hairline);
+  padding-top: var(--sp-4);
 }
 
 .hero__lede {
@@ -644,249 +715,144 @@ html.nav-open {
   margin: 0;
 }
 
-.hero__act {
-  margin: 0;
-  justify-self: start;
-}
-
-.hero__cta {
-  white-space: nowrap;
-  /* the page's primary action clears the 44px touch minimum. Scoped here
-     rather than on .pill, which is shared with denser contexts. */
-  min-height: 44px;
-}
+.hero__act { margin: 0; }
 
 .hero__foot {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: end;
   gap: var(--sp-4);
+  color: var(--text-muted);
 }
 
 .hero__scroll {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  color: var(--text-muted);
+  gap: var(--sp-2);
 }
 
 .hero__chev {
   width: 11px;
-  height: 8px;
+  height: 11px;
+  animation: hero-chev 2.4s var(--ease-inout) infinite;
 }
 
-.hero__foot-note {
-  color: var(--text-muted);
-  text-align: right;
+@keyframes hero-chev {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(3px); }
 }
 
-/* ---- The opening moment ----
-   A single wedge at the mark's own angle crosses the statement once and dies.
-   It animates transform and opacity only, runs for well under a second, and
-   leaves nothing behind: the calm state is the ambient rig alone. */
-.hero__sweep {
+/* ---- The strike ---- */
+
+.hero__strike {
   position: absolute;
-  inset: -30% -20%;
-  z-index: 0;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: clamp(150px, 26vh, 300px);
+  transform: translateY(-50%);
   pointer-events: none;
+  /* Two hard bands with no soft stops anywhere: the edge is the point. */
+  background: linear-gradient(
+    100deg,
+    transparent 0 12%,
+    var(--lamp-a) 12% 30%,
+    var(--lamp-b) 30% 46%,
+    transparent 46% 100%
+  );
   opacity: 0;
-  background: conic-gradient(from 0deg at 58% 42%,
-    transparent 0deg 7deg,
-    var(--lamp-a) 7deg 14deg,
-    transparent 14deg 360deg);
-  animation: hero-sweep 1500ms var(--ease-out) 200ms both;
-  will-change: transform, opacity;
+  mix-blend-mode: var(--room-blend, normal);
+  animation: hero-strike 1150ms cubic-bezier(0.2, 0.9, 0.1, 1) 120ms both;
 }
 
-@keyframes hero-sweep {
-  0%   { transform: rotate(-34deg); opacity: 0; }
-  30%  { opacity: 0.42; }
-  100% { transform: rotate(12deg); opacity: 0; }
+@keyframes hero-strike {
+  0%   { transform: translate(-115%, -50%) skewX(-14deg); opacity: 0; }
+  18%  { opacity: 0.85; }
+  72%  { opacity: 0.62; }
+  100% { transform: translate(115%, -50%) skewX(-14deg); opacity: 0; }
 }
 
+/* The whole event is one pass of light. Without motion it simply never
+   happens: the rule is already drawn and the statement is already there. */
 @media (prefers-reduced-motion: reduce) {
-  .hero__sweep { animation: none; opacity: 0; }
+  .hero__strike { animation: none; opacity: 0; }
+  .hero__line--3::after { animation: none; }
+  .hero__chev { animation: none; }
 }
 
-/* ---- Below the desktop band ---- */
+/* ---- The hero at phone width, composed rather than compressed ----
 
-@media (max-width: 1024px) {
-  .hero__say {
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
-    gap: var(--sp-5);
-  }
-}
+   The desktop composition does not survive being narrowed: at 375 the
+   statement broke to six lines with "BOTH." alone on the last, the lede ran to
+   five lines of 18px and outweighed everything, and the action sat below the
+   fold. This is a different composition using the same parts.
 
-@media (max-width: 760px) {
+   The statement runs to the edge and the mark is cropped hard against it, so
+   the type and the structure share one frame. The lede drops to the small
+   size and a tight measure, because on a phone the statement is the argument
+   and the lede is a caption under it. The action is full width and last,
+   which is the only place a thumb reliably reaches. */
+@media (max-width: 640px) {
   .hero__grid {
-    padding-top: clamp(76px, 12vh, 96px);
-    gap: var(--sp-5);
+    padding-block: clamp(var(--sp-5), 7vh, var(--sp-7)) var(--sp-4);
+    row-gap: clamp(var(--sp-4), 3.5vh, var(--sp-6));
   }
 
-  /* Reading and action come first on a phone. The core sits high rather than
-     dead centre, so the statement, the sentence and the button are all above
-     the fold on a 667px screen. */
-  .hero__core {
-    align-self: start;
-    gap: var(--sp-5);
+  /* One step wider than the desktop ratios: fewer, longer lines read better
+     than many short ones in a narrow column. */
+  .hero__line--1 { font-size: clamp(24px, 7.4vw, 34px); }
+  .hero__line--2 { font-size: clamp(29px, 9vw, 42px); }
+  .hero__line--3 { font-size: clamp(40px, 13.4vw, 62px); }
+
+  .hero__line--3::after {
+    width: 74px;
+    height: 2px;
   }
 
-  .hero__title { max-width: none; }
+  .hero__cluster {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+    gap: var(--sp-4);
+  }
+
+  .hero__lede {
+    font-size: var(--text-body-sm);
+    max-width: 40ch;
+  }
+
+  .hero__cta {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .hero__strike {
+    height: clamp(120px, 22vh, 210px);
+  }
 
   .hero__foot-note { display: none; }
 }
 
-/* Short and wide, such as a laptop in a shallow window: give the centre row
-   permission to use the space the foot would otherwise reserve. */
-@media (max-height: 640px) and (min-width: 761px) {
-  .hero__grid { gap: var(--sp-4); }
-  .hero__foot { display: none; }
+/* ---------------- Capabilities ----------------
+
+   The first thing after the hero, and it used to undo it: five identical rows
+   of numeral, name and description in parallel columns, which is a table with
+   the rules taken out. It read as a directory, so the page went from a
+   statement straight back to admin.
+
+   Different rhythm, same world. The hero is a centred crescendo; this is a
+   descending staircase. Each row steps further in than the one above it, so
+   the eye is pulled down and to the right and the section has a direction
+   rather than a stack. The index numeral is set at display scale and outlined
+   rather than filled, which makes it structure rather than a label, and it is
+   the thing that catches the light on hover. The description sits under the
+   name as a caption instead of in a second column, so each row is one object
+   rather than a row of a spreadsheet.
+   ------------------------------------------------------------------ */
+
+.caps__intro {
+  margin-bottom: clamp(var(--sp-6), 7vw, var(--sp-8));
 }
-
-/* ---------------- Anatomy — the mark, constructed ---------------- */
-
-.anatomy__grid {
-  display: grid;
-  grid-template-columns: 5fr 1fr 5fr;
-  gap: var(--col-gap);
-  align-items: center;
-}
-
-.anatomy__plate {
-  grid-column: 1;
-  background-color: var(--canvas-raised);
-  background-image:
-    repeating-linear-gradient(0deg, rgba(240, 239, 244, 0.045) 0 1px, transparent 1px 44px),
-    repeating-linear-gradient(90deg, rgba(240, 239, 244, 0.045) 0 1px, transparent 1px 44px);
-  padding: clamp(var(--sp-4), 3vw, var(--sp-6));
-}
-
-.anatomy__fig {
-  width: 100%;
-  height: auto;
-}
-
-/* The dim/highlight below rides on SVG paint opacities
-   (stroke-opacity / fill-opacity) rather than `opacity`, because the
-   scroll reveal leaves inline opacity on these elements and GSAP never
-   writes the paint channels — the two systems stay out of each other's way. */
-.anatomy__fig .guide {
-  stroke: var(--border-strong);
-  stroke-width: 1;
-  transition: stroke 0.35s ease, stroke-opacity 0.35s ease, stroke-width 0.35s ease;
-}
-
-.anatomy__fig .guide--notch {
-  stroke: var(--brand-a);
-}
-
-.anatomy__x {
-  fill: var(--text);
-  transition: fill-opacity 0.35s ease;
-}
-
-/* Spec rows converse with the figure: hovering one lights its guides */
-.anatomy__grid[data-active-spec] .guide {
-  stroke-opacity: 0.18;
-}
-
-.anatomy__grid[data-active-spec] .anatomy__x {
-  fill-opacity: 0.22;
-}
-
-.anatomy__grid[data-active-spec='terminals'] .guide[data-g='terminals'],
-.anatomy__grid[data-active-spec='geometry'] .guide[data-g='geometry'],
-.anatomy__grid[data-active-spec='notch'] .guide[data-g='notch'] {
-  stroke-opacity: 1;
-  stroke: var(--brand-a);
-  stroke-width: 1.5;
-}
-
-.anatomy__grid[data-active-spec='color'] .anatomy__x {
-  fill-opacity: 1;
-  fill: url(#xg);
-}
-
-.anatomy__specs li {
-  transition: padding-left 0.35s var(--ease-out);
-}
-
-@media (hover: hover) {
-  .anatomy__specs li:hover {
-    padding-left: 10px;
-  }
-
-  /* brand-b keeps AA contrast on parchment at 11px; brand-a does not */
-  .anatomy__specs li:hover .label {
-    color: var(--lamp-a);
-  }
-}
-
-.anatomy__cap {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--sp-4);
-  padding-top: var(--sp-4);
-  margin-top: var(--sp-3);
-  border-top: var(--hairline);
-}
-
-.anatomy__cap .label {
-  color: var(--text-secondary);
-}
-
-.anatomy__copy {
-  grid-column: 3;
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-5);
-}
-
-.anatomy__specs li {
-  display: grid;
-  grid-template-columns: 110px 1fr;
-  gap: var(--sp-4);
-  align-items: baseline;
-  padding-block: var(--sp-3);
-  border-top: var(--hairline);
-}
-
-.anatomy__specs li:last-child {
-  border-bottom: var(--hairline);
-}
-
-.anatomy__specs .label {
-  color: var(--text-secondary);
-}
-
-/* ---------------- Studio ---------------- */
-
-.studio__grid {
-  display: grid;
-  grid-template-columns: 5fr 1fr 5fr;
-  gap: var(--col-gap);
-  align-items: start;
-}
-
-.studio__statement {
-  grid-column: 1;
-}
-
-.studio__copy {
-  grid-column: 3;
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-4);
-  max-width: 52ch;
-}
-
-.studio__copy .ghost {
-  align-self: flex-start;
-  margin-top: var(--sp-3);
-}
-
-/* ---------------- Capabilities ---------------- */
 
 .caps__list {
   border-bottom: var(--hairline);
@@ -896,92 +862,130 @@ html.nav-open {
   border-top: var(--hairline);
 }
 
+/* The staircase. Five steps of the same increment, expressed against the
+   container so it scales with the page rather than being five magic numbers.
+   It resets to zero below the breakpoint, where an indent would just eat the
+   measure. */
+.caps__row:nth-child(2) .caps__link { --step: 1; }
+.caps__row:nth-child(3) .caps__link { --step: 2; }
+.caps__row:nth-child(4) .caps__link { --step: 3; }
+.caps__row:nth-child(5) .caps__link { --step: 4; }
+
 .caps__link {
   position: relative;
   display: grid;
-  grid-template-columns: 64px 1fr 1fr 48px;
-  align-items: baseline;
-  gap: var(--col-gap);
-  padding-block: var(--sp-5);
+  grid-template-columns: auto minmax(0, max-content) 1fr;
+  grid-template-areas:
+    'num name arr'
+    'num desc arr';
+  align-items: center;
+  column-gap: clamp(var(--sp-4), 3vw, var(--sp-6));
+  row-gap: var(--sp-2);
+  padding-block: clamp(var(--sp-5), 3.4vw, var(--sp-7));
   margin-inline: calc(-1 * var(--gutter));
+  /* padding-inline first: it sets both sides, so declaring it after the step
+     silently threw the staircase away. */
   padding-inline: var(--gutter);
-  transition: background-color var(--dur-fast) ease;
+  padding-left: calc(var(--gutter) + var(--step, 0) * clamp(12px, 3.2vw, 58px));
+  transition: padding-left 0.5s var(--ease-out), background-color var(--dur-fast) ease;
 }
 
 .caps__link:hover {
   background-color: var(--canvas-raised);
 }
 
+/* The numeral as structure: display scale, outlined, and the one thing in the
+   row that takes the brand colour when you reach for it. */
 .caps__num {
-  color: var(--text-secondary);
-  transition: color var(--dur-fast) ease;
+  grid-area: num;
+  font-size: clamp(34px, 5.2vw, 78px);
+  font-weight: 400;
+  line-height: 0.8;
+  letter-spacing: clamp(-1.8px, -0.02em, -0.3px);
+  color: transparent;
+  -webkit-text-stroke: 1px var(--border-strong);
+  transition: -webkit-text-stroke-color var(--dur-fast) ease, color var(--dur-fast) ease;
 }
 
 .caps__link:hover .caps__num {
   color: var(--brand-a);
+  -webkit-text-stroke-color: transparent;
 }
 
 .caps__name {
+  grid-area: name;
+  font-size: clamp(24px, 3.4vw, 46px);
+  line-height: 1.04;
+  letter-spacing: clamp(-1.2px, -0.014em, -0.2px);
   transition: transform 0.45s var(--ease-out);
 }
 
 .caps__link:hover .caps__name {
-  transform: translateX(12px);
+  transform: translateX(10px);
 }
 
 .caps__desc {
+  grid-area: desc;
+  font-size: var(--text-body);
+  line-height: 1.45;
   color: var(--text-secondary);
-  max-width: 44ch;
-  align-self: center;
+  max-width: 46ch;
+  transition: transform 0.45s var(--ease-out);
+}
+
+.caps__link:hover .caps__desc {
+  transform: translateX(10px);
 }
 
 .caps__arr {
-  width: 18px;
-  height: 12px;
-  justify-self: end;
+  grid-area: arr;
+  width: 20px;
+  height: 13px;
+  justify-self: start;
+  margin-left: clamp(var(--sp-4), 3vw, var(--sp-6));
   align-self: center;
+  color: var(--text-muted);
   opacity: 0;
-  transform: translateX(-10px);
+  transform: translateX(-12px);
   transition: opacity var(--dur-fast) ease, transform 0.45s var(--ease-out);
 }
 
 .caps__link:hover .caps__arr {
   opacity: 1;
   transform: translateX(0);
+  color: var(--text);
 }
 
-/* A ghost of the row's number surfaces behind the content on hover */
-.caps__ghost {
-  position: absolute;
-  right: calc(var(--gutter) + 40px);
-  top: 50%;
-  transform: translateY(-46%) translateX(24px);
-  font-size: clamp(80px, 8vw, 132px);
-  line-height: 1;
-  color: transparent;
-  /* slate stroke survives the white hover surface; ash washes out on paper */
-  -webkit-text-stroke: 1px var(--border-strong);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease, transform 0.6s var(--ease-out);
-  z-index: 0;
-}
+/* The old hover ghost is gone: the numeral does that job now, at the same
+   scale, without a second copy of the same character sliding about behind
+   the text. */
+.caps__ghost { display: none; }
 
-@media (hover: hover) {
-  .caps__link:hover .caps__ghost {
-    opacity: 0.6;
-    transform: translateY(-46%) translateX(0);
+@media (prefers-reduced-motion: reduce) {
+  .caps__link,
+  .caps__name,
+  .caps__desc,
+  .caps__arr {
+    transition: none;
   }
 }
 
-.caps__num,
-.caps__name,
-.caps__desc,
-.caps__arr {
-  position: relative;
-  z-index: 1;
-}
+@media (max-width: 760px) {
+  /* No staircase in a narrow column: the indent would come straight out of
+     the measure. The numeral moves above the name instead. */
+  .caps__link {
+    grid-template-columns: minmax(0, 1fr) 32px;
+    grid-template-areas:
+      'num  arr'
+      'name arr'
+      'desc arr';
+    align-items: start;
+    padding-left: var(--gutter);
+    row-gap: var(--sp-3);
+  }
 
+  .caps__arr { align-self: start; margin-top: var(--sp-2); }
+}
 
 /* ---------------- Homepage rhythm ----------------
 
@@ -1005,7 +1009,8 @@ html.nav-open {
    headings of identical size. */
 .caps__statement {
   font-size: var(--text-heading);
-  line-height: var(--leading-tight);
+  /* Sentence case: same correction as .doc__title. */
+  line-height: var(--leading-tight-mixed);
   max-width: 18ch;
 }
 
@@ -1412,49 +1417,12 @@ html.nav-open {
     row-gap: var(--sp-6);
   }
 
-  .caps__link {
-    grid-template-columns: 48px 1fr 48px;
-    grid-template-areas:
-      'num name arr'
-      'num desc arr';
-    row-gap: var(--sp-2);
-  }
-
-  .caps__num { grid-area: num; }
-  .caps__name { grid-area: name; }
-  .caps__desc { grid-area: desc; }
-  .caps__arr { grid-area: arr; }
 }
 
 @media (max-width: 760px) {
 
-  .hero__foot {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--sp-5);
-  }
-
-  .hero__lede {
-    max-width: 100%;
-  }
-
-  .hero__meta-bot .label:nth-child(2) {
-    display: none;
-  }
-
   .process__steps {
     grid-template-columns: 1fr;
-  }
-
-  .caps__arr {
-    display: none;
-  }
-
-  .caps__link {
-    grid-template-columns: 48px 1fr;
-    grid-template-areas:
-      'num name'
-      'num desc';
   }
 
   .footer__ctas {
@@ -1502,5 +1470,56 @@ html.nav-open {
     right: calc(var(--sp-3) * -1);
     width: clamp(150px, 46vw, 210px);
     opacity: 0.85;
+  }
+}
+
+/* ---------------- The light switch ---------------- */
+
+/* Sized and targeted like the menu control it sits beside, so the header row
+   keeps one rhythm and the control clears 44px on its own without the hit
+   area the other three header controls borrow. */
+/* The target is a hit area, not a box, for the same reason the other header
+   controls use one: a 44px control in this row pushed the header from 63px to
+   74px on every page. The glyph keeps its size and the reach is added around
+   it. */
+.nav__theme {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: var(--radius-ui);
+  color: var(--text);
+}
+
+.nav__theme::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+
+/* A circle split down the middle: the half that is filled is the room you are
+   not in. Drawn rather than iconed, so it themes itself with everything else
+   and there is no asset to keep in sync. */
+.nav__theme-glyph {
+  width: 17px;
+  height: 17px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+  transition: transform var(--dur-med) var(--ease-inout);
+}
+
+.nav__theme:hover .nav__theme-glyph {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav__theme-glyph {
+    transition: none;
   }
 }
