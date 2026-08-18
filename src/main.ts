@@ -156,25 +156,22 @@ function initAnatomyLink(): void {
 function heroIntro(): void {
   if (prefersReduced) return;
 
+  /* The three lines rise in sequence, timed so the strike crossing behind them
+     arrives with the payoff line rather than ahead of it. The strike itself is
+     CSS, so it plays whether or not this runs. */
   gsap
     .timeline({ defaults: { ease: EASE } })
     .fromTo(
-      '.hero__rule-top, .hero__rule-bot',
-      { scaleX: 0 },
-      { scaleX: 1, duration: 1.4, ease: EASE_INOUT },
-      0
-    )
-    .fromTo(
       '.hero__title .line__in',
       { yPercent: 112 },
-      { yPercent: 0, duration: 1.2, stagger: 0.1 },
-      0.15
+      { yPercent: 0, duration: 1.15, stagger: 0.11 },
+      0.1
     )
     .fromTo(
       '.hero [data-reveal="fade"]',
       { y: 18, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.9, stagger: 0.06 },
-      0.4
+      { y: 0, opacity: 1, duration: 0.9, stagger: 0.07 },
+      0.45
     );
 }
 
