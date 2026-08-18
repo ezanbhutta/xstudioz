@@ -59,13 +59,6 @@
      lamp to register and 45/255 for the violet. */
   --lit-base: #b9b9c4;
 
-  /* The mark standing in the beams. Its body sits below the room so it has a
-     silhouette of its own, and its edge sits above the room so the contour
-     reads when no beam is on it. Both are greys: the mark never wears the
-     brand colour, it only ever interrupts it. */
-  --gobo-body: #050507;
-  --gobo-rim: #191920;
-
   /* How the light combines with what is under it. In the void a beam
      screens up toward white; on paper it multiplies down toward the
      lamp's own colour, which is what shadow does. */
@@ -189,12 +182,6 @@
      the same reason it does in the dark: 9.5:1 unlit, deeper under a lamp. */
   --l-lit-base: #3a3745;
 
-  /* The mark is an object in a lit room now, so it is fractionally darker
-     than the paper rather than fractionally darker than the void, and the
-     wedges sweeping past it read as the shadow it throws. */
-  --l-gobo-body: #efedf3;
-  --l-gobo-rim: #d5d2de;
-
   /* Magenta at 3.4:1 behind selected text is too thin to read on paper, so
      daylight selects on the deep violet instead. */
   --selection-bg: var(--brand-a);
@@ -220,8 +207,6 @@
   --focus: var(--l-focus);
   --lamp-strength: var(--l-lamp-strength);
   --lit-base: var(--l-lit-base);
-  --gobo-body: var(--l-gobo-body);
-  --gobo-rim: var(--l-gobo-rim);
   --selection-bg: var(--l-selection-bg);
   --selection-text: var(--l-selection-text);
   --room-blend: multiply;
@@ -243,8 +228,6 @@
     --focus: var(--l-focus);
     --lamp-strength: var(--l-lamp-strength);
     --lit-base: var(--l-lit-base);
-    --gobo-body: var(--l-gobo-body);
-    --gobo-rim: var(--l-gobo-rim);
     --selection-bg: var(--l-selection-bg);
     --selection-text: var(--l-selection-text);
     --room-blend: multiply;

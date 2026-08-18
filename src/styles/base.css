@@ -289,7 +289,6 @@ html {
    duration, same linear timing, all started at page load off one document
    timeline. Nothing about the composition changes. */
 .room,
-.gobo,
 .lit {
   animation: rig-turn 120s linear infinite;
 }
@@ -317,52 +316,6 @@ html {
   mask-image: radial-gradient(78vmax 78vmax at 50% 50%, #000 10%, transparent 76%);
 }
 
-/* The gobo. The mark is never drawn: it stands in the beams and throws its
-   shadow, so what you see is an X of void inside the light.
-
-   That was the intent, and for a long time it did not happen. The mark was
-   centred with place-items, and the room casts its wedges from at 50% 50%,
-   so the mark's centre and the lamp's origin were the same point. The mark
-   was sitting on the vertex, where both beams have no width at all, and a
-   shape standing inside a light source blocks nothing. What read on screen
-   was two wedges pinching to a point, with no way to tell what was doing the
-   pinching. It was also filled in exactly the page colour with no edge, so
-   even where it did overlap a beam there was no contour to recognise.
-
-   Three things fix it, and they are all physical rather than decorative:
-   the mark stands away from the lamp so the beams cross it broadside, it is
-   darker than the room it stands in, and its edge catches enough light to
-   read as a silhouette when nothing is behind it. */
-.gobo {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  display: grid;
-  place-items: center;
-}
-
-.gobo svg {
-  width: min(58vmin, 580px);
-  height: auto;
-  overflow: visible;
-  /* Off the vertex. Translate first, then rotate, so the mark turns about
-     its own centre in its new position rather than orbiting the lamp. It
-     bleeds off the right edge on purpose: an object lit from one side, not a
-     motif centred in a frame. */
-  transform: translate(34%, -12%) rotate(calc(var(--rot) * -0.28));
-}
-
-.gobo path {
-  /* Its own darkness, one step below the room, so the silhouette exists even
-     with no beam on it. */
-  fill: var(--gobo-body);
-  /* The contour picks up the room. Painted under the fill so it reads as an
-     outer edge rather than eating into the drawing. */
-  stroke: var(--gobo-rim);
-  stroke-width: 2;
-  paint-order: stroke fill;
-}
 
 /* Anything above the rig */
 body > header,
@@ -398,14 +351,13 @@ body > footer { position: relative; z-index: 1; }
   /* The rig holds still at its initial angle, which is a composition in its
      own right rather than a broken state. */
   .room,
-  .gobo,
   .lit { animation: none; }
 }
 
 /* If the rig cannot render, the page is still a dark site with white type.
    Nothing on it depends on the light. */
 @supports not (background: conic-gradient(from 0deg, red, blue)) {
-  .room, .gobo { display: none; }
+  .room { display: none; }
 }
 
 @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
@@ -417,12 +369,11 @@ body > footer { position: relative; z-index: 1; }
 }
 
 /* ---------- Print ----------
-   The rig is light, and light does not print. Without this the gobo lays a
-   solid black X across the sheet and every .lit heading prints as nothing,
-   because clipped-to-text backgrounds do not survive the print pipeline. */
+   The rig is light, and light does not print. Without this every .lit heading
+   prints as nothing, because clipped-to-text backgrounds do not survive the
+   print pipeline. */
 @media print {
   .room,
-  .gobo,
   .lit { animation: none !important; }
 
   /* Screen chrome does not belong on paper. The header is position: fixed, so
@@ -445,8 +396,7 @@ body > footer { position: relative; z-index: 1; }
     border-top: 1px solid #999 !important;
   }
 
-  .room,
-  .gobo {
+  .room {
     display: none !important;
   }
 
