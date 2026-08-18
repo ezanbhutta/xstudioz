@@ -98,12 +98,21 @@
      line, at any viewport, however wide the container later becomes. */
   --text-display: clamp(44px, 7.4vw, calc((var(--page-max) - 2 * var(--gutter)) / 11.4));
 
+  /* 0.88 is set for uppercase, whose ink runs about 0.80em from cap to the
+     tail of a Q or a comma. Sentence case runs 0.952em, so the same value
+     makes consecutive lines overlap by 0.072em: a descender on one line
+     landing inside a capital on the next. Mixed-case display type gets its
+     own value that clears its own ink. */
   --leading-tight: 0.88;
+  --leading-tight-mixed: 0.98;
   --leading-solid: 1;
   --leading-body: 1.5;
 
   --tracking-label: 0.09em;
-  --tracking-display: 0.005em;
+  /* Negative, because tracking is optical. A value that suits 44px opens up
+     visibly at 120px, and positive tracking on large display type is the
+     usual reason it reads as unresolved rather than drawn. */
+  --tracking-display: -0.014em;
 
   /* Spacing rhythm */
   --sp-1: 5px;
@@ -157,7 +166,15 @@
 
   --l-text: #16151a;          /* 16.4:1 on paper */
   --l-text-secondary: #4a4854;/*  8.6:1          */
-  --l-text-muted: #64616f;    /*  5.6:1          */
+  /* Darker than a straight match to the dark theme's muted grey, and this is
+     the one place the two rooms genuinely cannot mirror each other. In the
+     void a beam lightens the ground under pale text, so light BUYS
+     contrast. On paper a beam darkens the ground under dark text, so light
+     SPENDS it. At the dark theme's equivalent value this role measured
+     3.92:1 beneath the violet lamp, under the 4.5 floor. Set from the worst
+     case rather than from the flat page: 6.8:1 on paper, 4.8:1 under the
+     violet, 5.2:1 under the magenta. */
+  --l-text-muted: #565360;
 
   --l-border: #e2e0e8;
   --l-border-strong: #c4c1cf;

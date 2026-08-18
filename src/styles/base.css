@@ -156,6 +156,11 @@ button {
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-display);
   text-transform: uppercase;
+  /* Kerning pairs are worth more at 120px than anywhere else on the page, and
+     the browser only applies them by default below a size threshold in some
+     engines. Asked for explicitly here. */
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures contextual;
 }
 
 /* ---------- Layout primitives ---------- */
@@ -221,9 +226,16 @@ button {
 .line {
   display: block;
   overflow: hidden;
-  /* extend the mask window past the baseline so descenders never clip */
-  padding-bottom: 0.09em;
-  margin-bottom: -0.09em;
+  /* The window has to clear the font's own descender, and 0.09em did not.
+     Satoshi's descender ink reaches 0.223em below the baseline. With display
+     leading at 0.88 the half-leading is negative (-0.06em), so the old
+     padding left 0.03em of room for 0.223em of letter: every g, y, p, q, j
+     and comma lost 86 percent of its tail, which at a 70px heading is 13.5px
+     sliced off. Measured from the font rather than guessed at:
+       0.223 descender + 0.06 negative half-leading = 0.283, rounded to 0.3.
+     The negative margin cancels it again so nothing below moves. */
+  padding-bottom: 0.3em;
+  margin-bottom: -0.3em;
 }
 .line__in {
   display: block;

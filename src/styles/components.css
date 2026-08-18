@@ -1010,7 +1010,8 @@ html.nav-open {
    headings of identical size. */
 .caps__statement {
   font-size: var(--text-heading);
-  line-height: var(--leading-tight);
+  /* Sentence case: same correction as .doc__title. */
+  line-height: var(--leading-tight-mixed);
   max-width: 18ch;
 }
 
