@@ -101,6 +101,29 @@
   --room-void-quiet: #8a8a97;         /*  5.82:1 */
   --room-void-accent: #e634be;        /*  5.30:1 */
 
+  /* ---- SCENE B'S PAIR, AND WHY IT FOLLOWS THE THEME ----
+
+     The clearspace scene opens on the paper room and a coloured plane sweeps
+     in underneath type that never moves and is never hidden. For that to be
+     true the type has to be set in ONE ink that is legal on both grounds,
+     and in daylight it is: near black measures 19.5:1 on paper and 5.30:1 on
+     magenta.
+
+     In the dark the paper room resolves to the void, and there is no ink at
+     all that clears 4.5:1 against both #09090b and #e634be. Solve it and the
+     answer is empty: the ink would need a relative luminance at or above
+     0.200 to pass on the void and at or below 0.016 to pass on magenta.
+
+     So in the dark the plane is deep violet instead, and the ink is light:
+     17.71:1 on the void it starts against, 13.45:1 on the deep violet it
+     ends against. Same mechanic, same brand, and the only pair on this site
+     that is allowed to change with the room.
+     ---------------------------------------------------------- */
+  --blade-clear: var(--brand-violet-deep);
+  --clear-ink: var(--room-deep-ink);
+  --clear-quiet: var(--room-deep-quiet);
+  --clear-counter: var(--room-deep-ground);
+
   /* Paper. The one room that follows the theme, because it is the reading
      room and a reader who asked for a dark interface should get one. In the
      dark theme it resolves to the void; in daylight it is near white. */
@@ -153,20 +176,32 @@
   --font-sans: 'Mulish', 'Mulish Fallback', ui-sans-serif, system-ui,
     -apple-system, 'Segoe UI', Roboto, sans-serif;
 
-  /* THE SCALE, resolved at 1500px wide: 170 / 68 / 52 / 26 / 16 / 14.
-     Gappy on purpose. There is nothing between 26 and 52, so any two things
-     on screen are unmistakably different ranks rather than nearly the same
-     one. Display to body is 170/16 = 10.6:1.
+  /* THE SCALE, resolved at 1500px wide: 140 / 57 / 44 / 22 / 15 / 14.
+
+     This is roughly 82% of the reference's 170 / 68 / 52 / 26 / 16, taken
+     down as one unit so every step keeps its place. Display to body is
+     140/15 = 9.33:1, which holds the gappy character that makes the scale
+     read as designed rather than defaulted while giving the page back the
+     air a 170px line was eating.
+
+     There is still nothing between 22 and 44, so any two things on screen
+     are unmistakably different ranks rather than nearly the same one.
 
      Below 1500 each step is a clamp against the viewport, so the ratio
-     compresses toward the small end where a 170px line could not fit. At and
-     above 1536 the root becomes 1.11vw and the steps switch to rem, so the
-     page scales as one unit with the ratio locked exactly. */
-  --text-display: clamp(54px, 11.333vw, 170px);
-  --text-heading: clamp(38px, 4.533vw, 68px);
-  --text-heading-sm: clamp(30px, 3.467vw, 52px);
-  --text-subheading: clamp(20px, 1.733vw, 26px);
-  --text-body: 16px;
+     compresses toward the small end where a 140px line could not fit. At and
+     above 1536 the root becomes 1.11vw and the steps switch to rem. The rem
+     figures are derived from the pixel figures at the switch point rather
+     than picked, so the scale is CONTINUOUS across 1536 instead of jumping,
+     and 9.33:1 holds at every width above it. */
+  --text-display: clamp(44px, 9.333vw, 140px);
+  --text-heading: clamp(32px, 3.8vw, 57px);
+  --text-heading-sm: clamp(26px, 2.933vw, 44px);
+  --text-subheading: clamp(18px, 1.467vw, 22px);
+  --text-body: 15px;
+  /* Not smaller than --text-body, and that is deliberate. Interior documents
+     set real reading copy at this step (the FAQ answers, the spec tables),
+     and 15px is the floor for anything a person is asked to read. It stays a
+     separate token because the roles are still separate. */
   --text-body-sm: 15px;
   --text-caption: 14px;
 
@@ -340,6 +375,11 @@
   --brand-a: var(--l-brand-a);
   --selection-bg: var(--l-selection-bg);
   --selection-text: var(--l-selection-text);
+
+  --blade-clear: var(--brand-magenta);
+  --clear-ink: var(--room-magenta-ink);
+  --clear-quiet: var(--room-magenta-quiet);
+  --clear-counter: var(--room-magenta-ground);
 }
 
 @media (prefers-color-scheme: light) {
@@ -360,6 +400,11 @@
     --brand-a: var(--l-brand-a);
     --selection-bg: var(--l-selection-bg);
     --selection-text: var(--l-selection-text);
+
+    --blade-clear: var(--brand-magenta);
+    --clear-ink: var(--room-magenta-ink);
+    --clear-quiet: var(--room-magenta-quiet);
+    --clear-counter: var(--room-magenta-ground);
   }
 }
 
@@ -373,15 +418,21 @@
     font-size: 1.11vw;
   }
 
+  /* 1.11vw resolves to 17.05px at the 1536px switch point, so every figure
+     below is its pixel value divided by 17.05. That is what makes the change
+     of unit invisible: at 1536 the page is the same size either side of the
+     query, and above it the whole sheet scales as one object with 9.33:1
+     locked. Letter-spacing stays in em, so display type tightens optically
+     as it grows. */
   :root {
-    --text-display: 10.625rem;
-    --text-heading: 4.25rem;
-    --text-heading-sm: 3.25rem;
-    --text-subheading: 1.625rem;
-    --text-body: 1rem;
-    --text-body-sm: 0.9375rem;
-    --text-caption: 0.875rem;
-    --gutter: 1.25rem;
+    --text-display: 8.211rem;
+    --text-heading: 3.343rem;
+    --text-heading-sm: 2.581rem;
+    --text-subheading: 1.29rem;
+    --text-body: 0.88rem;
+    --text-body-sm: 0.88rem;
+    --text-caption: 0.821rem;
+    --gutter: 1.173rem;
   }
 }
 

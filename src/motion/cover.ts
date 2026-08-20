@@ -1,23 +1,30 @@
 /* ============================================================
    XStudioz: the cover's choreography
 
-   The whole motion vocabulary of this site is in this file, and it is four
-   properties: opacity, x, y, and one SVG startOffset. Nothing blurs, nothing
-   scales, nothing rotates on entrance, nothing interpolates a colour, and no
-   text is ever masked or split by line.
+   The whole motion vocabulary of this site is four properties: opacity, x,
+   one rotation, and one unitless number driving a clip-path. Nothing blurs,
+   nothing scales, nothing interpolates a colour, and no text is ever masked
+   or split into characters.
 
-   Two rules govern everything below.
+   Three rules govern everything below.
 
-   1. NON-OVERLAPPING WINDOWS. Each scene is driven by exactly one scroll
-      progress value and its keyframe windows are laid end to end. At any
-      scroll position ONE element is moving. A busy page overlaps five
-      timelines; this one queues them.
+   1. THE MOVE IS HORIZONTAL, AND THE TURN IS HALF. Every entrance and exit
+      in both scenes travels sideways, and the one rotation on the site is a
+      180 degree turn about 49.90% / 50.71% of the mark's box. That figure is
+      measured off the artwork: the counter maps onto itself 22 of 22
+      vertices at a half turn, 29 of 52 at a quarter and 32 of 52 mirrored,
+      so a half turn is the only rotation this drawing can make honestly and
+      nothing here is ever turned 90 degrees.
 
-   2. THE TRAILING HOLD. Both scenes finish all motion at 70% of their track
-      and then hold, motionless, for the last 30%. Between them that is about
-      three viewports of the document spent looking at a finished, stationary
-      composition. It is the cheapest change on the list and the one that
-      does most of the work.
+   2. WINDOWS ARE LAID END TO END, WITH ONE DELIBERATE OVERLAP. Each scene is
+      driven by exactly one scroll progress value. The single overlap is the
+      blade and the turn in Scene A, and they overlap because they are one
+      event: the room going over.
+
+   3. THE TRAILING HOLD, SHORTER. Scene A holds for the last 26% of its
+      320vh track and Scene B for the last 20% of its 400vh. That is about
+      1.6 viewports of stillness across the document rather than the 3.3 a
+      500vh and a 600vh track with 30% holds would spend on it.
    ============================================================ */
 
 import { gsap, ScrollTrigger, prefersReduced } from '../lib/motion';
@@ -28,63 +35,89 @@ import { gsap, ScrollTrigger, prefersReduced } from '../lib/motion';
 const SCRUB = true as const;
 
 /* ------------------------------------------------------------
-   Splitting
+   Splitting, at the word
 
-   Words are wrapped so they can never break across a line, and each
-   character inside a word becomes its own inline-block span. Whitespace is
-   preserved as real text between the word spans rather than as a character,
-   so the line still wraps and still reads correctly to a screen reader,
-   which sees the element's textContent unchanged.
+   Each word becomes its own inline-block span. Whitespace is preserved as
+   real text between the spans rather than as part of one, so the line still
+   wraps and still reads correctly: the accessible name is rebuilt from the
+   original string so a screen reader is handed the sentence and not a list.
+
+   The reference splits to the character. This does not, and that is the
+   point rather than an economy: a word is the smallest unit a reader takes
+   in, so a line that resolves word by word resolves as language.
    ------------------------------------------------------------ */
-function splitChars(el: HTMLElement): HTMLElement[] {
+function splitWords(el: HTMLElement): HTMLElement[] {
   const source = (el.textContent ?? '').replace(/\s+/g, ' ').trim();
   if (!source) return [];
 
-  const chars: HTMLElement[] = [];
+  const words: HTMLElement[] = [];
   const frag = document.createDocumentFragment();
 
   source.split(' ').forEach((word, i) => {
     if (i > 0) frag.appendChild(document.createTextNode(' '));
     const w = document.createElement('span');
     w.className = 'scrub-word';
-    for (const ch of word) {
-      const c = document.createElement('span');
-      c.className = 'scrub-char';
-      c.textContent = ch;
-      w.appendChild(c);
-      chars.push(c);
-    }
+    w.textContent = word;
     frag.appendChild(w);
+    words.push(w);
   });
 
-  /* The visible text is now a tree of spans, so the accessible name is
-     rebuilt from the original string. Without this a screen reader reads the
-     line one letter at a time. */
   el.textContent = '';
   el.appendChild(frag);
   el.setAttribute('aria-label', source);
 
-  return chars;
+  return words;
+}
+
+/* One number, written straight onto the element. GSAP cannot interpolate a
+   polygon() with per-point calc in it, and it does not have to: the whole
+   shape is a function of --wipe, so the timeline tweens a plain object and
+   the browser recomputes the clip. */
+function wipe(el: HTMLElement, from: number, to: number, at: number, dur: number, tl: gsap.core.Timeline): void {
+  const v = { n: from };
+  el.style.setProperty('--wipe', String(from));
+  tl.to(
+    v,
+    {
+      n: to,
+      ease: 'none',
+      duration: dur,
+      onUpdate: () => el.style.setProperty('--wipe', v.n.toFixed(4)),
+    },
+    at
+  );
+}
+
+/* The reveal. Words light from the centre of the line outward, both ways at
+   once, so the lit edge opens rather than sweeps. Setting the stagger equal
+   to the duration makes the windows abut exactly, which is what keeps the
+   boundary a moving edge rather than a soft band. */
+function resolveWords(
+  el: HTMLElement,
+  tl: gsap.core.Timeline,
+  at: number,
+  span: number
+): void {
+  const words = splitWords(el);
+  if (!words.length) return;
+  gsap.set(words, { opacity: 0.62 });
+  const each = span / words.length;
+  tl.to(words, { opacity: 1, ease: 'none', duration: each, stagger: { each, from: 'center' } }, at);
 }
 
 /* ------------------------------------------------------------
    THE HERO ROTATOR
 
-   The one time-based animation on the page. Two states swap every three
-   seconds. Each character is its own span entering from 50px below on a 50ms
-   stagger, 300ms in and 200ms out, and the outgoing state fully clears
-   before the incoming one starts, so the label reads as being replaced from
-   underneath rather than cross-faded.
+   The one time-based animation on the page, and it resolves once.
 
-   There is no overflow mask. The characters travel and fade in open space,
-   which is why the row reserves its own height in CSS.
+   It used to split each label to the character and fly them in from 50px
+   below on a stagger, which is the reference's rotating-word move almost
+   exactly and which reads as broken type in any frame caught mid-flight:
+   the last glyph of a twenty character label sits lower and fainter than its
+   neighbours for a third of the cycle. It is now a cross-resolve of two
+   whole lines on opacity, with no travel and no splitting, which is what
+   stillness actually looks like at this size.
    ------------------------------------------------------------ */
-/* 50ms per character is right for a word of eight. These labels run to
-   twenty, where the same figure would spend 1.0s of a 3.0s cycle on the
-   stagger alone and the row would never be still. Capped so the sweep can
-   never exceed 0.6s whatever the label says. */
-const stagger = (n: number): number => Math.min(0.05, 0.6 / Math.max(1, n));
-
 function initRotator(): void {
   const host = document.querySelector<HTMLElement>('[data-rotator]');
   if (!host || prefersReduced) return;
@@ -92,84 +125,58 @@ function initRotator(): void {
   const items = Array.from(host.querySelectorAll<HTMLElement>('[data-rotator-item]'));
   if (items.length < 2) return;
 
-  const sets = items.map((el) => {
+  items.forEach((el, i) => {
     el.hidden = false;
-    el.style.visibility = 'hidden';
-    return { el, chars: splitChars(el) };
+    gsap.set(el, { opacity: i === 0 ? 1 : 0 });
   });
 
-  /* Every character starts at full strength. This rotator is not the scrub
-     and must not inherit its half-lit from-state. */
-  sets.forEach((s) => gsap.set(s.chars, { opacity: 1, y: 0 }));
-
-  let current = 0;
-  const show = (i: number): gsap.core.Timeline => {
-    const { el, chars } = sets[i];
-    el.style.visibility = 'visible';
-    return gsap.timeline().fromTo(
-      chars,
-      { opacity: 0, y: 50 },
-      { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out', stagger: stagger(chars.length) }
-    );
-  };
-
-  const hide = (i: number): gsap.core.Timeline => {
-    const { el, chars } = sets[i];
-    return gsap.timeline({ onComplete: () => (el.style.visibility = 'hidden') }).to(chars, {
-      opacity: 0,
-      y: -50,
-      duration: 0.2,
-      ease: 'power2.in',
-      stagger: stagger(chars.length),
-    });
-  };
-
-  sets.forEach((s, i) => {
-    if (i !== 0) s.el.style.visibility = 'hidden';
-  });
-  show(0);
-
-  window.setInterval(() => {
-    const next = (current + 1) % sets.length;
-    const out = hide(current);
-    out.eventCallback('onComplete', () => {
-      sets[current].el.style.visibility = 'hidden';
-      current = next;
-      show(next);
-    });
-  }, 3000);
+  /* Once, then still. A label that re-animates for the whole time somebody
+     is on the page is the opposite of the rest of this build. */
+  window.setTimeout(() => {
+    gsap
+      .timeline()
+      .to(items[0], { opacity: 0, duration: 0.45, ease: 'power2.inOut' })
+      .to(items[1], { opacity: 1, duration: 0.45, ease: 'power2.inOut' }, '>-0.15');
+  }, 4200);
 }
 
 /* ------------------------------------------------------------
-   SCENE A, THE STUDIO
+   SCENE A, THE STUDIO. The half turn.
 
-   Track 500vh, stage sticky at 100vh. Progress 0 when the track's top meets
+   Track 320vh, stage sticky at 100vh. Progress 0 when the track's top meets
    the viewport top, 1 when its bottom does, so the scrub range in pixels is
    exactly the track height.
 
-     0.00 → 0.60   the statement travels the curve, -80% to 110%
-     0.50 → 0.60   the curve leaves: x to 200, opacity to 0
-     0.60 → 0.70   the payoff arrives: y 50 to 0, opacity 0 to 1
-     0.70 → 1.00   held. 1.5 viewports of finished, motionless frame.
+     0.00 → 0.18   the statement resolves, word by word, centre outward
+     0.18 → 0.28   the statement leaves sideways, x to -180 and opacity to 0
+     0.28 → 0.54   the violet blade sweeps in from the right AND the mark
+                   turns a half turn about 49.90% / 50.71% of its box
+     0.54 → 0.74   the payoff arrives on opacity alone, no travel, and the
+                   mark clears out from under it.
+     0.74 → 1.00   held.
 
-   The one overlap in the scene is deliberate and it is on a single element:
-   the curve is still travelling while it fades, which is one object leaving,
-   not two objects moving.
+   The room change and the turn share their window on purpose: they are one
+   event, and separating them would read as two things happening in a row
+   rather than as a page going over. The mark is alone on the stage while it
+   turns, because a half turn that a reader has to pick out from behind a
+   headline is not a claim about registration, it is a texture.
    ------------------------------------------------------------ */
 function sceneStudio(): void {
   const track = document.querySelector<HTMLElement>('[data-scene="studio"]');
   if (!track) return;
 
-  const wave = track.querySelector<HTMLElement>('[data-wave]');
-  const path = track.querySelector<SVGTextPathElement>('[data-wave-path]');
+  const blade = track.querySelector<HTMLElement>('[data-blade]');
+  const mark = track.querySelector<HTMLElement>('[data-turn-mark]');
+  const line = track.querySelector<HTMLElement>('[data-reveal-words]');
   const payoff = track.querySelector<HTMLElement>('[data-payoff]');
-  if (!wave || !path || !payoff) return;
+  if (!blade || !mark || !line || !payoff) return;
 
-  gsap.set(payoff, { opacity: 0, y: 50 });
-
-  const offset = { v: -80 };
-  const write = (): void => path.setAttribute('startOffset', `${offset.v}%`);
-  write();
+  gsap.set(payoff, { opacity: 0 });
+  /* The measured centre, stated to the transform system explicitly. GSAP
+     defaults transformOrigin to the box centre the first time it writes a
+     transform, and the whole claim this site makes about its mark is that
+     the box centre is the wrong point. */
+  gsap.set(mark, { transformOrigin: '49.90% 50.71%', rotation: 0 });
 
   const tl = gsap.timeline({
     scrollTrigger: {
@@ -182,50 +189,58 @@ function sceneStudio(): void {
     },
   });
 
-  tl.to(offset, { v: 110, ease: 'none', duration: 0.6, onUpdate: write }, 0)
-    .to(wave, { x: 200, opacity: 0, ease: 'none', duration: 0.1 }, 0.5)
-    .to(payoff, { opacity: 1, y: 0, ease: 'none', duration: 0.1 }, 0.6)
-    /* The hold. An empty tween is the honest way to say that the last 30% of
-       this track is meant to have nothing happening in it. */
-    .to({}, { duration: 0.3 }, 0.7);
+  resolveWords(line, tl, 0, 0.18);
+
+  tl.to(line, { x: -180, opacity: 0, ease: 'none', duration: 0.1 }, 0.18);
+
+  wipe(blade, 0, 1, 0.28, 0.26, tl);
+
+  tl.to(mark, { opacity: 1, ease: 'none', duration: 0.08 }, 0.28)
+    .to(mark, { rotation: 180, ease: 'none', duration: 0.26 }, 0.28)
+    /* It goes when the payoff arrives. Held at even a tenth of its strength
+       it still cut edges through the running text underneath it, and a mark
+       that damages the legibility of the sentence beside it is not being
+       used properly. The turn has been made; nothing is served by leaving
+       the evidence on the wall. */
+    .to(mark, { opacity: 0, ease: 'none', duration: 0.1 }, 0.54)
+    .to(payoff, { opacity: 1, ease: 'none', duration: 0.2 }, 0.54)
+    /* The hold. An empty tween is the honest way to say that the last quarter
+       of this track is meant to have nothing happening in it. */
+    .to({}, { duration: 0.26 }, 0.74);
 }
 
 /* ------------------------------------------------------------
-   SCENE B, CLEARSPACE
+   SCENE B, CLEARSPACE. The blade.
 
-   The set piece.
+   The set piece, and the mirror of Scene A: its blade enters from the other
+   side, and its room change happens FIRST rather than in the middle.
 
-     0.00 → 0.30   two magenta discs converge from off screen
-     0.30 → 0.35   the intro leaves upward, one full viewport, in a flick
-     0.35 → 0.45   the line rises into frame from a viewport below
-     0.45 → 0.50   the plate fades and lifts 50px in the bottom right
-     0.50 → 0.70   the characters brighten, one at a time, 0.5 to 1.0
-     0.70 → 1.00   held. 1.5 viewports of finished, motionless frame.
+     0.00 → 0.26   the magenta blade sweeps in from the left
+     0.26 → 0.34   the intro leaves sideways, x to 200
+     0.34 → 0.48   the body arrives sideways from -220
+     0.48 → 0.56   the plate lands on a half turn about the mark's centre
+     0.56 → 0.80   the note resolves, word by word, centre outward
+     0.80 → 1.00   held.
 
-   The discs never fully meet at the centre line. Each stops with enough
-   overlap that the curved edges cover the corners of a 100vh stage, which is
-   what lets the change of room be performed by two moving objects rather
-   than by a background swap.
+   Two 300vh circles used to converge here from off screen top and bottom.
+   They were the most recognisable borrowed mechanic on the page and they are
+   gone. The type in this scene is set in an ink that is legal on both the
+   paper it starts on and the magenta it ends on, so the ground changes under
+   a statement that never moves and is never hidden.
    ------------------------------------------------------------ */
 function sceneClear(): void {
   const track = document.querySelector<HTMLElement>('[data-scene="clearspace"]');
   if (!track) return;
 
-  const top = track.querySelector<HTMLElement>('[data-disc="top"]');
-  const bottom = track.querySelector<HTMLElement>('[data-disc="bottom"]');
+  const blade = track.querySelector<HTMLElement>('[data-blade]');
   const intro = track.querySelector<HTMLElement>('[data-clear-intro]');
   const body = track.querySelector<HTMLElement>('[data-clear-body]');
   const plate = track.querySelector<HTMLElement>('[data-clear-plate]');
-  const line = track.querySelector<HTMLElement>('[data-scrub]');
-  if (!top || !bottom || !intro || !body || !plate || !line) return;
+  const line = track.querySelector<HTMLElement>('[data-reveal-words]');
+  if (!blade || !intro || !body || !plate || !line) return;
 
-  const chars = splitChars(line);
-  const n = chars.length;
-
-  gsap.set([top, bottom], { y: 0 });
-  gsap.set(body, { y: () => window.innerHeight });
-  gsap.set(plate, { opacity: 0, y: 50 });
-  gsap.set(chars, { opacity: 0.5 });
+  gsap.set(body, { x: -220, opacity: 0 });
+  gsap.set(plate, { opacity: 0, transformOrigin: '49.90% 50.71%', rotation: -180 });
 
   const tl = gsap.timeline({
     scrollTrigger: {
@@ -238,34 +253,15 @@ function sceneClear(): void {
     },
   });
 
-  /* Each disc is 300vh tall and sits one full height off screen. Closing
-     travels 66vh, not 50: the ellipse is 240vw across, so its edge sits
-     13.6vh higher at the screen edges than at the centre line, and the two
-     have to overlap by more than that or the corners of the stage stay open.
-     The overlap is what makes a change of room read as seamless. */
-  tl.to(top, { y: () => window.innerHeight * 0.66, ease: 'none', duration: 0.3 }, 0)
-    .to(bottom, { y: () => window.innerHeight * -0.66, ease: 'none', duration: 0.3 }, 0)
-    .to(intro, { y: () => -window.innerHeight, ease: 'none', duration: 0.05 }, 0.3)
-    .to(body, { y: 0, ease: 'none', duration: 0.1 }, 0.35)
-    .to(plate, { opacity: 1, y: 0, ease: 'none', duration: 0.05 }, 0.45);
+  wipe(blade, 0, 1, 0, 0.26, tl);
 
-  /* Character i lights across [0.5 + (i/n)*0.2, 0.5 + ((i+1)/n)*0.2]. Setting
-     the stagger equal to the duration is what makes the windows abut exactly:
-     character i finishes on the frame character i+1 begins, so the boundary
-     between lit and unlit is a single moving edge rather than a soft band.
+  tl.to(intro, { x: 200, opacity: 0, ease: 'none', duration: 0.08 }, 0.26)
+    .to(body, { x: 0, opacity: 1, ease: 'none', duration: 0.14 }, 0.34)
+    .to(plate, { opacity: 1, rotation: 0, ease: 'none', duration: 0.08 }, 0.48);
 
-     0.5 to 1.0, never 0 to 1. The unread text is always legible at half
-     strength, so the reader is never shown blank space. */
-  if (n) {
-    const each = 0.2 / n;
-    tl.to(
-      chars,
-      { opacity: 1, ease: 'none', duration: each, stagger: { each } },
-      0.5
-    );
-  }
+  resolveWords(line, tl, 0.56, 0.24);
 
-  tl.to({}, { duration: 0.3 }, 0.7);
+  tl.to({}, { duration: 0.2 }, 0.8);
 }
 
 /* ------------------------------------------------------------

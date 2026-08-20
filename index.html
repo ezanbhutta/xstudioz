@@ -198,7 +198,17 @@
          colour above. That emptiness is engineered, not left over: it is the
          cheapest of the three mechanisms this page uses to read unhurried.
          ==================================================================== -->
-    <section class="hero room-magenta" id="hero" aria-label="Introduction">
+    <section class="hero room-paper" id="hero" aria-label="Introduction">
+
+      <!-- The mark, as a structural object in the composition rather than a
+           decoration in a corner. aria-hidden because it carries no word: the
+           agency's name is already in the header and in the eyebrow. It sits
+           before the sheet so the type is always over it in paint order
+           without anything needing a z-index of its own. -->
+      <div class="hero__mark" aria-hidden="true">
+        <svg class="hero__mark-svg" viewBox="0 0 404 404"><use href="#xmark-parts" width="404" height="404" /></svg>
+      </div>
+
       <div class="container hero__sheet">
 
         <div class="hero__head">
@@ -247,40 +257,46 @@
     </section>
 
     <!-- ================= 01 · THE STUDIO ====================================
-         SCENE A. Room: deep violet. Ink: #f2f1f6 at 13.45:1.
-
-         Five viewports of scroll spent on one statement, which is the
-         inverted density this page runs on: one sentence gets five
-         viewports and the whole capability catalogue gets one.
+         SCENE A. Opens on paper. Turns over to violet halfway through.
 
          The pin is `position: sticky`, not a pinning library. The track is
-         500vh tall, the stage inside it is 100vh and sticky at top 0, and a
-         single scroll progress drives three things in NON-OVERLAPPING
-         windows so only one element is ever moving:
+         320vh tall and the stage inside it is 100vh, stuck at top 0.
 
-           0.00 → 0.60   the statement travels the curve
-           0.50 → 0.60   the curve leaves, x and opacity together
-           0.60 → 0.70   the payoff arrives, y and opacity together
-           0.70 → 1.00   nothing. 1.5 viewports of held frame.
+           0.00 → 0.18   the statement resolves, word by word, from the
+                         centre of the line outward. Opacity only.
+           0.18 → 0.34   the statement leaves sideways
+           0.34 → 0.60   the violet plane sweeps in from the right and the
+                         mark turns a half turn about its measured centre.
+                         One event, so the two overlap on purpose.
+           0.60 → 0.78   the payoff arrives. Opacity, no travel at all.
+           0.78 → 1.00   nothing. Roughly two thirds of a viewport, held.
          ==================================================================== -->
-    <section class="scene scene--studio room-deep" id="studio" aria-label="The studio">
+    <section class="scene scene--studio room-paper" id="studio" aria-label="The studio">
       <div class="scene__track" data-scene="studio">
         <div class="scene__stage">
+
+          <!-- The room turns over here. One violet plane sweeps in from the
+               right on a diagonal cut at the mark's own angle, and the mark
+               makes a single half turn about its measured centre of rotation
+               as the plane lands. Horizontal, and a rotation, because the
+               reference moves everything vertically and rotates nothing. -->
+          <span class="blade blade--right" data-blade aria-hidden="true"></span>
+
           <div class="container scene__inner">
 
             <p class="label scene__eyebrow">The Studio</p>
 
-            <!-- The statement rides a single cubic S, so it rises, crests,
-                 dips and rises again as it travels the frame. SVG text is
-                 exposed to assistive technology, so the heading is the
-                 drawing rather than a copy of it. -->
-            <h2 class="wave" data-wave>
-              <svg class="wave__svg" viewBox="0 0 1440 360" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
-                <path id="studio-curve" fill="none" d="M0 214 C240 74, 480 74, 720 214 C960 354, 1200 354, 1440 214" />
-                <text class="wave__text"><textPath href="#studio-curve" startOffset="-80%" data-wave-path>Small on purpose. Serious by default.</textPath></text>
-              </svg>
-              <span class="sr-only">Small on purpose. Serious by default.</span>
-            </h2>
+            <div class="turn" data-turn-stage>
+              <!-- The single-path mark, not the two-path construction one.
+                   Its counter is a real hole in one path, so whichever ground
+                   is underneath reads through the drawing without anything
+                   having to know which ground that currently is. -->
+              <div class="turn__mark" data-turn-mark aria-hidden="true">
+                <svg class="turn__mark-svg"><use href="#xmark" /></svg>
+              </div>
+
+              <h2 class="turn__line display" data-reveal-words>Small on purpose. Serious by default.</h2>
+            </div>
 
             <div class="payoff measure-display" data-payoff>
               <p class="payoff__line heading">The studio stays small so the standard can stay high. The same process, the same care, whether it is a single mark or a full identity system.</p>
@@ -408,7 +424,7 @@
          black, so the plate is pinned to the ground the mark was drawn
          against rather than following the room around the page.
          ==================================================================== -->
-    <section class="anatomy section room-deep" id="mark" aria-label="The mark">
+    <section class="anatomy section room-paper" id="mark" aria-label="The mark">
       <div class="container">
         <div class="section__head">
           <p class="label">The Mark</p>
@@ -551,7 +567,7 @@
          viewports. That inversion is the pacing: density is set against
          importance by word count, not with it.
          ==================================================================== -->
-    <section class="process section room-violet" id="process" aria-label="Process">
+    <section class="process section room-paper" id="process" aria-label="Process">
       <div class="container">
         <div class="section__head">
           <p class="label">The Process</p>
@@ -589,31 +605,29 @@
       </div>
     </section>
 
-    <!-- ================= 07 · CLEARSPACE ====================================
-         SCENE B. The set piece. Room: void, turning magenta from within.
+    <!-- ================= 07 · CLEARSPACE ===================================
+         SCENE B. Opens on paper. The magenta arrives underneath type that
+         never moves and never hides: the statement is set in the ink that
+         reads on BOTH grounds, so there is no frame in this scene where a
+         reader can be shown a word they cannot see.
 
-         The room does not swap its background. Two magenta discs converge
-         from off screen and fill the stage, so the change of room is
-         performed by two moving objects. The intro headline is set in
-         #09090b throughout: invisible against the void it starts on, and
-         5.30:1 against the magenta that arrives underneath it. The circles
-         do not reveal a new colour, they reveal the type.
-
-         Five non-overlapping windows and a held frame:
-
-           0.00 → 0.30   the discs converge
-           0.30 → 0.35   the intro leaves, upward, in a flick
-           0.35 → 0.45   the line rises into frame
-           0.45 → 0.50   the plate fades and lifts
-           0.50 → 0.70   the characters brighten, one at a time
-           0.70 → 1.00   nothing. 1.5 viewports of held frame.
+           0.00 → 0.26   one magenta blade sweeps in from the left
+           0.26 → 0.34   the intro leaves sideways
+           0.34 → 0.48   the body arrives sideways from the other side
+           0.48 → 0.56   the plate lands on a half turn about the mark's
+                         measured centre of rotation
+           0.56 → 0.80   the note resolves, word by word, centre outward
+           0.80 → 1.00   nothing. Four fifths of a viewport, held.
          ==================================================================== -->
-    <section class="scene scene--clear room-void" id="clearspace" aria-label="Clearspace">
+    <section class="scene scene--clear room-paper" id="clearspace" aria-label="Clearspace">
       <div class="scene__track" data-scene="clearspace">
         <div class="scene__stage">
 
-          <span class="disc disc--top" data-disc="top" aria-hidden="true"></span>
-          <span class="disc disc--bottom" data-disc="bottom" aria-hidden="true"></span>
+          <!-- One blade, entering from the left, opposite to the studio's.
+               The ground changes underneath type that does not move: the
+               statement is set in an ink that reads on paper AND on magenta,
+               so nothing is ever hidden waiting for a scroll position. -->
+          <span class="blade blade--left" data-blade aria-hidden="true"></span>
 
           <div class="container scene__inner scene__inner--clear">
 
@@ -626,7 +640,7 @@
             </div>
 
             <div class="clear__body" data-clear-body>
-              <p class="clear__note heading measure-statement" data-scrub>One mark width on every side, at every size, in every direction. Every move on this page was made to keep it open. It is still one width, filled.</p>
+              <p class="clear__note heading measure-statement" data-reveal-words>One mark width on every side, at every size, in every direction. Every move on this page was made to keep it open. It is still one width, filled.</p>
             </div>
 
             <figure class="clear__plate" data-clear-plate>
