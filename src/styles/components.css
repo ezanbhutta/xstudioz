@@ -644,20 +644,27 @@ html.nav-open {
 /* ============================================================
    THE COLOPHON
 
-   The void room, always, in every theme and under every page. It is the last
-   frame of the document and it closes the same way each time: one statement,
-   one filled control, then the apparatus. It ends rather than restarts.
+   The deep violet room, always, in every theme and under every page. It is
+   the last frame of the document and it closes the same way each time: one
+   statement, one filled control, then the apparatus. It ends rather than
+   restarts.
+
+   It used to be the void, which is a near black that the pixel instrument
+   correctly reads as no colour at all. On a site whose grounds are now
+   mostly paper, a black footer closed the document on an absence. Deep
+   violet closes it on the brand, holds 13.45:1 for its statement, and is the
+   one band of colour every one of the sixteen routes ends on.
    ============================================================ */
 
 .footer {
   /* One source for the mark's size. The statement reserves exactly this much
      room on its right, so the two can never collide at any viewport. */
   --footer-mark: clamp(150px, 24vw, 380px);
-  --ground: var(--room-void-ground);
-  --ink: var(--room-void-ink);
-  --ink-dim: var(--room-void-dim);
-  --ink-quiet: var(--room-void-quiet);
-  --ink-accent: var(--room-void-accent);
+  --ground: var(--room-deep-ground);
+  --ink: var(--room-deep-ink);
+  --ink-dim: var(--room-deep-dim);
+  --ink-quiet: var(--room-deep-quiet);
+  --ink-accent: var(--room-deep-accent);
   --ink-line: color-mix(in srgb, var(--ink) 18%, transparent);
   --ink-line-strong: color-mix(in srgb, var(--ink) 34%, transparent);
   background: var(--ground);
@@ -667,7 +674,7 @@ html.nav-open {
 
 .footer ::selection {
   background: var(--ink-accent);
-  color: var(--room-void-ground);
+  color: var(--room-deep-ground);
 }
 
 .footer__grid {

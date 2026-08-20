@@ -14,18 +14,48 @@
 /* ============================================================
    00 · HERO
 
-   items-end. The headline sits on the floor of the frame with roughly a
-   third of the viewport left as untouched magenta above it. That is the
-   cheapest of the three emptiness mechanisms on this page and it costs
-   nothing but the discipline to leave the space alone.
+   Paper ground. The headline sits on the floor of the frame with the top
+   third left open, which is the cheapest of the emptiness mechanisms on this
+   page and costs nothing but the discipline to leave the space alone.
+
+   The frame no longer commits to one flat hex. Colour arrives as a single
+   plane cut on the mark's own diagonal, holding the lede and the two
+   controls, so the reader meets the brand as a shape rather than as a wash.
+   Three treatments were built and looked at before this one was kept; the
+   two that lost are recorded in the report, not in this file.
    ============================================================ */
 
 .hero {
+  position: relative;
   min-height: 100svh;
   display: flex;
+  overflow: hidden;
+}
+
+/* ---- The mark, as structure ----
+   Not an ornament in a corner. It is the second largest object in the frame
+   after the headline, it runs off the right edge of the page on purpose, and
+   its counter is punched to the ground so the paper reads through it. The
+   reference has no equivalent object, and using this one properly is the
+   cheapest way to stop looking like a restyle of that page. */
+.hero__mark {
+  position: absolute;
+  right: 0;
+  top: 12svh;
+  width: clamp(150px, 21vw, 320px);
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+
+.hero__mark-svg {
+  --xm-body: var(--brand-magenta);
+  --xm-counter: var(--ground);
+  width: 100%;
+  height: 100%;
 }
 
 .hero__sheet {
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -41,9 +71,13 @@
   gap: var(--sp-5);
 }
 
+/* No measure cap. This is one short line in a 1460px row, and the 32ch cap
+   resolved to 268.8px against a line that needs 269, so it broke in two over
+   less than a pixel while 1200px sat empty beside it. A cap is for protecting
+   a reading column, and this is not one. */
 .hero__eyebrow {
   color: var(--ink);
-  max-width: 32ch;
+  white-space: nowrap;
 }
 
 /* The rotator has to reserve its own row height, because the characters
@@ -51,7 +85,11 @@
    moved would shove the eyebrow beside it. */
 .hero__state {
   position: relative;
-  min-width: 18ch;
+  /* Wide enough for the LONGEST state, not the average one. At 18ch this
+     reserved 172.8px for a row whose widest string measures 176, so the last
+     character of "2026" had nowhere to land and the swap read as broken type
+     rather than as an animation. */
+  min-width: 21ch;
   height: 1.3em;
   text-align: right;
   overflow: visible;
@@ -91,12 +129,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--sp-4);
-  padding-bottom: 0.14em;
-  max-width: 46ch;
-}
-
-.hero__lede {
-  color: var(--ink);
 }
 
 .hero__act {
@@ -129,14 +161,105 @@
   stroke: currentColor;
 }
 
+/* ============================================================
+   THE HERO PANEL
+
+   Four treatments were built side by side and screenshot in the same browser
+   at the same width so they could be compared rather than remembered. What
+   ships is the fourth. The three that lost:
+
+     A · paper      whole frame paper, colour only in the control and the
+                    mark. The most readable, and it undersold the brand: the
+                    only chromatic pixels in the opening frame were a
+                    hairline outline.
+     B · split      a corner to corner diagonal with the frame half paper and
+                    half magenta. Strong, but the cut ran straight through
+                    the lede and through half of a control, which is a
+                    contrast hazard before it is an aesthetic problem.
+     C · axis       centred stack with a deep violet band on the floor. The
+                    furthest from the reference and the worst on its own
+                    terms: the band ate the last line of the lede and took
+                    the second control down to an unreadable ratio.
+
+   What is kept from each: A's paper ground, B's diagonal stated as the
+   mark's own cut, and from C the decision that the mark is a structural
+   object rather than an ornament.
+   ============================================================ */
+
+.hero__floor {
+  grid-template-columns: minmax(0, 1fr) min(44vw, 600px);
+  align-items: end;
+  column-gap: clamp(20px, 3vw, 54px);
+}
+
+/* The panel IS the cluster rather than a plane behind it, so the text cannot
+   leave its own ground at any width. It bleeds off the right edge, which is
+   what makes it a piece of the page rather than a card sitting on one, and
+   its top-left corner is chamfered at --x-r, the mark's own cut. */
+.hero__cluster {
+  --ink: var(--room-magenta-ink);
+  --ink-dim: var(--room-magenta-dim);
+  --ink-quiet: var(--room-magenta-quiet);
+  --ink-line: color-mix(in srgb, var(--room-magenta-ink) 26%, transparent);
+  /* The panel publishes its own ground as well as its ink. Without it the
+     controls inside read --ground off the section, which is paper, and a
+     solid pill on this panel came out near black on near black the moment
+     the reader was in the dark theme. */
+  --ground: var(--room-magenta-ground);
+  background: var(--brand-magenta);
+  color: var(--room-magenta-ink);
+  max-width: none;
+  gap: var(--sp-5);
+  padding: var(--sp-6) var(--gutter) var(--sp-6) var(--sp-6);
+  margin-right: calc(var(--gutter) * -1);
+  clip-path: polygon(7% 0, 100% 0, 100% 100%, 0 100%, 0 13%);
+}
+
+.hero__lede {
+  color: var(--room-magenta-ink);
+  max-width: 42ch;
+}
+
+/* The filled control inside the magenta cannot take the magenta room's own
+   pair, or it is a magenta fill on a magenta panel. It commits to the void
+   in both directions instead: near black filled with near white type at
+   17.71:1, and the same two swapped on hover. Both hexes are fixed, so the
+   control reads identically in daylight and in the dark. */
+.hero__cta {
+  --ink: var(--room-magenta-ink);
+  --ground: var(--room-void-ink);
+}
+
 @media (max-width: 1100px) {
   .hero__floor {
     grid-template-columns: 1fr;
     align-items: start;
   }
 
+  /* The panel bleeds both edges once the frame is one column, so it reads as
+     a band across the page rather than as a narrow slab pushed to one side.
+     Only the top-left corner is chamfered here, and the padding clears it, so
+     nothing inside is ever cut. The full-height diagonal that the desktop
+     panel can afford ran straight through the first character of every line
+     of the lede at this width. */
   .hero__cluster {
-    padding-bottom: 0;
+    margin-inline: calc(var(--gutter) * -1);
+    padding: var(--sp-5) var(--gutter);
+    clip-path: polygon(0 14%, 10% 0, 100% 0, 100% 100%, 0 100%);
+  }
+
+  .hero__lede {
+    max-width: none;
+  }
+
+  /* Parked in the open band between the eyebrow and the headline, running
+     off the right edge. It is the one object in the frame allowed to touch
+     an edge, and it must clear the fixed header, which is why the top is
+     stated against --nav-h rather than left to the static position. */
+  .hero__mark {
+    right: calc(var(--gutter) * -1.4);
+    top: calc(var(--nav-h) + var(--sp-6));
+    width: clamp(104px, 30vw, 150px);
   }
 }
 
@@ -179,9 +302,19 @@
   position: relative;
 }
 
+/* 320vh here and 400vh on the second scene, set per scene rather than
+   shared. The reference runs its two set pieces at 500vh and 600vh with a
+   30% dead hold on each, which is 3.3 viewports of the document spent on a
+   frozen frame. These are shorter, unequal, and hold for 22% and 20%, so the
+   page keeps the stillness without asking anyone to scroll through it
+   twice. */
 .scene__track {
   position: relative;
-  height: 500vh;
+  height: 320vh;
+}
+
+.scene--clear .scene__track {
+  height: 400vh;
 }
 
 .scene__stage {
@@ -210,34 +343,96 @@
   color: var(--ink);
 }
 
-/* ---- Scene A: the statement on the curve ---- */
+/* ---- The blade ----
+   The room change on this site is performed by ONE plane sweeping
+   HORIZONTALLY, with its leading edge cut on the mark's own diagonal. The
+   reference converges two circles vertically; a circle is not in this brand's
+   drawing and a vertical close is the move everybody makes.
 
-/* Centred by layout, not by transform, for the same reason the discs are
-   placed by position: the timeline writes transform on this element and a
-   centring translate would be parsed as an existing offset and carried into
-   every frame it writes. */
-.wave {
+   The cut leans 69% of the width across 100% of the height, which at a 1500
+   by 900 stage puts the edge within a degree of 40.82, the angle the mark's
+   diagonals actually sit at (45 less --x-tau). The plane is driven by one
+   unitless custom property so the whole shape is a single number the
+   timeline writes, and at --wipe: 1 the polygon covers the stage exactly
+   with no seam at any corner.
+
+   Painted first in the stage, so everything in the container is over it in
+   paint order and no element needs a z-index of its own. */
+.blade {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  margin: 0;
-  text-align: var(--align);
+  --wipe: 0;
   pointer-events: none;
+  will-change: clip-path;
 }
 
-.wave__svg {
+.blade--right {
+  background: var(--brand-violet);
+  clip-path: polygon(
+    calc(100% - var(--wipe) * 169%) 0,
+    100% 0,
+    100% 100%,
+    calc(169% - var(--wipe) * 169%) 100%
+  );
+}
+
+.blade--left {
+  background: var(--blade-clear);
+  clip-path: polygon(
+    0 0,
+    calc(var(--wipe) * 169% - 69%) 0,
+    calc(var(--wipe) * 169%) 100%,
+    0 100%
+  );
+}
+
+/* ---- Scene A: the half turn ---- */
+
+/* The mark is the axis the statement is hung from rather than a picture
+   beside it. It sits behind the line, centred on the stage, and the line
+   crosses it. */
+.turn {
+  position: relative;
+  display: grid;
+  place-items: center;
   width: 100%;
-  height: auto;
-  overflow: visible;
 }
 
-.wave__text {
-  font-family: var(--font-display);
-  font-size: 100px;
-  font-weight: 400;
-  letter-spacing: -1px;
-  fill: var(--ink);
+.turn__mark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* Sized off the SMALLER of the two viewport axes, not the height alone.
+     At 54vh a 844px tall phone gave a 456px mark on a 390px wide screen: it
+     ran off both edges and read as wallpaper rather than as the mark. */
+  width: max(190px, min(48vh, 56vw, 520px));
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* Fixed brand magenta rather than the room's accent, because this one object
+   is on paper for the first third of the scene and on violet for the rest,
+   and a token that follows the room would change under it halfway through a
+   rotation. */
+.turn__mark-svg {
+  fill: var(--brand-magenta);
+  width: 100%;
+  height: 100%;
+}
+
+/* The statement is real text at the display step, not glyphs riding an SVG
+   path. It is centred, which is one of the few things on this page that is,
+   and it sits over the mark. */
+.turn__line {
+  position: relative;
+  margin: 0;
+  text-align: center;
+  color: var(--ink);
+  max-width: var(--measure-display);
+  will-change: transform, opacity;
 }
 
 .payoff {
@@ -260,47 +455,45 @@
   text-align: var(--align);
 }
 
-@media (max-width: 900px) {
-  .wave__text {
-    font-size: 148px;
-  }
-
-  .wave__svg {
-    width: 200%;
-  }
+/* Scene A's stage holds two compositions in the same box: the turn, and the
+   payoff that replaces it. They are stacked in one grid cell rather than run
+   in sequence, so the second cannot push the first off a stage that is
+   exactly one viewport tall. */
+.scene--studio .scene__inner {
+  display: grid;
+  align-content: center;
 }
 
-/* ---- Scene B: the discs, the flick, the scrub ---- */
-
-/* Two identical discs converge from off screen and fill the stage with flat
-   magenta. They never fully meet at the centre line: each stops with enough
-   overlap that the curved edges cover the corners, which is what lets a
-   change of room be performed by two moving objects rather than by a
-   background swap. */
-.disc {
-  position: absolute;
-  left: 50%;
-  width: 240vw;
-  height: 300vh;
-  margin-left: -120vw;
-  border-radius: 50%;
-  background: var(--brand-magenta);
-  pointer-events: none;
-  will-change: transform;
+.scene--studio .turn,
+.scene--studio .payoff {
+  grid-area: 1 / 1;
 }
 
- /* Placed off screen by POSITION, never by transform. A transform here would
-    be read back by the scrubber as an existing y and added to the one it
-    writes, which parks both discs at twice the intended distance and leaves
-    the scene playing out on a stage nothing ever reaches. Transform on these
-    two elements belongs to the timeline alone. */
-.disc--top {
-  top: -300vh;
+/* The payoff lands after the blade, so it is set against violet and not
+   against the paper the scene opened on. */
+.scene--studio .payoff {
+  --ink: var(--room-violet-ink);
+  --ink-dim: var(--room-violet-dim);
+  --ink-quiet: var(--room-violet-quiet);
+  --ink-accent: var(--room-violet-accent);
+  --ink-line: color-mix(in srgb, var(--room-violet-ink) 26%, transparent);
+  color: var(--room-violet-ink);
+  align-self: center;
+  /* Flush to the gutter like the eyebrow above it. Stacked in the same grid
+     cell as the turn, the measure cap's auto right margin was resolving
+     against a stretched column and leaving the block inset by 110px while
+     the section label beside it sat at 20. */
+  justify-self: start;
+  width: 100%;
 }
 
-.disc--bottom {
-  bottom: -300vh;
-}
+/* ---- Scene B: the blade, the exchange, the word reveal ----
+
+   The two 300vh discs that used to converge here are gone, and with them the
+   single most recognisable borrowed mechanic on the page. What replaces them
+   is one blade entering from the opposite side to Scene A's, so the two set
+   pieces on this document are a mirrored pair rather than two versions of
+   the same move. */
 
 .scene__inner--clear {
   justify-content: center;
@@ -321,13 +514,17 @@
   will-change: transform;
 }
 
-/* Both the eyebrow and the statement are set in the magenta room's ink, so
-   they are invisible against the void the scene opens on and read at 5.30:1
-   the moment the discs arrive underneath them. The discs do not reveal a
-   colour, they reveal the type. */
+/* One ink, legal on BOTH grounds this scene passes through, so the type is
+   set once and never changes, the blade passes underneath it, and there is
+   no frame in the scene where a word sits somewhere a reader cannot see it.
+   That is the inversion: the reference reveals the type with the ground, and
+   this reveals the ground under the type.
+
+   The pair resolves differently in the two themes and tokens.css states the
+   arithmetic that forces it. */
 .clear__eyebrow,
 .clear__statement {
-  color: var(--room-magenta-ink);
+  color: var(--clear-ink);
 }
 
 .clear__statement {
@@ -347,7 +544,7 @@
 
 .clear__note {
   margin: 0;
-  color: var(--room-magenta-ink);
+  color: var(--clear-ink);
   text-align: var(--align);
 }
 
@@ -363,7 +560,7 @@
 .clear__field {
   position: relative;
   aspect-ratio: 1;
-  border: 1px solid var(--room-magenta-ink);
+  border: 1px solid var(--clear-ink);
 }
 
 /* Three mark widths across, because the mark is one and the clearance is one
@@ -383,8 +580,8 @@
    is why the two fills are addressed as properties on the host and not as
    rules on the paths. */
 .clear__mark {
-  --xm-body: var(--room-magenta-ink);
-  --xm-counter: var(--room-magenta-ground);
+  --xm-body: var(--clear-ink);
+  --xm-counter: var(--clear-counter);
 }
 
 .clear__cap {
@@ -392,7 +589,7 @@
   justify-content: space-between;
   gap: var(--sp-3);
   margin-top: var(--sp-2);
-  color: var(--room-magenta-quiet);
+  color: var(--clear-quiet);
 }
 
 @media (max-width: 900px) {
@@ -433,8 +630,6 @@ html.no-motion .scene__inner {
 
 html:not(.js) .scene__eyebrow,
 html.no-motion .scene__eyebrow,
-html:not(.js) .wave,
-html.no-motion .wave,
 html:not(.js) .clear__intro,
 html.no-motion .clear__intro,
 html:not(.js) .clear__plate,
@@ -444,23 +639,71 @@ html.no-motion .clear__plate {
   inset: auto;
 }
 
+/* Scene A stacks its two compositions in one grid cell so the second cannot
+   push the first off a stage exactly one viewport tall. With no stage there
+   is nothing to push off, so they un-stack and read in document order: the
+   label, the mark, the statement, then the payoff. */
+html:not(.js) .scene--studio .scene__inner,
+html.no-motion .scene--studio .scene__inner {
+  align-content: start;
+}
+
+html:not(.js) .scene--studio .turn,
+html.no-motion .scene--studio .turn,
+html:not(.js) .scene--studio .payoff,
+html.no-motion .scene--studio .payoff {
+  grid-area: auto;
+}
+
+html:not(.js) .turn__line,
+html.no-motion .turn__line {
+  max-width: none;
+}
+
+/* The mark cannot sit behind the line when the stage has collapsed to its
+   content, because there is no stage left to centre it in. It becomes an
+   ordinary block above the statement. */
+html:not(.js) .turn__mark,
+html.no-motion .turn__mark {
+  position: static;
+  translate: none;
+  transform: none;
+  opacity: 1;
+  width: clamp(160px, 26vw, 300px);
+  margin-inline: auto;
+  margin-bottom: var(--sp-5);
+}
+
 html:not(.js) .clear__plate,
 html.no-motion .clear__plate {
   width: clamp(150px, 17vw, 260px);
 }
 
-html:not(.js) .disc,
-html.no-motion .disc {
+html:not(.js) .blade,
+html.no-motion .blade {
   display: none;
+}
+
+/* Each scene takes its arriving room outright, because the inks inside it
+   were chosen against that ground and not against paper. */
+html:not(.js) .scene--studio,
+html.no-motion .scene--studio {
+  --ground: var(--room-violet-ground);
+  --ink: var(--room-violet-ink);
+  --ink-dim: var(--room-violet-dim);
+  --ink-quiet: var(--room-violet-quiet);
+  --ink-accent: var(--room-violet-accent);
+  background: var(--ground);
+  color: var(--ink);
 }
 
 html:not(.js) .scene--clear,
 html.no-motion .scene--clear {
-  --ground: var(--room-magenta-ground);
-  --ink: var(--room-magenta-ink);
-  --ink-dim: var(--room-magenta-dim);
-  --ink-quiet: var(--room-magenta-quiet);
-  --ink-accent: var(--room-magenta-accent);
+  --ground: var(--blade-clear);
+  --ink: var(--clear-ink);
+  --ink-dim: var(--clear-ink);
+  --ink-quiet: var(--clear-quiet);
+  --ink-accent: var(--clear-ink);
   background: var(--ground);
   color: var(--ink);
 }
@@ -485,7 +728,6 @@ html.no-motion .scene--clear {
   }
 
   .scene__eyebrow,
-  .wave,
   .clear__intro,
   .clear__plate {
     position: static;
@@ -493,16 +735,49 @@ html.no-motion .scene--clear {
     inset: auto;
   }
 
-  .disc {
+  .scene--studio .scene__inner {
+    align-content: start;
+  }
+
+  .scene--studio .turn,
+  .scene--studio .payoff {
+    grid-area: auto;
+  }
+
+  .turn__line {
+    max-width: none;
+  }
+
+  .turn__mark {
+    position: static;
+    translate: none;
+    transform: none;
+    opacity: 1;
+    width: clamp(160px, 26vw, 300px);
+    margin-inline: auto;
+    margin-bottom: var(--sp-5);
+  }
+
+  .blade {
     display: none;
   }
 
+  .scene--studio {
+    --ground: var(--room-violet-ground);
+    --ink: var(--room-violet-ink);
+    --ink-dim: var(--room-violet-dim);
+    --ink-quiet: var(--room-violet-quiet);
+    --ink-accent: var(--room-violet-accent);
+    background: var(--ground);
+    color: var(--ink);
+  }
+
   .scene--clear {
-    --ground: var(--room-magenta-ground);
-    --ink: var(--room-magenta-ink);
-    --ink-dim: var(--room-magenta-dim);
-    --ink-quiet: var(--room-magenta-quiet);
-    --ink-accent: var(--room-magenta-accent);
+    --ground: var(--blade-clear);
+    --ink: var(--clear-ink);
+    --ink-dim: var(--clear-ink);
+    --ink-quiet: var(--clear-quiet);
+    --ink-accent: var(--clear-ink);
     background: var(--ground);
     color: var(--ink);
   }
@@ -1137,10 +1412,10 @@ html.no-motion .scene--clear {
    The header is fixed, so it cannot inherit the room it happens to be over.
    Each document declares which room its FIRST section paints and the header
    takes that room's ink until the reader scrolls, at which point it commits
-   to the void bar. The cover opens on magenta, so its unscrolled header is
-   near black at 5.30:1 rather than white at 3.75:1, which would have been
-   under the floor for 14px type.
+   to the void bar. The cover opens on paper now rather than on magenta, so
+   its unscrolled header takes the paper room's ink: 16.4:1 in daylight and
+   17.7:1 in the dark.
    ============================================================ */
 .cover {
-  --nav-ink: var(--room-magenta-ink);
+  --nav-ink: var(--room-paper-ink);
 }

@@ -310,6 +310,52 @@ button {
   transform-origin: left center;
 }
 
+/* ============================================================
+   THE SECTION SEAL
+
+   Every section head ends on the mark, and consecutive sections alternate
+   its orientation: upright, half turned, upright, half turned.
+
+   This is the cheapest possible use of the one thing this brand has that the
+   reference has no equivalent for. The mark maps onto itself 22 vertices out
+   of 22 at a half turn, 29 of 52 at a quarter and 32 of 52 mirrored, so a
+   half turn is the ONLY rotation it can make and come back identical. Turned
+   about 49.90% / 50.71% of its box rather than the box centre, which is
+   where its real centre of rotation was measured to be, the alternation is
+   invisible: the seal looks the same in both states and IS the same in both
+   states. That is the claim, made by the furniture rather than stated in a
+   caption.
+
+   Delivered as a mask rather than as markup, so it reaches all sixteen
+   documents without a single element being added to any of them, and takes
+   the room's ink like everything else.
+   ============================================================ */
+.section__head::after {
+  content: '';
+  flex: none;
+  width: 13px;
+  height: 13px;
+  background: currentColor;
+  color: var(--ink);
+  opacity: 0.42;
+  /* Base64 rather than percent-encoded: the minifier could not parse the
+     scheme inside a percent-encoded payload and failed the build on it. */
+  -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9Jzc1OCAzMzUgNDA0IDQwNCc+PHBhdGggZD0nTTEwNDEuNCw3MzJjLTMuNywwLTcuNC0xLjQtMTAuMi00LjNsLTUxLjktNTEuOWMtMi45LTIuOS00LjUtNy4xLTQuMi0xMS4zbDEuOC0yNC44LTg4LDg4Yy01LjYsNS42LTE0LjgsNS42LTIwLjUsMGwtOTYuMS05Ni4xYy0yLjctMi43LTQuMy02LjQtNC4zLTEwLjJzMS42LTcuNSw0LjMtMTAuMmw3MS4xLTcxLjEtNzEuMS03MS4xYy0yLjctMi43LTQuMy02LjQtNC4zLTEwLjJzMS42LTcuNSw0LjMtMTAuMmw5Ni4xLTk2LjFjNS42LTUuNiwxNC44LTUuNiwyMC41LDBsNTEuOSw1MS45YzIuOSwyLjksNC41LDcuMSw0LjIsMTEuM2wtMS44LDI0LjgsODgtODhjMi43LTIuNyw2LjQtNC4zLDEwLjItNC4zaDBjMy44LDAsNy41LDEuNiwxMC4yLDQuM2w5Ni4xLDk2LjFjNS42LDUuNiw1LjYsMTQuOCwwLDIwLjVsLTcxLjEsNzEuMSw3MS4xLDcxLjFjNS42LDUuNiw1LjYsMTQuOCwwLDIwLjVsLTk2LjEsOTYuMWMtMi45LDIuOS02LjUsNC4zLTEwLjIsNC4zWk04MDMuMSw2MjEuNGw3NS42LDc1LjYsMTA1LjMtMTA1LjNjNC4zLTQuMywxMC44LTUuNSwxNi4zLTIuOSw1LjUsMi41LDguOCw4LjIsOC40LDE0LjJsLTQuMiw1NywzNywzNyw3NS42LTc1LjYtNzEuMS03MS4xYy01LjYtNS42LTUuNi0xNC44LDAtMjAuNWw3MS4xLTcxLjEtNzUuNi03NS42LTEwNS4yLDEwNS4yYy00LjMsNC4zLTEwLjgsNS41LTE2LjMsMi45cy04LjgtOC4yLTguNC0xNC4ybDQuMi01Ny0zNy0zNy03NS42LDc1LjYsNzEuMSw3MS4xYzUuNiw1LjYsNS42LDE0LjgsMCwyMC41bC03MS4xLDcxLjFoMFonLz48L3N2Zz4=");
+  mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9Jzc1OCAzMzUgNDA0IDQwNCc+PHBhdGggZD0nTTEwNDEuNCw3MzJjLTMuNywwLTcuNC0xLjQtMTAuMi00LjNsLTUxLjktNTEuOWMtMi45LTIuOS00LjUtNy4xLTQuMi0xMS4zbDEuOC0yNC44LTg4LDg4Yy01LjYsNS42LTE0LjgsNS42LTIwLjUsMGwtOTYuMS05Ni4xYy0yLjctMi43LTQuMy02LjQtNC4zLTEwLjJzMS42LTcuNSw0LjMtMTAuMmw3MS4xLTcxLjEtNzEuMS03MS4xYy0yLjctMi43LTQuMy02LjQtNC4zLTEwLjJzMS42LTcuNSw0LjMtMTAuMmw5Ni4xLTk2LjFjNS42LTUuNiwxNC44LTUuNiwyMC41LDBsNTEuOSw1MS45YzIuOSwyLjksNC41LDcuMSw0LjIsMTEuM2wtMS44LDI0LjgsODgtODhjMi43LTIuNyw2LjQtNC4zLDEwLjItNC4zaDBjMy44LDAsNy41LDEuNiwxMC4yLDQuM2w5Ni4xLDk2LjFjNS42LDUuNiw1LjYsMTQuOCwwLDIwLjVsLTcxLjEsNzEuMSw3MS4xLDcxLjFjNS42LDUuNiw1LjYsMTQuOCwwLDIwLjVsLTk2LjEsOTYuMWMtMi45LDIuOS02LjUsNC4zLTEwLjIsNC4zWk04MDMuMSw2MjEuNGw3NS42LDc1LjYsMTA1LjMtMTA1LjNjNC4zLTQuMywxMC44LTUuNSwxNi4zLTIuOSw1LjUsMi41LDguOCw4LjIsOC40LDE0LjJsLTQuMiw1NywzNywzNyw3NS42LTc1LjYtNzEuMS03MS4xYy01LjYtNS42LTUuNi0xNC44LDAtMjAuNWw3MS4xLTcxLjEtNzUuNi03NS42LTEwNS4yLDEwNS4yYy00LjMsNC4zLTEwLjgsNS41LTE2LjMsMi45cy04LjgtOC4yLTguNC0xNC4ybDQuMi01Ny0zNy0zNy03NS42LDc1LjYsNzEuMSw3MS4xYzUuNiw1LjYsNS42LDE0LjgsMCwyMC41bC03MS4xLDcxLjFoMFonLz48L3N2Zz4=");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  transform-origin: var(--x-origin-x) var(--x-origin-y);
+}
+
+section:nth-of-type(even) .section__head::after,
+article:nth-of-type(even) .section__head::after {
+  transform: rotate(180deg);
+}
+
 /* Notched rule, the mark's diagonal cut, carried into structure.
    Three segments: line / 45° jog / line. */
 .rule-notch {
@@ -388,35 +434,39 @@ button {
 }
 
 /* ============================================================
-   THE PER-CHARACTER SCRUB
+   THE WORD RESOLVE
 
-   The signature effect. A display line is split into words, each word into
-   characters, and each character interpolates opacity 0.5 to 1.0 across
-   about 5px of scroll. The reader is never shown blank space, they are shown
-   a dim line that lights up under a moving edge.
+   This site's reveal signature, and it is deliberately NOT the reference's.
+   That page splits a display line into 196 characters and interpolates each
+   one from 0.5 to 1.0 under a single hard edge travelling left to right.
+   Three things are different here and each was chosen rather than inherited:
 
-   Never from 0. Never with a mask. Never on a paragraph of body copy, and
-   never per line. Opacity is the only property involved.
+     GRANULARITY   words, not characters. A word is the smallest unit a
+                   reader actually takes in, so the line resolves as language
+                   rather than as a row of glyphs being switched on.
+     DIRECTION     from the CENTRE of the line outward in both directions,
+                   which is the mark's own behaviour: it has a real centre of
+                   rotation and everything about it is stated from there.
+     FLOOR         0.62, not 0.5, and the figure is computed rather than
+                   picked. At 0.5 the dim state of the magenta scene's line
+                   measures 2.57:1 against its ground, under the 3:1 floor
+                   for large text. At 0.62 it measures 3.26:1 on magenta,
+                   4.94:1 on paper and 7.01:1 in the dark.
 
-   The from-state is set here in CSS rather than in script, so a document
-   whose bundle never arrives paints the line at half strength and is
-   readable. The .is-lit class is what the reduced-motion path and the
-   failsafe use to hand it back at full strength.
+   Opacity is still the only property involved, and the from-state is still
+   set in CSS rather than in script, so a document whose bundle never arrives
+   paints every line legible instead of blank.
    ============================================================ */
 
 .scrub-word {
   display: inline-block;
   white-space: nowrap;
-}
-
-.scrub-char {
-  display: inline-block;
-  opacity: 0.5;
+  opacity: 0.62;
   will-change: opacity;
 }
 
-.is-lit .scrub-char,
-.scrub-char.is-lit {
+.is-lit .scrub-word,
+.scrub-word.is-lit {
   opacity: 1;
 }
 
@@ -425,9 +475,9 @@ button {
     scroll-behavior: auto;
   }
 
-  /* The page has to compose statically. Every scrubbed character is handed
-     back at full strength and nothing waits on a scroll position. */
-  .scrub-char {
+  /* The page has to compose statically. Every word is handed back at full
+     strength and nothing waits on a scroll position. */
+  .scrub-word {
     opacity: 1 !important;
   }
 }
@@ -492,7 +542,7 @@ body > footer {
     color: #000 !important;
   }
 
-  .scrub-char {
+  .scrub-word {
     opacity: 1 !important;
   }
 
