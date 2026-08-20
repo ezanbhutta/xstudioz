@@ -3,7 +3,11 @@
 <header class="nav" id="nav">
   <div class="container nav__row">
     <a class="nav__brand" href="/" aria-label="XStudioz, home">
-      <svg class="nav__mark" aria-hidden="true"><use href="#xmark" /></svg>
+      <!-- The unit. A manual states clearspace in the mark's own width, and on a
+       page with no construction plate this is the mark. lib/measure.ts reads
+       it and publishes --w, so --clearspace on an interior page is four times
+       something actually drawn rather than the token's fallback. -->
+  <svg class="nav__mark" data-unit-w aria-hidden="true"><use href="#xmark" /></svg>
       <span class="nav__name">XStudioz</span>
     </a>
 

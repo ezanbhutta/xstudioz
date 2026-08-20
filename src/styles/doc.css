@@ -755,9 +755,20 @@
   transition: transform 180ms var(--ease-out), background-color var(--dur-fast) ease;
 }
 
-.faq__marker::after { transform: rotate(90deg); }
+/* The marker states open and closed by SHAPE: a plus closes into a minus.
+   It used to do it by turning one stroke through 90 degrees, which is the
+   single rotation this identity has no symmetry for. So the vertical stroke
+   is now drawn vertical, by geometry, and RETRACTS.
 
-.faq__item[open] .faq__marker::after { transform: rotate(0deg); }
+   Which is also the better reading. The stroke is not spinning away, it is
+   withdrawing to make room for the answer that is about to claim it, which
+   is the same sentence as everything else on this site. */
+.faq__marker::after {
+  transform: scaleY(1);
+  transform-origin: 50% 50%;
+}
+
+.faq__item[open] .faq__marker::after { transform: scaleY(0); }
 
 @media (hover: hover) {
   .faq__q:hover .faq__q-text { color: var(--text); }
@@ -1452,4 +1463,140 @@
 @media print {
   .journey, .journey__stage { border-color: #999 !important; }
   .journey__num, .journey__name, .journey__note { color: #000 !important; }
+}
+
+/* ============================================================
+   THE LAW, ON A PAGE WITH NO STAGE
+
+   The cover carries stages: pinned tracks, dimension lines, figures read off
+   the live document. None of that is here and none of it should be. An
+   interior page is a page of the manual, not the clearspace spread, and
+   staging a page of body copy would be the site performing its own concept
+   at a reader who came to find out what a logo costs.
+
+   What does carry across is the prohibition. Nothing on these pages animates
+   its own arrival. Every element is painted, opaque and final in the first
+   frame, before the bundle exists. The only movement an interior page ever
+   has is second-hand: a neighbour claims its clearance and whatever sits
+   beside it stands off by exactly that much.
+
+   The unit is real here too. lib/measure.ts publishes --w from the nav mark
+   on any document with no [data-stage], so --clearspace is four times the
+   width of the mark actually drawn in the header — 26px, therefore 104px —
+   rather than the token's 88px fallback.
+
+   Everything below is :has(), :hover and :focus-within. No listener, no
+   ScrollTrigger, no bundle dependency: an interior page whose JavaScript
+   never arrives behaves identically.
+   ============================================================ */
+
+.doc {
+  /* Every displacement on an interior page is a fraction of one clearance,
+     so there is exactly one number to tune and it is derived from the mark.
+     0.25W — 6.5px at the nav mark's 26. Small on purpose: this is a page
+     giving way, not a page performing. */
+  --clear-nudge: calc(var(--clearspace) / 16);
+}
+
+/* ---------------- The index parts ----------------
+   The row under the pointer does not move. It has claimed its clearance, and
+   the rows above and below it are what give way. Read the other way round
+   this is every hover effect on the internet; read this way it is the rule
+   the studio sells, stated by the page that sells it.
+
+   Symmetric by construction: li:has(~ li:hover) is every row above the
+   claimed one, li:hover ~ li is every row below, and the claimed row itself
+   matches neither. */
+
+@media (hover: hover) {
+  .doc__index li {
+    transition: transform var(--dur-med) var(--ease-out);
+  }
+
+  .doc__index li:has(~ li:hover),
+  .doc__index li:has(~ li:focus-within) {
+    transform: translateY(calc(var(--clear-nudge) * -1));
+  }
+
+  .doc__index li:hover ~ li,
+  .doc__index li:focus-within ~ li {
+    transform: translateY(var(--clear-nudge));
+  }
+}
+
+/* Keyboard gets the same displacement at every input type, not only where a
+   pointer exists. :focus-within on the li, because the focusable thing is
+   the anchor inside it. */
+.doc__index li:has(~ li:focus-within) {
+  transform: translateY(calc(var(--clear-nudge) * -1));
+}
+.doc__index li:focus-within ~ li {
+  transform: translateY(var(--clear-nudge));
+}
+
+/* ---------------- The list rows part ----------------
+   Same rule, on the two lists that close an interior page. The background
+   tint stays: displacement alone is too quiet to serve as the target
+   affordance for a 44px row, and the tint is what tells a reader the row is
+   the control. */
+
+@media (hover: hover) {
+  .related__row,
+  .entries li {
+    transition: transform var(--dur-med) var(--ease-out);
+  }
+
+  .related__row:has(~ .related__row:hover),
+  .entries li:has(~ li:hover) {
+    transform: translateY(calc(var(--clear-nudge) * -1));
+  }
+
+  .related__row:hover ~ .related__row,
+  .entries li:hover ~ li {
+    transform: translateY(var(--clear-nudge));
+  }
+}
+
+/* The displacement still happens with motion off — it is a state, and
+   suppressing it would leave the row under the pointer indistinguishable.
+   What goes is the easing. */
+@media (prefers-reduced-motion: reduce) {
+  .doc__index li,
+  .related__row,
+  .entries li {
+    transition: none;
+  }
+}
+
+/* ---------------- The keep-out, drawn ----------------
+   The construction plate on the cover draws clearspace as a dashed boundary
+   in the mark's own stroke weight. The interior pages carry the same
+   notation at the one place it is load-bearing: the left edge of the reading
+   grid, set one W outside it. Same dash as .fig__clear, 3 on 7 off, so the
+   two drawings are visibly the same drawing.
+
+   Nothing is claimed in words and no figure is printed, because there is no
+   [data-stage] here to measure one against. The line is drawn from the same
+   variable the layout is spaced by, so it is either at the clearance or the
+   layout is wrong. */
+
+.doc__grid {
+  position: relative;
+}
+
+.doc__grid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  /* 1W outside the reading grid. --clearspace is 4W, so a quarter of it. */
+  left: calc(var(--clearspace) * -0.25);
+  width: 1px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--border-strong) 0 3px,
+    transparent 3px 10px
+  );
+  opacity: 0.7;
+  pointer-events: none;
 }

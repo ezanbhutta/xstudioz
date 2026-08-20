@@ -148,6 +148,17 @@
   }
   </script>
 
+  <!-- The violation has to exist BEFORE first paint, or the reader sees the
+       correct sheet, then sees it break, then sees it repair, which reads as
+       a rendering bug rather than as the page allocating clearance. Setting
+       it from the bundle cannot be early enough on a warm visit, where
+       sessionStorage suppresses the loader veil.
+
+       The watchdog is the other half, and it is what makes the no-script
+       state the finished sheet rather than a permanently jammed one: this
+       script runs whether or not the module bundle ever executes, so if
+       nothing has claimed the hero within 2.5s the html.js class comes back
+       off and CSS composes the page on its own. -->
   <script>
     try {
       if (!sessionStorage.getItem('xz-seen')) {
@@ -155,6 +166,10 @@
         sessionStorage.setItem('xz-seen', '1');
       }
     } catch (e) {}
+    document.documentElement.classList.add('js');
+    setTimeout(function () {
+      if (!window.__xzHero) document.documentElement.classList.remove('js');
+    }, 2500);
   </script>
 </head>
 <body>
@@ -175,127 +190,255 @@
   <main id="top">
 
     <!-- ================= HERO ================= -->
-    <section class="hero" aria-label="Introduction">
-      <!-- The kinetic event. A hard-edged bar of the two lamps crosses the
-           statement once, left to right, in the first second, then collapses
-           to the short brand rule that stays under the payoff line. It is a
-           cut of light, not a glow: no blur, no bloom, nothing that lingers
-           moving. Pure CSS, so it runs whether or not the bundle arrives. -->
-      <div class="hero__strike" aria-hidden="true"></div>
+    <section class="hero" id="hero" aria-label="Introduction" data-stage>
+  <div class="container hero__sheet">
 
+    <div class="hero__head">
+      <p class="label hero__eyebrow" id="hero-eyebrow">XStudioz &middot; Independent brand design agency</p>
+      <!-- A label change done as a displacement, not a crossfade: two rows in
+           a one-line mask, the second pushing the first out. -->
+      <p class="hero__state" aria-hidden="true"><span class="hero__state-in">
+        <span class="label">Fig. 00 &middot; Clearspace</span>
+        <span class="label">Out of tolerance</span>
+      </span></p>
+    </div>
 
-      <div class="container hero__grid">
+    <!-- The plate. Its bottom border IS the datum rule DIM-C terminates on,
+         so that dimension ends on drawn geometry and never on a .line box. -->
+    <div class="hero__plate" id="hero-plate">
 
-        <p class="label hero__eyebrow" data-reveal="fade">XStudioz &middot; Independent brand design agency</p>
+      <div class="hero__markbox">
+        <!-- THE UNIT. measure.ts publishes this element's real drawn width
+             as --w on the stage and on :root. The two zero-size markers are
+             children, so they travel with the mark when it is shoved. -->
+        <div class="hero__mark" id="hero-mark" data-unit-w aria-hidden="true">
+          <svg class="hero__x"><use href="#xmark" /></svg>
+          <i class="hero__pt hero__pt--l" id="hero-mark-l"></i>
+          <i class="hero__pt hero__pt--r" id="hero-mark-r"></i>
+        </div>
+      </div>
 
-        <!-- The statement is a crescendo, not three equal lines. Each one is
-             set larger than the last, so the type itself carries the argument:
-             a fact, then a claim, then the payoff at full scale. Only the last
-             line is lit, so the light lands on the sentence that matters and
-             the first two stay crisp white. -->
+      <!-- The moving block. Its extension line is a child, so the same
+           transform carries the dimension's terminator. -->
+      <div class="hero__type" id="hero-type">
+        <i class="hero__ext" id="hero-type-l" aria-hidden="true"></i>
         <h1 class="hero__title">
-          <span class="line hero__line hero__line--1"><span class="line__in">A logo is a mark.</span></span>
-          <span class="line hero__line hero__line--2"><span class="line__in">A brand is a promise.</span></span>
-          <span class="line hero__line hero__line--3"><span class="line__in">We design both.</span></span>
+          <span class="hero__l"><span class="hero__w">We draw</span> <span class="hero__w">the mark</span></span>
+          <span class="hero__l">and every rule</span>
+          <span class="hero__l">that protects it.</span>
         </h1>
-
-        <!-- Lede and action are one cluster on a shared hairline rather than
-             two things floating near each other. -->
-        <div class="hero__cluster">
-          <p class="hero__lede" data-reveal="fade">
-            XStudioz is an independent brand design agency for founders who take their brand
-            seriously. We draw logos, identities and the systems that carry them, wherever you are building.
-          </p>
-          <p class="hero__act" data-reveal="fade">
-            <a class="pill pill--solid hero__cta" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
-              <span>Start a project</span>
-              <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
-            </a>
-          </p>
-        </div>
-
-        <div class="hero__foot">
-          <p class="hero__scroll label" data-reveal="fade">
-            Scroll
-            <svg class="hero__chev" aria-hidden="true"><use href="#chev-s" /></svg>
-          </p>
-          <p class="label hero__foot-note" data-reveal="fade">Identity &middot; Logo &middot; Systems</p>
-        </div>
-
       </div>
-    </section>
 
-<!-- ================= 02 · CAPABILITIES ================= -->
-    <section class="caps section" id="capabilities" aria-label="Capabilities">
-      <div class="container">
-        <div class="section__head">
-          <p class="label" data-reveal="fade">Capabilities</p>
-          <div class="rule-notch" data-rule-notch><i></i><i></i><i></i></div>
-        </div>
+      <i class="hero__ext hero__ext--gutter" id="hero-gutter" aria-hidden="true"></i>
+    </div>
 
-        <div class="caps__intro">
-          <h2 class="caps__statement heading-sm">
-            <span class="line"><span class="line__in">Five things we make,</span></span>
-            <span class="line"><span class="line__in">drawn as one system.</span></span>
-          </h2>
-        </div>
-
-        <ul class="caps__list">
-          <li class="caps__row" data-cap>
-            <a class="caps__link" href="/logo-design/">
-              <span class="caps__num label">01</span>
-              <span class="caps__ghost" aria-hidden="true">01</span>
-              <span class="caps__name heading-sm">Logo Design</span>
-              <span class="caps__desc body-sm">One mark, drawn until it holds. Concepts presented properly, never thumbnails in a grid.</span>
-              <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
-            </a>
-          </li>
-          <li class="caps__row" data-cap>
-            <a class="caps__link" href="/brand-identity/">
-              <span class="caps__num label">02</span>
-              <span class="caps__ghost" aria-hidden="true">02</span>
-              <span class="caps__name heading-sm">Brand Identity</span>
-              <span class="caps__desc body-sm">Colour, type, voice, and the rules that hold them together across everything you ship.</span>
-              <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
-            </a>
-          </li>
-          <li class="caps__row" data-cap>
-            <a class="caps__link" href="/brand-guidelines/">
-              <span class="caps__num label">03</span>
-              <span class="caps__ghost" aria-hidden="true">03</span>
-              <span class="caps__name heading-sm">Brand Guidelines</span>
-              <span class="caps__desc body-sm">The document your brand lives by, written so your team can actually use it.</span>
-              <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
-            </a>
-          </li>
-          <li class="caps__row" data-cap>
-            <a class="caps__link" href="/social-media-kits/">
-              <span class="caps__num label">04</span>
-              <span class="caps__ghost" aria-hidden="true">04</span>
-              <span class="caps__name heading-sm">Social Media Kits</span>
-              <span class="caps__desc body-sm">Templates and systems that keep every post unmistakably yours.</span>
-              <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
-            </a>
-          </li>
-          <li class="caps__row" data-cap>
-            <a class="caps__link" href="/stationery/">
-              <span class="caps__num label">05</span>
-              <span class="caps__ghost" aria-hidden="true">05</span>
-              <span class="caps__name heading-sm">Stationery &amp; Collateral</span>
-              <span class="caps__desc body-sm">Cards, letterheads and decks. The brand you can put in someone’s hand.</span>
-              <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
-            </a>
-          </li>
-        </ul>
+    <div class="hero__stack" id="hero-stack">
+      <i class="hero__tick" id="hero-stack-top" aria-hidden="true"></i>
+      <div class="hero__cluster">
+        <p class="hero__lede">An independent brand design agency. We draw logos and identity systems, and write the rules that keep them right everywhere you put them.</p>
+        <p class="hero__act">
+          <a class="pill pill--solid hero__cta" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
+            <span>Start a project</span>
+            <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+          </a>
+          <a class="ghost hero__alt" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
+            <span>See the work</span>
+            <svg class="ghost__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+            <span class="sr-only"> (opens in a new tab)</span>
+          </a>
+        </p>
       </div>
-    </section>
+    </div>
+
+    <div class="hero__foot" id="hero-foot">
+      <p class="hero__scroll label">Scroll <svg class="hero__chev" aria-hidden="true"><use href="#chev-s" /></svg></p>
+      <p class="label hero__foot-note">Nothing enters the clearspace</p>
+    </div>
+
+  </div>
+
+  <!-- ===== The dimension lines. Stage-space absolutes: direct children. =====
+       --basic = a specified dimension, boxed figure, drafting convention
+       --free  = an as-built dimension, bare figure
+
+       Endpoint order is load-bearing. For axis x measure.ts anchors the line
+       at min(a.right, b.right) and returns b.left - a.right when a.left <=
+       b.left. Every pair below is ordered so the anchor is the STATIONARY end
+       and the branch of gap() never flips, which is what makes the reading
+       signed, continuous and exactly linear in the driver. -->
+
+  <!-- A. mark to type, 1W. from is a real box, so when the type's marker
+       travels inside it the reading is genuinely negative. -->
+  <div class="dim dim--basic" id="dim-a" data-dim="x"
+       data-dim-from="#hero-mark" data-dim-to="#hero-type-l" data-dim-unit="W" aria-hidden="true">
+    <i class="dim__line"></i><i class="dim__sub"></i>
+    <i class="dim__tick dim__tick--a"></i><i class="dim__tick dim__tick--b"></i>
+    <span class="dim__fig label"><span data-dim-out>1W</span></span>
+  </div>
+
+  <!-- A on the narrow composition. Same pair, y axis. Only one is ever shown. -->
+  <div class="dim dim--basic dim--mob" id="dim-a-y" data-dim="y"
+       data-dim-from="#hero-mark" data-dim-to="#hero-type-l" data-dim-unit="W" aria-hidden="true">
+    <i class="dim__line"></i><i class="dim__sub"></i>
+    <i class="dim__tick dim__tick--a"></i><i class="dim__tick dim__tick--b"></i>
+    <span class="dim__fig label"><span data-dim-out>1W</span></span>
+  </div>
+
+  <!-- B. type to gutter, as built. from is the type BLOCK, a real box, so the
+       reading goes properly negative when the block is pushed past the gutter
+       instead of returning an unsigned magnitude. This is the figure that
+       changes when you drag the window edge. -->
+  <div class="dim dim--free" id="dim-b" data-dim="x"
+       data-dim-from="#hero-type" data-dim-to="#hero-gutter" data-dim-unit="W" aria-hidden="true">
+    <i class="dim__line"></i>
+    <i class="dim__tick dim__tick--a"></i><i class="dim__tick dim__tick--b"></i>
+    <span class="dim__fig label"><span data-dim-out>1.3W</span></span>
+  </div>
+
+  <!-- C. the plate's datum rule to the cluster, 1W. from is the plate box. -->
+  <div class="dim dim--basic" id="dim-c" data-dim="y"
+       data-dim-from="#hero-plate" data-dim-to="#hero-stack-top" data-dim-unit="W" aria-hidden="true">
+    <i class="dim__line"></i>
+    <i class="dim__tick dim__tick--a"></i><i class="dim__tick dim__tick--b"></i>
+    <span class="dim__fig label"><span data-dim-out>1W</span></span>
+  </div>
+
+  <!-- D. the definition of the unit, in device pixels. Two zero-size markers
+       inside the mark: for axis x, gap() returns b.left - a.right, which for
+       these two is exactly the mark's drawn width. -->
+  <div class="dim dim--free dim--def" id="dim-d" data-dim="x"
+       data-dim-from="#hero-mark-l" data-dim-to="#hero-mark-r" aria-hidden="true">
+    <i class="dim__line"></i>
+    <i class="dim__tick dim__tick--a"></i><i class="dim__tick dim__tick--b"></i>
+    <span class="dim__fig label"><span class="dim__unit">W =</span><span data-dim-out>93</span></span>
+  </div>
+
+  <!-- The caliper. Not measure-driven: arithmetic against two live rects, on
+       pointermove only. It reads geometry on the POINTER, never on scroll. -->
+  <i class="hero__caliper" id="hero-caliper" aria-hidden="true">
+    <span class="hero__caliper-fig label" id="hero-caliper-out">0W</span>
+  </i>
+
+</section>
+
+<!-- ================= 02 · CAPABILITIES =================
+     THE SHUNT.
+
+     Nothing in this list animates its own arrival. The rows are laid out
+     PACKED: no padding at all, one row's last line separated from the next
+     row's name by a single hairline. Then the section plays six claims. The
+     statement claims its clearance and the whole list is displaced. Row one
+     claims its clearance and rows two to five and the seal are displaced.
+     And so on down.
+
+     Everything below a claim moves in the same frame, by the same distance,
+     with no stagger between them, because a stagger would say each row has
+     its own entrance and that is the one thing forbidden here. What
+     accumulates is not delay, it is DISTANCE: the seal receives all six
+     claims and travels six times as far as the first row does. Simultaneous
+     in time, cumulative in amplitude. That is what a shunt looks like and it
+     is the only part of it a staggered list cannot imitate.
+
+     The distance is 4W and W is measured, not chosen: the chip in the head
+     carries [data-unit-w], lib/measure.ts publishes its real width, and
+     --clearspace on this section resolves to four of them. The dimension
+     line between rows one and two counts the gap up from 0W to 4W while it
+     is actually being opened.
+-->
+<section class="caps section" id="capabilities" aria-label="Capabilities" data-stage>
+  <div class="container">
+    <div class="section__head">
+      <p class="label">Capabilities</p>
+
+      <!-- The unit, declared the way a manual declares it, before anything is
+           stated in it. This element is what the measurement layer reads. -->
+      <span class="unit" aria-hidden="true">
+        <svg class="unit__x" viewBox="0 0 404 404" data-unit-w>
+          <use href="#xmark" width="404" height="404" />
+        </svg>
+        <span class="label unit__key">= W</span>
+      </span>
+
+      <div class="rule-notch"><i></i><i></i><i></i></div>
+    </div>
+
+    <div class="caps__intro">
+      <h2 class="caps__statement heading-sm">
+        <span class="line"><span class="line__in">Five things we make,</span></span>
+        <span class="line"><span class="line__in">drawn as one system.</span></span>
+      </h2>
+    </div>
+
+    <ul class="caps__list">
+      <li class="caps__row" data-cap>
+        <a class="caps__link" href="/logo-design/">
+          <span class="caps__num label">01</span>
+          <span class="caps__name heading-sm" id="cap-name-01">Logo Design</span>
+          <span class="caps__desc body-sm" id="cap-desc-01">One mark, drawn until it holds. Concepts presented properly, never thumbnails in a grid.</span>
+          <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+        </a>
+      </li>
+      <li class="caps__row" data-cap>
+        <a class="caps__link" href="/brand-identity/">
+          <span class="caps__num label">02</span>
+          <span class="caps__name heading-sm" id="cap-name-02">Brand Identity</span>
+          <span class="caps__desc body-sm">Colour, type, voice, and the rules that hold them together across everything you ship.</span>
+          <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+        </a>
+      </li>
+      <li class="caps__row" data-cap>
+        <a class="caps__link" href="/brand-guidelines/">
+          <span class="caps__num label">03</span>
+          <span class="caps__name heading-sm">Brand Guidelines</span>
+          <span class="caps__desc body-sm">The document your brand lives by, written so your team can actually use it.</span>
+          <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+        </a>
+      </li>
+      <li class="caps__row" data-cap>
+        <a class="caps__link" href="/social-media-kits/">
+          <span class="caps__num label">04</span>
+          <span class="caps__name heading-sm">Social Media Kits</span>
+          <span class="caps__desc body-sm">Templates and systems that keep every post unmistakably yours.</span>
+          <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+        </a>
+      </li>
+      <li class="caps__row" data-cap>
+        <a class="caps__link" href="/stationery/">
+          <span class="caps__num label">05</span>
+          <span class="caps__name heading-sm">Stationery &amp; Collateral</span>
+          <span class="caps__desc body-sm">Cards, letterheads and decks. The brand you can put in someone’s hand.</span>
+          <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+        </a>
+      </li>
+
+      <!-- The seal is the last body in the chain, not decoration. It receives
+           every claim above it, which is why it closes the list at the right
+           place instead of leaving the bottom rule stranded where the list
+           used to end. -->
+      <li class="caps__seal" aria-hidden="true">
+        <span class="label">05 / 05</span>
+        <span class="label">Clearance claimed</span>
+      </li>
+    </ul>
+
+    <!-- The dimension line spans the gap claim 1 opens. Its length is driven
+         by the same timeline that moves the row, so the drawing and the
+         figure describe the same distance on every frame, and settle() puts
+         the number back on the real measurement when the scrub lands. -->
+    <i class="dim dim--desk caps__dim" data-dim="y" data-dim-claim="1"
+       data-dim-from="#cap-desc-01" data-dim-to="#cap-name-02" data-dim-unit="W"
+       aria-hidden="true">
+      <b class="dim__fig" data-dim-out>0W</b>
+    </i>
+  </div>
+</section>
 
 <!-- ================= SEC. 02 · THE STUDIO ================= -->
     <section class="studio section" id="studio" aria-label="The studio">
       <div class="container">
         <div class="section__head">
-          <p class="label" data-reveal="fade">The Studio</p>
-          <div class="rule-notch" data-rule-notch><i></i><i></i><i></i></div>
+          <p class="label">The Studio</p>
+          <div class="rule-notch"><i></i><i></i><i></i></div>
         </div>
 
         <div class="studio__grid">
@@ -304,15 +447,15 @@
             <span class="line"><span class="line__in">Serious by default.</span></span>
           </h2>
           <div class="studio__copy">
-            <p class="body" data-reveal="fade">
+            <p class="body">
               When you hire XStudioz, you work with the people who actually draw. No account managers, no hand-offs, no templates
               dressed up as design. Every brief is read, questioned, and
               answered with work we are prepared to defend.
             </p>
-            <p class="body" data-reveal="fade">
+            <p class="body">
               The studio stays small so the standard can stay high. The same process, the same care, whether it is a single mark or a full identity system.
             </p>
-            <a class="ghost" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener" data-reveal="fade">
+            <a class="ghost" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
               <span>See the work</span>
               <svg class="ghost__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
             <span class="sr-only"> (opens in a new tab)</span></a>
@@ -321,70 +464,177 @@
       </div>
     </section>
 
+
 <!-- ================= SEC. 01 · THE MARK ================= -->
-    <section class="anatomy section" id="mark" aria-label="The mark">
-      <div class="container">
-        <div class="section__head">
-          <p class="label" data-reveal="fade">The Mark</p>
-          <div class="rule-notch" data-rule-notch><i></i><i></i><i></i></div>
-        </div>
+<section class="anatomy section" id="mark" aria-label="The mark" data-stage>
+  <div class="container">
+    <div class="section__head">
+      <p class="label">The Mark</p>
+      <span class="unit" aria-hidden="true">
+        <svg class="unit__x" viewBox="0 0 404 404" data-unit-w>
+          <use href="#xmark" width="404" height="404" />
+        </svg>
+        <span class="label unit__key">= W</span>
+      </span>
+      <div class="rule-notch"><i></i><i></i><i></i></div>
+    </div>
 
-        <div class="anatomy__grid">
-          <figure class="anatomy__plate" data-anatomy>
-            <svg class="anatomy__fig" viewBox="0 0 720 720" role="img" aria-label="Construction diagram of the XStudioz mark: concentric guides, 45-degree axes and clearspace boundaries around the X">
-              <!-- clearspace -->
-              <rect class="guide" data-g="terminals" x="70" y="70" width="580" height="580" fill="none" stroke-dasharray="4 6" pathLength="1" />
-              <!-- inscribing circles -->
-              <circle class="guide" data-g="terminals" cx="360" cy="360" r="235" fill="none" pathLength="1" />
-              <circle class="guide" data-g="terminals" cx="360" cy="360" r="150" fill="none" pathLength="1" />
-              <!-- axes -->
-              <line class="guide" data-g="geometry" x1="360" y1="40" x2="360" y2="680" pathLength="1" />
-              <line class="guide" data-g="geometry" x1="40" y1="360" x2="680" y2="360" pathLength="1" />
-              <!-- 45° diagonals -->
-              <line class="guide" data-g="geometry" x1="130" y1="130" x2="590" y2="590" pathLength="1" />
-              <line class="guide" data-g="geometry" x1="590" y1="130" x2="130" y2="590" pathLength="1" />
-              <!-- dimension ticks -->
-              <line class="guide guide--tick" x1="70" y1="700" x2="650" y2="700" pathLength="1" />
-              <line class="guide guide--tick" x1="70" y1="694" x2="70" y2="706" pathLength="1" />
-              <line class="guide guide--tick" x1="650" y1="694" x2="650" y2="706" pathLength="1" />
-              <!-- the mark -->
-              <use class="anatomy__x" href="#xmark" x="163" y="163" width="394" height="394" />
-              <!-- the notch highlight -->
-              <circle class="guide guide--notch" data-g="notch" cx="378" cy="440" r="32" fill="none" pathLength="1" />
+    <div class="anatomy__grid">
+      <figure class="anatomy__plate">
+        <svg class="fig" id="fig-01" viewBox="0 0 720 720" role="img" aria-label="Construction figure for the XStudioz mark: the five circles the drawing is built on, its true centre of rotation, and the clearspace boundary one stroke weight beyond the outer circle">
+          <!-- Every number in this figure was measured off the artwork.
+               The circles are the radii that vertices of the drawing
+               actually sit on, the centre is the point the mark turns
+               about, and the clearspace ring is one stroke weight beyond
+               the outer circle. Nothing here was chosen to look right. -->
+
+          <!-- clearspace, stated in the drawing's own stroke weight -->
+          <circle class="fig__clear" cx="359.61" cy="362.80" r="231.79" fill="none" />
+
+          <!-- the five construction circles -->
+          <circle class="fig__c" data-g="r1" cx="359.61" cy="362.80" r="203.51" fill="none" pathLength="1" />
+          <circle class="fig__c" data-g="r2" cx="359.61" cy="362.80" r="195.71" fill="none" pathLength="1" />
+          <circle class="fig__c" data-g="r3" cx="359.61" cy="362.80" r="172.34" fill="none" pathLength="1" />
+          <circle class="fig__c" data-g="r4" cx="359.61" cy="362.80" r="123.49" fill="none" pathLength="1" />
+          <circle class="fig__c" data-g="r5" cx="359.61" cy="362.80" r="84.32" fill="none" pathLength="1" />
+
+          <!-- axes through the centre the mark actually owns -->
+          <line class="fig__axis" data-g="centre" x1="359.61" y1="105.00" x2="359.61" y2="620.59" pathLength="1" />
+          <line class="fig__axis" data-g="centre" x1="101.81" y1="362.80" x2="617.40" y2="362.80" pathLength="1" />
+
+          <!-- the mark -->
+          <use class="fig__x" href="#xmark-parts" x="163" y="163" width="394" height="394" />
+
+          <!-- Detail A. The offset between the two centres is 2.83 units
+               in a 720 unit drawing, which is four tenths of one percent:
+               true, load bearing, and completely invisible at any size
+               this figure is ever printed. So it is magnified 15 times,
+               which is what a construction sheet does with a tolerance
+               too small to draw in place. -->
+          <circle class="fig__leader" cx="359.61" cy="362.80" r="26" fill="none" />
+          <line class="fig__leader" x1="377.61" y1="380.80" x2="543.00" y2="532.00" />
+          <circle class="fig__detail-ring" cx="597.00" cy="586.00" r="76" fill="none" />
+          <g class="fig__ghost" data-g="centre">
+            <line x1="583.96" y1="565.02" x2="615.96" y2="565.02" />
+            <line x1="599.96" y1="549.02" x2="599.96" y2="581.02" />
+          </g>
+          <g class="fig__centre" data-g="centre">
+            <line x1="578.04" y1="606.98" x2="610.04" y2="606.98" />
+            <line x1="594.04" y1="590.98" x2="594.04" y2="622.98" />
+          </g>
+          <line class="fig__offset" x1="599.96" y1="565.02" x2="594.04" y2="606.98" />
+          <text class="fig__note" x="597.00" y="682.00" text-anchor="middle">DETAIL A · 15×</text>
+        </svg>
+        <figcaption class="anatomy__cap">
+          <span class="label">Fig. 01 · Primary mark, construction</span>
+          <span class="label">Measured, not drawn</span>
+        </figcaption>
+      </figure>
+
+      <!-- ---------- Fig. 02 · THE REGISTRATION PROOF ----------
+           Fig. 01 states that the mark turns about 49.90% / 50.71% and lands
+           on itself. This plate is that claim tested rather than asserted.
+
+           Two copies of one drawing. The second is turned a half turn about
+           the measured centre and composited with mix-blend-mode: difference,
+           which subtracts one layer from the other channel by channel. Two
+           shapes that land on each other subtract to zero, and zero is black.
+           So a plate that goes empty is not a missing image, it is the result.
+
+           The target is drawn ABOVE the blend group rather than inside it, so
+           it survives the cancellation and gives the empty plate something to
+           be empty around.
+
+           This figure does not arrive. It sits where it sits, and it moves
+           only because Fig. 01 above it claimed its clearspace.
+      -->
+      <figure class="reg" id="registration">
+        <div class="reg__field" id="fig-02">
+          <div class="reg__stack">
+            <svg class="reg__x reg__x--base" viewBox="0 0 404 404" aria-hidden="true">
+              <use href="#xmark" width="404" height="404" />
             </svg>
-            <figcaption class="anatomy__cap">
-              <span class="label">Fig. 01 · Primary mark, construction</span>
-              <span class="label">1:1</span>
-            </figcaption>
-          </figure>
-
-          <div class="anatomy__copy">
-            <h2 class="anatomy__statement heading-sm">
-              <span class="line"><span class="line__in">Everything here</span></span>
-              <span class="line"><span class="line__in">is built from</span></span>
-              <span class="line"><span class="line__in">this mark.</span></span>
-            </h2>
-            <p class="body" data-reveal="fade">
-              The 45° cuts, the rounded terminals and the notch set the rules for every line, arrow and movement on this page. That is how we build brands: one system, drawn once,
-              applied everywhere.
-            </p>
-            <ul class="anatomy__specs" data-reveal="fade">
-              <li data-spec="terminals"><span class="label">Terminals</span><span class="body-sm">Rounded, outside only</span></li>
-              <li data-spec="geometry"><span class="label">Geometry</span><span class="body-sm">45° construction</span></li>
-              <li data-spec="notch"><span class="label">Signature</span><span class="body-sm">The notch, one deliberate break</span></li>
-              <li data-spec="color"><span class="label">Color</span><span class="body-sm">Signal gradient, #E634BE → #38016C</span></li>
-            </ul>
+            <svg class="reg__x reg__x--turn" viewBox="0 0 404 404" aria-hidden="true">
+              <use href="#xmark" width="404" height="404" />
+            </svg>
           </div>
+          <svg class="reg__target" viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="49.90" cy="50.71" r="9.4" fill="none" />
+            <line x1="49.90" y1="35.9" x2="49.90" y2="65.5" />
+            <line x1="35.1" y1="50.71" x2="64.7" y2="50.71" />
+          </svg>
         </div>
+
+        <div class="reg__foot">
+          <button class="reg__probe" type="button" data-reg-break aria-pressed="false">
+            <span class="label" data-reg-label>Break registration</span>
+            <span class="label reg__read" data-reg-out>180° · 22 of 22 · residual 0</span>
+          </button>
+
+          <p class="reg__note body-sm">
+            Two copies of one drawing, the second turned a half turn about the
+            centre the mark owns, subtracted from each other. Shapes that land
+            on each other cancel to nothing. Turn the copy a quarter instead
+            and the residual is what you see.
+          </p>
+
+          <figcaption class="anatomy__cap">
+            <span class="label">Fig. 02 · Registration, difference</span>
+            <span class="label">Zero is the proof</span>
+          </figcaption>
+        </div>
+      </figure>
+
+      <div class="anatomy__copy">
+        <h2 class="anatomy__statement heading-sm">
+          <span class="line"><span class="line__in">The mark does not</span></span>
+          <span class="line"><span class="line__in">sit in the middle</span></span>
+          <span class="line"><span class="line__in">of its own box.</span></span>
+        </h2>
+        <p class="body">
+          It sits 0.41 units left and 2.88 low, and the point it turns
+          about is 49.90% across and 50.71% down. Rotate it a half turn
+          and the counter lands on itself at all 22 of its vertices.
+          Rotate it a quarter and 23 of them miss. That is why the light
+          on this site comes from two sources facing each other, and why
+          nothing here ever turns 90 degrees.
+        </p>
+        <ul class="anatomy__specs">
+          <li data-spec="r1"><span class="label">Outer circle</span><span class="body-sm">51.653% of the box, 14 vertices</span></li>
+          <li data-spec="r3"><span class="label">Counter</span><span class="body-sm">43.741%, 10 vertices</span></li>
+          <li data-spec="centre"><span class="label">Centre</span><span class="body-sm">49.90% / 50.71%, not the middle</span></li>
+          <li data-spec="rot"><span class="label">Symmetry</span><span class="body-sm">Half turn, 22 of 22. Never a quarter</span></li>
+        </ul>
       </div>
-    </section>
+    </div>
+
+    <!-- Fig. 01 claims 4W below itself and Fig. 02 is displaced by exactly
+         that. This line spans the claim. -->
+    <i class="dim dim--desk anatomy__dim" data-dim="y" data-dim-claim="0"
+       data-dim-from="#fig-01" data-dim-to="#fig-02" data-dim-unit="W"
+       aria-hidden="true">
+      <b class="dim__fig" data-dim-out>0W</b>
+    </i>
+  </div>
+</section>
+
+
+NOTE ON THE REMOVED ATTRIBUTES
+Every inside these two sections is gone, and that is the
+law rather than an omission: an element that fades itself in is animating its
+own arrival. Inside a [data-stage] nothing arrives. lib/motion.ts is given a
+matching one-line skip so its shared reveals never reach into a stage.
+
+Cross-session hooks are untouched: no [data-consent-open], no fiverr.com,
+portfolio.xstudioz.com or mailto: link falls inside either section; class
+names .faq__*, .qa__*, .spec-wrap and .consent* are not referenced here.
 
 <!-- ================= 04 · THE PROCESS ================= -->
     <section class="process section" id="process" aria-label="Process">
       <div class="container">
         <div class="section__head">
-          <p class="label" data-reveal="fade">The Process</p>
-          <div class="rule-notch" data-rule-notch><i></i><i></i><i></i></div>
+          <p class="label">The Process</p>
+          <div class="rule-notch"><i></i><i></i><i></i></div>
         </div>
 
         <h2 class="process__statement heading-sm">
@@ -393,25 +643,25 @@
         </h2>
 
         <ol class="process__steps">
-          <li class="process__step" data-reveal="fade">
+          <li class="process__step">
             <i class="process__rule" aria-hidden="true"></i>
             <span class="process__num">01</span>
             <h3 class="process__name body">Brief</h3>
             <p class="process__body body-sm">Tell us what you’re building. We ask questions until we understand it as well as you do.</p>
           </li>
-          <li class="process__step" data-reveal="fade">
+          <li class="process__step">
             <i class="process__rule" aria-hidden="true"></i>
             <span class="process__num">02</span>
             <h3 class="process__name body">Directions</h3>
             <p class="process__body body-sm">Distinct concepts, each with a point of view. Every one is presented in context, on the things you actually make.</p>
           </li>
-          <li class="process__step" data-reveal="fade">
+          <li class="process__step">
             <i class="process__rule" aria-hidden="true"></i>
             <span class="process__num">03</span>
             <h3 class="process__name body">Refinement</h3>
             <p class="process__body body-sm">Focused rounds of revision until the mark sits exactly right. You’ll always know what changed and why.</p>
           </li>
-          <li class="process__step" data-reveal="fade">
+          <li class="process__step">
             <i class="process__rule" aria-hidden="true"></i>
             <span class="process__num">04</span>
             <h3 class="process__name body">Delivery</h3>
@@ -421,47 +671,7 @@
       </div>
     </section>
 
-                <!-- ================= 03 · THE WORK ================= -->
-    <section class="work section" id="work" aria-label="The archive">
-      <div class="container">
-        <div class="section__head">
-          <p class="label" data-reveal="fade">The Archive</p>
-          <div class="rule-notch" data-rule-notch><i></i><i></i><i></i></div>
-        </div>
-
-        <div class="work__grid">
-          <h2 class="work__statement subheading">
-            <span class="line"><span class="line__in">This page is the studio.</span></span>
-            <span class="line"><span class="line__in">The proof lives next door.</span></span>
-          </h2>
-          <p class="work__note body" data-reveal="fade">
-            We keep this page quiet and the archive loud. Logofolio, brand
-            identities, social kits and stationery. The full body of work lives at portfolio.xstudioz.com, and it is kept current.
-          </p>
-        </div>
-
-        <a class="portal" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener" data-clip>
-          <span class="portal__inner">
-            <span class="portal__top">
-              <span class="label">portfolio.xstudioz.com</span>
-              <svg class="portal__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
-            </span>
-            <span class="portal__title display lit">
-              <span class="line"><span class="line__in">Open the</span></span>
-              <span class="line"><span class="line__in">archive<span class="portal__x" aria-hidden="true"><svg><use href="#xmark" /></svg></span></span></span>
-            </span>
-            <span class="portal__bottom">
-              <span class="label">Logofolio</span>
-              <span class="label">Brand Identity</span>
-              <span class="label">Social Media Kits</span>
-              <span class="label">Stationery</span>
-            </span>
-          </span>
-        <span class="sr-only"> (opens in a new tab)</span></a>
-      </div>
-    </section>
-
-        <!-- ================= 05 · QUESTIONS =================
+                <!-- ================= 05 · QUESTIONS =================
          The cover is a poster, and posters answer nothing. These three are
          the questions every brief arrives carrying, answered plainly enough
          to stand on their own if lifted out of the page. The long versions
@@ -469,8 +679,8 @@
     <section class="qa section" id="questions" aria-label="Common questions">
       <div class="container">
         <div class="section__head">
-          <p class="label" data-reveal="fade">Questions</p>
-          <div class="rule-notch" data-rule-notch><i></i><i></i><i></i></div>
+          <p class="label">Questions</p>
+          <div class="rule-notch"><i></i><i></i><i></i></div>
         </div>
 
         <div class="qa__grid">
@@ -480,7 +690,7 @@
           </h2>
 
           <div class="qa__list">
-            <div class="qa__item" data-reveal="fade">
+            <div class="qa__item">
               <h3 class="qa__q body">What is the difference between a logo and a brand identity?</h3>
               <p class="qa__a body-sm">
                 A logo is one asset, a single mark. A brand identity is the
@@ -492,7 +702,7 @@
               </p>
             </div>
 
-            <div class="qa__item" data-reveal="fade">
+            <div class="qa__item">
               <h3 class="qa__q body">What files will I receive?</h3>
               <p class="qa__a body-sm">
                 Vector masters in SVG, EPS and PDF, plus raster exports for the
@@ -504,7 +714,7 @@
               </p>
             </div>
 
-            <div class="qa__item" data-reveal="fade">
+            <div class="qa__item">
               <h3 class="qa__q body">Do I own the work when it is finished?</h3>
               <p class="qa__a body-sm">
                 Yes. Full ownership of the final work transfers to you in
@@ -512,7 +722,7 @@
               </p>
             </div>
 
-            <p class="qa__more" data-reveal="fade">
+            <p class="qa__more">
               <a class="ghost" href="/faq/">
                 <span>Everything else people ask</span>
                 <svg class="ghost__arr" aria-hidden="true"><use href="#arr-e" /></svg>
@@ -527,8 +737,8 @@
     <section class="brief section--panel" id="brief" aria-label="Start a project">
       <div class="container">
         <div class="section__head">
-          <p class="label" data-reveal="fade">The Brief</p>
-          <div class="rule-notch" data-rule-notch><i></i><i></i><i></i></div>
+          <p class="label">The Brief</p>
+          <div class="rule-notch"><i></i><i></i><i></i></div>
         </div>
 
         <div class="brief__grid">
@@ -537,12 +747,12 @@
             <span class="line"><span class="line__in">started as an email.</span></span>
           </h2>
           <div class="brief__copy">
-            <p class="body" data-reveal="fade">
+            <p class="body">
               Tell us what you’re building: the name, the audience, the ambition. We read every brief ourselves and reply with how we’d
               approach it, what it costs, and when you’ll have it. No forms,
               no middlemen. Just write.
             </p>
-            <a class="pill" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz" data-reveal="fade">
+            <a class="pill" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
               <span>inquire@xstudioz.com</span>
               <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
             </a>
@@ -550,6 +760,178 @@
         </div>
       </div>
     </section>
+
+  <!-- ================= 06 · THE ARCHIVE =================
+     The one page in the manual that is made of nothing, and the one thing
+     this studio genuinely does not have on this domain. The construction
+     figure climbs the document; everything it passes gives up room because
+     its clearance arrives, not because it decided to move. At the top is the
+     plate the work would have been printed on. There is no work on this
+     page, so there is nothing in the plate to displace, and the clearance
+     cannot be allocated. The dimension line goes negative and says so.
+
+     Contracts other code depends on, do not change without checking:
+     - [data-stage] is read by src/lib/measure.ts; the dims below resolve
+       their endpoints by id inside it
+     - [data-unit-w] publishes this stage's W. It is a bare span and not the
+       <use>, because the mark turns and a rotating box would make the
+       published unit breathe sixty times a second
+     - the portfolio.xstudioz.com href is matched by src/lib/analytics.ts
+     - .portal__title has NO .line__in. initCommonReveals sets yPercent 112
+       on every .line__in outside the hero and only animates the ones inside
+       h1/h2/.footer__title, so a .line__in in here is a permanently hidden
+       headline. It is also an arrival, which this page does not do. -->
+<section class="work section" id="work" aria-label="The archive" data-stage>
+  <div class="container work__box">
+
+    <div class="section__head">
+      <p class="label">The Archive</p>
+      <div class="rule-notch"><i></i><i></i><i></i></div>
+    </div>
+
+    <!-- The plate reserved for the work. Nothing is drawn in it because
+         there is nothing on this page to draw. Its emptiness is the content
+         and the argument at the same time. -->
+    <div class="work__void" id="work-void">
+      <p class="label work__void-a">Fig. 06 &middot; Plate reserved for the work</p>
+      <p class="work__void-b body-sm">
+        Nothing is printed on this plate. There is no work on this page to
+        keep clear of, so there is nothing here for the rule to protect.
+      </p>
+      <p class="label work__void-c">Clearspace, not allocated</p>
+    </div>
+
+    <div class="work__grid">
+      <h2 class="work__statement subheading" id="work-statement">
+        <span class="work__line">This page is the studio.</span>
+        <span class="work__line">The proof lives next door.</span>
+      </h2>
+      <p class="work__note body" id="work-note">
+        We keep this page quiet and the archive loud. Logofolio, brand
+        identities, social kits and stationery. The full body of work lives at
+        portfolio.xstudioz.com, and it is kept current.
+      </p>
+    </div>
+
+    <!-- The exit. It is the one element the climber does not displace: a
+         link that moves under the cursor is a link you cannot press. -->
+    <a class="portal" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
+      <span class="portal__inner">
+        <span class="portal__top">
+          <span class="label">portfolio.xstudioz.com</span>
+          <svg class="portal__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+        </span>
+        <span class="portal__title display lit">
+          <span class="portal__line">Open the</span>
+          <span class="portal__line">archive<span class="portal__x" aria-hidden="true"><svg><use href="#xmark" /></svg></span></span>
+        </span>
+        <span class="portal__bottom">
+          <span class="label">Logofolio</span>
+          <span class="label">Brand Identity</span>
+          <span class="label">Social Media Kits</span>
+          <span class="label">Stationery</span>
+        </span>
+      </span>
+    <span class="sr-only"> (opens in a new tab)</span></a>
+
+  </div>
+
+  <!-- THE CLIMBER.
+       Absolutely positioned against the stage, so the section's grid never
+       reflows while it travels. The ring is the clearspace, drawn as a
+       manual draws a keep-out, and it is the thing that does the displacing.
+       The viewBox is 560 with the mark at 394, which is the anatomy plate's
+       geometry scaled: the centre is the measured one (0.39 left, 2.80 low
+       inside the box), never the box centre. -->
+  <div class="work__climb" aria-hidden="true">
+    <span class="work__ring" id="work-ring"></span>
+    <span class="work__unit" data-unit-w></span>
+    <svg class="work__fig" viewBox="0 0 560 560">
+      <circle class="fig__c" cx="279.61" cy="282.80" r="203.51" fill="none" />
+      <line class="fig__axis" x1="279.61" y1="51.00" x2="279.61" y2="514.59" />
+      <line class="fig__axis" x1="47.81" y1="282.80" x2="511.40" y2="282.80" />
+      <use class="fig__x" href="#xmark-parts" x="83" y="83" width="394" height="394" />
+    </svg>
+  </div>
+
+  <!-- The figures. Position, length and value all come from
+       lib/measure.ts off real rects, so the drawing and the number can never
+       disagree. The vertical one is the one that fails. -->
+  <i class="dim work__dim work__dim--climb" data-dim="y"
+     data-dim-from="#work-ring" data-dim-to="#work-void" data-dim-unit="W" aria-hidden="true">
+    <span class="dim__fig" data-dim-out>0</span>
+  </i>
+  <i class="dim work__dim work__dim--x" data-dim="x"
+     data-dim-from="#work-statement" data-dim-to="#work-ring" data-dim-unit="W" aria-hidden="true">
+    <span class="dim__fig" data-dim-out>0</span>
+  </i>
+  <i class="dim work__dim work__dim--x" data-dim="x"
+     data-dim-from="#work-ring" data-dim-to="#work-note" data-dim-unit="W" aria-hidden="true">
+    <span class="dim__fig" data-dim-out>0</span>
+  </i>
+</section>
+
+<!-- The archive could not allocate the clearance it asked for. This is the
+     page giving it anyway, after the fact, with nothing in it. Stated in
+     pixels because it is a hold on the scroll and not a space in a layout. -->
+<div class="hold" aria-hidden="true"></div>
+
+<!-- The mark's box, not the mark. It publishes W and it is the end of
+           the dimension line, and it does neither of those jobs correctly if
+           it turns: a square rect grows by 41 percent at 45 degrees. -->
+      <span class="inv__box" id="inv-box" data-unit-w aria-hidden="true"></span>
+      <svg class="inv__mark" viewBox="758 335 404 404" role="img"
+           aria-label="The XStudioz mark standing in its clearspace">
+        <use href="#xmark-parts" />
+      </svg>
+    </div>
+
+    <i class="dim inv__dim" data-dim="x"
+       data-dim-from="#inv-edge" data-dim-to="#inv-box" data-dim-unit="W" aria-hidden="true">
+      <span class="dim__fig" data-dim-out>0</span>
+    </i>
+
+    <div class="inv__foot">
+      <h2 class="inv__statement display lit">
+        <span class="inv__line">Nothing may enter here.</span>
+        <span class="inv__line">Light is not a thing.</span>
+      </h2>
+      <p class="inv__note body">
+        One mark width on every side, at every size, in every direction. Every
+        move on this page was made to keep it open. It is still one width,
+        filled.
+      </p>
+      <p class="inv__cap">
+        <span class="label">Fig. 07 &middot; Clearspace, occupied</span>
+        <span class="label">Measured, not drawn</span>
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 07 · CLEARSPACE, OCCUPIED =================
+     The inversion. Every section above this one moved something to keep this
+     shape empty. Here it is filled, by the only thing that can occupy it
+     without breaking the rule it was protecting.
+
+     The light is not new and it is not painted. It is the same two wedges
+     .room has been casting since the top of the page, on the same keyframes
+     off the same document timeline, seen through an aperture that keeps the
+     mark's own box out. The rig never changed. The gobo opened. -->
+<section class="inv" id="clearspace" aria-label="Clearspace" data-stage>
+  <div class="container inv__grid">
+
+    <p class="label inv__eyebrow">Clearspace</p>
+
+    <!-- Three mark widths across, because the mark is one and the clearance
+         is one on each side. The field is sized first and the mark derived
+         from it, not the other way round, so the drawing cannot disagree
+         with --w in the frames before the first measurement pass. -->
+    <div class="inv__field">
+      <span class="inv__light" aria-hidden="true"></span>
+      <span class="inv__rule" aria-hidden="true"></span>
+      <span class="inv__edge" id="inv-edge" aria-hidden="true"></span>
 
   </main>
 

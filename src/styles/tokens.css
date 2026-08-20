@@ -118,14 +118,77 @@
   --sp-8: 119px;
   --section-gap: clamp(76px, 11vw, 152px);
 
-  /* ---- Layout ----
-     One container law for every breakpoint. It holds 1400 through the laptop
-     range, then keeps growing to 1560 so a 1920 screen is a composition
-     rather than a 1400 slab marooned in 520px of dead space. */
-  --page-max: min(1560px, max(1400px, 82vw));
-  --gutter: clamp(20px, 4vw, 64px);
+  /* ---- Layout ---- */
+  /* The container holds the same PROPORTION of the screen at every size,
+     which is the thing that was actually wrong. The old law capped at 1560px,
+     so a page kept about 90 percent of the viewport up to 1440 and then
+     stopped growing: 74.6 percent at 1920 and 55.9 percent at 2560, stranded
+     in dead margin exactly where there is most room to use.
+
+     Now the gutter is proportional and the cap only exists to stop an
+     ultrawide display from setting a 3000px measure. Content lands at 90
+     percent of the viewport from 375 all the way to 2200. */
+  --page-max: min(2200px, 100vw);
+  --gutter: clamp(20px, 5vw, 110px);
   --col-gap: var(--sp-4);
+  /* The fixed header's real height, measured. The hero sizes its sheet
+     against it rather than guessing at a safe top padding. */
+  --nav-h: 63px;
   --measure: 68ch;            /* the reading column ceiling */
+
+  /* ============================================================
+     THE MARK'S OWN CONSTANTS
+
+     Measured off the artwork rather than chosen. The mark is drawn on a
+     404 unit square; its stroke is 29 units and its cut corners run 14.5.
+     Expressed against the box that is 7.175 percent and 3.587 percent, and
+     the drawing's diagonals sit 4.18 degrees off true 45.
+
+     These are primitives, not decoration. A radius on this site is the
+     mark's radius. A rotation is the mark's own angle. The alternative is
+     an 8px radius chosen because 8 is a round number, which is the point
+     at which a design system stops being an identity and starts being a
+     preference.
+     ============================================================ */
+  --x-w: 7.178%;              /* stroke weight, as a share of the box   */
+  --x-r: 3.589%;              /* the cut corner, exactly half of it     */
+  --x-tau: 4.18deg;           /* the drawing's departure from true 45   */
+
+  /* The centre the mark actually turns about, solved for rather than
+     assumed. It is NOT the centre of the viewBox: the drawing sits 0.41
+     units left and 2.88 units low inside its own box, so rotating about
+     50% 50% swings the mark on a point it does not own and the turn wobbles.
+     Found by minimising the residual between every vertex and its partner
+     under a half turn; at this centre the counter maps onto itself at 22 of
+     22 vertices, while 90 degrees fits 29 of 52 and a mirror fits 32 of 52.
+     That is the measurement the whole lighting rig rests on, and it is why
+     the two lamps are 180 apart and never 90. */
+  --x-origin-x: 49.90%;
+  --x-origin-y: 50.71%;
+
+  /* The circles the drawing is actually constructed on, as a share of the
+     box, with the number of vertices that sit on each. Taken off the
+     artwork, not chosen: these are what the construction figure draws. */
+  /* The same two constants as ratios. calc() cannot multiply a length by a
+     percentage, and every place that needs a fraction of a drawn box needs
+     exactly that. One source, two notations, so a stroke weight can never be
+     7.178 in one file and 0.07 in another. */
+  --x-w-k: 0.07178;      /* --x-w  */
+  --x-r1-k: 0.51653;     /* --x-r1 */
+
+  --x-r1: 51.653%;            /* 14 vertices — the outer extremity  */
+  --x-r2: 49.673%;            /*  8 vertices — the shoulder         */
+  --x-r3: 43.741%;            /* 10 vertices — the counter's reach  */
+  --x-r4: 31.342%;            /*  4 vertices                        */
+  --x-r5: 21.401%;            /*  4 vertices                        */
+
+  /* Clearspace is expressed in the mark's own width, the way a manual
+     states it, and --w is published live by lib/measure.ts off the real
+     drawn width of whatever carries [data-unit-w]. So this is not 88px
+     that was correct once: resize the mark and every clearance in the
+     document follows it. The fallback keeps the page composed before the
+     measurement layer's first pass and if it never runs at all. */
+  --w: 22;
 
   /* Radii — interactive elements only; surfaces stay sharp */
   --radius-ui: 10px;
@@ -186,8 +249,34 @@
      daylight selects on the deep violet instead. */
   --selection-bg: var(--brand-a);
   --selection-text: var(--canvas-raised);
+  /* The dark theme's #e634be is a lamp: it emits against the void and measures
+     5.30:1 there. On paper it is not a lamp, it is ink, and the same value
+     falls to 3.45:1 on --l-canvas, under the 4.5:1 floor for the places it is
+     set as text: prose, FAQ and consent link hover, the capability numeral,
+     and the footer selection, which sets it as a background behind --canvas.
+     Darkened at constant hue and saturation (313.5deg, 78.1%), so it is the
+     same magenta carrying the same weight in daylight that the lamp carries
+     in the dark. */
+  --l-brand-a: #c0189a;       /* 5.04:1 on --l-canvas */
+
   --l-selection-bg: #38016c;
   --l-selection-text: #ffffff;
+
+  /* ============================================================
+     THE PROOF PLATE
+
+     One place in the document that does not follow the room, and it has to
+     be. mix-blend-mode: difference subtracts one layer from the other, so
+     two identical layers cancel to 0,0,0 in every theme. Zero is black
+     whether the page is a void or a sheet of paper. Let the plate follow the
+     room and daylight gets an unexplained black slab; pin it to the ground
+     the mark was drawn against and it reads as what it is, a knockout test
+     printed on its own field.
+
+     Neither value is new. They are --canvas and --text from the dark room,
+     held still. */
+  --proof-field: #09090b;
+  --proof-ink: #f2f1f6;
 }
 
 /* One mapping, used twice. An explicit choice wins outright; otherwise the
@@ -207,6 +296,7 @@
   --focus: var(--l-focus);
   --lamp-strength: var(--l-lamp-strength);
   --lit-base: var(--l-lit-base);
+  --brand-a: var(--l-brand-a);
   --selection-bg: var(--l-selection-bg);
   --selection-text: var(--l-selection-text);
   --room-blend: multiply;
@@ -228,9 +318,20 @@
     --focus: var(--l-focus);
     --lamp-strength: var(--l-lamp-strength);
     --lit-base: var(--l-lit-base);
+    --brand-a: var(--l-brand-a);
     --selection-bg: var(--l-selection-bg);
     --selection-text: var(--l-selection-text);
     --room-blend: multiply;
     --lit-blend: multiply;
   }
+}
+
+/* Clearspace is derived, not stored, and it has to be derived at every scope
+   that can publish a unit. var() substitution happens against the declaring
+   element, so this one rule declared for both the document and each stage is
+   what lets a stage carrying its own mark set its own clearance while
+   everything else follows the document's. */
+:root,
+[data-stage] {
+  --clearspace: calc(4 * var(--w) * 1px);
 }
