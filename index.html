@@ -198,8 +198,8 @@
       <!-- A label change done as a displacement, not a crossfade: two rows in
            a one-line mask, the second pushing the first out. -->
       <p class="hero__state" aria-hidden="true"><span class="hero__state-in">
-        <span class="label">Fig. 00 &middot; Clearspace</span>
-        <span class="label">Out of tolerance</span>
+        <span class="label">Independent studio</span>
+        <span class="label">Taking work for 2026</span>
       </span></p>
     </div>
 
@@ -213,15 +213,12 @@
              children, so they travel with the mark when it is shoved. -->
         <div class="hero__mark" id="hero-mark" data-unit-w aria-hidden="true">
           <svg class="hero__x"><use href="#xmark" /></svg>
-          <i class="hero__pt hero__pt--l" id="hero-mark-l"></i>
-          <i class="hero__pt hero__pt--r" id="hero-mark-r"></i>
         </div>
       </div>
 
       <!-- The moving block. Its extension line is a child, so the same
            transform carries the dimension's terminator. -->
       <div class="hero__type" id="hero-type">
-        <i class="hero__ext" id="hero-type-l" aria-hidden="true"></i>
         <h1 class="hero__title">
           <span class="hero__l"><span class="hero__w">We draw</span> <span class="hero__w">the mark</span></span>
           <span class="hero__l">and every rule</span>
@@ -229,11 +226,9 @@
         </h1>
       </div>
 
-      <i class="hero__ext hero__ext--gutter" id="hero-gutter" aria-hidden="true"></i>
     </div>
 
     <div class="hero__stack" id="hero-stack">
-      <i class="hero__tick" id="hero-stack-top" aria-hidden="true"></i>
       <div class="hero__cluster">
         <p class="hero__lede">An independent brand design agency. We draw logos and identity systems, and write the rules that keep them right everywhere you put them.</p>
         <p class="hero__act">
@@ -252,7 +247,7 @@
 
     <div class="hero__foot" id="hero-foot">
       <p class="hero__scroll label">Scroll <svg class="hero__chev" aria-hidden="true"><use href="#chev-s" /></svg></p>
-      <p class="label hero__foot-note">Nothing enters the clearspace</p>
+      <p class="label hero__foot-note">Logos, identities, and the rules that hold them</p>
     </div>
 
   </div>
@@ -269,55 +264,22 @@
 
   <!-- A. mark to type, 1W. from is a real box, so when the type's marker
        travels inside it the reading is genuinely negative. -->
-  <div class="dim dim--basic" id="dim-a" data-dim="x"
-       data-dim-from="#hero-mark" data-dim-to="#hero-type-l" data-dim-unit="W" aria-hidden="true">
-    <i class="dim__line"></i><i class="dim__sub"></i>
-    <i class="dim__tick dim__tick--a"></i><i class="dim__tick dim__tick--b"></i>
-    <span class="dim__fig label"><span data-dim-out>1W</span></span>
-  </div>
 
   <!-- A on the narrow composition. Same pair, y axis. Only one is ever shown. -->
-  <div class="dim dim--basic dim--mob" id="dim-a-y" data-dim="y"
-       data-dim-from="#hero-mark" data-dim-to="#hero-type-l" data-dim-unit="W" aria-hidden="true">
-    <i class="dim__line"></i><i class="dim__sub"></i>
-    <i class="dim__tick dim__tick--a"></i><i class="dim__tick dim__tick--b"></i>
-    <span class="dim__fig label"><span data-dim-out>1W</span></span>
-  </div>
 
   <!-- B. type to gutter, as built. from is the type BLOCK, a real box, so the
        reading goes properly negative when the block is pushed past the gutter
        instead of returning an unsigned magnitude. This is the figure that
        changes when you drag the window edge. -->
-  <div class="dim dim--free" id="dim-b" data-dim="x"
-       data-dim-from="#hero-type" data-dim-to="#hero-gutter" data-dim-unit="W" aria-hidden="true">
-    <i class="dim__line"></i>
-    <i class="dim__tick dim__tick--a"></i><i class="dim__tick dim__tick--b"></i>
-    <span class="dim__fig label"><span data-dim-out>1.3W</span></span>
-  </div>
 
   <!-- C. the plate's datum rule to the cluster, 1W. from is the plate box. -->
-  <div class="dim dim--basic" id="dim-c" data-dim="y"
-       data-dim-from="#hero-plate" data-dim-to="#hero-stack-top" data-dim-unit="W" aria-hidden="true">
-    <i class="dim__line"></i>
-    <i class="dim__tick dim__tick--a"></i><i class="dim__tick dim__tick--b"></i>
-    <span class="dim__fig label"><span data-dim-out>1W</span></span>
-  </div>
 
   <!-- D. the definition of the unit, in device pixels. Two zero-size markers
        inside the mark: for axis x, gap() returns b.left - a.right, which for
        these two is exactly the mark's drawn width. -->
-  <div class="dim dim--free dim--def" id="dim-d" data-dim="x"
-       data-dim-from="#hero-mark-l" data-dim-to="#hero-mark-r" aria-hidden="true">
-    <i class="dim__line"></i>
-    <i class="dim__tick dim__tick--a"></i><i class="dim__tick dim__tick--b"></i>
-    <span class="dim__fig label"><span class="dim__unit">W =</span><span data-dim-out>93</span></span>
-  </div>
 
   <!-- The caliper. Not measure-driven: arithmetic against two live rects, on
        pointermove only. It reads geometry on the POINTER, never on scroll. -->
-  <i class="hero__caliper" id="hero-caliper" aria-hidden="true">
-    <span class="hero__caliper-fig label" id="hero-caliper-out">0W</span>
-  </i>
 
 </section>
 
@@ -352,12 +314,6 @@
 
       <!-- The unit, declared the way a manual declares it, before anything is
            stated in it. This element is what the measurement layer reads. -->
-      <span class="unit" aria-hidden="true">
-        <svg class="unit__x" viewBox="0 0 404 404" data-unit-w>
-          <use href="#xmark" width="404" height="404" />
-        </svg>
-        <span class="label unit__key">= W</span>
-      </span>
 
       <div class="rule-notch"><i></i><i></i><i></i></div>
     </div>
@@ -425,11 +381,6 @@
          by the same timeline that moves the row, so the drawing and the
          figure describe the same distance on every frame, and settle() puts
          the number back on the real measurement when the scrub lands. -->
-    <i class="dim dim--desk caps__dim" data-dim="y" data-dim-claim="1"
-       data-dim-from="#cap-desc-01" data-dim-to="#cap-name-02" data-dim-unit="W"
-       aria-hidden="true">
-      <b class="dim__fig" data-dim-out>0W</b>
-    </i>
   </div>
 </section>
 
@@ -470,12 +421,6 @@
   <div class="container">
     <div class="section__head">
       <p class="label">The Mark</p>
-      <span class="unit" aria-hidden="true">
-        <svg class="unit__x" viewBox="0 0 404 404" data-unit-w>
-          <use href="#xmark" width="404" height="404" />
-        </svg>
-        <span class="label unit__key">= W</span>
-      </span>
       <div class="rule-notch"><i></i><i></i><i></i></div>
     </div>
 
@@ -489,18 +434,10 @@
                the outer circle. Nothing here was chosen to look right. -->
 
           <!-- clearspace, stated in the drawing's own stroke weight -->
-          <circle class="fig__clear" cx="359.61" cy="362.80" r="231.79" fill="none" />
 
           <!-- the five construction circles -->
-          <circle class="fig__c" data-g="r1" cx="359.61" cy="362.80" r="203.51" fill="none" pathLength="1" />
-          <circle class="fig__c" data-g="r2" cx="359.61" cy="362.80" r="195.71" fill="none" pathLength="1" />
-          <circle class="fig__c" data-g="r3" cx="359.61" cy="362.80" r="172.34" fill="none" pathLength="1" />
-          <circle class="fig__c" data-g="r4" cx="359.61" cy="362.80" r="123.49" fill="none" pathLength="1" />
-          <circle class="fig__c" data-g="r5" cx="359.61" cy="362.80" r="84.32" fill="none" pathLength="1" />
 
           <!-- axes through the centre the mark actually owns -->
-          <line class="fig__axis" data-g="centre" x1="359.61" y1="105.00" x2="359.61" y2="620.59" pathLength="1" />
-          <line class="fig__axis" data-g="centre" x1="101.81" y1="362.80" x2="617.40" y2="362.80" pathLength="1" />
 
           <!-- the mark -->
           <use class="fig__x" href="#xmark-parts" x="163" y="163" width="394" height="394" />
@@ -511,23 +448,10 @@
                this figure is ever printed. So it is magnified 15 times,
                which is what a construction sheet does with a tolerance
                too small to draw in place. -->
-          <circle class="fig__leader" cx="359.61" cy="362.80" r="26" fill="none" />
-          <line class="fig__leader" x1="377.61" y1="380.80" x2="543.00" y2="532.00" />
-          <circle class="fig__detail-ring" cx="597.00" cy="586.00" r="76" fill="none" />
-          <g class="fig__ghost" data-g="centre">
-            <line x1="583.96" y1="565.02" x2="615.96" y2="565.02" />
-            <line x1="599.96" y1="549.02" x2="599.96" y2="581.02" />
-          </g>
-          <g class="fig__centre" data-g="centre">
-            <line x1="578.04" y1="606.98" x2="610.04" y2="606.98" />
-            <line x1="594.04" y1="590.98" x2="594.04" y2="622.98" />
-          </g>
-          <line class="fig__offset" x1="599.96" y1="565.02" x2="594.04" y2="606.98" />
-          <text class="fig__note" x="597.00" y="682.00" text-anchor="middle">DETAIL A · 15×</text>
         </svg>
         <figcaption class="anatomy__cap">
-          <span class="label">Fig. 01 · Primary mark, construction</span>
-          <span class="label">Measured, not drawn</span>
+          <span class="label">The mark</span>
+          <span class="label">The mark</span>
         </figcaption>
       </figure>
 
@@ -610,11 +534,6 @@
 
     <!-- Fig. 01 claims 4W below itself and Fig. 02 is displaced by exactly
          that. This line spans the claim. -->
-    <i class="dim dim--desk anatomy__dim" data-dim="y" data-dim-claim="0"
-       data-dim-from="#fig-01" data-dim-to="#fig-02" data-dim-unit="W"
-       aria-hidden="true">
-      <b class="dim__fig" data-dim-out>0W</b>
-    </i>
   </div>
 </section>
 
@@ -847,9 +766,6 @@ names .faq__*, .qa__*, .spec-wrap and .consent* are not referenced here.
     <span class="work__ring" id="work-ring"></span>
     <span class="work__unit" data-unit-w></span>
     <svg class="work__fig" viewBox="0 0 560 560">
-      <circle class="fig__c" cx="279.61" cy="282.80" r="203.51" fill="none" />
-      <line class="fig__axis" x1="279.61" y1="51.00" x2="279.61" y2="514.59" />
-      <line class="fig__axis" x1="47.81" y1="282.80" x2="511.40" y2="282.80" />
       <use class="fig__x" href="#xmark-parts" x="83" y="83" width="394" height="394" />
     </svg>
   </div>
@@ -857,18 +773,6 @@ names .faq__*, .qa__*, .spec-wrap and .consent* are not referenced here.
   <!-- The figures. Position, length and value all come from
        lib/measure.ts off real rects, so the drawing and the number can never
        disagree. The vertical one is the one that fails. -->
-  <i class="dim work__dim work__dim--climb" data-dim="y"
-     data-dim-from="#work-ring" data-dim-to="#work-void" data-dim-unit="W" aria-hidden="true">
-    <span class="dim__fig" data-dim-out>0</span>
-  </i>
-  <i class="dim work__dim work__dim--x" data-dim="x"
-     data-dim-from="#work-statement" data-dim-to="#work-ring" data-dim-unit="W" aria-hidden="true">
-    <span class="dim__fig" data-dim-out>0</span>
-  </i>
-  <i class="dim work__dim work__dim--x" data-dim="x"
-     data-dim-from="#work-ring" data-dim-to="#work-note" data-dim-unit="W" aria-hidden="true">
-    <span class="dim__fig" data-dim-out>0</span>
-  </i>
 </section>
 
 <!-- The archive could not allocate the clearance it asked for. This is the
@@ -886,10 +790,6 @@ names .faq__*, .qa__*, .spec-wrap and .consent* are not referenced here.
       </svg>
     </div>
 
-    <i class="dim inv__dim" data-dim="x"
-       data-dim-from="#inv-edge" data-dim-to="#inv-box" data-dim-unit="W" aria-hidden="true">
-      <span class="dim__fig" data-dim-out>0</span>
-    </i>
 
     <div class="inv__foot">
       <h2 class="inv__statement display lit">
@@ -903,7 +803,7 @@ names .faq__*, .qa__*, .spec-wrap and .consent* are not referenced here.
       </p>
       <p class="inv__cap">
         <span class="label">Fig. 07 &middot; Clearspace, occupied</span>
-        <span class="label">Measured, not drawn</span>
+        <span class="label">The mark</span>
       </p>
     </div>
 
