@@ -38,12 +38,14 @@
   </defs>
 </svg>
 
-<!-- THE LIGHTING RIG.
-     Two wedges locked 180 degrees apart, which is the mark's measured
-     symmetry, and the mark itself standing in them casting its shadow.
-     Both layers are inert: fixed, aria-hidden, pointer-events none, and
-     behind everything. The rig is pure CSS, so it costs no JavaScript. -->
-<div class="room" aria-hidden="true"></div>
+<!-- The lighting rig stood here: two conic wedges locked 180 degrees apart,
+     fixed behind the whole document, turning once every 120 seconds.
+
+     It is gone with the doctrine that put it there. Colour on this site is a
+     ground now, painted flat at viewport scale by the section itself, so
+     there is nothing left for a rig to cast onto and nothing here to hold
+     the beams. Deleting the element as well as its CSS is the point: an
+     empty fixed layer over every page is still a compositor layer. -->
 
 <!-- Makes overflowing spec tables reachable by keyboard. Loaded from this
      shared partial so it reaches every route, including pages this session

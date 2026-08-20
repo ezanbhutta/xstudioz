@@ -1,5 +1,5 @@
 /* ============================================================
-   XStudioz — the interior documents
+   XStudioz: the interior documents
 
    Fifteen of the site's sixteen URLs boot from here, and what this file does
    not do is the point of it.
@@ -27,12 +27,7 @@ import './styles/doc.css';
    construction plate and the dimension line are 31,212 bytes of CSS that no
    URL reachable from this entry can render. */
 
-import {
-  initLenis,
-  initNav,
-  revealFailsafe,
-  applyStaticScroll,
-} from './lib/motion';
+import { prefersReduced, initNav, revealFailsafe, applyStaticScroll } from './lib/motion';
 import { initUnit } from './lib/measure';
 import { initConsent } from './lib/consent';
 import { initAnalytics } from './lib/analytics';
@@ -50,19 +45,59 @@ function boot(): void {
      has a [data-stage], which is the cover, so the two never fight. */
   initUnit();
 
-  const lenis = initLenis();
-  initNav(lenis);
+  if (prefersReduced) document.documentElement.classList.add('no-motion');
+
+  initNav();
   markCurrentSection();
+  initSectionEnters();
 
   /* Kept, and near enough free: an interior page registers no ScrollTrigger
      at all, so this is one timer over an empty list. It stays because the
-     guarantee it encodes — no code path may leave readable content in a
-     state a reader cannot get out of — is a property of the site, not of the
+     guarantee it encodes, no code path may leave readable content in a
+     state a reader cannot get out of, is a property of the site, not of the
      reveals it used to police, and a later section on one of these pages
      must inherit it rather than rediscover it. */
   revealFailsafe();
 
   applyStaticScroll();
+}
+
+/* ------------------------------------------------------------
+   Section arrivals
+
+   The one piece of motion an interior document has, and it is deliberately
+   not the cover's machinery: no timeline, no ScrollTrigger, no stage. An
+   IntersectionObserver adds a class and CSS does the rest, with the
+   from-state declared in doc.css behind html.js so a document whose bundle
+   never arrives is painted finished in its first frame.
+
+   Same vocabulary as the cover: opacity and y, 20px of travel, half a
+   second, once. A reading page is read, so nothing here scrubs, nothing
+   pins, and no paragraph is split into characters.
+   ------------------------------------------------------------ */
+function initSectionEnters(): void {
+  if (prefersReduced) return;
+
+  const targets = Array.from(document.querySelectorAll<HTMLElement>('[data-enter]'));
+  if (!targets.length) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-in');
+        observer.unobserve(entry.target);
+      });
+    },
+    { rootMargin: '0px 0px -12% 0px' }
+  );
+
+  targets.forEach((el) => observer.observe(el));
+
+  /* No code path may leave readable text at an opacity a reader cannot get
+     out of. If a trigger has not fired within four seconds, everything is
+     handed back regardless of where the page is. */
+  window.setTimeout(() => targets.forEach((el) => el.classList.add('is-in')), 4000);
 }
 
 /* The section index highlights whichever section is in view. Purely a state

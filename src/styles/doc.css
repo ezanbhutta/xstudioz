@@ -1,5 +1,5 @@
 /* ============================================================
-   XStudioz — Interior documents
+   XStudioz: Interior documents
    The cover is a poster. These are pages of the same manual:
    a numbered section, a measured column of prose, hairlines
    doing the work that boxes would do elsewhere.
@@ -8,8 +8,7 @@
 /* ---------------- Preloader failsafe ----------------
    The inline <head> script opts the first visit into the loader overlay,
    but only the module bundle takes it away again. If that bundle 404s,
-   throws, or never arrives, the overlay would cover the page forever —
-   for a reader and for any renderer that runs JS.
+   throws, or never arrives, the overlay would cover the page forever, for a reader and for any renderer that runs JS.
 
    So the overlay removes itself. On a healthy load GSAP has cleared it
    after roughly two seconds and this never becomes visible; it exists
@@ -42,8 +41,8 @@
   right: 0;
   bottom: 0;
   z-index: 90;
-  background: var(--canvas-raised);
-  border-top: 1px solid var(--border);
+  background: var(--ground);
+  border-top: 1px solid var(--ink-line);
   transform: translateY(101%);
   transition: transform 0.5s var(--ease-inout);
 }
@@ -64,7 +63,7 @@
 }
 
 .consent__title {
-  color: var(--text-secondary);
+  color: var(--ink-dim);
   margin-bottom: 6px;
 }
 
@@ -75,7 +74,7 @@
 }
 
 .consent__body a {
-  background-image: linear-gradient(var(--text), var(--text));
+  background-image: linear-gradient(var(--ink), var(--ink));
   background-repeat: no-repeat;
   background-size: 100% 1px;
   background-position: left calc(100% - 1px);
@@ -83,8 +82,8 @@
 }
 
 .consent__body a:hover {
-  color: var(--brand-a);
-  background-image: linear-gradient(var(--brand-a), var(--brand-a));
+  color: var(--ink-accent);
+  background-image: linear-gradient(var(--ink-accent), var(--ink-accent));
 }
 
 .consent__actions {
@@ -132,8 +131,8 @@
   left: 50%;
   transform: translate(-50%, -120%);
   z-index: 200;
-  background: var(--interactive);
-  color: var(--interactive-text);
+  background: var(--ink);
+  color: var(--ground);
   font-size: var(--text-body-sm);
   font-weight: 500;
   padding: 10px var(--sp-4);
@@ -144,10 +143,23 @@
 .skip-link:focus-visible {
   transform: translate(-50%, 0);
   outline-offset: -4px;
-  outline-color: var(--canvas);
+  outline-color: var(--ground);
 }
 
 /* ---------------- Breadcrumbs ---------------- */
+
+/* The breadcrumb is the masthead's first line, not a strip above it, so it
+   takes the same room. Left as its own element in the markup because the two
+   policy pages are owned elsewhere and their markup is not mine to move. */
+.doc > .container > .crumbs {
+  --ink: var(--room-deep-ink);
+  --ink-dim: var(--room-deep-dim);
+  --ink-quiet: var(--room-deep-quiet);
+  background: var(--room-deep-ground);
+  color: var(--ink);
+  margin-inline: calc(var(--gutter) * -1);
+  padding: calc(var(--nav-h) + var(--sp-5)) var(--gutter) 0;
+}
 
 .crumbs {
   padding-top: calc(92px + var(--sp-5));
@@ -164,18 +176,18 @@
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
-  color: var(--text-secondary);
+  color: var(--ink-dim);
 }
 
 .crumbs li + li::before {
   content: '';
   width: 9px;
   height: 1px;
-  background: var(--border);
+  background: var(--ink-line);
 }
 
 .crumbs a {
-  background-image: linear-gradient(var(--text-secondary), var(--text-secondary));
+  background-image: linear-gradient(var(--ink-dim), var(--ink-dim));
   background-repeat: no-repeat;
   background-size: 0% 1px;
   background-position: left calc(100% - 1px);
@@ -183,12 +195,12 @@
 }
 
 .crumbs a:hover {
-  color: var(--text);
+  color: var(--ink);
   background-size: 100% 1px;
 }
 
 .crumbs [aria-current='page'] {
-  color: var(--text);
+  color: var(--ink);
 }
 
 /* ---------------- Document head ---------------- */
@@ -198,7 +210,7 @@
 }
 
 .doc__eyebrow {
-  color: var(--text-secondary);
+  color: var(--ink-dim);
   margin-bottom: var(--sp-4);
 }
 
@@ -217,12 +229,12 @@
   font-size: var(--text-subheading);
   line-height: 1.28;
   letter-spacing: 0.005em;
-  color: var(--text);
+  color: var(--ink);
   max-width: 34ch;
   margin-top: clamp(var(--sp-5), 3vw, var(--sp-6));
 }
 
-/* Key facts sit as a spec strip under the title — the same
+/* Key facts sit as a spec strip under the title, the same
    language as the mark's construction notes on the cover. */
 .doc__facts {
   display: grid;
@@ -245,7 +257,7 @@
   line-height: 1.4;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--text-secondary);
+  color: var(--ink-dim);
 }
 
 .doc__facts dd {
@@ -307,8 +319,8 @@
   letter-spacing: -0.02em;
   /* One step off the ground, the same value the footer mark is cut from, so
      the number sits in the page rather than on it. */
-  color: var(--canvas-raised);
-  -webkit-text-stroke: 1px var(--border-strong);
+  color: var(--ground);
+  -webkit-text-stroke: 1px var(--ink-line-strong);
   user-select: none;
 }
 
@@ -340,13 +352,10 @@
    and the reading body below is calm dark paper. That is also what
    base.css already says the rig is for: body copy is never lit. */
 
-@supports selector(:has(*)) {
-  body:has(.doc--capability) .room {
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 118vh;
-  }
-}
+/* A block here re-anchored the lighting rig to the top of a capability page,
+   so the beams fell on the masthead and the reading body below stayed calm.
+   The rig is gone and colour is a ground now, so the masthead simply IS a
+   room and there is nothing left to anchor. */
 
 /* ---- 3. The width ----
    At 1440 the third column held about 430px of nothing, while the spec
@@ -422,7 +431,7 @@
 }
 
 .doc__index-head {
-  color: var(--text-secondary);
+  color: var(--ink-dim);
   padding-bottom: var(--sp-3);
   border-bottom: var(--hairline);
 }
@@ -449,7 +458,7 @@
   gap: var(--sp-2);
   min-height: 44px;
   font-size: var(--text-body-sm);
-  color: var(--text-secondary);
+  color: var(--ink-dim);
   transition: color var(--dur-fast) ease;
 }
 
@@ -463,7 +472,7 @@
 
 .doc__index a:hover,
 .doc__index a.is-current {
-  color: var(--text);
+  color: var(--ink);
 }
 
 .doc__prose {
@@ -515,12 +524,12 @@
 
 .prose em {
   font-style: normal;
-  color: var(--text-secondary);
+  color: var(--ink-dim);
 }
 
 /* Inline links must be visible without relying on colour alone. */
 .prose a:not(.pill):not(.ghost) {
-  background-image: linear-gradient(var(--text), var(--text));
+  background-image: linear-gradient(var(--ink), var(--ink));
   background-repeat: no-repeat;
   background-size: 100% 1px;
   background-position: left calc(100% - 1px);
@@ -528,12 +537,12 @@
 }
 
 .prose a:not(.pill):not(.ghost):hover {
-  color: var(--brand-a);
-  background-image: linear-gradient(var(--brand-a), var(--brand-a));
+  color: var(--ink-accent);
+  background-image: linear-gradient(var(--ink-accent), var(--ink-accent));
 }
 
 /* Running lists in the prose get the dash-and-number treatment. Lists that
-   are really components — .checklist, .entries, .related__list — bring their
+   are really components, .checklist, .entries, .related__list, bring their
    own layout, so they are excluded here rather than having to undo it. */
 .prose :is(ul, ol):not(.checklist, .entries, .related__list, .journey) {
   margin-top: var(--sp-4);
@@ -554,7 +563,7 @@
   top: 0.72em;
   width: 7px;
   height: 1px;
-  background: var(--text-secondary);
+  background: var(--ink-dim);
 }
 
 .prose ol:not(.checklist, .entries, .related__list) {
@@ -575,7 +584,7 @@
   font-weight: 500;
   letter-spacing: var(--tracking-label);
   line-height: 2.4;
-  color: var(--text-secondary);
+  color: var(--ink-dim);
 }
 
 /* ---------------- The answer block ----------------
@@ -584,8 +593,8 @@
    Machines lift this; people read it and stop. */
 
 .answer {
-  background: var(--canvas-raised);
-  border-left: 2px solid var(--text-muted);
+  background: var(--ground);
+  border-left: 2px solid var(--ink-quiet);
   padding: var(--sp-4) var(--sp-5);
   margin-bottom: var(--sp-5);
 }
@@ -611,8 +620,8 @@
      to. The fade tracks the scroll position, so it disappears at the end
      rather than implying content that is not there. */
   background:
-    linear-gradient(to right, var(--canvas) 30%, transparent) left / 40px 100% no-repeat,
-    linear-gradient(to left, var(--canvas) 30%, transparent) right / 40px 100% no-repeat;
+    linear-gradient(to right, var(--ground) 30%, transparent) left / 40px 100% no-repeat,
+    linear-gradient(to left, var(--ground) 30%, transparent) right / 40px 100% no-repeat;
   background-attachment: local, local;
 }
 
@@ -652,7 +661,7 @@
   font-weight: 500;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--text-secondary);
+  color: var(--ink-dim);
   white-space: nowrap;
 }
 
@@ -660,7 +669,7 @@
   font-size: var(--text-body-sm);
   letter-spacing: 0.01em;
   text-transform: none;
-  color: var(--text);
+  color: var(--ink);
   font-weight: 500;
 }
 
@@ -682,7 +691,7 @@
 }
 
 .checklist li span:last-child {
-  color: var(--text-secondary);
+  color: var(--ink-dim);
   font-size: var(--text-caption);
   font-weight: 500;
   letter-spacing: var(--tracking-label);
@@ -751,7 +760,7 @@
   position: absolute;
   inset: 50% 0 auto 0;
   height: 1px;
-  background: var(--text-secondary);
+  background: var(--ink-dim);
   transition: transform 180ms var(--ease-out), background-color var(--dur-fast) ease;
 }
 
@@ -771,9 +780,9 @@
 .faq__item[open] .faq__marker::after { transform: scaleY(0); }
 
 @media (hover: hover) {
-  .faq__q:hover .faq__q-text { color: var(--text); }
+  .faq__q:hover .faq__q-text { color: var(--ink); }
   .faq__q:hover .faq__marker::before,
-  .faq__q:hover .faq__marker::after { background: var(--text); }
+  .faq__q:hover .faq__marker::after { background: var(--ink); }
 }
 
 .faq__q:focus-visible {
@@ -785,7 +794,7 @@
 .faq__a {
   max-width: 37rem;
   padding-bottom: clamp(var(--sp-4), 2.4vw, var(--sp-5));
-  color: var(--text-secondary);
+  color: var(--ink-dim);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -836,12 +845,12 @@
 }
 
 .qa__a {
-  color: var(--text-secondary);
+  color: var(--ink-dim);
 }
 
 .qa__a a {
-  color: var(--text);
-  background-image: linear-gradient(var(--text), var(--text));
+  color: var(--ink);
+  background-image: linear-gradient(var(--ink), var(--ink));
   background-repeat: no-repeat;
   background-size: 100% 1px;
   background-position: left calc(100% - 1px);
@@ -849,8 +858,8 @@
 }
 
 .qa__a a:hover {
-  color: var(--brand-a);
-  background-image: linear-gradient(var(--brand-a), var(--brand-a));
+  color: var(--ink-accent);
+  background-image: linear-gradient(var(--ink-accent), var(--ink-accent));
 }
 
 .qa__more {
@@ -883,7 +892,7 @@
 }
 
 .related__link:hover {
-  background-color: var(--canvas-raised);
+  background-color: var(--ground);
 }
 
 .related__name {
@@ -898,7 +907,7 @@
 }
 
 .related__desc {
-  color: var(--text-secondary);
+  color: var(--ink-dim);
   align-self: center;
   max-width: 46ch;
 }
@@ -924,7 +933,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-4);
-  color: var(--text-secondary);
+  color: var(--ink-dim);
   margin-top: var(--sp-5);
 }
 
@@ -948,11 +957,11 @@
 }
 
 .entries a:hover {
-  background-color: var(--canvas-raised);
+  background-color: var(--ground);
 }
 
 .entries .label {
-  color: var(--text-secondary);
+  color: var(--ink-dim);
 }
 
 .entries__name {
@@ -969,7 +978,7 @@
 
 .entries__desc {
   font-size: var(--text-body-sm);
-  color: var(--text-secondary);
+  color: var(--ink-dim);
   align-self: center;
   max-width: 44ch;
 }
@@ -994,7 +1003,7 @@
 .doc__cta {
   margin-top: var(--section-gap);
   padding-block: clamp(var(--sp-6), 6vw, var(--sp-7));
-  background: var(--canvas-panel);
+  background: var(--ground);
 }
 
 .doc__cta-grid {
@@ -1035,7 +1044,7 @@
 }
 
 .lost__code {
-  color: var(--text-secondary);
+  color: var(--ink-dim);
 }
 
 .lost__links {
@@ -1058,7 +1067,7 @@
 }
 
 .footer__col-head {
-  color: var(--text-muted);
+  color: var(--ink-quiet);
   margin-bottom: var(--sp-4);
 }
 
@@ -1079,7 +1088,7 @@
      thumb and the wrong page. */
   min-height: 44px;
   font-size: var(--text-body-sm);
-  color: var(--text-secondary);
+  color: var(--ink-dim);
   transition: color var(--dur-fast) ease;
 }
 
@@ -1094,14 +1103,14 @@
   right: 0;
   bottom: calc(50% - 0.85em);
   height: 1px;
-  background: var(--text);
+  background: var(--ink);
   transform: scaleX(0);
   transform-origin: left center;
   transition: transform var(--dur-fast) var(--ease-out);
 }
 
 .footer__col a:hover {
-  color: var(--text);
+  color: var(--ink);
 }
 
 .footer__col a:hover::after {
@@ -1142,7 +1151,7 @@
 
 .footer__channel-name {
   font-size: var(--text-body);
-  color: var(--text);
+  color: var(--ink);
 }
 
 .footer__channel-note {
@@ -1150,7 +1159,7 @@
   font-size: var(--text-caption);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--ink-quiet);
 }
 
 .footer__channel-arr {
@@ -1159,19 +1168,19 @@
   align-self: center;
   width: 12px;
   height: 12px;
-  color: var(--text-muted);
+  color: var(--ink-quiet);
   transition:
     transform var(--dur-fast) var(--ease-out),
     color var(--dur-fast) ease;
 }
 
 .footer__col--channels a:hover .footer__channel-arr {
-  color: var(--text);
+  color: var(--ink);
   transform: translate(2px, -2px);
 }
 
 .footer__col--channels a:hover .footer__channel-note {
-  color: var(--text-secondary);
+  color: var(--ink-dim);
 }
 
 /* The hover states stay, they just stop travelling. Both of these move a
@@ -1412,20 +1421,20 @@
   font-size: 12px;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--ink-quiet);
 }
 
 .journey__name {
   font-size: var(--text-body);
   font-weight: 500;
   line-height: 1.25;
-  color: var(--text);
+  color: var(--ink);
 }
 
 .journey__note {
   font-size: var(--text-body-sm);
   line-height: var(--leading-body);
-  color: var(--text-secondary);
+  color: var(--ink-dim);
   max-width: 34ch;
 }
 
@@ -1482,8 +1491,7 @@
 
    The unit is real here too. lib/measure.ts publishes --w from the nav mark
    on any document with no [data-stage], so --clearspace is four times the
-   width of the mark actually drawn in the header — 26px, therefore 104px —
-   rather than the token's 88px fallback.
+   width of the mark actually drawn in the header, 26px, therefore 104px, rather than the token's 88px fallback.
 
    Everything below is :has(), :hover and :focus-within. No listener, no
    ScrollTrigger, no bundle dependency: an interior page whose JavaScript
@@ -1493,7 +1501,7 @@
 .doc {
   /* Every displacement on an interior page is a fraction of one clearance,
      so there is exactly one number to tune and it is derived from the mark.
-     0.25W — 6.5px at the nav mark's 26. Small on purpose: this is a page
+     0.25W, 6.5px at the nav mark's 26. Small on purpose: this is a page
      giving way, not a page performing. */
   --clear-nudge: calc(var(--clearspace) / 16);
 }
@@ -1557,7 +1565,7 @@
   }
 }
 
-/* The displacement still happens with motion off — it is a state, and
+/* The displacement still happens with motion off, it is a state, and
    suppressing it would leave the row under the pointer indistinguishable.
    What goes is the easing. */
 @media (prefers-reduced-motion: reduce) {
@@ -1594,9 +1602,270 @@
   width: 1px;
   background-image: repeating-linear-gradient(
     to bottom,
-    var(--border-strong) 0 3px,
+    var(--ink-line-strong) 0 3px,
     transparent 3px 10px
   );
   opacity: 0.7;
   pointer-events: none;
+}
+
+/* ============================================================
+   THE INTERIOR DOCUMENTS, IN ROOMS
+
+   Everything above this block is the reading apparatus and it is unchanged
+   in kind. This block is what makes an interior page belong to the same site
+   as the cover, and the rule it follows is narrow on purpose.
+
+   An interior page is READ. It is not a landing page and it must not become
+   one, so nothing here pins, nothing scrubs, and no paragraph is ever split
+   into characters. What the cover and the documents share is the SEAMS: the
+   header, the type ratio, the way a section opens, the colour grounds, the
+   footer, and the pace at which things arrive.
+
+   The sequence on every interior URL:
+
+     crumbs      paper
+     masthead    deep violet, full bleed, the display step
+     the reading paper, one measure, 16px at 155% leading
+     related     magenta, full bleed
+     the CTA     violet, full bleed
+     colophon    void
+
+   The reading column is the one thing colour is not allowed to touch. It
+   keeps its measure, its size and its leading, on the ground the reader's
+   own theme chose.
+   ============================================================ */
+
+/* Full bleed from inside a .container. The container has no max-width below
+   2200px, so cancelling its gutter reaches the real edges of the viewport
+   and putting it back as padding keeps the type on the same spine as the
+   text above and below. */
+.bleed {
+  margin-inline: calc(var(--gutter) * -1);
+  padding-inline: var(--gutter);
+}
+
+/* ---- The masthead ---- */
+
+.doc__head {
+  --ground: var(--room-deep-ground);
+  --ink: var(--room-deep-ink);
+  --ink-dim: var(--room-deep-dim);
+  --ink-quiet: var(--room-deep-quiet);
+  --ink-accent: var(--room-deep-accent);
+  --ink-line: color-mix(in srgb, var(--ink) 20%, transparent);
+  --ink-line-strong: color-mix(in srgb, var(--ink) 38%, transparent);
+  background: var(--ground);
+  color: var(--ink);
+  margin-inline: calc(var(--gutter) * -1);
+  padding: clamp(48px, 6vw, 96px) var(--gutter) clamp(48px, 6vw, 90px);
+  margin-bottom: clamp(40px, 5vw, 72px);
+
+  /* The masthead commits a whole frame to one flat hex and sets its title on
+     the floor of it, which is the cover's hero rule applied to a document.
+     It is the strongest single seam between the two: a reader arriving from
+     the homepage meets the same move before they meet any prose. */
+  min-height: min(84svh, 760px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.doc__eyebrow {
+  color: var(--ink-quiet);
+  margin-bottom: var(--sp-4);
+}
+
+/* The display step, the same one the cover's hero is set at, which is the
+   single strongest seam between a document and the poster it came from. */
+.doc__title {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  font-weight: 400;
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  max-width: var(--measure-display);
+  text-align: var(--align);
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.doc__lede {
+  font-family: var(--font-sans);
+  font-size: var(--text-subheading);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-dim);
+  max-width: 46ch;
+  margin-top: clamp(var(--sp-5), 3vw, var(--sp-6));
+}
+
+.doc__facts {
+  border-top-color: var(--ink-line);
+}
+
+.doc__facts dt {
+  color: var(--ink-quiet);
+}
+
+.doc__facts dd {
+  color: var(--ink);
+}
+
+/* ---- The reading column ----
+   Protected. 16px at 155% on a 37rem measure, on the reader's own ground.
+   No colour, no scrub, no split. This is the part of the site that is read
+   rather than looked at and none of the poster language reaches it. */
+
+.doc__section > h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-heading-sm);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+.doc__section h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-subheading);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.prose p,
+.prose li {
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: 0;
+}
+
+/* The one coloured thing inside the reading column, and it is a callout
+   rather than prose: a direct answer to the question the section asks. */
+.answer {
+  --ground: var(--room-violet-ground);
+  --ink: var(--room-violet-ink);
+  --ink-dim: var(--room-violet-dim);
+  --ink-quiet: var(--room-violet-quiet);
+  --ink-accent: var(--room-violet-accent);
+  background: var(--ground);
+  color: var(--ink);
+  border-left: 0;
+  padding: var(--sp-5);
+}
+
+.answer p {
+  color: var(--ink);
+}
+
+/* ---- The closing bands ---- */
+
+.related {
+  --ground: var(--room-magenta-ground);
+  --ink: var(--room-magenta-ink);
+  --ink-dim: var(--room-magenta-dim);
+  --ink-quiet: var(--room-magenta-quiet);
+  --ink-accent: var(--room-magenta-accent);
+  --ink-line: color-mix(in srgb, var(--ink) 24%, transparent);
+  --ink-line-strong: color-mix(in srgb, var(--ink) 46%, transparent);
+  background: var(--ground);
+  color: var(--ink);
+  margin-inline: calc(var(--gutter) * -1);
+  padding: clamp(56px, 6vw, 104px) var(--gutter);
+}
+
+.doc__cta {
+  --ground: var(--room-violet-ground);
+  --ink: var(--room-violet-ink);
+  --ink-dim: var(--room-violet-dim);
+  --ink-quiet: var(--room-violet-quiet);
+  --ink-accent: var(--room-violet-accent);
+  --ink-line: color-mix(in srgb, var(--ink) 24%, transparent);
+  --ink-line-strong: color-mix(in srgb, var(--ink) 46%, transparent);
+  background: var(--ground);
+  color: var(--ink);
+  margin-top: 0;
+  padding-block: clamp(60px, 7vw, 118px);
+}
+
+.doc__cta h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-heading);
+  font-weight: 400;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+/* ---- Fixed chrome that sits outside every room ---- */
+
+.consent,
+.skip-link {
+  --ground: var(--room-void-ground);
+  --ink: var(--room-void-ink);
+  --ink-dim: var(--room-void-dim);
+  --ink-quiet: var(--room-void-quiet);
+  --ink-accent: var(--room-void-accent);
+  --ink-line: color-mix(in srgb, var(--ink) 22%, transparent);
+  --ink-line-strong: color-mix(in srgb, var(--ink) 44%, transparent);
+  color: var(--ink);
+}
+
+/* ---- Display type in the apparatus ---- */
+
+.related__name,
+.entries__name {
+  font-family: var(--font-display);
+  font-size: var(--text-subheading);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.faq__q-text {
+  font-family: var(--font-display);
+  font-size: var(--text-subheading);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.qa__statement,
+.doc__cta-grid > h2 {
+  text-align: var(--align);
+}
+
+/* ============================================================
+   ARRIVALS
+
+   The whole interior motion budget. Opacity and 20px of y, half a second,
+   once, applied by an IntersectionObserver in page.ts. The from-state is
+   behind html.js so a document whose bundle never arrives is painted
+   finished in its first frame, and html.no-motion opts out entirely.
+   ============================================================ */
+
+html.js:not(.no-motion) [data-enter] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+}
+
+html.js:not(.no-motion) [data-enter].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-enter] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

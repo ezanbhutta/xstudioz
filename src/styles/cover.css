@@ -1,0 +1,1146 @@
+/* ============================================================
+   XStudioz: the cover
+
+   Homepage only. Imported by src/main.ts and by nothing else, so none of it
+   reaches the fifteen interior documents.
+
+   Everything shared lives one layer up: the two families, the five step
+   scale, the fluid root above 1536, the 20px gutter, the rooms and their
+   inks, and the motion vocabulary are all in tokens.css and base.css. If a
+   colour or a size appears below it is because this page is the only place
+   it exists, and there are very few of those.
+   ============================================================ */
+
+/* ============================================================
+   00 · HERO
+
+   items-end. The headline sits on the floor of the frame with roughly a
+   third of the viewport left as untouched magenta above it. That is the
+   cheapest of the three emptiness mechanisms on this page and it costs
+   nothing but the discipline to leave the space alone.
+   ============================================================ */
+
+.hero {
+  min-height: 100svh;
+  display: flex;
+}
+
+.hero__sheet {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  padding-block: calc(var(--nav-h) + var(--gutter)) var(--gutter);
+}
+
+.hero__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-5);
+}
+
+.hero__eyebrow {
+  color: var(--ink);
+  max-width: 32ch;
+}
+
+/* The rotator has to reserve its own row height, because the characters
+   travel 50px in open space with no mask and a row that resized as they
+   moved would shove the eyebrow beside it. */
+.hero__state {
+  position: relative;
+  min-width: 18ch;
+  height: 1.3em;
+  text-align: right;
+  overflow: visible;
+}
+
+.hero__state-item {
+  position: absolute;
+  right: 0;
+  top: 0;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.hero__state-item[hidden] {
+  display: none;
+}
+
+.hero__floor {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(300px, 1fr);
+  align-items: end;
+  column-gap: clamp(30px, 5vw, 90px);
+  row-gap: var(--sp-6);
+}
+
+.hero__title {
+  margin: 0;
+  color: var(--ink);
+}
+
+.hero__l {
+  display: block;
+  white-space: nowrap;
+}
+
+.hero__cluster {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding-bottom: 0.14em;
+  max-width: 46ch;
+}
+
+.hero__lede {
+  color: var(--ink);
+}
+
+.hero__act {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+}
+
+.hero__foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  border-top: 1px solid var(--ink-line);
+  padding-top: var(--sp-3);
+  color: var(--ink);
+}
+
+.hero__scroll {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+/* Static. A cue that bobs has no neighbour to bob against. */
+.hero__chev {
+  width: 11px;
+  height: 11px;
+  stroke: currentColor;
+}
+
+@media (max-width: 1100px) {
+  .hero__floor {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .hero__cluster {
+    padding-bottom: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero__head {
+    flex-direction: column;
+    gap: var(--sp-3);
+  }
+
+  .hero__state {
+    text-align: left;
+    min-width: 0;
+  }
+
+  .hero__state-item {
+    right: auto;
+    left: 0;
+  }
+
+  .hero__foot {
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+}
+
+/* ============================================================
+   THE TWO SCENES
+
+   The pin is `position: sticky`, not a pinning library. A track several
+   viewports tall holds a 100vh stage stuck to the top of it, so the
+   duration of a scene is just the height of its parent and there is no pin
+   spacer, no layout thrash and no scroll jump on refresh.
+
+   Progress runs 0 when the track's top reaches the viewport top and 1 when
+   its BOTTOM reaches the viewport top, so the scrub range in pixels equals
+   the track height exactly.
+   ============================================================ */
+
+.scene {
+  position: relative;
+}
+
+.scene__track {
+  position: relative;
+  height: 500vh;
+}
+
+.scene__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.scene__inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: calc(var(--nav-h) + var(--gutter)) var(--gutter);
+}
+
+.scene__eyebrow {
+  position: absolute;
+  top: calc(var(--nav-h) + var(--gutter));
+  left: var(--gutter);
+  color: var(--ink);
+}
+
+/* ---- Scene A: the statement on the curve ---- */
+
+/* Centred by layout, not by transform, for the same reason the discs are
+   placed by position: the timeline writes transform on this element and a
+   centring translate would be parsed as an existing offset and carried into
+   every frame it writes. */
+.wave {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  text-align: var(--align);
+  pointer-events: none;
+}
+
+.wave__svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.wave__text {
+  font-family: var(--font-display);
+  font-size: 100px;
+  font-weight: 400;
+  letter-spacing: -1px;
+  fill: var(--ink);
+}
+
+.payoff {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  align-items: var(--align, start);
+}
+
+.payoff__line {
+  margin: 0;
+  color: var(--ink);
+  text-align: var(--align);
+}
+
+.payoff__note {
+  color: var(--ink-dim);
+  max-width: 62ch;
+  text-align: var(--align);
+}
+
+@media (max-width: 900px) {
+  .wave__text {
+    font-size: 148px;
+  }
+
+  .wave__svg {
+    width: 200%;
+  }
+}
+
+/* ---- Scene B: the discs, the flick, the scrub ---- */
+
+/* Two identical discs converge from off screen and fill the stage with flat
+   magenta. They never fully meet at the centre line: each stops with enough
+   overlap that the curved edges cover the corners, which is what lets a
+   change of room be performed by two moving objects rather than by a
+   background swap. */
+.disc {
+  position: absolute;
+  left: 50%;
+  width: 240vw;
+  height: 300vh;
+  margin-left: -120vw;
+  border-radius: 50%;
+  background: var(--brand-magenta);
+  pointer-events: none;
+  will-change: transform;
+}
+
+ /* Placed off screen by POSITION, never by transform. A transform here would
+    be read back by the scrubber as an existing y and added to the one it
+    writes, which parks both discs at twice the intended distance and leaves
+    the scene playing out on a stage nothing ever reaches. Transform on these
+    two elements belongs to the timeline alone. */
+.disc--top {
+  top: -300vh;
+}
+
+.disc--bottom {
+  bottom: -300vh;
+}
+
+.scene__inner--clear {
+  justify-content: center;
+  align-items: var(--align, flex-start);
+}
+
+.clear__intro {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--sp-4);
+  align-items: center;
+  will-change: transform;
+}
+
+/* Both the eyebrow and the statement are set in the magenta room's ink, so
+   they are invisible against the void the scene opens on and read at 5.30:1
+   the moment the discs arrive underneath them. The discs do not reveal a
+   colour, they reveal the type. */
+.clear__eyebrow,
+.clear__statement {
+  color: var(--room-magenta-ink);
+}
+
+.clear__statement {
+  margin: 0;
+  text-align: center;
+}
+
+.clear__line {
+  display: block;
+}
+
+.clear__body {
+  position: relative;
+  width: 100%;
+  will-change: transform;
+}
+
+.clear__note {
+  margin: 0;
+  color: var(--room-magenta-ink);
+  text-align: var(--align);
+}
+
+.clear__plate {
+  position: absolute;
+  right: var(--gutter);
+  bottom: var(--gutter);
+  width: clamp(150px, 17vw, 260px);
+  margin: 0;
+  will-change: transform, opacity;
+}
+
+.clear__field {
+  position: relative;
+  aspect-ratio: 1;
+  border: 1px solid var(--room-magenta-ink);
+}
+
+/* Three mark widths across, because the mark is one and the clearance is one
+   on each side. The field is sized first and the mark derived from it, so
+   the drawing cannot disagree with the unit. */
+.clear__box,
+.clear__mark {
+  position: absolute;
+  inset: 33.3333%;
+  width: 33.3334%;
+  height: 33.3334%;
+  pointer-events: none;
+}
+
+/* <use> builds a shadow tree and a class selector in this document cannot
+   reach inside one. Custom properties do inherit across that boundary, which
+   is why the two fills are addressed as properties on the host and not as
+   rules on the paths. */
+.clear__mark {
+  --xm-body: var(--room-magenta-ink);
+  --xm-counter: var(--room-magenta-ground);
+}
+
+.clear__cap {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-top: var(--sp-2);
+  color: var(--room-magenta-quiet);
+}
+
+@media (max-width: 900px) {
+  .clear__plate {
+    display: none;
+  }
+}
+
+/* ---- Static composition ----
+   No bundle, reduced motion, or the ?static QA mode. The tracks collapse to
+   their content, the stages stop sticking, and the scene reads top to bottom
+   as an ordinary section. Nothing waits on a scroll position and nothing is
+   left at an opacity a reader cannot get out of.
+
+   Scene B loses its discs entirely and takes the magenta room outright,
+   because the ink it is set in only exists against magenta. */
+
+html:not(.js) .scene__track,
+html.no-motion .scene__track {
+  height: auto;
+}
+
+html:not(.js) .scene__stage,
+html.no-motion .scene__stage {
+  position: static;
+  height: auto;
+  overflow: visible;
+  padding-block: var(--section-gap);
+}
+
+html:not(.js) .scene__inner,
+html.no-motion .scene__inner {
+  height: auto;
+  display: grid;
+  gap: clamp(30px, 4vw, 64px);
+  padding-block: 0;
+}
+
+html:not(.js) .scene__eyebrow,
+html.no-motion .scene__eyebrow,
+html:not(.js) .wave,
+html.no-motion .wave,
+html:not(.js) .clear__intro,
+html.no-motion .clear__intro,
+html:not(.js) .clear__plate,
+html.no-motion .clear__plate {
+  position: static;
+  transform: none;
+  inset: auto;
+}
+
+html:not(.js) .clear__plate,
+html.no-motion .clear__plate {
+  width: clamp(150px, 17vw, 260px);
+}
+
+html:not(.js) .disc,
+html.no-motion .disc {
+  display: none;
+}
+
+html:not(.js) .scene--clear,
+html.no-motion .scene--clear {
+  --ground: var(--room-magenta-ground);
+  --ink: var(--room-magenta-ink);
+  --ink-dim: var(--room-magenta-dim);
+  --ink-quiet: var(--room-magenta-quiet);
+  --ink-accent: var(--room-magenta-accent);
+  background: var(--ground);
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene__track {
+    height: auto;
+  }
+
+  .scene__stage {
+    position: static;
+    height: auto;
+    overflow: visible;
+    padding-block: var(--section-gap);
+  }
+
+  .scene__inner {
+    height: auto;
+    display: grid;
+    gap: clamp(30px, 4vw, 64px);
+    padding-block: 0;
+  }
+
+  .scene__eyebrow,
+  .wave,
+  .clear__intro,
+  .clear__plate {
+    position: static;
+    transform: none;
+    inset: auto;
+  }
+
+  .disc {
+    display: none;
+  }
+
+  .scene--clear {
+    --ground: var(--room-magenta-ground);
+    --ink: var(--room-magenta-ink);
+    --ink-dim: var(--room-magenta-dim);
+    --ink-quiet: var(--room-magenta-quiet);
+    --ink-accent: var(--room-magenta-accent);
+    background: var(--ground);
+    color: var(--ink);
+  }
+}
+
+/* ============================================================
+   02 · CAPABILITIES
+
+   Five rows, packed, separated by a single hairline. The name is the
+   display step at 68px and the rank between an active row and an inactive
+   one is carried by colour alone. Nothing here is bolded and nothing
+   animates its own arrival: the list is laid out finished and the section
+   fades once, as one block.
+   ============================================================ */
+
+.caps__intro {
+  margin-bottom: clamp(40px, 5vw, 80px);
+}
+
+.caps__statement {
+  margin: 0;
+  color: var(--ink);
+}
+
+.caps__list {
+  border-top: 1px solid var(--ink-line);
+}
+
+.caps__row {
+  border-bottom: 1px solid var(--ink-line);
+}
+
+.caps__link {
+  display: grid;
+  grid-template-columns: 4ch minmax(0, 1fr) minmax(0, 26ch) 40px;
+  align-items: center;
+  gap: var(--sp-4);
+  padding-block: var(--sp-3);
+  color: var(--ink-dim);
+  transition: color var(--dur-fast) ease;
+}
+
+.caps__link:hover,
+.caps__link:focus-visible {
+  color: var(--ink-accent);
+}
+
+.caps__num {
+  color: inherit;
+  align-self: start;
+  padding-top: 0.5em;
+}
+
+/* Wired to the switch like every other display line, so flipping --align to
+   center genuinely centres the whole page rather than leaving six elements
+   behind at the left gutter. */
+.caps__name {
+  margin: 0;
+  color: inherit;
+  text-align: var(--align);
+}
+
+.caps__desc {
+  color: var(--ink-dim);
+  transition: color var(--dur-fast) ease;
+}
+
+.caps__link:hover .caps__desc {
+  color: var(--ink);
+}
+
+.caps__arr {
+  width: 26px;
+  height: 18px;
+  justify-self: end;
+  stroke: currentColor;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.caps__link:hover .caps__arr {
+  transform: translateX(6px);
+}
+
+.caps__seal {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding-top: var(--sp-3);
+  color: var(--ink-quiet);
+}
+
+.caps__seal .label {
+  color: inherit;
+}
+
+@media (max-width: 1024px) {
+  .caps__link {
+    grid-template-columns: 4ch minmax(0, 1fr) 30px;
+    align-items: start;
+  }
+
+  .caps__desc {
+    grid-column: 2;
+  }
+
+  .caps__arr {
+    grid-column: 3;
+    grid-row: 1;
+    align-self: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .caps__link {
+    grid-template-columns: 3.5ch minmax(0, 1fr);
+    gap: var(--sp-2) var(--sp-3);
+  }
+
+  .caps__arr {
+    display: none;
+  }
+}
+
+/* ============================================================
+   03 · THE BRIEF
+   ============================================================ */
+
+.brief__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: clamp(30px, 5vw, 90px);
+  align-items: start;
+}
+
+.brief__statement {
+  margin: 0;
+  color: var(--ink);
+}
+
+.brief__copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+  align-items: flex-start;
+}
+
+.brief__copy .body {
+  color: var(--ink);
+  max-width: 52ch;
+}
+
+/* ============================================================
+   04 · THE MARK
+   ============================================================ */
+
+.anatomy__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr) minmax(0, 1.1fr);
+  gap: clamp(30px, 4vw, 64px);
+  align-items: start;
+}
+
+.anatomy__plate {
+  margin: 0;
+}
+
+.fig {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.fig__x {
+  --xm-body: var(--ink);
+  --xm-counter: var(--ground);
+}
+
+.anatomy__cap {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-top: var(--sp-3);
+  color: var(--ink-quiet);
+  border-top: 1px solid var(--ink-line);
+  padding-top: var(--sp-2);
+}
+
+.anatomy__copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.anatomy__statement {
+  margin: 0;
+  color: var(--ink);
+}
+
+.anatomy__copy .body {
+  color: var(--ink-dim);
+  max-width: 52ch;
+}
+
+.anatomy__specs {
+  display: grid;
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
+}
+
+.anatomy__specs li {
+  display: grid;
+  grid-template-columns: 14ch minmax(0, 1fr);
+  gap: var(--sp-3);
+  border-top: 1px solid var(--ink-line);
+  padding-top: var(--sp-2);
+  color: var(--ink-dim);
+}
+
+.anatomy__specs .label {
+  color: var(--ink-quiet);
+}
+
+/* ---- Fig. 02, the registration proof ----
+   Two copies of one drawing, the upper turned a half turn about the measured
+   centre and composited with mix-blend-mode: difference. Identical layers
+   subtract to 0,0,0, and zero is black in every theme and in every room, so
+   the plate cannot follow the room around the page. --proof-field and
+   --proof-ink are the void and its ink, held still, which is the ground the
+   mark was actually drawn against. */
+
+.reg {
+  display: grid;
+  gap: var(--sp-4);
+  margin: 0;
+}
+
+.reg__field {
+  position: relative;
+  aspect-ratio: 1;
+  background: var(--proof-field);
+  border: 1px solid var(--ink-line-strong);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.reg__stack {
+  position: absolute;
+  inset: 14%;
+}
+
+.reg__x {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--proof-ink);
+}
+
+.reg__x--turn {
+  mix-blend-mode: difference;
+  transform-origin: var(--x-origin-x) var(--x-origin-y);
+  transform: rotate(180deg);
+  transition: transform 0.9s var(--ease-inout);
+}
+
+.reg.is-broken .reg__x--turn {
+  transform: rotate(90deg);
+}
+
+/* Above the blend group, not inside it, so it survives the cancellation. */
+.reg__target {
+  position: absolute;
+  inset: 14%;
+  z-index: 1;
+  stroke: var(--brand-magenta);
+  stroke-width: 0.7;
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease-out);
+}
+
+.reg.is-broken .reg__target {
+  opacity: 1;
+}
+
+.reg__foot {
+  display: grid;
+  gap: var(--sp-3);
+}
+
+.reg__probe {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  width: 100%;
+  text-align: left;
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid var(--ink-line);
+  color: var(--ink);
+  transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+
+.reg__probe:hover {
+  border-bottom-color: var(--ink-line-strong);
+}
+
+.reg__read {
+  color: var(--ink-quiet);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--dur-fast) ease;
+}
+
+.reg.is-broken .reg__read {
+  color: var(--ink-accent);
+}
+
+.reg__note {
+  color: var(--ink-dim);
+  max-width: 42ch;
+}
+
+.anatomy__grid:has([data-spec='rot']:hover) .reg__target {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reg__x--turn,
+  .reg__target {
+    transition: none;
+  }
+}
+
+/* If the engine cannot blend, the plate would show two solid marks on top of
+   each other and claim to be a proof. Better to show one and say nothing. */
+@supports not (mix-blend-mode: difference) {
+  .reg__x--turn {
+    display: none;
+  }
+
+  .reg__probe {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .anatomy__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .anatomy__copy {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 700px) {
+  .anatomy__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   05 · THE ARCHIVE
+
+   The two title lines are centred individually, so they form a ragged
+   centred stack rather than a left aligned list. This is one of the four
+   things on the page that centres on purpose while the switch is set left.
+   ============================================================ */
+
+.work__box {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(40px, 5vw, 80px);
+}
+
+.work__void {
+  display: grid;
+  gap: var(--sp-3);
+  border: 1px dashed var(--ink-line-strong);
+  padding: clamp(30px, 4vw, 56px);
+}
+
+.work__void-a,
+.work__void-c {
+  color: var(--ink-quiet);
+}
+
+.work__void-c {
+  justify-self: end;
+}
+
+.work__void-b {
+  color: var(--ink-dim);
+  max-width: 52ch;
+}
+
+.work__grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-5);
+}
+
+.work__statement {
+  margin: 0;
+  color: var(--ink);
+  text-align: center;
+}
+
+.work__line {
+  display: block;
+}
+
+.work__note {
+  color: var(--ink-dim);
+  text-align: center;
+}
+
+.portal {
+  display: block;
+  border: 1px solid var(--ink-line-strong);
+  padding: clamp(24px, 3vw, 44px);
+  transition: border-color var(--dur-fast) ease;
+}
+
+.portal:hover,
+.portal:focus-visible {
+  border-color: var(--ink);
+}
+
+.portal__inner {
+  display: grid;
+  gap: var(--sp-5);
+}
+
+.portal__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  color: var(--ink-quiet);
+}
+
+.portal__arr {
+  width: 16px;
+  height: 16px;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.portal:hover .portal__arr {
+  transform: translate(4px, -4px);
+}
+
+.portal__title {
+  display: block;
+  color: var(--ink);
+  text-align: var(--align);
+}
+
+.portal__line {
+  display: block;
+}
+
+.portal__x {
+  display: inline-block;
+  width: 0.62em;
+  height: 0.62em;
+  margin-left: 0.2em;
+  vertical-align: baseline;
+}
+
+.portal__x svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+  transition: transform 0.6s var(--ease-inout);
+}
+
+.portal:hover .portal__x svg,
+.portal:focus-visible .portal__x svg {
+  transform: rotate(180deg);
+}
+
+.portal__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-4);
+  color: var(--ink-quiet);
+  border-top: 1px solid var(--ink-line);
+  padding-top: var(--sp-3);
+}
+
+/* ============================================================
+   06 · THE PROCESS
+   ============================================================ */
+
+.process__statement {
+  margin: 0 0 clamp(40px, 5vw, 80px);
+  color: var(--ink);
+}
+
+.process__steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--sp-5);
+}
+
+.process__step {
+  display: grid;
+  gap: var(--sp-2);
+  align-content: start;
+}
+
+.process__rule {
+  display: block;
+  height: 1px;
+  background: var(--ink-line-strong);
+  margin-bottom: var(--sp-3);
+  transform-origin: left center;
+}
+
+.process__num {
+  color: var(--ink-quiet);
+}
+
+.process__name {
+  margin: 0;
+  color: var(--ink);
+}
+
+.process__body {
+  color: var(--ink-dim);
+}
+
+@media (max-width: 1024px) {
+  .process__steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: var(--sp-6);
+  }
+}
+
+@media (max-width: 620px) {
+  .process__steps {
+    grid-template-columns: 1fr;
+  }
+
+  .brief__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   08 · QUESTIONS
+
+   .qa__* names are load bearing across sessions and are unchanged. The
+   cover overrides only what the interior documents style differently.
+   ============================================================ */
+
+.qa__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: clamp(30px, 5vw, 90px);
+  align-items: start;
+}
+
+.qa__statement {
+  margin: 0;
+  color: var(--ink);
+}
+
+.qa__list {
+  display: grid;
+  gap: var(--sp-6);
+}
+
+.qa__item {
+  display: grid;
+  gap: var(--sp-2);
+  border-top: 1px solid var(--ink-line);
+  padding-top: var(--sp-4);
+}
+
+.qa__q {
+  margin: 0;
+  color: var(--ink);
+}
+
+.qa__a {
+  color: var(--ink-dim);
+  max-width: 62ch;
+}
+
+.qa__a a {
+  color: var(--ink-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.qa__a a:hover {
+  color: var(--ink);
+}
+
+.qa__more {
+  margin-top: var(--sp-2);
+}
+
+@media (max-width: 900px) {
+  .qa__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   ENTRANCES
+
+   The whole vocabulary, for the whole page. Opacity and y, one distance,
+   one duration, once. Elements carrying [data-enter] start where they
+   finish and are given their from-state in script, so a document whose
+   bundle never arrives paints every one of them finished.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-enter] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ============================================================
+   THE HEADER, ON THIS PAGE
+
+   The header is fixed, so it cannot inherit the room it happens to be over.
+   Each document declares which room its FIRST section paints and the header
+   takes that room's ink until the reader scrolls, at which point it commits
+   to the void bar. The cover opens on magenta, so its unscrolled header is
+   near black at 5.30:1 rather than white at 3.75:1, which would have been
+   under the floor for 14px type.
+   ============================================================ */
+.cover {
+  --nav-ink: var(--room-magenta-ink);
+}

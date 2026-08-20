@@ -1,29 +1,60 @@
 /* ============================================================
-   XStudioz — Base: fonts, reset, primitive type styles
+   XStudioz: Base: fonts, reset, primitive type, rooms
+
+   Two families, self-hosted, both under the SIL Open Font License and both
+   free. Bebas Neue carries every display size at one weight; Mulish carries
+   body and UI at three. Nothing on this site animates a weight axis and
+   nothing is bolded to make it matter.
    ============================================================ */
 
 @font-face {
-  font-family: 'Satoshi';
-  src: url('/fonts/Satoshi-400.woff2') format('woff2');
+  font-family: 'Bebas Neue';
+  src: url('/fonts/BebasNeue-400.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
+
+/* Mulish ships as one variable file with a 200 to 1000 axis. Three static
+   weights are used off it: 400 for body, 500 for small caps-tracked labels,
+   700 for card titles. */
+@font-face {
+  font-family: 'Mulish';
+  src: url('/fonts/Mulish-var.woff2') format('woff2');
+  font-weight: 200 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Metric-matched fallbacks. Without these the first paint sets a 170px line
+   in Arial at Arial's metrics, and the whole sheet reflows when the real
+   face lands. Overrides are the standard computed metrics for each face
+   against a local Arial. */
+@font-face {
+  font-family: 'Bebas Neue Fallback';
+  src: local('Arial');
+  ascent-override: 117.32%;
+  descent-override: 39.11%;
+  line-gap-override: 0%;
+  size-adjust: 76.72%;
+}
+@font-face {
+  font-family: 'Mulish Fallback';
+  src: local('Arial');
+  ascent-override: 96.56%;
+  descent-override: 24.02%;
+  line-gap-override: 0%;
+  size-adjust: 104.08%;
+}
+
+/* Satoshi is retained for one job only: the wordmark in the header, which is
+   drawn letterform and not running text. Every other use is gone. */
 @font-face {
   font-family: 'Satoshi';
   src: url('/fonts/Satoshi-500.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
-}
-/* Metric-matched fallback keeps the ch-sized hero stable while Satoshi loads */
-@font-face {
-  font-family: 'Satoshi Fallback';
-  src: local('Helvetica Neue'), local('Arial');
-  size-adjust: 99%;
-  ascent-override: 100%;
-  descent-override: 25%;
-  line-gap-override: 0%;
 }
 
 *,
@@ -35,15 +66,12 @@
 }
 
 html {
+  /* Programmatic jumps ease; the wheel does not. There is no smooth-scroll
+     library on this site and that is deliberate. Every scrubbed timeline
+     tracks the wheel one to one with no lerp, no easing tail and no inertia
+     layer, which is what makes a five viewport scrub feel precise rather
+     than like it is swimming to catch up. */
   scroll-behavior: smooth;
-}
-
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
 }
 
 html,
@@ -53,10 +81,11 @@ body {
 
 body {
   font-family: var(--font-sans);
-  font-size: var(--text-body-sm);
+  font-size: var(--text-body);
+  font-weight: 400;
   line-height: var(--leading-body);
-  color: var(--text);
-  background: var(--canvas);
+  color: var(--ink);
+  background: var(--ground);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -91,7 +120,7 @@ button {
 }
 
 :focus-visible {
-  outline: 2px solid var(--focus);
+  outline: 2px solid currentColor;
   outline-offset: 3px;
   border-radius: 2px;
 }
@@ -114,53 +143,137 @@ button {
   overflow: hidden;
 }
 
+/* ============================================================
+   THE ROOMS
+
+   One class paints a whole section: ground, and the four inks that are
+   legal on it. Nothing inside a room sets its own colour, so a section can
+   be moved from magenta to violet by changing one word in the markup and
+   every ratio inside it stays compliant by construction.
+
+   The ground is painted on the element AND published to the browser through
+   the section, so a full-bleed section is genuinely edge to edge with no
+   seam at the gutter.
+   ============================================================ */
+
+.room-paper,
+.room-magenta,
+.room-violet,
+.room-deep,
+.room-void {
+  background: var(--ground);
+  color: var(--ink);
+}
+
+.room-paper {
+  --ground: var(--room-paper-ground);
+  --ink: var(--room-paper-ink);
+  --ink-dim: var(--room-paper-dim);
+  --ink-quiet: var(--room-paper-quiet);
+  --ink-accent: var(--room-paper-accent);
+}
+
+.room-magenta {
+  --ground: var(--room-magenta-ground);
+  --ink: var(--room-magenta-ink);
+  --ink-dim: var(--room-magenta-dim);
+  --ink-quiet: var(--room-magenta-quiet);
+  --ink-accent: var(--room-magenta-accent);
+}
+
+.room-violet {
+  --ground: var(--room-violet-ground);
+  --ink: var(--room-violet-ink);
+  --ink-dim: var(--room-violet-dim);
+  --ink-quiet: var(--room-violet-quiet);
+  --ink-accent: var(--room-violet-accent);
+}
+
+.room-deep {
+  --ground: var(--room-deep-ground);
+  --ink: var(--room-deep-ink);
+  --ink-dim: var(--room-deep-dim);
+  --ink-quiet: var(--room-deep-quiet);
+  --ink-accent: var(--room-deep-accent);
+}
+
+.room-void {
+  --ground: var(--room-void-ground);
+  --ink: var(--room-void-ink);
+  --ink-dim: var(--room-void-dim);
+  --ink-quiet: var(--room-void-quiet);
+  --ink-accent: var(--room-void-accent);
+}
+
 /* ---------- Primitive type styles ---------- */
 
+/* 14px Mulish 500 with positive tracking. Every consumer labels something:
+   section eyebrows, index heads, table headers, tags, numerals. Tracking is
+   positive here and negative at display size, which is optical rather than
+   uniform. */
 .label {
+  font-family: var(--font-sans);
   font-size: var(--text-caption);
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 1.3;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
 .body {
+  font-family: var(--font-sans);
   font-size: var(--text-body);
+  font-weight: 400;
   line-height: var(--leading-body);
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
 }
 
 .body-sm {
+  font-family: var(--font-sans);
   font-size: var(--text-body-sm);
+  font-weight: 400;
   line-height: var(--leading-body);
+  letter-spacing: 0;
+}
+
+/* The four display steps. One family, one weight, four sizes, and the gap
+   between any two of them is large enough that nothing has to be bolded for
+   the rank to read. */
+.display,
+.heading,
+.heading-sm,
+.subheading {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures contextual;
+  text-align: var(--align);
+  text-wrap: balance;
+}
+
+.display {
+  font-size: var(--text-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+}
+
+.heading {
+  font-size: var(--text-heading);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+}
+
+.heading-sm {
+  font-size: var(--text-heading-sm);
+  line-height: 0.9;
   letter-spacing: 0.01em;
 }
 
 .subheading {
   font-size: var(--text-subheading);
-  font-weight: 400;
-  line-height: var(--leading-solid);
-  letter-spacing: 0.005em;
-}
-
-.heading-sm {
-  font-size: var(--text-heading-sm);
-  font-weight: 400;
-  line-height: var(--leading-solid);
-  letter-spacing: 0.005em;
-}
-
-.display {
-  font-size: var(--text-display);
-  font-weight: 400;
-  line-height: var(--leading-tight);
-  letter-spacing: var(--tracking-display);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
   text-transform: uppercase;
-  /* Kerning pairs are worth more at 120px than anywhere else on the page, and
-     the browser only applies them by default below a size threshold in some
-     engines. Asked for explicitly here. */
-  font-kerning: normal;
-  font-variant-ligatures: common-ligatures contextual;
 }
 
 /* ---------- Layout primitives ---------- */
@@ -173,36 +286,43 @@ button {
 }
 
 .section {
-  padding-block: var(--section-gap) 0;
+  padding-block: var(--section-gap);
 }
 
 .section__head {
-  margin-bottom: clamp(40px, 5vw, 64px);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-bottom: clamp(30px, 3.4vw, 52px);
 }
 
 .section__head .label {
-  color: var(--text);
-  margin-bottom: var(--sp-3);
+  color: var(--ink);
+  margin-bottom: 0;
+  flex: none;
 }
 
 /* Hairline rule */
 .rule {
   height: 1px;
   width: 100%;
-  background: var(--border);
+  background: var(--ink-line);
   transform-origin: left center;
 }
 
-/* Notched rule — the mark's diagonal cut, carried into structure.
+/* Notched rule, the mark's diagonal cut, carried into structure.
    Three segments: line / 45° jog / line. */
 .rule-notch {
   display: flex;
   align-items: center;
   height: 9px;
+  flex: 1;
+  color: var(--ink);
 }
 .rule-notch i {
   display: block;
-  background: var(--border);
+  background: currentColor;
+  opacity: 0.28;
   transform-origin: left center;
 }
 .rule-notch i:nth-child(1) {
@@ -221,221 +341,162 @@ button {
   flex: 1;
 }
 
-/* ---------- Line-reveal scaffolding ---------- */
+/* ---------- Line scaffolding ----------
+   Kept as a block wrapper only. It is no longer a mask: nothing on this site
+   is clipped and released, because there are no masked reveals in the
+   content anywhere in the system. Bebas caps carry no descender other than
+   the comma, so the clearance a Satoshi descender needed is gone with it. */
 
 .line {
   display: block;
-  overflow: hidden;
-  /* The window has to clear the font's own descender, and 0.09em did not.
-     Satoshi's descender ink reaches 0.223em below the baseline. With display
-     leading at 0.88 the half-leading is negative (-0.06em), so the old
-     padding left 0.03em of room for 0.223em of letter: every g, y, p, q, j
-     and comma lost 86 percent of its tail, which at a 70px heading is 13.5px
-     sliced off. Measured from the font rather than guessed at:
-       0.223 descender + 0.06 negative half-leading = 0.283, rounded to 0.3.
-     The negative margin cancels it again so nothing below moves. */
-  padding-bottom: 0.3em;
-  margin-bottom: -0.3em;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
 }
 .line__in {
   display: block;
-  text-wrap: balance;
 }
 
-/* This used to say that motion-hidden defaults were applied by JS, so that
-   without JS everything was simply visible. There are no motion-hidden
-   defaults any more: the shared reveal pass that set them was deleted, and
-   nothing on this site hides itself waiting to be revealed. Every document
-   paints finished in its first frame, with or without the bundle. */
+/* ============================================================
+   MEASURE CAPS
+
+   Display type never runs the full content width. These are what make the
+   centred variant work the moment --align flips, and in the left build they
+   are what stops a 68px line from running 1460px and losing its rag.
+   ============================================================ */
+
+.measure-display {
+  max-width: var(--measure-display);
+}
+.measure-statement {
+  max-width: var(--measure-statement);
+}
+.measure-narrow {
+  max-width: var(--measure-narrow);
+}
+
+/* When the switch is centre, a capped block has to centre itself as well as
+   its text, or it stays pinned to the left gutter with centred lines in it. */
+.measure-display,
+.measure-statement,
+.measure-narrow {
+  margin-inline: var(--measure-mi, 0) auto;
+}
+:root[style*='--align: center'] .measure-display,
+:root[style*='--align: center'] .measure-statement,
+:root[style*='--align: center'] .measure-narrow {
+  --measure-mi: auto;
+}
+
+/* ============================================================
+   THE PER-CHARACTER SCRUB
+
+   The signature effect. A display line is split into words, each word into
+   characters, and each character interpolates opacity 0.5 to 1.0 across
+   about 5px of scroll. The reader is never shown blank space, they are shown
+   a dim line that lights up under a moving edge.
+
+   Never from 0. Never with a mask. Never on a paragraph of body copy, and
+   never per line. Opacity is the only property involved.
+
+   The from-state is set here in CSS rather than in script, so a document
+   whose bundle never arrives paints the line at half strength and is
+   readable. The .is-lit class is what the reduced-motion path and the
+   failsafe use to hand it back at full strength.
+   ============================================================ */
+
+.scrub-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.scrub-char {
+  display: inline-block;
+  opacity: 0.5;
+  will-change: opacity;
+}
+
+.is-lit .scrub-char,
+.scrub-char.is-lit {
+  opacity: 1;
+}
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-}
 
-/* ============================================================
-   THE LIGHTING RIG
-
-   One angle, --rot, drives every lit surface in the document. The rig is
-   two wedges locked 180 degrees apart, which is the mark's own symmetry.
-   It runs on a registered custom property so the whole thing animates on
-   the compositor with no JavaScript at all. Browsers without @property
-   simply get the rig at its initial angle, which is a valid composition.
-   ============================================================ */
-
-@property --rot {
-  syntax: '<angle>';
-  inherits: true;
-  initial-value: 38deg;
-}
-
-@keyframes rig-turn {
-  to { --rot: 398deg; }
-}
-
-html {
-  --rot: 38deg;
-}
-
-/* The turn is declared on the three elements that actually read --rot, not on
-   html, and this is a performance fix rather than a tidy-up.
-
-   --rot is a registered property with inherits: true. Animating it on the root
-   changes an inherited custom property sixty times a second, and every one of
-   those changes invalidates the computed style of every element in the
-   document, whether or not it has anything to do with the light. Declaring the
-   same animation on the three consumers instead confines that invalidation to
-   their own subtrees, which between them hold a handful of nodes.
-
-   They stay in step because they are the same animation: same keyframes, same
-   duration, same linear timing, all started at page load off one document
-   timeline. Nothing about the composition changes. */
-.room,
-.lit {
-  animation: rig-turn 120s linear infinite;
-}
-
-/* The room. The only light in the document. */
-.room {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    conic-gradient(from var(--rot) at 50% 50%,
-      var(--lamp-a) 0deg var(--wedge), transparent var(--wedge) 180deg,
-      var(--lamp-b) 180deg calc(180deg + var(--wedge)), transparent calc(180deg + var(--wedge)) 360deg);
-  opacity: var(--lamp-strength);
-  filter: saturate(1.1);
-  /* In the void the wedges are the only light there is, so they simply sit on
-     the ground and add to it. On paper the page is already lit, so a beam
-     cannot add anything: what a lamp produces in a lit room is shadow. The
-     blend mode is the whole inversion, and it is why light mode is the same
-     rig rather than a second one. */
-  mix-blend-mode: var(--room-blend, normal);
-  /* the beams fall off with distance, and never reach the reading column edges */
-  -webkit-mask-image: radial-gradient(78vmax 78vmax at 50% 50%, #000 10%, transparent 76%);
-  mask-image: radial-gradient(78vmax 78vmax at 50% 50%, #000 10%, transparent 76%);
-}
-
-
-/* Anything above the rig */
-body > header,
-body > main,
-body > footer { position: relative; z-index: 1; }
-
-/* A lit surface samples the same rig, so every lit thing in the document
-   is lit by one room rather than decorated element by element.
-   Display sizes only: body copy is never lit, so reading never depends on
-   where the beams happen to be pointing. */
-.lit {
-  background-image:
-    conic-gradient(from var(--rot) at 50% 50%,
-      var(--lamp-a) 0deg var(--wedge), transparent var(--wedge) 180deg,
-      var(--lamp-b) 180deg calc(180deg + var(--wedge)), transparent calc(180deg + var(--wedge)) 360deg),
-    linear-gradient(0deg, var(--lit-base), var(--lit-base));
-  /* No background-attachment: fixed. iOS Safari does not honour it and drops
-     to scroll, which silently changes the effect on every iPhone. The beams
-     are instead sized far larger than the element and centred on it, so the
-     ANGLE is shared across the document even though each origin is local:
-     one light direction, which is what actually reads as one room. */
-  background-size: 220vmax 220vmax, auto;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-blend-mode: var(--lit-blend, screen), normal;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  /* The rig holds still at its initial angle, which is a composition in its
-     own right rather than a broken state. */
-  .room,
-  .lit { animation: none; }
-}
-
-/* If the rig cannot render, the page is still a dark site with white type.
-   Nothing on it depends on the light. */
-@supports not (background: conic-gradient(from 0deg, red, blue)) {
-  .room { display: none; }
-}
-
-@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
-  .lit {
-    background: none;
-    color: var(--text);
-    -webkit-text-fill-color: var(--text);
+  /* The page has to compose statically. Every scrubbed character is handed
+     back at full strength and nothing waits on a scroll position. */
+  .scrub-char {
+    opacity: 1 !important;
   }
 }
 
-/* ---------- Print ----------
-   The rig is light, and light does not print. Without this every .lit heading
-   prints as nothing, because clipped-to-text backgrounds do not survive the
-   print pipeline. */
-@media print {
-  .room,
-  .lit { animation: none !important; }
+/* ============================================================
+   WHAT USED TO BE HERE
 
-  /* Screen chrome does not belong on paper. The header is position: fixed, so
-     it was printing as a 74px band across the top of the first page, on top of
-     the document's own opening lines. The skip link is a keyboard affordance
-     with nothing to skip to on a sheet of paper, and the footer's mark is a
-     large dark shape that costs ink and says nothing. The footer's text is
-     kept: a printed page should still carry who made it and how to reach
-     them. */
+   The lighting rig: a registered --rot angle, a 120s rotation, two conic
+   wedges locked 180 degrees apart, and a .lit class that clipped that
+   gradient to text. It is deleted, along with the .room element in
+   partials/svg-defs.html that carried it.
+
+   It is not a regression, it is the point of this rebuild. A page cannot
+   have flat committed colour and a lighting rig on it at the same time, and
+   the rig was what held the whole document to 6.8% chromatic pixels: two
+   beams over a near-black canvas that registered at one percent each. Colour
+   is now a ground.
+
+   .lit survives as a class name because forty one elements across the
+   interior documents still carry it, and it now does the one job the rig was
+   ever really doing at display size: it sets the room's accent ink.
+   ============================================================ */
+
+.lit {
+  color: var(--ink-accent);
+}
+
+/* Anything above the ground */
+body > header,
+body > main,
+body > footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Print ---------- */
+@media print {
   .nav,
   .skip-link,
   .footer__x {
     display: none !important;
   }
 
-  /* The footer paints itself with the void colour, which becomes a black slab
-     the moment a reader turns background graphics on. */
   .footer {
     background: none !important;
     border-top: 1px solid #999 !important;
   }
 
-  .room {
-    display: none !important;
-  }
-
+  /* Flat colour grounds cost a cartridge and say nothing on paper. Every
+     room prints as white with black ink. */
+  .room-paper,
+  .room-magenta,
+  .room-violet,
+  .room-deep,
+  .room-void,
   body {
     background: #fff !important;
     color: #000 !important;
   }
 
   .lit {
-    background: none !important;
     color: #000 !important;
-    -webkit-text-fill-color: #000 !important;
   }
 
-  a { color: #000 !important; }
-}
+  .scrub-char {
+    opacity: 1 !important;
+  }
 
-/* The aperture in step 07 samples the rig, so it has to turn with it. Same
-   keyframes, same duration, same linear timing, all started off one document
-   timeline, which is what keeps them in step without a shared clock. */
-.room,
-.lit,
-.inv__light {
-  animation: rig-turn 120s linear infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .room,
-  .lit,
-  .inv__light { animation: none; }
-}
-
-@media print {
-  .room,
-  .lit,
-  .inv__light { animation: none !important; }
-  /* … existing print block, plus: */
-  .inv__light { display: none !important; }
+  a {
+    color: #000 !important;
+  }
 }
