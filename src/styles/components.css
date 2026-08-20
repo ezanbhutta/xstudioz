@@ -700,9 +700,9 @@ html.js .hero { --hero-open: 0; }
   column-gap: var(--markw);        /* 1W. DIM-A measures exactly this. */
   align-items: start;
   padding-bottom: clamp(14px, 2.4svh, 30px);
-  /* The datum rule. DIM-C terminates on the plate's box, and this border is
-     that box's bottom edge, so the dimension ends on something drawn. */
-  border-bottom: 1px solid var(--border-strong);
+  /* The datum rule is gone with the dimension that terminated on it. A
+     hairline under the type with nothing measuring to it is just a stray
+     line across the page. */
 }
 
 .hero__markbox { grid-column: 1; grid-row: 1; }
