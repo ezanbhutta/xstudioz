@@ -1,5 +1,5 @@
 /* ============================================================
-   XStudioz — Shared motion + chrome
+   XStudioz: Shared motion + chrome
    Everything both the cover (main.ts) and the interior pages
    (page.ts) need. Section-specific choreography stays in its
    own entry; this file owns only what must behave identically
@@ -8,7 +8,6 @@
 
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Lenis from 'lenis';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -35,31 +34,35 @@ export const EASE = 'expo.out';
 export const EASE_INOUT = 'power4.inOut';
 
 /* ------------------------------------------------------------
-   Smooth scroll
-   ------------------------------------------------------------ */
+   Scroll
 
-export function initLenis(): Lenis | null {
-  if (prefersReduced) return null;
-  const lenis = new Lenis({ lerp: 0.115, wheelMultiplier: 1 });
-  lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add((time) => lenis.raf(time * 1000));
-  gsap.ticker.lagSmoothing(0);
-  return lenis;
-}
+   There is no smooth-scroll library on this site any more, and its absence
+   is a design decision rather than a saving.
+
+   Lenis was lerping the wheel at 0.115, and this page is now almost entirely
+   long scrubbed scenes. Smoothing makes a short animation feel luxurious and
+   a five viewport scrub feel unresponsive, because the timeline is always
+   catching up with an input the reader has already finished giving. Native
+   wheel scroll tracks one to one with no lerp, no easing tail and no inertia
+   layer, which is what makes a scrub read as precise rather than as swimming.
+
+   CSS `scroll-behavior: smooth` is kept. It only affects programmatic jumps,
+   so anchor links still ease and the wheel still does not.
+   ------------------------------------------------------------ */
 
 /* ------------------------------------------------------------
-   Nav — solid after scroll, hides going down, returns going up
+   Nav, solid after scroll, hides going down, returns going up
    ------------------------------------------------------------ */
 
-export function initNav(lenis: Lenis | null): void {
+export function initNav(): void {
   const nav = document.getElementById('nav');
   if (!nav) return;
 
   let suppressed = false;
   let lastY = window.scrollY;
 
-  /* The scroll handler runs on every frame Lenis produces, so it holds the two
-     class states itself and only touches the DOM when one actually flips.
+  /* The scroll handler runs on every scroll event, so it holds the two class
+     states itself and only touches the DOM when one actually flips.
      Calling classList.toggle/add/remove unconditionally meant a style
      invalidation on the header sixty times a second to re-assert values that
      were already correct. */
@@ -90,8 +93,7 @@ export function initNav(lenis: Lenis | null): void {
   };
   onScroll(window.scrollY);
 
-  if (lenis) lenis.on('scroll', (e: { scroll: number }) => onScroll(e.scroll));
-  else window.addEventListener('scroll', () => onScroll(window.scrollY), { passive: true });
+  window.addEventListener('scroll', () => onScroll(window.scrollY), { passive: true });
 
   // Keyboard focus inside the header must always bring it back on screen
   // Through setHidden, not the DOM directly: writing the class behind the
@@ -99,9 +101,10 @@ export function initNav(lenis: Lenis | null): void {
   // next scroll frame would decline to show it again.
   nav.addEventListener('focusin', () => setHidden(false));
 
-  /* Same-document hash links go through Lenis so easing stays consistent,
-     keep the URL hash honest, and hand focus to the target section.
-     Links such as /#capabilities are same-document only on the cover —
+  /* Same-document hash links keep the URL hash honest and hand focus to the
+     target section. The scroll itself is the browser's, eased by CSS
+     scroll-behavior, because a programmatic jump is the one place easing
+     helps. Links such as /#capabilities are same-document only on the cover;
      everywhere else they must navigate normally. */
   document.querySelectorAll<HTMLAnchorElement>('a[href*="#"]').forEach((a) => {
     const url = new URL(a.href, window.location.href);
@@ -123,12 +126,8 @@ export function initNav(lenis: Lenis | null): void {
 
       suppressed = true;
       setHidden(false);
-      if (lenis) {
-        lenis.scrollTo(target, { offset: 0, duration: 1.4, onComplete: finish });
-      } else {
-        target.scrollIntoView();
-        finish();
-      }
+      target.scrollIntoView();
+      window.setTimeout(finish, 600);
     });
   });
 }
@@ -152,8 +151,7 @@ export function initNav(lenis: Lenis | null): void {
    Reveal failsafe
    No code path may leave readable text sitting at opacity 0.
 
-   Only elements that are already at or above the fold are forced —
-   those should have played on load, so if they are still hidden
+   Only elements that are already at or above the fold are forced, those should have played on load, so if they are still hidden
    seconds later their trigger mismeasured and the page is broken.
    Anything genuinely below the fold is left alone, because a reader
    who lingers before scrolling should still get the animation.
@@ -177,6 +175,13 @@ export function revealFailsafe(delay = 4000): void {
          pins are most of what is registered, and without this line the
          failsafe becomes the bug it was written to prevent. */
       if (st.pin) return;
+
+      /* A scrubbed scene is not a reveal. It sits at progress 0 because the
+         reader has not entered its track yet, which is the correct state,
+         and forcing it to 1 would throw a five viewport scene to its last
+         frame before anyone had scrolled into it. The sticky scenes on the
+         cover carry no pin, so the guard above does not catch them. */
+      if (st.vars.scrub) return;
 
       const el = st.trigger as HTMLElement | null;
       if (!el) return;

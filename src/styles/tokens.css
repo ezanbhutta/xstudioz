@@ -1,27 +1,41 @@
 /* ============================================================
-   XStudioz — Design Tokens
+   XStudioz: Design Tokens
 
    THE LAW OF THIS SITE
-   The brand gradient is never painted on anything. It is cast.
+   Colour is a GROUND, not a light.
 
-   The mark measures as one shape, drawn once, placed twice, rotated 180
-   degrees: its counter matches itself under rotation at 22 of 22 sampled
-   points, 90 degrees fits only 19 of 30, and it has no mirror symmetry.
-   So the page carries two light sources locked exactly opposite each other
-   through the centre, which is that symmetry used as a lighting rig. Light
-   is thrown in hard wedges on the mark's 45 degree diagonals, never as soft
-   bloom, because there is no softness anywhere in the drawing.
+   The previous law said the brand gradient is cast and never painted. That
+   doctrine produced a page measuring 6.8% chromatic pixels per viewport: a
+   near-black document with two conic beams that registered at one or two
+   percent each. A beam over a dark canvas is still a dark canvas.
+
+   The law now is the opposite and it is structural. A section commits its
+   ENTIRE viewport to one flat hex, and the next section commits its entire
+   viewport to a different one. There are no decorative gradients anywhere in
+   the system. The reader walks through rooms.
+
+   Four colours are fixed and may not be changed: magenta #e634be, violet
+   #6d1fc4, deep violet #38016c and the ground #09090b. Everything else in
+   here is a neutral or a derived ink, and every ink states the contrast
+   ratio it was measured at against the ground it is set on.
 
    NAMING
-   Every token below states its role. There are no colour-named aliases,
-   because those are what silently inverted the footer into a white slab
-   when the site went dark: a rule saying "background: ink" still read as
-   correct while ink had quietly become the lightest colour in the system.
-   A token now says what it is FOR, so it cannot be right in name and wrong
-   on screen.
+   Every token states its role. There are no colour-named aliases, because
+   those are what silently inverted the footer into a white slab when the
+   site went dark. A token says what it is FOR, so it cannot be right in name
+   and wrong on screen.
    ============================================================ */
 
 :root {
+  /* ============================================================
+     1. THE FOUR FIXED COLOURS
+     Stated once. Nothing below redefines them, in either theme.
+     ============================================================ */
+  --brand-magenta: #e634be;
+  --brand-violet: #6d1fc4;
+  --brand-violet-deep: #38016c;
+  --brand-ground: #09090b;
+
   /* ---- Ground ---- */
   --canvas: #09090b;          /* the void. matches portfolio.xstudioz.com  */
   --canvas-raised: #101014;   /* a plane lifted just off the void          */
@@ -41,71 +55,155 @@
   --interactive-text: var(--canvas);  /* the text colour on that fill      */
   --focus: #f2f1f6;                   /* focus ring, on every ground       */
 
-  /* ---- The two lamps ---- */
-  --lamp-a: #e634be;          /* brand magenta, emits as drawn. 5.3:1 as text */
-  --lamp-b: #6d1fc4;          /* brand violet, raised to a luminance that
-                                 can behave as a light rather than a shadow  */
-  --brand-a: var(--lamp-a);   /* flat brand fills (marks, selection)         */
-  --brand-b: #38016c;         /* the true brand violet                       */
+  /* ============================================================
+     2. THE ROOMS
 
-  /* Lit type sits at --lit-base when no beam is on it and screens UP toward
-     the lamps when one is: 10.2:1 unlit, rising under each lamp, so light
-     always adds contrast rather than spending it.
-     The base is the whole trick. Screen against a near-white base is
-     near-white, which is why the first version of this rig moved the headline
-     by 14/255 and did nothing. Too dark and the headline becomes the dimmest
-     thing on the page, which inverts the hierarchy. This value is the balance:
-     crisp enough to lead the page, with 63/255 of headroom for the magenta
-     lamp to register and 45/255 for the violet. */
-  --lit-base: #b9b9c4;
+     A room is a ground plus the four inks that are legal on it. Every pair
+     was computed, not judged: the number after each ink is its measured
+     WCAG contrast ratio against that room's ground.
 
-  /* How the light combines with what is under it. In the void a beam
-     screens up toward white; on paper it multiplies down toward the
-     lamp's own colour, which is what shadow does. */
+       --ground   the flat hex the section commits its whole viewport to
+       --ink      body copy and primary display. AA at 4.5:1 or better
+       --ink-dim  supporting copy and inactive display. AA at 4.5:1 or better
+       --ink-quiet furniture and micro-labels. AA at 4.5:1 or better
+       --ink-accent display type only. AA large at 3:1 or better
+
+     A section applies one room by setting these five, and everything inside
+     it inherits. That is the whole mechanism. There is no per-element
+     colour anywhere in the system.
+     ============================================================ */
+
+  /* Magenta. The loudest room, so it takes the darkest ink. */
+  --room-magenta-ground: #e634be;
+  --room-magenta-ink: #09090b;        /*  5.30:1 */
+  --room-magenta-dim: #2b0722;        /*  4.84:1 */
+  --room-magenta-quiet: #340a2a;      /*  4.61:1 */
+  --room-magenta-accent: #38016c;     /*  4.03:1, large only */
+
+  /* Violet. Mid luminance, so it takes light ink. */
+  --room-violet-ground: #6d1fc4;
+  --room-violet-ink: #ffffff;         /*  7.94:1 */
+  --room-violet-dim: #e8dcf7;         /*  6.06:1 */
+  --room-violet-quiet: #dccbf3;       /*  5.35:1 */
+  --room-violet-accent: #ffffff;      /*  7.94:1 */
+
+  /* Deep violet. Nearly as dark as the void, so it behaves like one. */
+  --room-deep-ground: #38016c;
+  --room-deep-ink: #f2f1f6;           /* 13.45:1 */
+  --room-deep-dim: #cbb8e6;           /*  8.31:1 */
+  --room-deep-quiet: #b49bd6;         /*  6.10:1 */
+  --room-deep-accent: #e634be;        /*  4.03:1, large only */
+
+  /* Void. The fixed ground colour, held in both themes. */
+  --room-void-ground: #09090b;
+  --room-void-ink: #f2f1f6;           /* 17.71:1 */
+  --room-void-dim: #a9a9b6;           /*  8.62:1 */
+  --room-void-quiet: #8a8a97;         /*  5.82:1 */
+  --room-void-accent: #e634be;        /*  5.30:1 */
+
+  /* Paper. The one room that follows the theme, because it is the reading
+     room and a reader who asked for a dark interface should get one. In the
+     dark theme it resolves to the void; in daylight it is near white. */
+  --room-paper-ground: var(--canvas);
+  --room-paper-ink: var(--text);
+  --room-paper-dim: var(--text-secondary);
+  --room-paper-quiet: var(--text-muted);
+  --room-paper-accent: var(--brand-a);
+
+  /* The document's default room. Every element reads these four, so a
+     section only has to reassign them to repaint everything inside it. */
+  --ground: var(--room-paper-ground);
+  --ink: var(--room-paper-ink);
+  --ink-dim: var(--room-paper-dim);
+  --ink-quiet: var(--room-paper-quiet);
+  --ink-accent: var(--room-paper-accent);
+  --ink-line: color-mix(in srgb, var(--ink) 18%, transparent);
+  --ink-line-strong: color-mix(in srgb, var(--ink) 34%, transparent);
+
+  /* Kept because doc.css and components.css still name them. They are the
+     brand fills used for marks and selection, never as a light. */
+  --lamp-a: #e634be;
+  --lamp-b: #6d1fc4;
+  --brand-a: var(--lamp-a);
+  --brand-b: #38016c;
+
+  /* The lighting rig is gone. These three are kept so no rule that still
+     names them resolves to nothing, and all three are now inert: the rig
+     never paints, so there is no blend to choose and no strength to set. */
+  --lit-base: var(--ink-accent);
   --room-blend: normal;
-  --lit-blend: screen;
+  --lit-blend: normal;
+  --wedge: 21deg;
+  --lamp-strength: 0;
 
-  /* The wedge pair. One angle drives the whole document. */
-  --wedge: 21deg;             /* half-width of each beam */
-  --lamp-strength: 0.42;
+  /* ============================================================
+     3. TYPE
 
-  /* Type — Satoshi carries everything */
-  --font-sans: 'Satoshi', 'Satoshi Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+     Two families. One weight for display, three for body. Every step of
+     hierarchy is carried by SIZE and COLOUR, never by weight, so there is no
+     bold headline anywhere on this site.
 
-  /* 12px, not 11px. Every consumer of this token labels something: section
-     eyebrows, index heads, table headers, facts labels, checklist tags and
-     list numerals all carry information rather than decorate. Raising the
-     token is the smallest system-level fix; the alternative was six separate
-     overrides that would drift apart. Uppercase at wide tracking reads the
-     same at 12 as at 11, so nothing about the editorial character changes. */
-  --text-caption: 12px;
+     Bebas Neue 400 is an uppercase-only condensed grotesque, so sentence
+     case in the markup renders as caps with no text-transform. That is the
+     separation worth keeping: the page reads loud without the copy ever
+     being written loud.
+     ============================================================ */
+  --font-display: 'Bebas Neue', 'Bebas Neue Fallback', 'Haettenschweiler',
+    'Arial Narrow', sans-serif;
+  --font-sans: 'Mulish', 'Mulish Fallback', ui-sans-serif, system-ui,
+    -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* THE SCALE, resolved at 1500px wide: 170 / 68 / 52 / 26 / 16 / 14.
+     Gappy on purpose. There is nothing between 26 and 52, so any two things
+     on screen are unmistakably different ranks rather than nearly the same
+     one. Display to body is 170/16 = 10.6:1.
+
+     Below 1500 each step is a clamp against the viewport, so the ratio
+     compresses toward the small end where a 170px line could not fit. At and
+     above 1536 the root becomes 1.11vw and the steps switch to rem, so the
+     page scales as one unit with the ratio locked exactly. */
+  --text-display: clamp(54px, 11.333vw, 170px);
+  --text-heading: clamp(38px, 4.533vw, 68px);
+  --text-heading-sm: clamp(30px, 3.467vw, 52px);
+  --text-subheading: clamp(20px, 1.733vw, 26px);
+  --text-body: 16px;
   --text-body-sm: 15px;
-  --text-body: 18px;
-  --text-subheading: clamp(26px, 2.6vw, 34px);
-  --text-heading-sm: clamp(30px, 3.6vw, 46px);
-  --text-heading: clamp(40px, 5.4vw, 70px);
+  --text-caption: 14px;
 
-  /* Display is capped by the measure it has to fit inside, not by a number
-     picked by eye. The longest hero line needs 11.15x its own font-size, so
-     dividing the usable column by 11.4 guarantees it can never take a fourth
-     line, at any viewport, however wide the container later becomes. */
-  --text-display: clamp(44px, 7.4vw, calc((var(--page-max) - 2 * var(--gutter)) / 11.4));
-
-  /* 0.88 is set for uppercase, whose ink runs about 0.80em from cap to the
-     tail of a Q or a comma. Sentence case runs 0.952em, so the same value
-     makes consecutive lines overlap by 0.072em: a descender on one line
-     landing inside a capital on the next. Mixed-case display type gets its
-     own value that clears its own ink. */
-  --leading-tight: 0.88;
-  --leading-tight-mixed: 0.98;
+  /* Display leading sits at or below 100%, so lines physically touch. Body
+     leading is 125% to 160%. The contrast between the two carries most of
+     the premium read, and it costs nothing. */
+  --leading-display: 1;
+  --leading-tight: 0.86;
+  --leading-tight-mixed: 0.9;
   --leading-solid: 1;
-  --leading-body: 1.5;
+  --leading-body: 1.55;
 
-  --tracking-label: 0.09em;
-  /* Negative, because tracking is optical. A value that suits 44px opens up
-     visibly at 120px, and positive tracking on large display type is the
-     usual reason it reads as unresolved rather than drawn. */
-  --tracking-display: -0.014em;
+  /* Tracking is optical, not uniform: positive at 14px, negative at 170px.
+     It stays in absolute em so it tracks the size through the fluid root. */
+  --tracking-label: 0.02em;
+  --tracking-display: -0.02em;
+
+  /* ============================================================
+     4. ALIGNMENT, THE OPEN QUESTION
+
+     The reference is 80% left aligned and centres exactly four things inside
+     hard measure caps. The owner asked for centre aligned. Those two are not
+     the same page, and the conflict is unresolved.
+
+     Built LEFT, as the reference is. Flipping this ONE value to `center`
+     centres every display line on the site inside the measure caps that are
+     already in place, with no other change anywhere. That is the whole
+     switch and it is why the caps exist even in the left build.
+     ============================================================ */
+  --align: start;
+
+  /* Hard measure caps. Display type never runs the full 1460px content
+     width, so even a centred headline leaves clear ground either side. */
+  --measure-display: 1240px;
+  --measure-statement: 1220px;
+  --measure-narrow: 808px;
+  --measure: 68ch;            /* the reading column ceiling */
 
   /* Spacing rhythm */
   --sp-1: 5px;
@@ -116,25 +214,18 @@
   --sp-6: 46px;
   --sp-7: 76px;
   --sp-8: 119px;
-  --section-gap: clamp(76px, 11vw, 152px);
+  --section-gap: clamp(64px, 8vw, 130px);
 
-  /* ---- Layout ---- */
-  /* The container holds the same PROPORTION of the screen at every size,
-     which is the thing that was actually wrong. The old law capped at 1560px,
-     so a page kept about 90 percent of the viewport up to 1440 and then
-     stopped growing: 74.6 percent at 1920 and 55.9 percent at 2560, stranded
-     in dead margin exactly where there is most room to use.
-
-     Now the gutter is proportional and the cap only exists to stop an
-     ultrawide display from setting a 3000px measure. Content lands at 90
-     percent of the viewport from 375 all the way to 2200. */
+  /* ---- Layout ----
+     A flat 20px gutter at every width above 768, which puts content on
+     97.3% of a 1500px viewport. The old clamp resolved to 75px there and
+     kept the page at 90%, and that 7 point difference is the whole reason a
+     170px line can press against the edge of the screen rather than sit
+     politely inside a margin. */
   --page-max: min(2200px, 100vw);
-  --gutter: clamp(20px, 5vw, 110px);
+  --gutter: 20px;
   --col-gap: var(--sp-4);
-  /* The fixed header's real height, measured. The hero sizes its sheet
-     against it rather than guessing at a safe top padding. */
   --nav-h: 63px;
-  --measure: 68ch;            /* the reading column ceiling */
 
   /* ============================================================
      THE MARK'S OWN CONSTANTS
@@ -143,77 +234,49 @@
      404 unit square; its stroke is 29 units and its cut corners run 14.5.
      Expressed against the box that is 7.175 percent and 3.587 percent, and
      the drawing's diagonals sit 4.18 degrees off true 45.
-
-     These are primitives, not decoration. A radius on this site is the
-     mark's radius. A rotation is the mark's own angle. The alternative is
-     an 8px radius chosen because 8 is a round number, which is the point
-     at which a design system stops being an identity and starts being a
-     preference.
      ============================================================ */
   --x-w: 7.178%;              /* stroke weight, as a share of the box   */
   --x-r: 3.589%;              /* the cut corner, exactly half of it     */
   --x-tau: 4.18deg;           /* the drawing's departure from true 45   */
 
-  /* The centre the mark actually turns about, solved for rather than
-     assumed. It is NOT the centre of the viewBox: the drawing sits 0.41
-     units left and 2.88 units low inside its own box, so rotating about
-     50% 50% swings the mark on a point it does not own and the turn wobbles.
-     Found by minimising the residual between every vertex and its partner
-     under a half turn; at this centre the counter maps onto itself at 22 of
-     22 vertices, while 90 degrees fits 29 of 52 and a mirror fits 32 of 52.
-     That is the measurement the whole lighting rig rests on, and it is why
-     the two lamps are 180 apart and never 90. */
   --x-origin-x: 49.90%;
   --x-origin-y: 50.71%;
 
-  /* The circles the drawing is actually constructed on, as a share of the
-     box, with the number of vertices that sit on each. Taken off the
-     artwork, not chosen: these are what the construction figure draws. */
-  /* The same two constants as ratios. calc() cannot multiply a length by a
-     percentage, and every place that needs a fraction of a drawn box needs
-     exactly that. One source, two notations, so a stroke weight can never be
-     7.178 in one file and 0.07 in another. */
-  --x-w-k: 0.07178;      /* --x-w  */
-  --x-r1-k: 0.51653;     /* --x-r1 */
+  --x-w-k: 0.07178;
+  --x-r1-k: 0.51653;
 
-  --x-r1: 51.653%;            /* 14 vertices — the outer extremity  */
-  --x-r2: 49.673%;            /*  8 vertices — the shoulder         */
-  --x-r3: 43.741%;            /* 10 vertices — the counter's reach  */
+  --x-r1: 51.653%;            /* 14 vertices, the outer extremity  */
+  --x-r2: 49.673%;            /*  8 vertices, the shoulder         */
+  --x-r3: 43.741%;            /* 10 vertices, the counter's reach  */
   --x-r4: 31.342%;            /*  4 vertices                        */
   --x-r5: 21.401%;            /*  4 vertices                        */
 
-  /* Clearspace is expressed in the mark's own width, the way a manual
-     states it, and --w is published live by lib/measure.ts off the real
-     drawn width of whatever carries [data-unit-w]. So this is not 88px
-     that was correct once: resize the mark and every clearance in the
-     document follows it. The fallback keeps the page composed before the
-     measurement layer's first pass and if it never runs at all. */
+  /* Clearspace in the mark's own width, published live by lib/measure.ts. */
   --w: 22;
 
-  /* Radii — interactive elements only; surfaces stay sharp */
+  /* Radii, interactive elements only; surfaces stay sharp */
   --radius-ui: 10px;
 
-  /* Motion */
+  /* Motion. Six numbers cover the whole site.
+     Every entrance travels 20px or 50px and lasts 0.3s to 0.8s. Nothing
+     scales, nothing rotates, nothing blurs. */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-inout: cubic-bezier(0.65, 0.05, 0, 1);
-  --dur-fast: 0.35s;
+  --dur-fast: 0.3s;
   --dur-med: 0.6s;
 
   /* Hairlines */
-  --hairline: 1px solid var(--border);
+  --hairline: 1px solid var(--ink-line);
 
   /* ============================================================
-     THE OTHER HALF OF THE ROOM
+     DAYLIGHT
 
-     Daylight values, parked here under --l-* so every colour in the system
-     has exactly one home. The two mapping blocks below only ever point the
-     real token at one of these, so a value can never drift between the
-     place that sets it and the place that overrides it.
+     Parked under --l-* so every colour in the system has one home. The two
+     mapping blocks below only ever point a real token at one of these.
 
-     This is not an inversion of the dark palette. A dark room and a lit room
-     are different rooms: contrast ratios are matched role for role, but the
-     surfaces step the other way, because on paper a plane lifts toward the
-     light and in a void it lifts toward whatever is illuminating it.
+     Only the PAPER room follows the theme. The three brand rooms are the
+     same hex in daylight as in the dark, because a magenta room is the
+     brand and not a preference.
      ============================================================ */
 
   --l-canvas: #f6f5f8;        /* paper, with the faintest violet in it     */
@@ -222,41 +285,24 @@
 
   --l-text: #16151a;          /* 16.4:1 on paper */
   --l-text-secondary: #4a4854;/*  8.6:1          */
-  /* Darker than a straight match to the dark theme's muted grey, and this is
-     the one place the two rooms genuinely cannot mirror each other. In the
-     void a beam lightens the ground under pale text, so light BUYS
-     contrast. On paper a beam darkens the ground under dark text, so light
-     SPENDS it. At the dark theme's equivalent value this role measured
-     3.92:1 beneath the violet lamp, under the 4.5 floor. Set from the worst
-     case rather than from the flat page: 6.8:1 on paper, 4.8:1 under the
-     violet, 5.2:1 under the magenta. */
-  --l-text-muted: #565360;
+  --l-text-muted: #565360;    /*  6.8:1          */
 
   --l-border: #e2e0e8;
   --l-border-strong: #c4c1cf;
 
   --l-focus: #16151a;         /* the ring has to be dark to exist here */
 
-  /* Multiply is far more assertive on paper than screen is in a void, so the
-     same two lamps are held back to roughly half strength. */
-  --l-lamp-strength: 0.2;
-
-  /* Ink that darkens further under a beam, so light adds contrast here for
-     the same reason it does in the dark: 9.5:1 unlit, deeper under a lamp. */
+  /* Kept, and inert: the rig no longer paints in either room. */
+  --l-lamp-strength: 0;
   --l-lit-base: #3a3745;
 
-  /* Magenta at 3.4:1 behind selected text is too thin to read on paper, so
-     daylight selects on the deep violet instead. */
   --selection-bg: var(--brand-a);
   --selection-text: var(--canvas-raised);
-  /* The dark theme's #e634be is a lamp: it emits against the void and measures
-     5.30:1 there. On paper it is not a lamp, it is ink, and the same value
-     falls to 3.45:1 on --l-canvas, under the 4.5:1 floor for the places it is
-     set as text: prose, FAQ and consent link hover, the capability numeral,
-     and the footer selection, which sets it as a background behind --canvas.
-     Darkened at constant hue and saturation (313.5deg, 78.1%), so it is the
-     same magenta carrying the same weight in daylight that the lamp carries
-     in the dark. */
+
+  /* #e634be measures 3.45:1 on paper, under the 4.5 floor for the places it
+     is set as text. Darkened at constant hue and saturation (313.5deg,
+     78.1%), so it is the same magenta carrying the same weight in daylight
+     that it carries in the dark. */
   --l-brand-a: #c0189a;       /* 5.04:1 on --l-canvas */
 
   --l-selection-bg: #38016c;
@@ -268,13 +314,8 @@
      One place in the document that does not follow the room, and it has to
      be. mix-blend-mode: difference subtracts one layer from the other, so
      two identical layers cancel to 0,0,0 in every theme. Zero is black
-     whether the page is a void or a sheet of paper. Let the plate follow the
-     room and daylight gets an unexplained black slab; pin it to the ground
-     the mark was drawn against and it reads as what it is, a knockout test
-     printed on its own field.
-
-     Neither value is new. They are --canvas and --text from the dark room,
-     held still. */
+     whether the page is a void or a sheet of paper.
+     ============================================================ */
   --proof-field: #09090b;
   --proof-ink: #f2f1f6;
 }
@@ -295,12 +336,10 @@
   --border-strong: var(--l-border-strong);
   --focus: var(--l-focus);
   --lamp-strength: var(--l-lamp-strength);
-  --lit-base: var(--l-lit-base);
+  --lit-base: var(--ink-accent);
   --brand-a: var(--l-brand-a);
   --selection-bg: var(--l-selection-bg);
   --selection-text: var(--l-selection-text);
-  --room-blend: multiply;
-  --lit-blend: multiply;
 }
 
 @media (prefers-color-scheme: light) {
@@ -317,20 +356,43 @@
     --border-strong: var(--l-border-strong);
     --focus: var(--l-focus);
     --lamp-strength: var(--l-lamp-strength);
-    --lit-base: var(--l-lit-base);
+    --lit-base: var(--ink-accent);
     --brand-a: var(--l-brand-a);
     --selection-bg: var(--l-selection-bg);
     --selection-text: var(--l-selection-text);
-    --room-blend: multiply;
-    --lit-blend: multiply;
+  }
+}
+
+/* At and above 1536px the root becomes fluid and the top of the scale
+   switches to rem, so the page scales as one unit and the 10.6:1 ratio is
+   preserved exactly rather than the headline growing while the body sits
+   still. Letter-spacing stays in em so display type tightens optically as it
+   grows, which is the correct behaviour at this size. */
+@media (min-width: 96rem) {
+  html {
+    font-size: 1.11vw;
+  }
+
+  :root {
+    --text-display: 10.625rem;
+    --text-heading: 4.25rem;
+    --text-heading-sm: 3.25rem;
+    --text-subheading: 1.625rem;
+    --text-body: 1rem;
+    --text-body-sm: 0.9375rem;
+    --text-caption: 0.875rem;
+    --gutter: 1.25rem;
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --gutter: 16px;
   }
 }
 
 /* Clearspace is derived, not stored, and it has to be derived at every scope
-   that can publish a unit. var() substitution happens against the declaring
-   element, so this one rule declared for both the document and each stage is
-   what lets a stage carrying its own mark set its own clearance while
-   everything else follows the document's. */
+   that can publish a unit. */
 :root,
 [data-stage] {
   --clearspace: calc(4 * var(--w) * 1px);
