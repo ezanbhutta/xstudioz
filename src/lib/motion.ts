@@ -133,95 +133,20 @@ export function initNav(lenis: Lenis | null): void {
   });
 }
 
-/* ------------------------------------------------------------
-   Reveals shared by every document
-   Opacity and transform only — text never leaves the DOM or the
-   accessibility tree, so a crawler that does not run JS still
-   reads the full document.
-   ------------------------------------------------------------ */
+/* The shared reveal system used to live here: initCommonReveals, its
+   options interface, and five branches that each set their own from-state in
+   script (the .line__in mask, the heading stagger, [data-reveal="fade"], the
+   rule draw and the notch segments).
 
-export interface CommonRevealOptions {
-  /* The cover fires its headline reveals five percent earlier than the
-     interior pages do. That difference predates this file: the cover carried
-     its own forked copy of these reveals and the two drifted. It is preserved
-     rather than quietly normalised, because collapsing the fork was supposed
-     to change no behaviour. Pass nothing and you get the interior timing. */
-  headlineStart?: string;
-}
+   All of it is gone and nothing replaces it. That is the step rather than a
+   regression: a site whose law is "nothing animates its own arrival" cannot
+   also ship a generic fade-and-rise, and the correct substitute for a reveal
+   is the element already being there. Every deleted branch set its from-state
+   in JS rather than CSS, which is why there is nothing left to clean up and
+   why these documents have always been readable with the bundle blocked.
 
-export function initCommonReveals(
-  scope: ParentNode = document,
-  { headlineStart = 'top 90%' }: CommonRevealOptions = {}
-): void {
-  if (prefersReduced) return;
-
-  scope.querySelectorAll<HTMLElement>('.line__in').forEach((el) => {
-    if (el.closest('.hero')) return;
-    gsap.set(el, { yPercent: 112 });
-  });
-
-  scope.querySelectorAll<HTMLElement>('h1, h2, .footer__title').forEach((block) => {
-    /* The hero's own h1 is choreographed by the cover's entrance timeline, so
-       it must not also pick up a scroll trigger here. Without this the two
-       would both own the same .line__in transform and fight over it on load:
-       the trigger fires immediately, because the hero is at the top of the
-       page, at the same moment the entrance is tweening the same elements. */
-    if (block.closest('.hero')) return;
-
-    const lines = block.querySelectorAll<HTMLElement>('.line__in');
-    if (!lines.length) return;
-    gsap.to(lines, {
-      yPercent: 0,
-      duration: 1.1,
-      ease: EASE,
-      stagger: 0.09,
-      scrollTrigger: { trigger: block, start: headlineStart, once: true },
-    });
-  });
-
-  scope.querySelectorAll<HTMLElement>('[data-reveal="fade"]').forEach((el) => {
-    if (el.closest('.hero')) return;
-    gsap.fromTo(
-      el,
-      { y: 22, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.9,
-        ease: EASE,
-        scrollTrigger: { trigger: el, start: 'top 88%', once: true },
-      }
-    );
-  });
-
-  scope.querySelectorAll<HTMLElement>('[data-rule]').forEach((el) => {
-    if (el.closest('.hero')) return;
-    gsap.fromTo(
-      el,
-      { scaleX: 0 },
-      {
-        scaleX: 1,
-        duration: 1.2,
-        ease: EASE_INOUT,
-        scrollTrigger: { trigger: el, start: 'top 90%', once: true },
-      }
-    );
-  });
-
-  scope.querySelectorAll<HTMLElement>('[data-rule-notch]').forEach((el) => {
-    gsap.fromTo(
-      el.querySelectorAll('i'),
-      { scaleX: 0 },
-      {
-        scaleX: 1,
-        duration: 0.8,
-        ease: EASE_INOUT,
-        stagger: 0.12,
-        scrollTrigger: { trigger: el, start: 'top 92%', once: true },
-      }
-    );
-  });
-}
+   EASE and EASE_INOUT stay exported: main.ts still uses them for the loader
+   timeline and the cover's own choreography. */
 
 /* ------------------------------------------------------------
    Reveal failsafe
@@ -241,6 +166,18 @@ export function revealFailsafe(delay = 4000): void {
     const fold = window.innerHeight;
     ScrollTrigger.getAll().forEach((st) => {
       if (st.progress > 0) return;
+
+      /* A pinned stage is scrubbed, not revealed. It sits at progress 0
+         because the reader has not entered its track yet, which is the
+         correct state, and forcing it to 1 would throw the hero to the end of
+         a choreography nobody asked for.
+
+         This guard was not needed while initCommonReveals existed, because
+         the once:true reveals vastly outnumbered the stages. With those gone
+         pins are most of what is registered, and without this line the
+         failsafe becomes the bug it was written to prevent. */
+      if (st.pin) return;
+
       const el = st.trigger as HTMLElement | null;
       if (!el) return;
       // A zero-height viewport means nothing can ever come into view.

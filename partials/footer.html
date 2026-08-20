@@ -5,7 +5,6 @@
      quiet apparatus (where else to go, who made it, the legal footing).
 
      Contracts other code depends on, do not change without checking:
-     - data-folio feeds the running folio indicator in src/main.ts
      - .footer is observed in src/main.ts to hide that indicator down here
      - .footer__title keeps its .line / .line__in split for the reveal
      - the [data-consent-open] link must keep an <li> ancestor, because
@@ -14,7 +13,7 @@
      - the fiverr.com, portfolio.xstudioz.com and mailto: hrefs are matched
        by src/lib/analytics.ts to send its three link events -->
 
-<footer class="footer" id="contact" data-folio="Colophon">
+<footer class="footer" id="contact">
   <div class="container footer__grid">
     <p class="label footer__chapter">Colophon · The last page</p>
 

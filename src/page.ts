@@ -1,44 +1,74 @@
 /* ============================================================
-   XStudioz — Interior document entry
-   The cover (main.ts) owns the preloader and the hero entrance.
-   Every other page boots only the shared chrome from lib/motion.ts,
-   so the interior bundle stays small and the content paints
-   immediately.
+   XStudioz — the interior documents
+
+   Fifteen of the site's sixteen URLs boot from here, and what this file does
+   not do is the point of it.
+
+   It registers no timeline, no ScrollTrigger and no reveal. It imports
+   nothing from lib/stage.ts. An interior page has no [data-stage], so
+   initMeasure would return at its first line and is not called at all.
+
+   The law is inherited whole and the apparatus is not. Nothing here animates
+   its own arrival because nothing here animates anything: every element is
+   painted, opaque and final in the first frame, and the only movement these
+   pages have is the CSS displacement in doc.css, where a row that claims its
+   clearance pushes its neighbours off it. That runs with this bundle blocked.
+
+   What it does own: the unit, so --clearspace is real rather than the
+   token's fallback; the shared chrome; consent; and the index highlight,
+   which is a state and not an entrance.
    ============================================================ */
 
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/doc.css';
+/* Deliberately not './styles/cover.css'. The hero, the capability rows, the
+   construction plate and the dimension line are 31,212 bytes of CSS that no
+   URL reachable from this entry can render. */
 
 import {
   initLenis,
   initNav,
-  initCommonReveals,
   revealFailsafe,
   applyStaticScroll,
-  ScrollTrigger,
 } from './lib/motion';
+import { initUnit } from './lib/measure';
 import { initConsent } from './lib/consent';
 import { initAnalytics } from './lib/analytics';
 
 function boot(): void {
-  // Consent first, so nothing measures before a choice exists.
+  // Consent first, so nothing measures before a choice exists. This order is
+  // load-bearing: initConsent sets the Consent Mode defaults the other two
+  // depend on.
   initConsent();
   initAnalytics();
 
+  /* The unit before anything that spends it. One rect off the nav mark,
+     published as --w on the root, so --clearspace resolves to four times the
+     mark actually drawn in this page's header. It bails on any document that
+     has a [data-stage], which is the cover, so the two never fight. */
+  initUnit();
+
   const lenis = initLenis();
   initNav(lenis);
-  initCommonReveals();
-  revealFailsafe();
   markCurrentSection();
 
-  document.fonts?.ready.then(() => ScrollTrigger.refresh());
+  /* Kept, and near enough free: an interior page registers no ScrollTrigger
+     at all, so this is one timer over an empty list. It stays because the
+     guarantee it encodes — no code path may leave readable content in a
+     state a reader cannot get out of — is a property of the site, not of the
+     reveals it used to police, and a later section on one of these pages
+     must inherit it rather than rediscover it. */
+  revealFailsafe();
+
   applyStaticScroll();
 }
 
-/* The section index highlights whichever section is in view.
-   Purely decorative: the links work regardless. */
+/* The section index highlights whichever section is in view. Purely a state
+   readout: it changes a colour, moves nothing, and the links work regardless.
+   IntersectionObserver rather than a ScrollTrigger, so it costs nothing and
+   does not put this page in the business of scroll-driven animation. */
 function markCurrentSection(): void {
   const links = Array.from(
     document.querySelectorAll<HTMLAnchorElement>('.doc__index a[href^="#"]')

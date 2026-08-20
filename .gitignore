@@ -2,3 +2,5 @@ node_modules/
 dist/
 xstudioz-site.zip
 .DS_Store
+public/_measure-proof.html
+.spec/

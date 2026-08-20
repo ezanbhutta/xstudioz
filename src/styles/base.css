@@ -242,8 +242,11 @@ button {
   text-wrap: balance;
 }
 
-/* Motion-hidden defaults are applied by JS (progressive enhancement):
-   without JS everything is simply visible. */
+/* This used to say that motion-hidden defaults were applied by JS, so that
+   without JS everything was simply visible. There are no motion-hidden
+   defaults any more: the shared reveal pass that set them was deleted, and
+   nothing on this site hides itself waiting to be revealed. Every document
+   paints finished in its first frame, with or without the bundle. */
 
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -412,4 +415,27 @@ body > footer { position: relative; z-index: 1; }
   }
 
   a { color: #000 !important; }
+}
+
+/* The aperture in step 07 samples the rig, so it has to turn with it. Same
+   keyframes, same duration, same linear timing, all started off one document
+   timeline, which is what keeps them in step without a shared clock. */
+.room,
+.lit,
+.inv__light {
+  animation: rig-turn 120s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .room,
+  .lit,
+  .inv__light { animation: none; }
+}
+
+@media print {
+  .room,
+  .lit,
+  .inv__light { animation: none !important; }
+  /* … existing print block, plus: */
+  .inv__light { display: none !important; }
 }
