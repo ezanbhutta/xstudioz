@@ -286,6 +286,27 @@
   --x-r4: 31.342%;            /*  4 vertices                        */
   --x-r5: 21.401%;            /*  4 vertices                        */
 
+  /* The mark, as a mask. Base64 rather than percent-encoded: the minifier
+     could not parse the scheme inside a percent-encoded payload and failed
+     the build on it. It is the single-path drawing, so the counter is a real
+     hole and whichever ground is underneath reads through it.
+
+     Stated once here because three separate places now paint the mark
+     without adding an element to any of the sixteen documents: the section
+     seal in base.css, the masthead mark and the section seal on the interior
+     pages. */
+  --x-mask: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9Jzc1OCAzMzUgNDA0IDQwNCc+PHBhdGggZD0nTTEwNDEuNCw3MzJjLTMuNywwLTcuNC0xLjQtMTAuMi00LjNsLTUxLjktNTEuOWMtMi45LTIuOS00LjUtNy4xLTQuMi0xMS4zbDEuOC0yNC44LTg4LDg4Yy01LjYsNS42LTE0LjgsNS42LTIwLjUsMGwtOTYuMS05Ni4xYy0yLjctMi43LTQuMy02LjQtNC4zLTEwLjJzMS42LTcuNSw0LjMtMTAuMmw3MS4xLTcxLjEtNzEuMS03MS4xYy0yLjctMi43LTQuMy02LjQtNC4zLTEwLjJzMS42LTcuNSw0LjMtMTAuMmw5Ni4xLTk2LjFjNS42LTUuNiwxNC44LTUuNiwyMC41LDBsNTEuOSw1MS45YzIuOSwyLjksNC41LDcuMSw0LjIsMTEuM2wtMS44LDI0LjgsODgtODhjMi43LTIuNyw2LjQtNC4zLDEwLjItNC4zaDBjMy44LDAsNy41LDEuNiwxMC4yLDQuM2w5Ni4xLDk2LjFjNS42LDUuNiw1LjYsMTQuOCwwLDIwLjVsLTcxLjEsNzEuMSw3MS4xLDcxLjFjNS42LDUuNiw1LjYsMTQuOCwwLDIwLjVsLTk2LjEsOTYuMWMtMi45LDIuOS02LjUsNC4zLTEwLjIsNC4zWk04MDMuMSw2MjEuNGw3NS42LDc1LjYsMTA1LjMtMTA1LjNjNC4zLTQuMywxMC44LTUuNSwxNi4zLTIuOSw1LjUsMi41LDguOCw4LjIsOC40LDE0LjJsLTQuMiw1NywzNywzNyw3NS42LTc1LjYtNzEuMS03MS4xYy01LjYtNS42LTUuNi0xNC44LDAtMjAuNWw3MS4xLTcxLjEtNzUuNi03NS42LTEwNS4yLDEwNS4yYy00LjMsNC4zLTEwLjgsNS41LTE2LjMsMi45cy04LjgtOC4yLTguNC0xNC4ybDQuMi01Ny0zNy0zNy03NS42LDc1LjYsNzEuMSw3MS4xYzUuNiw1LjYsNS42LDE0LjgsMCwyMC41bC03MS4xLDcxLjFoMFonLz48L3N2Zz4=");
+
+  /* THE PLANE CUT.
+
+     45 degrees less the drawing's own 4.18 degree departure, so 40.82. Every
+     edge on this site that changes one thing into another is cut at it, and
+     the run is derived from the rise rather than picked: 1 / tan(40.82) =
+     1.1575. Stating the ratio rather than the angle is what lets a corner be
+     chamfered with clip-path and still be the same angle as the blade the
+     cover sweeps a room in with. */
+  --cut-k: 1.1575;
+
   /* Clearspace in the mark's own width, published live by lib/measure.ts. */
   --w: 22;
 
