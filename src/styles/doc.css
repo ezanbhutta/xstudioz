@@ -156,16 +156,12 @@
 /* ---------------- Breadcrumbs ---------------- */
 
 /* The breadcrumb is the masthead's first line, not a strip above it, so it
-   takes the same room. Left as its own element in the markup because the two
+   takes the same room. That room is paper now, so it needs no ground and no
+   bleed of its own: it simply sits on the sheet under the header, the way the
+   cover's eyebrow does. Left as its own element in the markup because the two
    policy pages are owned elsewhere and their markup is not mine to move. */
 .doc > .container > .crumbs {
-  --ink: var(--room-deep-ink);
-  --ink-dim: var(--room-deep-dim);
-  --ink-quiet: var(--room-deep-quiet);
-  background: var(--room-deep-ground);
-  color: var(--ink);
-  margin-inline: calc(var(--gutter) * -1);
-  padding: calc(var(--nav-h) + var(--sp-5)) var(--gutter) 0;
+  padding: calc(var(--nav-h) + var(--sp-5)) 0 0;
 }
 
 .crumbs {
@@ -324,10 +320,15 @@
   line-height: 0.8;
   font-weight: 400;
   letter-spacing: -0.02em;
-  /* One step off the ground, the same value the footer mark is cut from, so
-     the number sits in the page rather than on it. */
+  /* Cut out of the ground rather than set on it, so the number sits in the
+     page. The outline was drawn at --ink-line-strong, 34% of the ink, which
+     measured 2.10:1 against paper once the masthead stopped being deep violet.
+     It is decoration and it is aria-hidden, so nothing depends on it, but a
+     figure a reader can see is better than one they cannot: at 50% it measures
+     3.37:1 in daylight and 4.86:1 in the dark, both clear of the 3:1 floor for
+     large glyphs. */
   color: var(--ground);
-  -webkit-text-stroke: 1px var(--ink-line-strong);
+  -webkit-text-stroke: 1px color-mix(in srgb, var(--ink) 50%, transparent);
   user-select: none;
 }
 
@@ -779,7 +780,15 @@
    Which is also the better reading. The stroke is not spinning away, it is
    withdrawing to make room for the answer that is about to claim it, which
    is the same sentence as everything else on this site. */
+/* Drawn vertical, by geometry. It was inheriting the horizontal rule above and
+   only setting a scaleY on it, so both strokes lay on the same 1px line: the
+   closed state rendered a minus, the open state rendered the same minus, and
+   the marker could not state anything at all. Caught by looking at a rendered
+   FAQ row rather than at the rule. */
 .faq__marker::after {
+  inset: 0 auto 0 calc(50% - 0.5px);
+  width: 1px;
+  height: auto;
   transform: scaleY(1);
   transform-origin: 50% 50%;
 }
@@ -1505,12 +1514,27 @@
    never arrives behaves identically.
    ============================================================ */
 
-.doc {
+.doc,
+.lost {
   /* Every displacement on an interior page is a fraction of one clearance,
      so there is exactly one number to tune and it is derived from the mark.
      0.25W, 6.5px at the nav mark's 26. Small on purpose: this is a page
      giving way, not a page performing. */
   --clear-nudge: calc(var(--clearspace) / 16);
+
+  /* THE PLANE CUT, at band scale.
+
+     One rise, and the run derived from it through --cut-k, so every cut edge
+     on a document is the same 40.82 degrees the cover sweeps its rooms in at.
+     A section change on this site is a plane arriving, not a horizontal line
+     being crossed, and this is that statement made in clip-path on a page
+     with no timeline to sweep anything.
+
+     Rise rather than run, because the rise is what has to be cleared by the
+     padding of whatever the band holds, and that is the constraint that
+     actually bites. */
+  --cut-rise: clamp(44px, 8vw, 120px);
+  --cut-run: calc(var(--cut-rise) * var(--cut-k));
 }
 
 /* ---------------- The index parts ----------------
@@ -1632,11 +1656,20 @@
    The sequence on every interior URL:
 
      crumbs      paper
-     masthead    deep violet, full bleed, the display step
-     the reading paper, one measure, 16px at 155% leading
-     related     magenta, full bleed
-     the CTA     violet, full bleed
-     colophon    void
+     masthead    paper, the mark bleeding off the right edge, the title at
+                 the display step, and one chamfered magenta panel holding
+                 the lede
+     the reading paper, one measure, 15px at 155% leading
+     related     magenta, full bleed, its leading edge cut at 40.82 degrees
+     the CTA     violet, full bleed, cut the other way, so the two are a
+                 mirrored pair rather than two of the same move
+     colophon    deep violet
+
+   The masthead used to commit its whole frame to deep violet, which is the
+   reference's shape and the one the cover was moved off. Paper is the ground
+   here as well now: colour arrives as a panel and as the mark, and the reader
+   meets the same composition they met on the cover before they meet any
+   prose.
 
    The reading column is the one thing colour is not allowed to touch. It
    keeps its measure, its size and its leading, on the ground the reader's
@@ -1654,47 +1687,83 @@
 
 /* ---- The masthead ----
 
+   Paper, the mark, one panel. The composition the cover opens on, restated
+   for a document that has a title, a lede and a spec strip instead of a
+   headline and two controls.
+
+   What it replaced: a full-bleed deep violet block, 84svh tall, with the
+   title on its floor. That is a wall of one flat hex and it is the shape the
+   cover was deliberately moved off, so fifteen documents were still wearing
+   it after the poster stopped. Three things carry the change:
+
+     THE GROUND   paper, so the masthead and the reading column below it are
+                  one sheet and the first seam a reader meets is a hairline
+                  rather than a colour change.
+     THE MARK     top right, running to the edge of the page, its counter
+                  punched through to the paper. It is the second largest
+                  object in the frame after the title, which is exactly the
+                  job it does on the cover.
+     THE PANEL    the lede sits on flat magenta with its leading corner cut
+                  at the plane angle and its right edge off the page. Colour
+                  is punctuation here: one panel, roughly a fifth of the
+                  frame, rather than the whole of it.
+
    The header is position: fixed and transparent until the reader scrolls, so
    before it commits to the void bar it takes whatever ink the document
-   declares for the room its FIRST section paints. Every document with a
-   masthead opens on deep violet, so it declares the deep room's ink here
-   rather than in fifteen separate files, two of which this session may not
-   edit at all.
-
-   Measured before the fix by sampling the real pixel under a nav link at
-   scroll 0: fourteen of the sixteen routes were rendering the header at
-   1.20:1, because the fallback is the paper room's near-black ink and the
-   ground under it is #38016c. The cover overrides this back to the paper ink
-   from cover.css, and 404 has no masthead so it never matches. */
-body:has(.doc__head) {
-  --nav-ink: var(--room-deep-ink);
-}
+   declares for the room its FIRST section paints. That room is paper on all
+   sixteen routes now, which is the components.css fallback, so the
+   body:has(.doc__head) override that used to force the deep room's ink is
+   gone rather than restated. Measured under a nav link at scroll 0: 16.4:1 in
+   daylight, 17.7:1 in the dark. */
 
 .doc__head {
-  --ground: var(--room-deep-ground);
-  --ink: var(--room-deep-ink);
-  --ink-dim: var(--room-deep-dim);
-  --ink-quiet: var(--room-deep-quiet);
-  --ink-accent: var(--room-deep-accent);
-  --ink-line: color-mix(in srgb, var(--ink) 20%, transparent);
-  --ink-line-strong: color-mix(in srgb, var(--ink) 38%, transparent);
-  background: var(--ground);
-  color: var(--ink);
-  margin-inline: calc(var(--gutter) * -1);
-  padding: clamp(48px, 6vw, 96px) var(--gutter) clamp(48px, 6vw, 90px);
+  /* One figure for the mark, and the open band above the eyebrow derived from
+     it rather than guessed: where the mark starts, plus the mark, plus one
+     gap. Change the mark's size and the band follows it, so the two can never
+     disagree and the title can never be run into. The clamp is the cover's
+     own, unchanged, so the object is the same size on a document as it is on
+     the poster. */
+  --doc-mark: clamp(112px, 21vw, 320px);
+  --doc-mark-top: clamp(8px, 1.6vw, 30px);
+
+  position: relative;
+  padding: 0 0 clamp(var(--sp-6), 5vw, var(--sp-7));
   margin-bottom: clamp(40px, 5vw, 72px);
 
-  /* The masthead commits a whole frame to one flat hex and sets its title on
-     the floor of it, which is the cover's hero rule applied to a document.
-     It is the strongest single seam between the two: a reader arriving from
-     the homepage meets the same move before they meet any prose. */
-  min-height: min(84svh, 760px);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  /* Stated as padding rather than as a min-height with the content pushed to
+     the floor, because the capability pages turn this element into a grid at
+     901px and a grid has no justify-content: flex-end to give way to. Padding
+     is the one mechanism that composes identically in both. */
+  padding-top: calc(
+    var(--doc-mark-top) + var(--doc-mark) + clamp(var(--sp-4), 3vw, var(--sp-6))
+  );
 }
 
-.doc__eyebrow {
+/* The mark. Painted as a mask rather than as markup, so it reaches all
+   fifteen documents without an element being added to any of them, including
+   the two whose markup this session may not touch. Fixed brand magenta, not
+   the room's accent: it is the brand's own colour arriving on paper, and it
+   reads at full strength in both themes. */
+.doc__head::before {
+  content: '';
+  position: absolute;
+  top: var(--doc-mark-top);
+  right: calc(var(--gutter) * -1);
+  width: var(--doc-mark);
+  aspect-ratio: 1;
+  background: var(--brand-magenta);
+  -webkit-mask-image: var(--x-mask);
+  mask-image: var(--x-mask);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  pointer-events: none;
+}
+
+.doc__head .doc__eyebrow {
   color: var(--ink-quiet);
   margin-bottom: var(--sp-4);
 }
@@ -1713,16 +1782,60 @@ body:has(.doc__head) {
   text-wrap: balance;
 }
 
+/* ---- The lede, as the panel ----
+
+   The panel IS the paragraph rather than a plane behind it, so the text
+   cannot leave its own ground at any width. It runs off the right edge of the
+   page, which is what makes it a piece of the sheet rather than a card lying
+   on one, and its leading corner is cut on the plane angle.
+
+   Held to the reading measure and pushed to the right, which puts it under
+   the right half of the title and leaves clear paper under the left: the
+   cover's floor, restated. The first build let it run the whole width of the
+   column and it came out a slab of magenta two thirds empty, which is the
+   wall this masthead exists to stop being. */
 .doc__lede {
+  /* The panel takes its own, smaller rise. The band cut is sized against a
+     band; on a panel four lines deep the same figure would run the cut
+     through the first line of the lede, which is a legibility fault before it
+     is an aesthetic one.
+
+     The run is restated here rather than inherited, and it has to be. A custom
+     property is substituted where it is DECLARED, so --cut-run computed once
+     on .doc against the band's rise and then arrived here as a finished
+     length: the panel was drawing a 45px rise over a 139px run, which is 17.9
+     degrees and not an angle this site has. Measured off the rendered clip
+     path, which is the only reason it was caught. */
+  --cut-rise: clamp(26px, 3vw, 52px);
+  --cut-run: calc(var(--cut-rise) * var(--cut-k));
+  --ink: var(--room-magenta-ink);
+  --ink-dim: var(--room-magenta-dim);
+  --ink-quiet: var(--room-magenta-quiet);
+  --ink-line: color-mix(in srgb, var(--room-magenta-ink) 26%, transparent);
+  --ground: var(--room-magenta-ground);
   font-family: var(--font-sans);
   font-size: var(--text-subheading);
   font-weight: 400;
   line-height: 1.35;
   letter-spacing: 0;
   text-transform: none;
-  color: var(--ink-dim);
-  max-width: 46ch;
+  background: var(--brand-magenta);
+  color: var(--room-magenta-ink);
+  /* The measure, plus the two paddings and the width of the bleed, so the
+     text inside sits at 40 characters however wide the column around it is. */
+  max-width: calc(40ch + var(--gutter) + clamp(var(--sp-4), 2.2vw, var(--sp-5)) + var(--gutter));
   margin-top: clamp(var(--sp-5), 3vw, var(--sp-6));
+  margin-left: auto;
+  margin-right: calc(var(--gutter) * -1);
+  padding: clamp(var(--sp-4), 2.4vw, var(--sp-5)) var(--gutter)
+    clamp(var(--sp-4), 2.4vw, var(--sp-5)) clamp(var(--sp-4), 2.2vw, var(--sp-5));
+  clip-path: polygon(
+    var(--cut-run) 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 var(--cut-rise)
+  );
 }
 
 .doc__facts {
@@ -1737,18 +1850,94 @@ body:has(.doc__head) {
   color: var(--ink);
 }
 
+/* On one column the panel has no left half to sit beside, so it stops being
+   pushed right and simply spans the sheet. */
+@media (max-width: 760px) {
+  .doc__lede {
+    max-width: none;
+    margin-left: calc(var(--gutter) * -1);
+    padding-left: var(--gutter);
+  }
+}
+
 /* ---- The reading column ----
    Protected. 16px at 155% on a 37rem measure, on the reader's own ground.
    No colour, no scrub, no split. This is the part of the site that is read
    rather than looked at and none of the poster language reaches it. */
 
+/* ---- How a section opens ----
+
+   The cover opens every section with the same three marks: a rule across the
+   column, one 45 degree notch cut into it, and the mark itself at the end,
+   alternating upright and half turned down the page. A document had none of
+   that; its sections simply began, which is why a page of the manual read as
+   a different site from the poster on the way in.
+
+   It is the same drawing here, delivered as two pseudo-elements and a border
+   rather than as .section__head markup, because eleven of these documents are
+   generated from templates this session did not write and two are owned by
+   another session entirely. Nothing is added to the reading column: the rule
+   is a border on a heading that was already there.
+
+   The alternation is the claim the mark makes about itself. It maps onto
+   itself 22 vertices of 22 at a half turn, so an upright seal and a turned
+   seal are the same object, and a reader who notices the alternation finds
+   nothing changing. */
 .doc__section > h2 {
+  position: relative;
   font-family: var(--font-display);
   font-size: var(--text-heading-sm);
   font-weight: 400;
   line-height: 0.9;
   letter-spacing: 0.01em;
   color: var(--ink);
+  border-top: 1px solid var(--ink-line);
+  padding-top: clamp(var(--sp-4), 2vw, var(--sp-5));
+}
+
+/* The notch. The same 12px tick at the same 45 degrees the cover's rule
+   carries, at the same 38% of the run, so the two rules are visibly the one
+   rule. The plane angle belongs to the band edges below, where a cut changes
+   one room into another; this is furniture on a hairline. */
+.doc__section > h2::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 38%;
+  width: 12px;
+  height: 1px;
+  background: var(--ink);
+  opacity: 0.28;
+  transform: rotate(-45deg);
+  transform-origin: center;
+  pointer-events: none;
+}
+
+/* The seal, sitting on the rule at the end of it. Its counter is a hole, so
+   the rule reads straight through the middle of the mark. */
+.doc__section > h2::after {
+  content: '';
+  position: absolute;
+  top: -7px;
+  right: 0;
+  width: 13px;
+  height: 13px;
+  background: var(--ink);
+  opacity: 0.42;
+  -webkit-mask-image: var(--x-mask);
+  mask-image: var(--x-mask);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  transform-origin: var(--x-origin-x) var(--x-origin-y);
+  pointer-events: none;
+}
+
+.doc__section:nth-of-type(even) > h2::after {
+  transform: rotate(180deg);
 }
 
 .doc__section h3 {
@@ -1769,8 +1958,14 @@ body:has(.doc__head) {
 }
 
 /* The one coloured thing inside the reading column, and it is a callout
-   rather than prose: a direct answer to the question the section asks. */
+   rather than prose: a direct answer to the question the section asks. It
+   takes the plane cut at the smallest rise on the site, so the one object
+   colour is allowed to sit behind in here is drawn by the same rule as the
+   bands that close the page. The rise is well inside the padding, so no
+   character of the answer is ever within the cut. */
 .answer {
+  --cut-rise: 22px;
+  --cut-run: calc(var(--cut-rise) * var(--cut-k));
   --ground: var(--room-violet-ground);
   --ink: var(--room-violet-ink);
   --ink-dim: var(--room-violet-dim);
@@ -1780,13 +1975,34 @@ body:has(.doc__head) {
   color: var(--ink);
   border-left: 0;
   padding: var(--sp-5);
+  clip-path: polygon(
+    var(--cut-run) 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 var(--cut-rise)
+  );
 }
 
 .answer p {
   color: var(--ink);
 }
 
-/* ---- The closing bands ---- */
+/* ---- The closing bands ----
+
+   Two rooms, and until now two horizontal edges: the paper stopped, magenta
+   started, magenta stopped, violet started. Squared off like that they are a
+   stack of walls and they are the reference's way of changing a section.
+
+   Both leading edges are cut at 40.82 degrees now, and they are cut in
+   OPPOSITE corners, so the pair mirrors the way the cover's two blades mirror
+   each other: one plane arrives from the right, the next from the left. The
+   wedge each cut opens shows the sheet underneath, so the change of room
+   reads as one plane sliding over another rather than as a border.
+
+   The padding-top on each is stated against the rise, not chosen, because a
+   band whose first line sits above its own cut is a band with its first line
+   clipped. */
 
 .related {
   --ground: var(--room-magenta-ground);
@@ -1799,7 +2015,15 @@ body:has(.doc__head) {
   background: var(--ground);
   color: var(--ink);
   margin-inline: calc(var(--gutter) * -1);
-  padding: clamp(56px, 6vw, 104px) var(--gutter);
+  padding: max(clamp(56px, 6vw, 104px), calc(var(--cut-rise) + var(--sp-5)))
+    var(--gutter) clamp(56px, 6vw, 104px);
+  clip-path: polygon(
+    var(--cut-run) 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 var(--cut-rise)
+  );
 }
 
 .doc__cta {
@@ -1813,7 +2037,15 @@ body:has(.doc__head) {
   background: var(--ground);
   color: var(--ink);
   margin-top: 0;
-  padding-block: clamp(60px, 7vw, 118px);
+  padding-top: max(clamp(60px, 7vw, 118px), calc(var(--cut-rise) + var(--sp-5)));
+  padding-bottom: clamp(60px, 7vw, 118px);
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--cut-run)) 0,
+    100% var(--cut-rise),
+    100% 100%,
+    0 100%
+  );
 }
 
 .doc__cta h2 {
@@ -1868,10 +2100,29 @@ body:has(.doc__head) {
 /* ============================================================
    ARRIVALS
 
-   The whole interior motion budget. Opacity and 20px of y, half a second,
-   once, applied by an IntersectionObserver in page.ts. The from-state is
-   behind html.js so a document whose bundle never arrives is painted
-   finished in its first frame, and html.no-motion opts out entirely.
+   The whole interior motion budget, and it is now the cover's own signature
+   rather than a second, quieter one.
+
+   THE WORD RESOLVE. Display lines resolve word by word from the centre of the
+   line outward, from a floor of 0.62 to 1. Granularity, direction and floor
+   are all stated in base.css, which is where the mechanism lives, and this
+   file changes only what drives it: the cover scrubs the opacity against a
+   pinned timeline, and a document has no timeline, so the stagger is a
+   transition delay written per word by page.ts and the trigger is the
+   IntersectionObserver that already runs there.
+
+   It is applied to DISPLAY LINES ONLY. There are two on a document, the
+   masthead title and the closing call, and on the 404 there is one. Nothing
+   in the reading column is split, nothing there waits on a scroll position,
+   and no paragraph on this site is ever touched by it.
+
+   The from-state is a legible 0.62 rather than 0, the words are only ever
+   created by script, and the delays are inline, so a document whose bundle
+   never arrives paints every line finished in its first frame.
+
+   [data-enter] is kept because the failsafe and the observer in page.ts are
+   written against it and a later section on one of these pages must inherit
+   the guarantee rather than rediscover it.
    ============================================================ */
 
 html.js:not(.no-motion) [data-enter] {
@@ -1885,10 +2136,69 @@ html.js:not(.no-motion) [data-enter].is-in {
   transform: none;
 }
 
+/* Scoped to the split host, so the only .scrub-word elements that ever carry
+   a transition are the ones on a document. The cover's are interpolated
+   frame by frame against the wheel and a transition on those would put the
+   lit edge behind the scroll position. */
+html.js:not(.no-motion) [data-words] .scrub-word {
+  transition: opacity 0.55s var(--ease-out);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html.js [data-enter] {
     opacity: 1;
     transform: none;
     transition: none;
   }
+
+  /* base.css already hands every word back at full strength. The delays are
+     written inline by script, so the transition is killed here as well and
+     nothing is left waiting on one. */
+  html.js [data-words] .scrub-word {
+    transition: none;
+    transition-delay: 0s !important;
+  }
+}
+
+/* ============================================================
+   THE 404
+
+   No masthead, so no mark came with one. It is still a document and it still
+   opens on paper, so it takes the same object in the same place.
+   ============================================================ */
+
+.lost {
+  position: relative;
+}
+
+/* .lost is a section rather than something inside .container, so it already
+   spans the viewport and the mark reaches the edge of the page at right: 0.
+   The band it stands in is derived from its own size, the same way the
+   masthead's is, so the error code can never end up printed across it. */
+.lost {
+  --doc-mark: clamp(112px, 21vw, 320px);
+  --doc-mark-top: calc(var(--nav-h) + var(--sp-5));
+}
+
+.lost__grid {
+  padding-top: calc(var(--doc-mark-top) + var(--doc-mark) + var(--sp-5));
+}
+
+.lost::before {
+  content: '';
+  position: absolute;
+  top: var(--doc-mark-top);
+  right: 0;
+  width: var(--doc-mark);
+  aspect-ratio: 1;
+  background: var(--brand-magenta);
+  -webkit-mask-image: var(--x-mask);
+  mask-image: var(--x-mask);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  pointer-events: none;
 }
