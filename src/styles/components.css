@@ -2,80 +2,11 @@
    XStudioz: Components
    ============================================================ */
 
-/* ---------------- Loader ---------------- */
-
-/* Hidden by default, an inline head script opts in for first visits,
-   so a JS failure can never leave the page covered. */
-.loader {
-  display: none;
-}
-
-.show-loader .loader {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  background: var(--ground);
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  gap: var(--sp-4);
-}
-
-.loader__mark {
-  position: relative;
-  width: clamp(72px, 9vw, 110px);
-  aspect-ratio: 1;
-}
-
-.loader__x {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.loader__x--ink {
-  fill: var(--ink);
-  opacity: 0.1;
-}
-
-/* The mark was painted with the brand gradient here. The gradient is cast by
-   the rig or it is not used, and a preloader sits above the rig, so down here
-   the mark is simply drawn in ink. The veil lifting is what hands you over to
-   the lit room. */
-.loader__x--fill {
-  fill: var(--ink);
-  clip-path: inset(100% 0 0 0);
-}
-
-.loader__word {
-  color: var(--ink);
-}
-
-body.is-loading {
-  overflow: hidden;
-}
-
-/* A failsafe that clears the overlay when the bundle never arrives already
-   exists, in doc.css, deliberately placed in the last-imported stylesheet so
-   it wins the cascade without !important. Nothing is added here; see
-   "Preloader failsafe" there.
-
-   Nobody who asked for less motion should meet a full-screen animated veil,
-   and skipping it outright also means they never depend on a script to
-   remove it. */
-@media (prefers-reduced-motion: reduce) {
-  .show-loader .loader {
-    display: none;
-  }
-}
-
-/* The print-furniture layer (.furniture, .furniture__doc, .furniture__folio,
-   the four .crop corner marks) used to live here, together with the running
-   folio that drove it from main.ts. None of that markup exists on any of the
-   sixteen routes any more, so the CSS styled nothing and initFolio() returned
-   at its first line on every page load. Removed rather than kept warm, and
-   the [data-folio] attributes that fed it went with it. */
+/* The preloader lived here. A veil that covers the page while the page is
+   already there is a cost with no return: it delays the first thing a reader
+   came for so it can show them a logo they have not asked about yet. The
+   hero composes on its own in the first frame, with or without the bundle,
+   so there was nothing left for it to hide. */
 
 /* ---------------- Nav ---------------- */
 
@@ -178,7 +109,7 @@ body.is-loading {
 
 .nav__links {
   display: flex;
-  gap: clamp(var(--sp-4), 2.2vw, var(--sp-5));
+  gap: var(--sp-5);
   justify-content: center;
   white-space: nowrap;
 }
@@ -340,14 +271,14 @@ body.is-loading {
 .nav__menu {
   display: flex;
   flex-direction: column;
-  margin-block: clamp(var(--sp-6), 9vh, var(--sp-8)) auto;
+  margin-block: 5.4rem auto;
 }
 
 .nav__menu-link {
   display: block;
-  padding-block: clamp(12px, 1.6vh, 18px);
+  padding-block: 0.96rem;
   border-top: var(--hairline);
-  font-size: clamp(28px, 7.4vw, 44px);
+  font-size: 2.9333rem;
   line-height: 1.15;
   letter-spacing: -0.01em;
   color: var(--ink);
@@ -587,10 +518,11 @@ html.nav-open {
    the room its first section paints. A document sets --nav-ink once, on
    <body>, and never thinks about it again.
 
-   Scrolled it stops borrowing and commits: the void ground with light ink,
-   which is a decisive bar that reads at 17.7:1 over magenta, violet, deep
-   violet, paper and the void alike. One bar for nine rooms rather than five
-   conditional treatments.
+   Scrolled it stops borrowing and commits: the paper ground with the sheet's
+   own ink under a hairline, which reads at 16.4:1 and is the same bar over
+   every section on the site. It was the void, and a near-black bar fixed to
+   the top of every route is a viewport's worth of darkness on a document that
+   is meant to be light.
    ============================================================ */
 
 .nav {
@@ -605,11 +537,12 @@ html.nav-open {
 }
 
 .nav--scrolled {
-  --ink: var(--room-void-ink);
-  --ground: var(--room-void-ground);
-  --ink-accent: var(--room-void-accent);
-  background: var(--room-void-ground);
-  color: var(--room-void-ink);
+  --ink: var(--room-paper-ink);
+  --ground: var(--room-paper-ground);
+  --ink-accent: var(--room-paper-ink);
+  background: var(--room-paper-ground);
+  color: var(--room-paper-ink);
+  border-bottom: 1px solid var(--border);
 }
 
 /* The overlay menu is its own room and always the same one, so opening it
@@ -636,7 +569,7 @@ html.nav-open {
 .nav__menu-link {
   font-family: var(--font-display);
   font-size: var(--text-heading-sm);
-  font-weight: 400;
+  font-weight: var(--weight-display);
   line-height: 0.9;
   letter-spacing: 0.01em;
 }
@@ -656,31 +589,37 @@ html.nav-open {
    one band of colour every one of the sixteen routes ends on.
    ============================================================ */
 
+/* The colophon. It was a full deep violet band closing every one of the
+   sixteen routes, which is one whole dark viewport on each of them and a
+   large part of what the page was reacting to. It closes on paper now. The
+   colour is still here and it is the mark, on the ramp, at the scale it had
+   as a field: one chromatic object rather than one chromatic wall. */
 .footer {
   /* One source for the mark's size. The statement reserves exactly this much
      room on its right, so the two can never collide at any viewport. */
-  --footer-mark: clamp(150px, 24vw, 380px);
-  --ground: var(--room-deep-ground);
-  --ink: var(--room-deep-ink);
-  --ink-dim: var(--room-deep-dim);
-  --ink-quiet: var(--room-deep-quiet);
-  --ink-accent: var(--room-deep-accent);
-  --ink-line: color-mix(in srgb, var(--ink) 18%, transparent);
-  --ink-line-strong: color-mix(in srgb, var(--ink) 34%, transparent);
+  --footer-mark: 24rem;
+  --ground: var(--room-paper-ground);
+  --ink: var(--room-paper-ink);
+  --ink-dim: var(--room-paper-dim);
+  --ink-quiet: var(--room-paper-quiet);
+  --ink-accent: var(--room-paper-ink);
+  --ink-line: color-mix(in srgb, var(--ink) 16%, transparent);
+  --ink-line-strong: color-mix(in srgb, var(--ink) 30%, transparent);
   background: var(--ground);
   color: var(--ink);
-  padding-block: clamp(60px, 7vw, 110px) var(--sp-6);
+  border-top: 1px solid var(--ink-line-strong);
+  padding-block: 7rem var(--sp-6);
 }
 
 .footer ::selection {
-  background: var(--ink-accent);
-  color: var(--room-deep-ground);
+  background: var(--selection-bg);
+  color: var(--selection-text);
 }
 
 .footer__grid {
   display: flex;
   flex-direction: column;
-  gap: clamp(30px, 3.6vw, 54px);
+  gap: 3.6rem;
 }
 
 .footer__chapter {
@@ -694,8 +633,11 @@ html.nav-open {
   align-items: center;
 }
 
-/* The mark is a large quiet shape behind the statement, at the room's own
-   accent. It is flat brand colour, not a light, and nothing about it moves. */
+/* The mark closes the document. Now that the footer is paper it is the one
+   chromatic object down here, so it is set at full strength on the ramp
+   rather than at 16 percent of an accent, and it carries both brand colours
+   the way every other chromatic surface on the site does. Nothing about it
+   moves. */
 .footer__x {
   position: absolute;
   right: 0;
@@ -704,20 +646,23 @@ html.nav-open {
   width: var(--footer-mark);
   height: var(--footer-mark);
   pointer-events: none;
-  opacity: 0.16;
 }
 
 .footer__x-svg {
   width: 100%;
   height: 100%;
-  fill: var(--ink-accent);
+  fill: url(#xg);
 }
 
+/* The last statement on every route, and it closes on the brand. The plate
+   bleeds to both edges of the viewport behind it and the mark sits on the
+   plate in ramp ink, so the two objects that close the document are one
+   surface rather than a display line and a decoration beside it. */
 .footer__title {
   position: relative;
   font-family: var(--font-display);
   font-size: var(--text-display);
-  font-weight: 400;
+  font-weight: var(--weight-display);
   line-height: var(--leading-display);
   letter-spacing: var(--tracking-display);
   max-width: calc(100% - var(--footer-mark) - var(--sp-5));

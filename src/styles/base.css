@@ -2,49 +2,71 @@
    XStudioz: Base: fonts, reset, primitive type, rooms
 
    Two families, self-hosted, both under the SIL Open Font License and both
-   free. Bebas Neue carries every display size at one weight; Mulish carries
+   free. Outfit carries every display size at one weight; Manrope carries
    body and UI at three. Nothing on this site animates a weight axis and
    nothing is bolded to make it matter.
+
+   Bebas Neue was here and is gone. It is an uppercase-only condensed poster
+   face, so every display line on the site rendered as caps whatever the
+   markup said, and at 140px it read as a gig poster rather than as a studio.
+   Outfit is a geometric sans with real lowercase, so the display steps now
+   set in sentence case and the only capitals left on the page are the ones
+   .label and .subheading ask for.
    ============================================================ */
 
 @font-face {
-  font-family: 'Bebas Neue';
-  src: url('/fonts/BebasNeue-400.woff2') format('woff2');
+  font-family: 'Outfit';
+  src: url('/fonts/Outfit-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Manrope';
+  src: url('/fonts/Manrope-400.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
-/* Mulish ships as one variable file with a 200 to 1000 axis. Three static
-   weights are used off it: 400 for body, 500 for small caps-tracked labels,
-   700 for card titles. */
 @font-face {
-  font-family: 'Mulish';
-  src: url('/fonts/Mulish-var.woff2') format('woff2');
-  font-weight: 200 1000;
+  font-family: 'Manrope';
+  src: url('/fonts/Manrope-500.woff2') format('woff2');
+  font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 
-/* Metric-matched fallbacks. Without these the first paint sets a 170px line
-   in Arial at Arial's metrics, and the whole sheet reflows when the real
-   face lands. Overrides are the standard computed metrics for each face
-   against a local Arial. */
 @font-face {
-  font-family: 'Bebas Neue Fallback';
+  font-family: 'Manrope';
+  src: url('/fonts/Manrope-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Metric-matched fallbacks. Without these the first paint sets the headline
+   in Arial at Arial's metrics and the whole sheet reflows when the real face
+   lands. Every override below is computed off the two faces rather than
+   copied: size-adjust is each family's mean lowercase advance divided by
+   Arial's, and the ascent and descent are the face's own hhea values divided
+   back through that adjustment. */
+@font-face {
+  font-family: 'Outfit Fallback';
   src: local('Arial');
-  ascent-override: 117.32%;
-  descent-override: 39.11%;
+  ascent-override: 94.89%;
+  descent-override: 24.67%;
   line-gap-override: 0%;
-  size-adjust: 76.72%;
+  size-adjust: 105.38%;
 }
 @font-face {
-  font-family: 'Mulish Fallback';
+  font-family: 'Manrope Fallback';
   src: local('Arial');
-  ascent-override: 96.56%;
-  descent-override: 24.02%;
+  ascent-override: 99.84%;
+  descent-override: 28.1%;
   line-gap-override: 0%;
-  size-adjust: 104.08%;
+  size-adjust: 106.77%;
 }
 
 /* Satoshi is retained for one job only: the wordmark in the header, which is
@@ -146,17 +168,29 @@ button {
 /* ============================================================
    THE ROOMS
 
-   One class paints a whole section: ground, and the four inks that are
-   legal on it. Nothing inside a room sets its own colour, so a section can
-   be moved from magenta to violet by changing one word in the markup and
-   every ratio inside it stays compliant by construction.
+   There are two now, not five. Paper, and the ramp.
 
-   The ground is painted on the element AND published to the browser through
-   the section, so a full-bleed section is genuinely edge to edge with no
-   seam at the gutter.
+   The five flat rooms were magenta, violet, deep violet, void and paper, and
+   each committed a whole viewport to one hex. Two of those are gone as
+   grounds outright: nothing on this site stands in the void or in deep violet
+   any more, which is where most of the darkness went. The other two are not
+   allowed to appear apart: a chromatic surface carries BOTH brand colours,
+   sampled from --brand-ramp, or it is not chromatic at all.
+
+   The old class names are kept and all point at the ramp, because fifteen
+   documents this session does not own still name them and a room that is
+   right in the markup and wrong on screen is the failure mode this whole
+   naming scheme exists to prevent.
+
+   WHAT MAY BE SET ON A RAMP. Display type in white, and nothing under 24px.
+   The arithmetic is in tokens.css: the worst point of any ramp containing
+   pure magenta is 3.75:1 against white, which clears the 3:1 large-text floor
+   and misses the 4.5:1 body floor, and no ink clears 4.5:1 at both ends.
+   Body copy, labels and captions live on paper.
    ============================================================ */
 
 .room-paper,
+.room-ramp,
 .room-magenta,
 .room-violet,
 .room-deep,
@@ -165,7 +199,8 @@ button {
   color: var(--ink);
 }
 
-.room-paper {
+.room-paper,
+.room-void {
   --ground: var(--room-paper-ground);
   --ink: var(--room-paper-ink);
   --ink-dim: var(--room-paper-dim);
@@ -173,41 +208,92 @@ button {
   --ink-accent: var(--room-paper-accent);
 }
 
-.room-magenta {
-  --ground: var(--room-magenta-ground);
-  --ink: var(--room-magenta-ink);
-  --ink-dim: var(--room-magenta-dim);
-  --ink-quiet: var(--room-magenta-quiet);
-  --ink-accent: var(--room-magenta-accent);
-}
-
-.room-violet {
-  --ground: var(--room-violet-ground);
-  --ink: var(--room-violet-ink);
-  --ink-dim: var(--room-violet-dim);
-  --ink-quiet: var(--room-violet-quiet);
-  --ink-accent: var(--room-violet-accent);
-}
-
+/* One chromatic surface, stated once. Every consumer samples this rather than
+   declaring its own, so a band, a blade and a plate cannot drift onto three
+   versions of the brand. The background-color under the image is the violet
+   stop, so a surface whose gradient fails to paint still lands on a brand
+   colour with legal ink rather than on nothing. */
+.room-ramp,
+.room-magenta,
+.room-violet,
 .room-deep {
-  --ground: var(--room-deep-ground);
-  --ink: var(--room-deep-ink);
-  --ink-dim: var(--room-deep-dim);
-  --ink-quiet: var(--room-deep-quiet);
-  --ink-accent: var(--room-deep-accent);
+  --ground: var(--brand-violet);
+  --ink: var(--ramp-ink);
+  --ink-dim: var(--ramp-ink);
+  --ink-quiet: var(--ramp-ink);
+  --ink-accent: var(--ramp-ink);
+  --ink-line: var(--ramp-line);
+  --ink-line-strong: var(--ramp-line-strong);
+  background-color: var(--brand-violet);
+  background-image: var(--brand-ramp-deep);
+  color: var(--ramp-ink);
 }
 
-.room-void {
-  --ground: var(--room-void-ground);
-  --ink: var(--room-void-ink);
-  --ink-dim: var(--room-void-dim);
-  --ink-quiet: var(--room-void-quiet);
-  --ink-accent: var(--room-void-accent);
+/* ============================================================
+   THE PLATE
+
+   The device that carries colour on this site, and the reason the page can be
+   a light document and still be loud.
+
+   A plate is a full-bleed ramp behind ONE display line. It escapes the
+   container to both edges of the viewport, it is the only chromatic surface
+   in a section, and the single rule about what may sit on it is the one
+   stated in tokens.css: nothing under 24px, ever. So a plate carries a
+   statement and the sheet either side of it carries everything a reader
+   actually reads.
+
+   That split is what makes the arithmetic work in both directions. The site
+   measures a little over half its pixels as paper, which is what was asked
+   for, while every statement on every route arrives on the brand rather than
+   in ink. Colour is punctuation, and the punctuation is always the ramp with
+   both colours on it.
+
+   The BLEED is the pseudo-element's, not the box's: left and right at -50vw,
+   because a plate has to escape a container whose width it cannot know. html
+   and body carry overflow-x: clip, so the overshoot never produces a
+   horizontal scrollbar at any width.
+
+   The box itself keeps the container's gutter and takes no horizontal padding
+   of its own, so a plated line starts exactly where every other line on the
+   page starts. The first build pushed the box out with a negative margin and
+   put the padding back inside it, which inset the type by two gutters instead
+   of one: at 375 that left a 44px headline 215px to fit into and the first
+   line ran off the screen. */
+
+.plate {
+  position: relative;
+  isolation: isolate;
+  color: var(--ramp-ink);
+  padding-block: 5.2rem;
+}
+
+.plate::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: -50vw;
+  right: -50vw;
+  background-color: var(--brand-violet);
+  background-image: var(--brand-ramp-deep);
+  pointer-events: none;
+}
+
+/* The plate publishes the ramp's inks as well as its ground, so anything
+   legal that does sit on one takes them without asking. */
+.plate {
+  --ink: var(--ramp-ink);
+  --ink-dim: var(--ramp-ink);
+  --ink-quiet: var(--ramp-ink);
+  --ink-accent: var(--ramp-ink);
+  --ink-line: var(--ramp-line);
+  --ink-line-strong: var(--ramp-line-strong);
 }
 
 /* ---------- Primitive type styles ---------- */
 
-/* 14px Mulish 500 with positive tracking. Every consumer labels something:
+/* 14px Manrope 500 with positive tracking. Every consumer labels something:
    section eyebrows, index heads, table headers, tags, numerals. Tracking is
    positive here and negative at display size, which is optical rather than
    uniform. */
@@ -244,7 +330,7 @@ button {
 .heading-sm,
 .subheading {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: var(--weight-display);
   font-kerning: normal;
   font-variant-ligatures: common-ligatures contextual;
   text-align: var(--align);
@@ -293,7 +379,7 @@ button {
   display: flex;
   align-items: center;
   gap: var(--sp-4);
-  margin-bottom: clamp(30px, 3.4vw, 52px);
+  margin-bottom: 3.4rem;
 }
 
 .section__head .label {
@@ -333,8 +419,8 @@ button {
 .section__head::after {
   content: '';
   flex: none;
-  width: 13px;
-  height: 13px;
+  width: 0.8667rem;
+  height: 0.8667rem;
   background: currentColor;
   color: var(--ink);
   opacity: 0.42;
@@ -356,42 +442,12 @@ article:nth-of-type(even) .section__head::after {
   transform: rotate(180deg);
 }
 
-/* Notched rule, the mark's diagonal cut, carried into structure.
-   Three segments: line / 45° jog / line. */
-.rule-notch {
-  display: flex;
-  align-items: center;
-  height: 9px;
-  flex: 1;
-  color: var(--ink);
-}
-.rule-notch i {
-  display: block;
-  background: currentColor;
-  opacity: 0.28;
-  transform-origin: left center;
-}
-.rule-notch i:nth-child(1) {
-  height: 1px;
-  width: 38%;
-}
-.rule-notch i:nth-child(2) {
-  height: 1px;
-  width: 12px;
-  transform: rotate(-45deg);
-  margin-inline: -1px;
-  transform-origin: center;
-}
-.rule-notch i:nth-child(3) {
-  height: 1px;
-  flex: 1;
-}
 
 /* ---------- Line scaffolding ----------
    Kept as a block wrapper only. It is no longer a mask: nothing on this site
    is clipped and released, because there are no masked reveals in the
-   content anywhere in the system. Bebas caps carry no descender other than
-   the comma, so the clearance a Satoshi descender needed is gone with it. */
+   content anywhere in the system. The wrapper keeps a hair of clearance so a
+   descender is never trimmed by the block edge. */
 
 .line {
   display: block;

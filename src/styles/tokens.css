@@ -36,24 +36,77 @@
   --brand-violet-deep: #38016c;
   --brand-ground: #09090b;
 
-  /* ---- Ground ---- */
-  --canvas: #09090b;          /* the void. matches portfolio.xstudioz.com  */
-  --canvas-raised: #101014;   /* a plane lifted just off the void          */
-  --canvas-panel: #16161c;    /* a second, quieter plane. also the footer  */
+  /* ---- Ground ----
+
+     PAPER IS THE BASE, AND THAT IS A REVERSAL. The site used to carry the
+     void here and reach for daylight through a preference query, which meant
+     the document it shipped as was a near-black one. It is a light document
+     now: :root is the sheet, and the dark palette is an opt-in the reader
+     reaches through the switch in the header. */
+  --canvas: #f6f5f8;          /* paper, with the faintest violet in it     */
+  --canvas-raised: #ffffff;   /* a plane lifted toward the light           */
+  --canvas-panel: #edecf1;    /* a quieter plane, set back                 */
 
   /* ---- Text. Every role below passes WCAG AA on all three grounds. ---- */
-  --text: #f2f1f6;            /* primary          17.7:1 on canvas */
-  --text-secondary: #a9a9b6;  /* supporting copy   8.6:1 on canvas */
-  --text-muted: #8a8a97;      /* furniture, micro-labels  5.8:1    */
+  --text: #16151a;            /* primary          16.4:1 on paper */
+  --text-secondary: #4a4854;  /* supporting copy   8.6:1 on paper */
+  --text-muted: #565360;      /* furniture, micro-labels  6.8:1   */
 
   /* ---- Structure. Decorative only: never the sole carrier of meaning. ---- */
-  --border: #23232b;          /* hairlines you feel more than see  */
-  --border-strong: #3a3a45;   /* rules and outlines that hold shape */
+  --border: #e2e0e8;          /* hairlines you feel more than see  */
+  --border-strong: #c4c1cf;   /* rules and outlines that hold shape */
 
   /* ---- Interactive ---- */
   --interactive: var(--text);         /* the fill a control takes on hover */
   --interactive-text: var(--canvas);  /* the text colour on that fill      */
-  --focus: #f2f1f6;                   /* focus ring, on every ground       */
+  --focus: #16151a;                   /* focus ring, on every ground       */
+
+  /* ============================================================
+     THE RAMP
+
+     The two brand colours are never set as separate flat fields. Wherever a
+     chromatic surface exists on this site it carries BOTH of them, sampled
+     from the one ramp declared here, so no panel, band, blade or fill can
+     drift onto its own version of the brand.
+
+     The angle is the mark's, not a choice. The drawing's diagonals sit 4.18
+     degrees off true 45, so 40.82 is the site's angle and it is already what
+     every cut edge is drawn at.
+
+     WHAT MAY BE SET ON A RAMP, AND WHY IT IS ONLY DISPLAY TYPE
+
+     Computed, not judged. White measures 3.75:1 against #e634be and 7.94:1
+     against #6d1fc4, so the WORST point of any ramp containing pure magenta
+     is 3.75:1. Near black is worse in the other direction: 5.30:1 on magenta
+     but 2.50:1 on violet, so it fails outright. Solve for an ink that clears
+     4.5:1 at both ends and the answer is empty.
+
+     3.75:1 clears the 3:1 floor for large text and misses the 4.5:1 floor for
+     body, so the law is a size and not a colour: NOTHING UNDER 24px IS EVER
+     SET ON A RAMP. Body copy, labels and captions live on paper, which is
+     also where the reader wants them. A ramp carries a short display line in
+     white and nothing else.
+     ============================================================ */
+  --ramp-angle: 40.82deg;
+  --brand-ramp: linear-gradient(
+    var(--ramp-angle),
+    var(--brand-magenta) 0%,
+    var(--brand-violet) 100%
+  );
+  /* The same ramp with the darker landing, for surfaces large enough that the
+     two-stop version reads as one wash. Deep violet only ever participates as
+     the far end; it is never a field on its own. */
+  --brand-ramp-deep: linear-gradient(
+    var(--ramp-angle),
+    var(--brand-magenta) 0%,
+    var(--brand-violet) 58%,
+    var(--brand-violet-deep) 100%
+  );
+  /* The one ink a ramp takes. 3.75:1 at the magenta end, 15.12:1 at the deep
+     end, so the floor is the magenta corner in every case. */
+  --ramp-ink: #ffffff;
+  --ramp-line: color-mix(in srgb, #ffffff 34%, transparent);
+  --ramp-line-strong: color-mix(in srgb, #ffffff 62%, transparent);
 
   /* ============================================================
      2. THE ROOMS
@@ -94,14 +147,17 @@
   --room-deep-quiet: #b49bd6;         /*  6.10:1 */
   --room-deep-accent: #e634be;        /*  4.03:1, large only */
 
-  /* Void. The fixed ground colour, held in both themes. */
+  /* Void. No longer a room any section stands in. It survives for exactly two
+     jobs: the solid control fill, and the ink a solid control sets its label
+     in. Nothing on this site commits a viewport to it any more, which is most
+     of where the darkness the page was carrying went. */
   --room-void-ground: #09090b;
   --room-void-ink: #f2f1f6;           /* 17.71:1 */
   --room-void-dim: #a9a9b6;           /*  8.62:1 */
   --room-void-quiet: #8a8a97;         /*  5.82:1 */
   --room-void-accent: #e634be;        /*  5.30:1 */
 
-  /* ---- SCENE B'S PAIR, AND WHY IT FOLLOWS THE THEME ----
+  /* ---- WHAT USED TO BE HERE ----
 
      The clearspace scene opens on the paper room and a coloured plane sweeps
      in underneath type that never moves and is never hidden. For that to be
@@ -119,14 +175,10 @@
      ends against. Same mechanic, same brand, and the only pair on this site
      that is allowed to change with the room.
      ---------------------------------------------------------- */
-  --blade-clear: var(--brand-violet-deep);
-  --clear-ink: var(--room-deep-ink);
-  --clear-quiet: var(--room-deep-quiet);
-  --clear-counter: var(--room-deep-ground);
 
-  /* Paper. The one room that follows the theme, because it is the reading
-     room and a reader who asked for a dark interface should get one. In the
-     dark theme it resolves to the void; in daylight it is near white. */
+  /* Paper. The dominant ground on every route. It follows the theme, because
+     it is the reading room and a reader who explicitly asks for a dark
+     interface should get one; left alone it is the sheet. */
   --room-paper-ground: var(--canvas);
   --room-paper-ink: var(--text);
   --room-paper-dim: var(--text-secondary);
@@ -147,7 +199,10 @@
      brand fills used for marks and selection, never as a light. */
   --lamp-a: #e634be;
   --lamp-b: #6d1fc4;
-  --brand-a: var(--lamp-a);
+  /* The base is paper, so the accent has to be the darkened magenta: pure
+     #e634be measures 3.45:1 on the sheet and is under the floor everywhere it
+     is set as text. The dark mapping hands the pure hex back. */
+  --brand-a: var(--l-brand-a);
   --brand-b: #38016c;
 
   /* The lighting rig is gone. These three are kept so no rule that still
@@ -166,44 +221,57 @@
      hierarchy is carried by SIZE and COLOUR, never by weight, so there is no
      bold headline anywhere on this site.
 
-     Bebas Neue 400 is an uppercase-only condensed grotesque, so sentence
-     case in the markup renders as caps with no text-transform. That is the
-     separation worth keeping: the page reads loud without the copy ever
-     being written loud.
+     Outfit 600 is a geometric sans with real lowercase, so a display line
+     sets in the case the copy is written in. The predecessor was caps-only
+     and turned every headline into a poster whatever the markup said.
+
+     One display weight, and it is 600 rather than 400. The rule that
+     hierarchy is carried by size and colour and never by weight still holds:
+     600 is the only weight display type is ever set in, so there is no bold
+     variant of anything to reach for.
      ============================================================ */
-  --font-display: 'Bebas Neue', 'Bebas Neue Fallback', 'Haettenschweiler',
-    'Arial Narrow', sans-serif;
-  --font-sans: 'Mulish', 'Mulish Fallback', ui-sans-serif, system-ui,
+  --font-display: 'Outfit', 'Outfit Fallback', ui-sans-serif, system-ui,
     -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Manrope', 'Manrope Fallback', ui-sans-serif, system-ui,
+    -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --weight-display: 600;
 
-  /* THE SCALE, resolved at 1500px wide: 140 / 57 / 44 / 22 / 15 / 14.
+  /* THE SCALE, AS ONE NUMBER
 
-     This is roughly 82% of the reference's 170 / 68 / 52 / 26 / 16, taken
-     down as one unit so every step keeps its place. Display to body is
-     140/15 = 9.33:1, which holds the gappy character that makes the scale
-     read as designed rather than defaulted while giving the page back the
-     air a 170px line was eating.
+     THE LAW. There is one base on the root, it is derived from the viewport,
+     and every step below is a multiple of it. `rem` is the ancestor-safe
+     spelling of "em from the base": a custom property holding `em` resolves
+     against whatever element eventually uses it, which would make
+     --text-display mean one thing on a paragraph and another inside a
+     heading. rem resolves against the root and cannot drift. Anything that
+     should scale with its OWN type rather than with the page keeps em, and
+     tracking and radii are the two places that is true.
 
-     There is still nothing between 22 and 44, so any two things on screen
-     are unmistakably different ranks rather than nearly the same one.
+     WHAT THIS FIXES, MEASURED. The display used to be viewport-linear at
+     9.333vw while heading, subheading, body and caption sat frozen from 1200
+     right through 1500. Display-to-body therefore slid from 7.47:1 at 1200 to
+     9.33:1 at 1500, which nobody reads as a bug and everybody feels as the
+     headline getting bossier on a bigger screen while the paragraph stays
+     put. With one base every step moves together and the ratio is 9.333:1 at
+     1200, 1500, 1920 and 2200 without a single conditional.
 
-     Below 1500 each step is a clamp against the viewport, so the ratio
-     compresses toward the small end where a 140px line could not fit. At and
-     above 1536 the root becomes 1.11vw and the steps switch to rem. The rem
-     figures are derived from the pixel figures at the switch point rather
-     than picked, so the scale is CONTINUOUS across 1536 instead of jumping,
-     and 9.33:1 holds at every width above it. */
-  --text-display: clamp(44px, 9.333vw, 140px);
-  --text-heading: clamp(32px, 3.8vw, 57px);
-  --text-heading-sm: clamp(26px, 2.933vw, 44px);
-  --text-subheading: clamp(18px, 1.467vw, 22px);
-  --text-body: 15px;
+     THE FIGURES, resolved at 1500 wide: 140 / 57 / 44 / 22 / 15 / 14. Each
+     rem number below is that pixel figure divided by 15, so nothing on the
+     1500px artboard changed by a pixel and every other width now follows it.
+
+     There is still nothing between 22 and 44, so any two things on screen are
+     unmistakably different ranks rather than nearly the same one. */
+  --text-display: 9.3333rem;
+  --text-heading: 3.8rem;
+  --text-heading-sm: 2.9333rem;
+  --text-subheading: 1.4667rem;
+  --text-body: 1rem;
   /* Not smaller than --text-body, and that is deliberate. Interior documents
      set real reading copy at this step (the FAQ answers, the spec tables),
      and 15px is the floor for anything a person is asked to read. It stays a
      separate token because the roles are still separate. */
-  --text-body-sm: 15px;
-  --text-caption: 14px;
+  --text-body-sm: 1rem;
+  --text-caption: 0.9333rem;
 
   /* Display leading sits at or below 100%, so lines physically touch. Body
      leading is 125% to 160%. The contrast between the two carries most of
@@ -234,22 +302,26 @@
   --align: start;
 
   /* Hard measure caps. Display type never runs the full 1460px content
-     width, so even a centred headline leaves clear ground either side. */
-  --measure-display: 1240px;
-  --measure-statement: 1220px;
-  --measure-narrow: 808px;
+     width, so even a centred headline leaves clear ground either side. In the
+     base too, because a cap that stays in pixels while the type it caps
+     scales is a cap that changes its meaning at every width. */
+  --measure-display: 82.667rem;   /* 1240px at 1500 */
+  --measure-statement: 81.333rem; /* 1220px at 1500 */
+  --measure-narrow: 53.867rem;    /*  808px at 1500 */
   --measure: 68ch;            /* the reading column ceiling */
 
-  /* Spacing rhythm */
-  --sp-1: 5px;
-  --sp-2: 8px;
-  --sp-3: 15px;
-  --sp-4: 19px;
-  --sp-5: 30px;
-  --sp-6: 46px;
-  --sp-7: 76px;
-  --sp-8: 119px;
-  --section-gap: clamp(64px, 8vw, 130px);
+  /* Spacing rhythm, in the base. Every figure is its pixel value at 1500
+     divided by 15, so the 1500px artboard is unchanged and every other width
+     now moves with the type rather than against it. */
+  --sp-1: 0.3333rem;  /*   5px at 1500 */
+  --sp-2: 0.5333rem;  /*   8px */
+  --sp-3: 1rem;       /*  15px */
+  --sp-4: 1.2667rem;  /*  19px */
+  --sp-5: 2rem;       /*  30px */
+  --sp-6: 3.0667rem;  /*  46px */
+  --sp-7: 5.0667rem;  /*  76px */
+  --sp-8: 7.9333rem;  /* 119px */
+  --section-gap: 8rem; /* 120px at 1500 */
 
   /* ---- Layout ----
      A flat 20px gutter at every width above 768, which puts content on
@@ -258,9 +330,17 @@
      170px line can press against the edge of the screen rather than sit
      politely inside a margin. */
   --page-max: min(2200px, 100vw);
-  --gutter: 20px;
+  /* One flat margin at every width. The site had 20px, which is the reference's
+     figure and reads as bleed rather than as breathing room, and a clamp would
+     make the page feel different on a phone than on a desktop. A single value
+     is the point: the sheet has the same edge wherever it is opened. */
+  --gutter: 40px;
   --col-gap: var(--sp-4);
-  --nav-h: 63px;
+  /* The header's own height, published so the hero and the scene can clear
+     it. In the base with a pixel floor: the row is the mark plus two --sp-3,
+     so it grows with the page, and 4.2rem is exactly the 63px it measured at
+     1500. The floor is what stops it collapsing under the mark on a phone. */
+  --nav-h: max(4.2rem, 56px);
 
   /* ============================================================
      THE MARK'S OWN CONSTANTS
@@ -310,8 +390,12 @@
   /* Clearspace in the mark's own width, published live by lib/measure.ts. */
   --w: 22;
 
-  /* Radii, interactive elements only; surfaces stay sharp */
-  --radius-ui: 10px;
+  /* Radii, interactive elements only; surfaces stay sharp. In em rather than
+     in the base, because a corner belongs to the control it is cut into: a
+     pill set at caption size should round in proportion to its own label, not
+     to the page. This is the detail that stops a scaled page reading as a
+     zoomed screenshot. */
+  --radius-ui: 0.715em;       /* 10px on a 14px control */
 
   /* Motion. Six numbers cover the whole site.
      Every entrance travels 20px or 50px and lasts 0.3s to 0.8s. Nothing
@@ -325,44 +409,47 @@
   --hairline: 1px solid var(--ink-line);
 
   /* ============================================================
-     DAYLIGHT
+     THE DARK ROOM
 
-     Parked under --l-* so every colour in the system has one home. The two
-     mapping blocks below only ever point a real token at one of these.
+     Parked under --d-* so every colour in the system has one home. The
+     mapping block below only ever points a real token at one of these.
 
-     Only the PAPER room follows the theme. The three brand rooms are the
-     same hex in daylight as in the dark, because a magenta room is the
-     brand and not a preference.
+     This used to be the other way round: :root carried the void and daylight
+     was reached for through a preference query. The site shipped as a
+     near-black document and measured about half its pixels chromatic or dark
+     on the cover. Paper is the base now and this is the opt-in.
+
+     Only the PAPER room follows the theme. The brand ramp is the same two
+     hexes in the dark as in daylight, because the brand is not a preference.
      ============================================================ */
 
-  --l-canvas: #f6f5f8;        /* paper, with the faintest violet in it     */
-  --l-canvas-raised: #ffffff; /* a plane lifted toward the light           */
-  --l-canvas-panel: #edecf1;  /* a quieter plane, set back                 */
+  --d-canvas: #09090b;        /* the void. matches portfolio.xstudioz.com  */
+  --d-canvas-raised: #101014; /* a plane lifted just off the void          */
+  --d-canvas-panel: #16161c;  /* a second, quieter plane                   */
 
-  --l-text: #16151a;          /* 16.4:1 on paper */
-  --l-text-secondary: #4a4854;/*  8.6:1          */
-  --l-text-muted: #565360;    /*  6.8:1          */
+  --d-text: #f2f1f6;          /* 17.7:1 on the void */
+  --d-text-secondary: #a9a9b6;/*  8.6:1             */
+  --d-text-muted: #8a8a97;    /*  5.8:1             */
 
-  --l-border: #e2e0e8;
-  --l-border-strong: #c4c1cf;
+  --d-border: #23232b;
+  --d-border-strong: #3a3a45;
 
-  --l-focus: #16151a;         /* the ring has to be dark to exist here */
+  --d-focus: #f2f1f6;
 
   /* Kept, and inert: the rig no longer paints in either room. */
   --l-lamp-strength: 0;
   --l-lit-base: #3a3745;
 
-  --selection-bg: var(--brand-a);
-  --selection-text: var(--canvas-raised);
-
   /* #e634be measures 3.45:1 on paper, under the 4.5 floor for the places it
      is set as text. Darkened at constant hue and saturation (313.5deg,
-     78.1%), so it is the same magenta carrying the same weight in daylight
+     78.1%), so it is the same magenta carrying the same weight on the sheet
      that it carries in the dark. */
-  --l-brand-a: #c0189a;       /* 5.04:1 on --l-canvas */
+  --l-brand-a: #c0189a;       /* 5.04:1 on paper */
 
-  --l-selection-bg: #38016c;
-  --l-selection-text: #ffffff;
+  --selection-bg: #38016c;
+  --selection-text: #ffffff;
+  --d-selection-bg: var(--brand-magenta);
+  --d-selection-text: #09090b;
 
   /* ============================================================
      THE PROOF PLATE
@@ -376,90 +463,106 @@
   --proof-ink: #f2f1f6;
 }
 
-/* One mapping, used twice. An explicit choice wins outright; otherwise the
-   operating system's preference decides, which is also what keeps this
-   working with no JavaScript at all. */
-:root[data-theme='light'] {
-  color-scheme: light;
+/* THE ONE MAPPING. Paper is what :root carries, so this block is the only
+   place the site ever goes dark, and it is reached only by an explicit
+   choice: the switch in the header writes data-theme and an inline script in
+   <head> replays it before first paint.
 
-  --canvas: var(--l-canvas);
-  --canvas-raised: var(--l-canvas-raised);
-  --canvas-panel: var(--l-canvas-panel);
-  --text: var(--l-text);
-  --text-secondary: var(--l-text-secondary);
-  --text-muted: var(--l-text-muted);
-  --border: var(--l-border);
-  --border-strong: var(--l-border-strong);
-  --focus: var(--l-focus);
-  --lamp-strength: var(--l-lamp-strength);
-  --lit-base: var(--ink-accent);
-  --brand-a: var(--l-brand-a);
-  --selection-bg: var(--l-selection-bg);
-  --selection-text: var(--l-selection-text);
+   There is deliberately no prefers-color-scheme query here. The site is a
+   light document by decision, not by circumstance, and a reader whose
+   machine happens to be dark is still shown the sheet until they ask
+   otherwise. The switch is one press away and it is remembered. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
 
-  --blade-clear: var(--brand-magenta);
-  --clear-ink: var(--room-magenta-ink);
-  --clear-quiet: var(--room-magenta-quiet);
-  --clear-counter: var(--room-magenta-ground);
+  --canvas: var(--d-canvas);
+  --canvas-raised: var(--d-canvas-raised);
+  --canvas-panel: var(--d-canvas-panel);
+  --text: var(--d-text);
+  --text-secondary: var(--d-text-secondary);
+  --text-muted: var(--d-text-muted);
+  --border: var(--d-border);
+  --border-strong: var(--d-border-strong);
+  --focus: var(--d-focus);
+  --brand-a: var(--lamp-a);
+  --selection-bg: var(--d-selection-bg);
+  --selection-text: var(--d-selection-text);
 }
 
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme='dark']) {
-    color-scheme: light;
+/* ============================================================
+   THE BASE
 
-    --canvas: var(--l-canvas);
-    --canvas-raised: var(--l-canvas-raised);
-    --canvas-panel: var(--l-canvas-panel);
-    --text: var(--l-text);
-    --text-secondary: var(--l-text-secondary);
-    --text-muted: var(--l-text-muted);
-    --border: var(--l-border);
-    --border-strong: var(--l-border-strong);
-    --focus: var(--l-focus);
-    --lamp-strength: var(--l-lamp-strength);
-    --lit-base: var(--ink-accent);
-    --brand-a: var(--l-brand-a);
-    --selection-bg: var(--l-selection-bg);
-    --selection-text: var(--l-selection-text);
+   One number. Everything above is a multiple of it and nothing else in the
+   system is allowed to be a magic pixel value.
 
-    --blade-clear: var(--brand-magenta);
-    --clear-ink: var(--room-magenta-ink);
-    --clear-quiet: var(--room-magenta-quiet);
-    --clear-counter: var(--room-magenta-ground);
-  }
+   BELOW THE DESKTOP BAND the base drives SPACING only, fluidly, and the type
+   ladder is hand authored underneath. 1.25vw resolves to exactly 15px at
+   1200, which is also where the desktop clamp bottoms out, so the two
+   segments meet without a step in the rhythm. The 9px floor is what stops a
+   375px phone inheriting a base small enough to close every gap on the sheet.
+
+   THE DESKTOP BAND is one declaration: 15px at 1500 is the artboard, 1vw is
+   that figure divided by that width, and the clamp bounds the band at both
+   ends. Between 1200 and 1500 the floor holds it at 15px, from 1500 to 2200
+   it is linear, and at 2200 the ceiling takes it. The RATIO is 9.333:1 at all
+   four of those widths either way, because every step scales with the base
+   whether the base is moving or held.
+
+   THIS IS ONE CLAMP WHERE THERE WERE SEVENTY.
+   ============================================================ */
+:root {
+  font-size: clamp(9px, 1.25vw, 15px);
 }
 
-/* At and above 1536px the root becomes fluid and the top of the scale
-   switches to rem, so the page scales as one unit and the 10.6:1 ratio is
-   preserved exactly rather than the headline growing while the body sits
-   still. Letter-spacing stays in em so display type tightens optically as it
-   grows, which is the correct behaviour at this size. */
-@media (min-width: 96rem) {
-  html {
-    font-size: 1.11vw;
-  }
-
-  /* 1.11vw resolves to 17.05px at the 1536px switch point, so every figure
-     below is its pixel value divided by 17.05. That is what makes the change
-     of unit invisible: at 1536 the page is the same size either side of the
-     query, and above it the whole sheet scales as one object with 9.33:1
-     locked. Letter-spacing stays in em, so display type tightens optically
-     as it grows. */
+@media (min-width: 75rem) {
   :root {
-    --text-display: 8.211rem;
-    --text-heading: 3.343rem;
-    --text-heading-sm: 2.581rem;
-    --text-subheading: 1.29rem;
-    --text-body: 0.88rem;
-    --text-body-sm: 0.88rem;
-    --text-caption: 0.821rem;
-    --gutter: 1.173rem;
+    font-size: clamp(15px, 1vw, 22px);
   }
 }
 
-@media (max-width: 767px) {
+/* ============================================================
+   BELOW THE DESKTOP BAND, THE LADDER IS HAND AUTHORED
+
+   And it has to be. The hero sets three hard-broken lines that may not wrap,
+   and the widest renders 7.9707px of line for every 1px of font size in this
+   face. So the display can never exceed (width - 80) / 7.9707, while holding
+   9.333:1 against a body that may not go under 15px needs a display of at
+   least 140px. Solve those two together and they only both hold from 1196px
+   up. That is a measured number rather than a preference: below it the
+   single-scale law and the reading floor cannot both be true, so the law
+   stops at 1200 and the band underneath is drawn by hand. Both reference
+   sites do exactly this.
+
+   Body and caption are pinned in pixels here, at the floor, because a reading
+   size is a reading size on a phone as much as on a desk. The display step
+   stays viewport-linear at the same 9.333vw it has always been, which is the
+   only rate that keeps those three lines on the sheet at every width from 320
+   up. Heading and subheading take floors so they cannot fall through the body.
+   ============================================================ */
+@media (max-width: 74.9375rem) {
   :root {
-    --gutter: 16px;
+    --text-display: 9.333vw;
+    --text-heading: max(30px, 3.8vw);
+    --text-heading-sm: max(25px, 2.933vw);
+    --text-subheading: 18px;
+    --text-body: 15px;
+    --text-body-sm: 15px;
+    --text-caption: 14px;
+  }
+}
+
+/* THE PHONE. Fixed pixels, no viewport unit anywhere in the ladder, which is
+   what both references do and what protects a small screen from a rule
+   written for a desk. 36px is the measured ceiling for the hero's widest line
+   at 375: 36 x 7.9707 = 286.97 against 295px of sheet. The breakpoint is 400
+   rather than 768 because 9.333vw resolves to 37.3px there, so the step into
+   fixed pixels is 1.3px and the reader never sees a seam. */
+@media (max-width: 25rem) {
+  :root {
+    --text-display: 36px;
+    --text-heading: 30px;
+    --text-heading-sm: 25px;
+    --text-subheading: 18px;
   }
 }
 

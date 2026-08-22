@@ -151,8 +151,7 @@
   <!-- The violation has to exist BEFORE first paint, or the reader sees the
        correct sheet, then sees it break, then sees it repair, which reads as
        a rendering bug rather than as the page allocating clearance. Setting
-       it from the bundle cannot be early enough on a warm visit, where
-       sessionStorage suppresses the loader veil.
+       it from the bundle cannot be early enough.
 
        The watchdog is the other half, and it is what makes the no-script
        state the finished sheet rather than a permanently jammed one: this
@@ -160,12 +159,6 @@
        nothing has claimed the hero within 2.5s the html.js class comes back
        off and CSS composes the page on its own. -->
   <script>
-    try {
-      if (!sessionStorage.getItem('xz-seen')) {
-        document.documentElement.classList.add('show-loader');
-        sessionStorage.setItem('xz-seen', '1');
-      }
-    } catch (e) {}
     document.documentElement.classList.add('js');
     setTimeout(function () {
       if (!window.__xzHero) document.documentElement.classList.remove('js');
@@ -177,16 +170,7 @@
 
   <!--@include:svg-defs-->
 
-  <!-- Preloader -->
-  <div class="loader" id="loader" aria-hidden="true">
-    <div class="loader__mark">
-      <svg class="loader__x loader__x--ink"><use href="#xmark" /></svg>
-      <svg class="loader__x loader__x--fill"><use href="#xmark" /></svg>
-    </div>
-    <p class="loader__word label">XStudioz</p>
-  </div>
-
-  <!--@include:nav-->
+<!--@include:nav-->
 
   <main id="top">
 
@@ -200,14 +184,11 @@
          ==================================================================== -->
     <section class="hero room-paper" id="hero" aria-label="Introduction">
 
-      <!-- The mark, as a structural object in the composition rather than a
-           decoration in a corner. aria-hidden because it carries no word: the
-           agency's name is already in the header and in the eyebrow. It sits
-           before the sheet so the type is always over it in paint order
-           without anything needing a z-index of its own. -->
-      <div class="hero__mark" aria-hidden="true">
-        <svg class="hero__mark-svg" viewBox="0 0 404 404"><use href="#xmark-parts" width="404" height="404" /></svg>
-      </div>
+      <!-- The mark is drawn by the plate itself now, as a second layer under
+           the headline rather than as an element beside it. See .hero__title
+           in cover.css: an element here would have had to sit either behind
+           the plate, where it is invisible, or in front of it, where it
+           covers the line. -->
 
       <div class="container hero__sheet">
 
@@ -226,11 +207,12 @@
         </div>
 
         <div class="hero__floor">
-          <h1 class="hero__title display">
+          <h1 class="hero__title display plate">
             <span class="hero__l">We draw the mark</span>
             <span class="hero__l">and every rule</span>
             <span class="hero__l">that protects it.</span>
           </h1>
+
 
           <div class="hero__cluster">
             <p class="hero__lede body">An independent brand design agency. We draw logos and identity systems, and write the rules that keep them right everywhere you put them.</p>
@@ -326,11 +308,10 @@
       <div class="container">
         <div class="section__head">
           <p class="label">Capabilities</p>
-          <div class="rule-notch"><i></i><i></i><i></i></div>
         </div>
 
         <div class="caps__intro" data-enter>
-          <h2 class="caps__statement heading measure-statement">Five things we make, drawn as one system.</h2>
+          <h2 class="caps__statement heading plate">Five things we make, drawn as one system.</h2>
         </div>
 
         <ul class="caps__list" data-enter>
@@ -374,11 +355,6 @@
               <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
             </a>
           </li>
-
-          <li class="caps__seal" aria-hidden="true">
-            <span class="label">05 / 05</span>
-            <span class="label">Clearance claimed</span>
-          </li>
         </ul>
       </div>
     </section>
@@ -391,15 +367,14 @@
          way a five viewport scene does, because a room is a room whatever
          its height.
          ==================================================================== -->
-    <section class="brief section room-violet" id="brief" aria-label="Start a project">
+    <section class="brief section room-paper" id="brief" aria-label="Start a project">
       <div class="container">
         <div class="section__head">
           <p class="label">The Brief</p>
-          <div class="rule-notch"><i></i><i></i><i></i></div>
         </div>
 
         <div class="brief__grid" data-enter>
-          <h2 class="brief__statement heading-sm measure-statement">Every brand here started as an email.</h2>
+          <h2 class="brief__statement heading plate">Every brand here started as an email.</h2>
           <div class="brief__copy">
             <p class="body">
               Tell us what you’re building: the name, the audience, the ambition. We read every brief ourselves and reply with how we’d
@@ -415,91 +390,6 @@
       </div>
     </section>
 
-    <!-- ================= 04 · THE MARK ======================================
-         Room: deep violet. Ink: #f2f1f6 at 13.45:1.
-
-         The registration proof keeps its own field. mix-blend-mode:
-         difference subtracts one layer from the other, so two identical
-         layers cancel to 0,0,0 in every theme and in every room. Zero is
-         black, so the plate is pinned to the ground the mark was drawn
-         against rather than following the room around the page.
-         ==================================================================== -->
-    <section class="anatomy section room-paper" id="mark" aria-label="The mark">
-      <div class="container">
-        <div class="section__head">
-          <p class="label">The Mark</p>
-          <div class="rule-notch"><i></i><i></i><i></i></div>
-        </div>
-
-        <div class="anatomy__grid">
-          <figure class="anatomy__plate" data-enter>
-            <svg class="fig" id="fig-01" viewBox="0 0 720 720" role="img" aria-label="Construction figure for the XStudioz mark">
-              <use class="fig__x" href="#xmark-parts" x="163" y="163" width="394" height="394" />
-            </svg>
-            <figcaption class="anatomy__cap">
-              <span class="label">Fig. 01 &middot; Primary mark, construction</span>
-              <span class="label">Measured, not drawn</span>
-            </figcaption>
-          </figure>
-
-          <figure class="reg" id="registration" data-enter>
-            <div class="reg__field" id="fig-02">
-              <div class="reg__stack">
-                <svg class="reg__x reg__x--base" viewBox="0 0 404 404" aria-hidden="true">
-                  <use href="#xmark" width="404" height="404" />
-                </svg>
-                <svg class="reg__x reg__x--turn" viewBox="0 0 404 404" aria-hidden="true">
-                  <use href="#xmark" width="404" height="404" />
-                </svg>
-              </div>
-              <svg class="reg__target" viewBox="0 0 100 100" aria-hidden="true">
-                <circle cx="49.90" cy="50.71" r="9.4" fill="none" />
-                <line x1="49.90" y1="35.9" x2="49.90" y2="65.5" />
-                <line x1="35.1" y1="50.71" x2="64.7" y2="50.71" />
-              </svg>
-            </div>
-
-            <div class="reg__foot">
-              <button class="reg__probe" type="button" data-reg-break aria-pressed="false">
-                <span class="label" data-reg-label>Break registration</span>
-                <span class="label reg__read" data-reg-out>180° &middot; 22 of 22 &middot; residual 0</span>
-              </button>
-
-              <p class="reg__note body">
-                Two copies of one drawing, the second turned a half turn about the
-                centre the mark owns, subtracted from each other. Shapes that land
-                on each other cancel to nothing. Turn the copy a quarter instead
-                and the residual is what you see.
-              </p>
-
-              <figcaption class="anatomy__cap">
-                <span class="label">Fig. 02 &middot; Registration, difference</span>
-                <span class="label">Zero is the proof</span>
-              </figcaption>
-            </div>
-          </figure>
-
-          <div class="anatomy__copy" data-enter>
-            <h2 class="anatomy__statement heading measure-statement">The mark does not sit in the middle of its own box.</h2>
-            <p class="body">
-              It sits 0.41 units left and 2.88 low, and the point it turns
-              about is 49.90% across and 50.71% down. Rotate it a half turn
-              and the counter lands on itself at all 22 of its vertices.
-              Rotate it a quarter and 23 of them miss. That is why the light
-              on this site comes from two sources facing each other, and why
-              nothing here ever turns 90 degrees.
-            </p>
-            <ul class="anatomy__specs">
-              <li data-spec="r1"><span class="label">Outer circle</span><span class="body">51.653% of the box, 14 vertices</span></li>
-              <li data-spec="r3"><span class="label">Counter</span><span class="body">43.741%, 10 vertices</span></li>
-              <li data-spec="centre"><span class="label">Centre</span><span class="body">49.90% / 50.71%, not the middle</span></li>
-              <li data-spec="rot"><span class="label">Symmetry</span><span class="body">Half turn, 22 of 22. Never a quarter</span></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- ================= 05 · THE ARCHIVE ===================================
          Room: magenta. Ink: #09090b at 5.30:1.
 
@@ -508,50 +398,63 @@
          left aligned list. This is one of the four things on the page that
          is centred on purpose while the switch is still set to left.
          ==================================================================== -->
-    <section class="work section room-magenta" id="work" aria-label="The archive">
+    <section class="work section room-paper" id="work" aria-label="The archive">
       <div class="container work__box">
 
         <div class="section__head">
           <p class="label">The Archive</p>
-          <div class="rule-notch"><i></i><i></i><i></i></div>
         </div>
 
-        <div class="work__void" data-enter id="work-void">
-          <p class="label work__void-a">Fig. 06 &middot; Plate reserved for the work</p>
-          <p class="work__void-b body">
-            Nothing is printed on this plate. There is no work on this page to
-            keep clear of, so there is nothing here for the rule to protect.
-          </p>
-          <p class="label work__void-c">Clearspace, not allocated</p>
-        </div>
+        <!-- APERTURE 2 of 2, and the last thing the travelling mark is seen
+             through. The second full-bleed ramp on this page stood behind the
+             statement below and is deleted with the first. The mark arrives
+             here at its own size, turned a full 360 from where it started, and
+             leaves before the portal so the page never carries two large
+             chromatic objects at once. -->
+        <i class="xwin xwin--work" aria-hidden="true"><i class="xwin__lens"><svg class="xwin__x"><use href="#xmark" /></svg></i></i>
 
-        <div class="work__grid" data-enter>
-          <h2 class="work__statement display" id="work-statement">
+        <div class="work__grid">
+          <h2 class="work__statement display" id="work-statement" data-enter>
             <span class="work__line">This page is the studio.</span>
             <span class="work__line">The proof lives next door.</span>
           </h2>
-          <p class="work__note body measure-narrow" id="work-note">
+          <p class="work__note body measure-narrow" id="work-note" data-enter>
             We keep this page quiet and the archive loud. Logofolio, brand
             identities, social kits and stationery. The full body of work lives at
             portfolio.xstudioz.com, and it is kept current.
           </p>
         </div>
 
+        <!-- The single most important link on this site: the studio has no
+             portfolio of its own and the work lives behind this one href.
+             Two things it must keep, both matched by other sessions' code:
+             the portfolio.xstudioz.com href, and the (opens in a new tab)
+             note. Every word inside is unchanged.
+
+             The index row sits on paper because the domain and the four
+             service names are set at label and body scale, and nothing under
+             24px is allowed on the ramp. The plate carries the display line,
+             the mark and the arrow, and those are the only three things on
+             it. -->
         <a class="portal" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
-          <span class="portal__inner">
-            <span class="portal__top">
-              <span class="label">portfolio.xstudioz.com</span>
-              <svg class="portal__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
-            </span>
-            <span class="portal__title heading">
-              <span class="portal__line">Open the</span>
-              <span class="portal__line">archive<span class="portal__x" aria-hidden="true"><svg><use href="#xmark" /></svg></span></span>
-            </span>
-            <span class="portal__bottom">
+          <span class="portal__index">
+            <span class="label portal__domain">portfolio.xstudioz.com</span>
+            <span class="portal__services">
               <span class="label">Logofolio</span>
               <span class="label">Brand Identity</span>
               <span class="label">Social Media Kits</span>
               <span class="label">Stationery</span>
+            </span>
+          </span>
+
+          <span class="portal__plate room-ramp">
+            <span class="portal__mark" aria-hidden="true"><svg><use href="#xmark" /></svg></span>
+            <span class="portal__title display">
+              <span class="portal__line">Open the</span>
+              <span class="portal__line">archive</span>
+            </span>
+            <span class="portal__go" aria-hidden="true">
+              <svg class="portal__arr"><use href="#arr-ne" /></svg>
             </span>
           </span>
         <span class="sr-only"> (opens in a new tab)</span></a>
@@ -571,10 +474,9 @@
       <div class="container">
         <div class="section__head">
           <p class="label">The Process</p>
-          <div class="rule-notch"><i></i><i></i><i></i></div>
         </div>
 
-        <h2 class="process__statement heading measure-statement" data-enter>Four stages, the same every time.</h2>
+        <h2 class="process__statement heading plate" data-enter>Four stages, the same every time.</h2>
 
         <ol class="process__steps" data-enter>
           <li class="process__step">
@@ -605,69 +507,6 @@
       </div>
     </section>
 
-    <!-- ================= 07 · CLEARSPACE ===================================
-         SCENE B. Opens on paper. The magenta arrives underneath type that
-         never moves and never hides: the statement is set in the ink that
-         reads on BOTH grounds, so there is no frame in this scene where a
-         reader can be shown a word they cannot see.
-
-           0.00 → 0.26   one magenta blade sweeps in from the left
-           0.26 → 0.34   the intro leaves sideways
-           0.34 → 0.48   the body arrives sideways from the other side
-           0.48 → 0.56   the plate lands on a half turn about the mark's
-                         measured centre of rotation
-           0.56 → 0.80   the note resolves, word by word, centre outward
-           0.80 → 1.00   nothing. Four fifths of a viewport, held.
-         ==================================================================== -->
-    <section class="scene scene--clear room-paper" id="clearspace" aria-label="Clearspace">
-      <div class="scene__track" data-scene="clearspace">
-        <div class="scene__stage">
-
-          <!-- One blade, entering from the left, opposite to the studio's.
-               The ground changes underneath type that does not move: the
-               statement is set in an ink that reads on paper AND on magenta,
-               so nothing is ever hidden waiting for a scroll position. -->
-          <span class="blade blade--left" data-blade aria-hidden="true"></span>
-
-          <div class="container scene__inner scene__inner--clear">
-
-            <div class="clear__intro" data-clear-intro>
-              <p class="label clear__eyebrow">Clearspace</p>
-              <h2 class="clear__statement display">
-                <span class="clear__line">Nothing may enter here.</span>
-                <span class="clear__line">Light is not a thing.</span>
-              </h2>
-            </div>
-
-            <div class="clear__body" data-clear-body>
-              <p class="clear__note heading measure-statement" data-reveal-words>One mark width on every side, at every size, in every direction. Every move on this page was made to keep it open. It is still one width, filled.</p>
-            </div>
-
-            <figure class="clear__plate" data-clear-plate>
-              <div class="clear__field">
-                <span class="clear__box" data-unit-w aria-hidden="true"></span>
-                <!-- No viewBox on the host. The symbol carries its own
-                     (758 335 404 404) and a <use> with no geometry fills the
-                     host at 100%, so the symbol's viewBox does the mapping.
-                     Repeating it here instead places the drawing at user
-                     space 0,0 while the visible window starts at 758 and the
-                     mark lands outside the frame. -->
-                <svg class="clear__mark" role="img"
-                     aria-label="The XStudioz mark standing in its clearspace">
-                  <use href="#xmark-parts" />
-                </svg>
-              </div>
-              <figcaption class="clear__cap">
-                <span class="label">Fig. 07 &middot; Clearspace, occupied</span>
-                <span class="label">The mark</span>
-              </figcaption>
-            </figure>
-
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- ================= 08 · QUESTIONS =====================================
          Room: paper. The last reading room before the colophon.
 
@@ -678,11 +517,10 @@
       <div class="container">
         <div class="section__head">
           <p class="label">Questions</p>
-          <div class="rule-notch"><i></i><i></i><i></i></div>
         </div>
 
         <div class="qa__grid" data-enter>
-          <h2 class="qa__statement heading measure-statement">Asked before every brief.</h2>
+          <h2 class="qa__statement heading plate">Asked before every brief.</h2>
 
           <div class="qa__list">
             <div class="qa__item">

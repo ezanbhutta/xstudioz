@@ -8,14 +8,14 @@
    What this owns is only the choice. Three states, in order of authority:
 
      1. an explicit choice, remembered in localStorage
-     2. the operating system's preference
-     3. dark, which is the palette :root carries
+     2. light, which is the palette :root carries
 
-   The stylesheet already covers 2 and 3 on its own through a
-   prefers-color-scheme query, so with scripting off the site still follows
-   the reader's system setting. This module exists for 1, and for the control
-   that sets it. A small inline script in <head> applies a remembered choice
-   before the first paint, so nothing flashes; this file takes over afterwards.
+   The operating system's preference is deliberately not one of them. The site
+   is a light document by decision: tokens.css carries paper on :root and
+   reaches the dark room only through data-theme, so with scripting off every
+   reader gets the sheet. This module exists for 1, and for the control that
+   sets it. A small inline script in <head> applies a remembered choice before
+   the first paint, so nothing flashes; this file takes over afterwards.
 
    Loaded from partials/nav.html alongside nav.ts, so it reaches every page
    without either entry point importing it.
@@ -25,7 +25,6 @@ type Theme = 'light' | 'dark';
 
 const KEY = 'xz-theme';
 const root = document.documentElement;
-const system = window.matchMedia('(prefers-color-scheme: light)');
 
 function stored(): Theme | null {
   try {
@@ -42,7 +41,7 @@ function stored(): Theme | null {
 function active(): Theme {
   const attr = root.getAttribute('data-theme');
   if (attr === 'light' || attr === 'dark') return attr;
-  return system.matches ? 'light' : 'dark';
+  return 'light';
 }
 
 function apply(theme: Theme, remember: boolean): void {
@@ -77,16 +76,6 @@ if (button) {
 
   button.addEventListener('click', () => {
     apply(active() === 'dark' ? 'light' : 'dark', true);
-  });
-
-  /* Follow the system while no explicit choice has been made, so someone whose
-     machine turns itself dark in the evening is taken with it. The moment they
-     press the switch, that stops: their choice outranks the operating system
-     until they clear it. */
-  system.addEventListener('change', () => {
-    if (stored()) return;
-    root.removeAttribute('data-theme');
-    sync();
   });
 }
 

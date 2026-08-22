@@ -1,8 +1,26 @@
 <!-- Shared vector definitions: the X mark, brand gradient, arrow + chevron glyphs -->
 <svg class="svg-defs" aria-hidden="true" focusable="false">
   <defs>
-    <linearGradient id="xg" x1="0" y1="0" x2="1" y2="0">
+    <!-- The brand ramp, in SVG. It is the same two stops and the same 40.82
+         degrees as --brand-ramp in tokens.css, restated here only because a
+         CSS gradient cannot fill an SVG path. A horizontal ramp turned
+         -40.82 in object bounding box space points up and to the right,
+         which is the mark's own diagonal. Both brand colours are present,
+         which is the rule: neither is ever a field on its own. -->
+    <linearGradient id="xg" x1="0" y1="0.5" x2="1" y2="0.5"
+                    gradientTransform="rotate(-40.82 0.5 0.5)">
       <stop offset="0" stop-color="#e634be" />
+      <stop offset="1" stop-color="#6d1fc4" />
+    </linearGradient>
+    <!-- The same ramp with the darker landing, for the one object big enough
+         that the two-stop version reads as a single wash: the travelling
+         mark. It is --brand-ramp-deep restated in SVG, same three stops and
+         the same 40.82 degrees, because a CSS gradient cannot fill a path.
+         Deep violet only ever participates as the far end. -->
+    <linearGradient id="xg-body" x1="0" y1="0.5" x2="1" y2="0.5"
+                    gradientTransform="rotate(-40.82 0.5 0.5)">
+      <stop offset="0" stop-color="#e634be" />
+      <stop offset="0.58" stop-color="#6d1fc4" />
       <stop offset="1" stop-color="#38016c" />
     </linearGradient>
     <symbol id="xmark" viewBox="758 335 404 404">

@@ -209,7 +209,7 @@
 /* ---------------- Document head ---------------- */
 
 .doc__head {
-  padding-block: clamp(var(--sp-5), 4vw, var(--sp-7)) clamp(var(--sp-6), 5vw, var(--sp-7));
+  padding-block: 4rem 5rem;
 }
 
 .doc__eyebrow {
@@ -234,7 +234,7 @@
   letter-spacing: 0.005em;
   color: var(--ink);
   max-width: 34ch;
-  margin-top: clamp(var(--sp-5), 3vw, var(--sp-6));
+  margin-top: 3rem;
 }
 
 /* Key facts sit as a spec strip under the title, the same
@@ -243,7 +243,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--col-gap);
-  margin-top: clamp(var(--sp-6), 5vw, var(--sp-7));
+  margin-top: 5rem;
   border-top: var(--hairline);
   padding-top: var(--sp-4);
 }
@@ -285,12 +285,12 @@
   display: grid;
   grid-template-columns:
     minmax(0, 14rem)
-    minmax(0, clamp(31rem, 44vw, 37rem))
+    minmax(0, 39.4667rem)
     minmax(0, 1fr);
-  gap: clamp(var(--sp-4), 3vw, var(--sp-6));
+  gap: 3rem;
   align-items: start;
   border-top: var(--hairline);
-  padding-top: clamp(var(--sp-5), 4vw, var(--sp-6));
+  padding-top: var(--sp-6);
 }
 
 /* ============================================================
@@ -316,7 +316,7 @@
    its own, and is hidden from assistive tech. */
 
 .doc__ord {
-  font-size: clamp(40px, 7vw, 104px);
+  font-size: 6.9333rem;
   line-height: 0.8;
   font-weight: 400;
   letter-spacing: -0.02em;
@@ -383,7 +383,7 @@
     grid-template-columns:
       minmax(0, 14rem)
       minmax(0, 1fr);
-    column-gap: clamp(var(--sp-4), 3vw, var(--sp-6));
+    column-gap: 3rem;
     align-items: start;
   }
 
@@ -494,7 +494,7 @@
 /* ---------------- Prose ---------------- */
 
 .doc__section + .doc__section {
-  margin-top: clamp(var(--sp-6), 6vw, var(--sp-7));
+  margin-top: var(--sp-7);
 }
 
 .doc__section > h2 {
@@ -535,18 +535,43 @@
   color: var(--ink-dim);
 }
 
-/* Inline links must be visible without relying on colour alone. */
-.prose a:not(.pill):not(.ghost) {
-  background-image: linear-gradient(var(--ink), var(--ink));
+/* ---- THE INLINE LINK ----
+
+   One treatment, used everywhere an inline link appears, and it is not a
+   colour swap. Flat magenta text was the previous answer and it was the
+   weakest possible use of the brand: an unvisited-link default, one of the
+   two colours set on its own, and under the 4.5:1 floor on the sheet in any
+   case (#e634be measures 3.45:1 on paper).
+
+   The word keeps the room's ink, so it is 16.4:1 on the sheet and 17.7:1 in
+   the dark, and the RULE carries the brand. It is drawn as a background image
+   rather than as text-decoration on purpose: an underline skips ink around a
+   descender, and the gap it opens under a g, a y or a p is where the stray
+   light fragment was coming from. A background rule does not skip, does not
+   break, and cannot show anything through itself.
+
+   The rule is never the sole carrier of meaning: it is an underline, which is
+   the non-colour cue, so the link is identifiable with no colour perception
+   at all.
+
+   Scoped away from anything named __link or __more. Those are component
+   links, not inline ones: a journey stage and an archive entry are whole rows
+   with their own affordance, and the rule was landing under every line of
+   them. */
+:is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note) a:not(.pill):not(.ghost):not(.portal):not([class*="__link"]):not([class*="__more"]) {
+  color: var(--ink);
+  background-image: var(--brand-ramp);
   background-repeat: no-repeat;
-  background-size: 100% 1px;
+  background-size: 100% 2px;
   background-position: left calc(100% - 1px);
-  transition: background-size var(--dur-fast) var(--ease-out), color var(--dur-fast) ease;
+  padding-bottom: 1px;
+  transition: background-size var(--dur-fast) var(--ease-out);
 }
 
-.prose a:not(.pill):not(.ghost):hover {
-  color: var(--ink-accent);
-  background-image: linear-gradient(var(--ink-accent), var(--ink-accent));
+:is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note) a:not(.pill):not(.ghost):not(.portal):not([class*="__link"]):not([class*="__more"]):hover,
+:is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note) a:not(.pill):not(.ghost):not(.portal):not([class*="__link"]):not([class*="__more"]):focus-visible {
+  color: var(--ink);
+  background-size: 100% 6px;
 }
 
 /* Running lists in the prose get the dash-and-number treatment. Lists that
@@ -731,7 +756,7 @@
   align-items: baseline;
   justify-content: space-between;
   gap: var(--sp-4);
-  padding-block: clamp(var(--sp-4), 2.4vw, var(--sp-5));
+  padding-block: var(--sp-5);
   min-height: 44px;
   cursor: pointer;
   list-style: none;
@@ -809,7 +834,7 @@
 
 .faq__a {
   max-width: 37rem;
-  padding-bottom: clamp(var(--sp-4), 2.4vw, var(--sp-5));
+  padding-bottom: var(--sp-5);
   color: var(--ink-dim);
 }
 
@@ -831,19 +856,22 @@
    Same 5/1/5 measure as the studio and brief frames, so the cover keeps
    one column rhythm the whole way down. */
 
+/* One column. The statement is a plate that bleeds to both edges of the
+   viewport, so a second track beside it put the whole question list on the
+   ramp at 15px, which is the one thing the ramp may never carry. */
 .qa__grid {
   display: grid;
-  grid-template-columns: 5fr 1fr 5fr;
-  gap: var(--col-gap);
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4rem;
   align-items: start;
 }
 
 .qa__statement {
-  grid-column: 1;
+  grid-column: auto;
 }
 
 .qa__list {
-  grid-column: 3;
+  grid-column: auto;
   max-width: 56ch;
   border-top: var(--hairline);
 }
@@ -864,19 +892,7 @@
   color: var(--ink-dim);
 }
 
-.qa__a a {
-  color: var(--ink);
-  background-image: linear-gradient(var(--ink), var(--ink));
-  background-repeat: no-repeat;
-  background-size: 100% 1px;
-  background-position: left calc(100% - 1px);
-  transition: background-size var(--dur-fast) var(--ease-out), color var(--dur-fast) ease;
-}
-
-.qa__a a:hover {
-  color: var(--ink-accent);
-  background-image: linear-gradient(var(--ink-accent), var(--ink-accent));
-}
+/* Covered by the one inline-link rule above. */
 
 .qa__more {
   padding-top: var(--sp-5);
@@ -1018,7 +1034,7 @@
 
 .doc__cta {
   margin-top: var(--section-gap);
-  padding-block: clamp(var(--sp-6), 6vw, var(--sp-7));
+  padding-block: var(--sp-7);
   background: var(--ground);
 }
 
@@ -1079,7 +1095,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr);
   gap: var(--col-gap);
-  padding-block: clamp(var(--sp-5), 4vw, var(--sp-6));
+  padding-block: var(--sp-6);
 }
 
 .footer__col-head {
@@ -1410,7 +1426,7 @@
 
 .journey {
   list-style: none;
-  margin: clamp(var(--sp-5), 4vw, var(--sp-6)) 0;
+  margin: var(--sp-6) 0;
   padding: 0;
   display: grid;
   border-top: var(--hairline);
@@ -1425,7 +1441,7 @@
 .journey__link {
   display: grid;
   gap: var(--sp-2);
-  padding: clamp(var(--sp-4), 2.2vw, var(--sp-5)) 0;
+  padding: var(--sp-5) 0;
   min-height: 44px;
   align-content: start;
 }
@@ -1480,7 +1496,7 @@
   }
 
   .journey__link {
-    padding-block: clamp(var(--sp-4), 2vw, var(--sp-5));
+    padding-block: var(--sp-5);
     padding-right: var(--sp-5);
   }
 }
@@ -1533,7 +1549,7 @@
      Rise rather than run, because the rise is what has to be cleared by the
      padding of whatever the band holds, and that is the constraint that
      actually bites. */
-  --cut-rise: clamp(44px, 8vw, 120px);
+  --cut-rise: 8rem;
   --cut-run: calc(var(--cut-rise) * var(--cut-k));
 }
 
@@ -1723,27 +1739,28 @@
      disagree and the title can never be run into. The clamp is the cover's
      own, unchanged, so the object is the same size on a document as it is on
      the poster. */
-  --doc-mark: clamp(112px, 21vw, 320px);
-  --doc-mark-top: clamp(8px, 1.6vw, 30px);
+  --doc-mark: 21rem;
+  --doc-mark-top: 1.6rem;
 
   position: relative;
-  padding: 0 0 clamp(var(--sp-6), 5vw, var(--sp-7));
-  margin-bottom: clamp(40px, 5vw, 72px);
+  padding: 0 0 5rem;
+  margin-bottom: 4.8rem;
 
   /* Stated as padding rather than as a min-height with the content pushed to
      the floor, because the capability pages turn this element into a grid at
      901px and a grid has no justify-content: flex-end to give way to. Padding
      is the one mechanism that composes identically in both. */
   padding-top: calc(
-    var(--doc-mark-top) + var(--doc-mark) + clamp(var(--sp-4), 3vw, var(--sp-6))
+    var(--doc-mark-top) + var(--doc-mark) + 3rem
   );
 }
 
 /* The mark. Painted as a mask rather than as markup, so it reaches all
    fifteen documents without an element being added to any of them, including
-   the two whose markup this session may not touch. Fixed brand magenta, not
-   the room's accent: it is the brand's own colour arriving on paper, and it
-   reads at full strength in both themes. */
+   the two whose markup this session may not touch. It carries the ramp rather
+   than a flat hex, because neither brand colour is ever set on its own
+   anywhere on this site, and a mask takes a background image as readily as it
+   takes a background colour. */
 .doc__head::before {
   content: '';
   position: absolute;
@@ -1751,7 +1768,8 @@
   right: calc(var(--gutter) * -1);
   width: var(--doc-mark);
   aspect-ratio: 1;
-  background: var(--brand-magenta);
+  background-color: var(--brand-violet);
+  background-image: var(--brand-ramp);
   -webkit-mask-image: var(--x-mask);
   mask-image: var(--x-mask);
   -webkit-mask-size: contain;
@@ -1769,73 +1787,61 @@
 }
 
 /* The display step, the same one the cover's hero is set at, which is the
-   single strongest seam between a document and the poster it came from. */
+   single strongest seam between a document and the poster it came from.
+
+   It is a plate. Stated here as a rule rather than as a class in the markup
+   so it reaches all fifteen documents including the two whose files this
+   session may not touch, which would otherwise have been the only mastheads
+   on the site still opening in ink on paper. */
 .doc__title {
+  position: relative;
+  isolation: isolate;
   font-family: var(--font-display);
   font-size: var(--text-display);
-  font-weight: 400;
+  font-weight: var(--weight-display);
   line-height: var(--leading-display);
   letter-spacing: var(--tracking-display);
-  max-width: var(--measure-display);
   text-align: var(--align);
-  color: var(--ink);
+  color: var(--ramp-ink);
   text-wrap: balance;
+  padding-block: 6rem;
 }
 
-/* ---- The lede, as the panel ----
+.doc__title::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: -50vw;
+  right: -50vw;
+  background-color: var(--brand-violet);
+  background-image: var(--brand-ramp-deep);
+  pointer-events: none;
+}
 
-   The panel IS the paragraph rather than a plane behind it, so the text
-   cannot leave its own ground at any width. It runs off the right edge of the
-   page, which is what makes it a piece of the sheet rather than a card lying
-   on one, and its leading corner is cut on the plane angle.
+/* ---- The lede ----
 
-   Held to the reading measure and pushed to the right, which puts it under
-   the right half of the title and leaves clear paper under the left: the
-   cover's floor, restated. The first build let it run the whole width of the
-   column and it came out a slab of magenta two thirds empty, which is the
-   wall this masthead exists to stop being. */
+   It was a magenta panel with its leading corner cut on the plane angle,
+   bleeding off the right of the sheet. That device is gone from the whole
+   site. A body paragraph set on a saturated field inside a clipped box reads
+   as a callout or a sticker rather than as a studio's opening statement, and
+   it put reading copy on colour on the one page that exists to be read.
+
+   The lede is type on the page now: one step above body, held to a real
+   measure, in the room's own ink. The cut survives where it belongs, on the
+   leading edge of a full-bleed band, where it is an edge between two rooms
+   rather than a box drawn round a paragraph. */
 .doc__lede {
-  /* The panel takes its own, smaller rise. The band cut is sized against a
-     band; on a panel four lines deep the same figure would run the cut
-     through the first line of the lede, which is a legibility fault before it
-     is an aesthetic one.
-
-     The run is restated here rather than inherited, and it has to be. A custom
-     property is substituted where it is DECLARED, so --cut-run computed once
-     on .doc against the band's rise and then arrived here as a finished
-     length: the panel was drawing a 45px rise over a 139px run, which is 17.9
-     degrees and not an angle this site has. Measured off the rendered clip
-     path, which is the only reason it was caught. */
-  --cut-rise: clamp(26px, 3vw, 52px);
-  --cut-run: calc(var(--cut-rise) * var(--cut-k));
-  --ink: var(--room-magenta-ink);
-  --ink-dim: var(--room-magenta-dim);
-  --ink-quiet: var(--room-magenta-quiet);
-  --ink-line: color-mix(in srgb, var(--room-magenta-ink) 26%, transparent);
-  --ground: var(--room-magenta-ground);
   font-family: var(--font-sans);
   font-size: var(--text-subheading);
   font-weight: 400;
-  line-height: 1.35;
+  line-height: 1.45;
   letter-spacing: 0;
   text-transform: none;
-  background: var(--brand-magenta);
-  color: var(--room-magenta-ink);
-  /* The measure, plus the two paddings and the width of the bleed, so the
-     text inside sits at 40 characters however wide the column around it is. */
-  max-width: calc(40ch + var(--gutter) + clamp(var(--sp-4), 2.2vw, var(--sp-5)) + var(--gutter));
-  margin-top: clamp(var(--sp-5), 3vw, var(--sp-6));
-  margin-left: auto;
-  margin-right: calc(var(--gutter) * -1);
-  padding: clamp(var(--sp-4), 2.4vw, var(--sp-5)) var(--gutter)
-    clamp(var(--sp-4), 2.4vw, var(--sp-5)) clamp(var(--sp-4), 2.2vw, var(--sp-5));
-  clip-path: polygon(
-    var(--cut-run) 0,
-    100% 0,
-    100% 100%,
-    0 100%,
-    0 var(--cut-rise)
-  );
+  color: var(--ink);
+  max-width: 54ch;
+  margin-top: 3rem;
 }
 
 .doc__facts {
@@ -1850,13 +1856,9 @@
   color: var(--ink);
 }
 
-/* On one column the panel has no left half to sit beside, so it stops being
-   pushed right and simply spans the sheet. */
 @media (max-width: 760px) {
   .doc__lede {
     max-width: none;
-    margin-left: calc(var(--gutter) * -1);
-    padding-left: var(--gutter);
   }
 }
 
@@ -1867,83 +1869,76 @@
 
 /* ---- How a section opens ----
 
-   The cover opens every section with the same three marks: a rule across the
-   column, one 45 degree notch cut into it, and the mark itself at the end,
-   alternating upright and half turned down the page. A document had none of
-   that; its sections simply began, which is why a page of the manual read as
-   a different site from the poster on the way in.
+   Every section of every document opens on the brand. The heading is a plate:
+   a full-bleed ramp carrying one line at the 44px step, with the reading
+   column underneath it on the sheet. That is the whole colour system of this
+   site restated at document scale, and it is what lets the page be a light
+   document and still arrive loud.
 
-   It is the same drawing here, delivered as two pseudo-elements and a border
-   rather than as .section__head markup, because eleven of these documents are
-   generated from templates this session did not write and two are owned by
-   another session entirely. Nothing is added to the reading column: the rule
-   is a border on a heading that was already there.
+   It replaces a hairline rule with a 12px tick cut into it at 45 degrees. The
+   tick was drafting-sheet furniture and it went with the rest of that
+   language; the plate's own edge is the rule now.
 
-   The alternation is the claim the mark makes about itself. It maps onto
-   itself 22 vertices of 22 at a half turn, so an upright seal and a turned
-   seal are the same object, and a reader who notices the alternation finds
-   nothing changing. */
+   The seal survives, in ramp ink. It maps onto itself 22 vertices of 22 at a
+   half turn, so an upright seal and a turned one are the same object, and a
+   reader who notices the alternation finds nothing changing.
+
+   ::before carries the bleed rather than a negative margin, because the
+   reading column is one track of a three column grid and a negative margin
+   would only reach the edge of that track.
+
+   It bleeds RIGHT ONLY, and that is a correction rather than a style. A plate
+   bleeding both ways crossed the sticky page index in the left track, which
+   put a column of 15px links on the ramp. The plate starts at the reading
+   column and runs off the right edge of the page; the index stays on the
+   sheet beside it. */
 .doc__section > h2 {
   position: relative;
+  isolation: isolate;
   font-family: var(--font-display);
   font-size: var(--text-heading-sm);
-  font-weight: 400;
+  font-weight: var(--weight-display);
   line-height: 0.9;
   letter-spacing: 0.01em;
-  color: var(--ink);
-  border-top: 1px solid var(--ink-line);
-  padding-top: clamp(var(--sp-4), 2vw, var(--sp-5));
+  color: var(--ramp-ink);
+  padding: 6.4rem 0;
 }
 
-/* The notch. The same 12px tick at the same 45 degrees the cover's rule
-   carries, at the same 38% of the run, so the two rules are visibly the one
-   rule. The plane angle belongs to the band edges below, where a cut changes
-   one room into another; this is furniture on a hairline. */
 .doc__section > h2::before {
   content: '';
   position: absolute;
-  top: -1px;
-  left: 38%;
-  width: 12px;
-  height: 1px;
-  background: var(--ink);
-  opacity: 0.28;
-  transform: rotate(-45deg);
-  transform-origin: center;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: -50vw;
+  background-color: var(--brand-violet);
+  background-image: var(--brand-ramp-deep);
   pointer-events: none;
 }
 
-/* The seal, sitting on the rule at the end of it. Its counter is a hole, so
-   the rule reads straight through the middle of the mark. */
-.doc__section > h2::after {
-  content: '';
-  position: absolute;
-  top: -7px;
-  right: 0;
-  width: 13px;
-  height: 13px;
-  background: var(--ink);
-  opacity: 0.42;
-  -webkit-mask-image: var(--x-mask);
-  mask-image: var(--x-mask);
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  transform-origin: var(--x-origin-x) var(--x-origin-y);
-  pointer-events: none;
+/* Below the three column breakpoint the index is above the prose rather than
+   beside it, so there is nothing on the left for the plate to run into and it
+   takes the whole sheet again. Stated here rather than in the layout block
+   further up, because a media query that sits earlier in the file than the
+   rule it overrides does not override anything. */
+@media (max-width: 900px) {
+  .doc__section > h2::before {
+    left: calc(var(--gutter) * -1);
+  }
 }
 
-.doc__section:nth-of-type(even) > h2::after {
-  transform: rotate(180deg);
-}
+/* The seal is gone from the section head. It sat at the right edge of the
+   reading column, and once the heading became a plate the column edge is
+   where the heading text ends, so the mark landed on the last word. It is
+   still on the masthead of every document and in the footer; it does not need
+   to be on every heading as well. */
+
 
 .doc__section h3 {
   font-family: var(--font-display);
   font-size: var(--text-subheading);
-  font-weight: 400;
+  font-weight: var(--weight-display);
   line-height: 1.2;
   letter-spacing: 0.01em;
   text-transform: uppercase;
@@ -1957,31 +1952,21 @@
   letter-spacing: 0;
 }
 
-/* The one coloured thing inside the reading column, and it is a callout
-   rather than prose: a direct answer to the question the section asks. It
-   takes the plane cut at the smallest rise on the site, so the one object
-   colour is allowed to sit behind in here is drawn by the same rule as the
-   bands that close the page. The rise is well inside the padding, so no
-   character of the answer is ever within the cut. */
+/* The direct answer to the question a section asks. It was a violet box with
+   its leading corner cut on the plane angle: the same device as the masthead
+   lede, and rejected for the same reason. It also broke the reading column's
+   own rule, that no colour is ever set behind running copy.
+
+   It is a rule and an indent now. The colour went into the rule, which
+   carries the ramp, and the paragraph sits on the sheet at 16.4:1. */
 .answer {
-  --cut-rise: 22px;
-  --cut-run: calc(var(--cut-rise) * var(--cut-k));
-  --ground: var(--room-violet-ground);
-  --ink: var(--room-violet-ink);
-  --ink-dim: var(--room-violet-dim);
-  --ink-quiet: var(--room-violet-quiet);
-  --ink-accent: var(--room-violet-accent);
-  background: var(--ground);
+  position: relative;
+  background: none;
   color: var(--ink);
-  border-left: 0;
-  padding: var(--sp-5);
-  clip-path: polygon(
-    var(--cut-run) 0,
-    100% 0,
-    100% 100%,
-    0 100%,
-    0 var(--cut-rise)
-  );
+  border-left: 3px solid transparent;
+  border-image: var(--brand-ramp) 1;
+  padding: var(--sp-2) 0 var(--sp-2) var(--sp-5);
+  clip-path: none;
 }
 
 .answer p {
@@ -2004,19 +1989,40 @@
    band whose first line sits above its own cut is a band with its first line
    clipped. */
 
+/* ---- The closing bands ----
+
+   Two full-bleed slabs used to close every document, one magenta and one
+   violet, each about a viewport tall. Between them they were most of the
+   darkness and most of the flat brand colour on the fifteen interior routes,
+   and both carried running copy on a saturated ground.
+
+   They close on paper now. The colour did not leave, it moved: the related
+   band opens on a ramp rule cut at the plane angle, and the closing statement
+   sits on a full-bleed ramp plate that carries the display line and nothing
+   else. Everything a reader actually reads down here is on the sheet. */
+
 .related {
-  --ground: var(--room-magenta-ground);
-  --ink: var(--room-magenta-ink);
-  --ink-dim: var(--room-magenta-dim);
-  --ink-quiet: var(--room-magenta-quiet);
-  --ink-accent: var(--room-magenta-accent);
-  --ink-line: color-mix(in srgb, var(--ink) 24%, transparent);
-  --ink-line-strong: color-mix(in srgb, var(--ink) 46%, transparent);
-  background: var(--ground);
+  --ink-line: color-mix(in srgb, var(--ink) 16%, transparent);
+  --ink-line-strong: color-mix(in srgb, var(--ink) 30%, transparent);
+  position: relative;
+  background: none;
   color: var(--ink);
   margin-inline: calc(var(--gutter) * -1);
-  padding: max(clamp(56px, 6vw, 104px), calc(var(--cut-rise) + var(--sp-5)))
-    var(--gutter) clamp(56px, 6vw, 104px);
+  padding: max(6rem, calc(var(--cut-rise) + var(--sp-5)))
+    var(--gutter) 6rem;
+  clip-path: none;
+}
+
+/* The band's opening edge, cut at 40.82 degrees and carrying the ramp. It is
+   the whole of the colour this band gets and it is an edge rather than a
+   field, which is the one place the plane cut belongs. */
+.related::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: calc(var(--cut-rise) + 4px);
+  background-color: var(--brand-violet);
+  background-image: var(--brand-ramp);
   clip-path: polygon(
     var(--cut-run) 0,
     100% 0,
@@ -2024,50 +2030,74 @@
     0 100%,
     0 var(--cut-rise)
   );
+  pointer-events: none;
 }
 
 .doc__cta {
-  --ground: var(--room-violet-ground);
-  --ink: var(--room-violet-ink);
-  --ink-dim: var(--room-violet-dim);
-  --ink-quiet: var(--room-violet-quiet);
-  --ink-accent: var(--room-violet-accent);
-  --ink-line: color-mix(in srgb, var(--ink) 24%, transparent);
-  --ink-line-strong: color-mix(in srgb, var(--ink) 46%, transparent);
-  background: var(--ground);
+  --ink-line: color-mix(in srgb, var(--ink) 16%, transparent);
+  --ink-line-strong: color-mix(in srgb, var(--ink) 30%, transparent);
+  background: none;
   color: var(--ink);
   margin-top: 0;
-  padding-top: max(clamp(60px, 7vw, 118px), calc(var(--cut-rise) + var(--sp-5)));
-  padding-bottom: clamp(60px, 7vw, 118px);
-  clip-path: polygon(
-    0 0,
-    calc(100% - var(--cut-run)) 0,
-    100% var(--cut-rise),
-    100% 100%,
-    0 100%
-  );
+  padding-top: 0;
+  padding-bottom: 7rem;
+  clip-path: none;
 }
 
+/* The plate. Full bleed past both gutters, on the ramp, carrying the closing
+   statement in white and nothing else: at the 57px heading step it is large
+   text, and 3.75:1 at the magenta corner clears the 3:1 floor. The paragraph
+   and the control beside it stay on the sheet, where 15px copy belongs. */
 .doc__cta h2 {
+  position: relative;
+  isolation: isolate;
+  color: var(--ramp-ink);
+  grid-column: 1 / -1;
+  padding-block: 6.4rem;
+  margin-bottom: 4.8rem;
   font-family: var(--font-display);
   font-size: var(--text-heading);
-  font-weight: 400;
+  font-weight: var(--weight-display);
   line-height: var(--leading-tight);
   letter-spacing: -0.01em;
-  color: var(--ink);
+}
+
+/* The plate itself, escaping the container to both edges of the viewport.
+   html and body carry overflow-x: clip, so the overshoot never produces a
+   horizontal scrollbar at any width. */
+.doc__cta h2::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: -50vw;
+  right: -50vw;
+  background-color: var(--brand-violet);
+  background-image: var(--brand-ramp-deep);
+  pointer-events: none;
+}
+
+.doc__cta-copy {
+  grid-column: 3;
 }
 
 /* ---- Fixed chrome that sits outside every room ---- */
 
+/* The consent bar and the skip link sit outside every room, so they have to
+   state their own. They were pinned to the void, which put a near-black slab
+   across the foot of every route the moment the bar appeared. Paper, with a
+   hairline, like every other panel in the manual. */
 .consent,
 .skip-link {
-  --ground: var(--room-void-ground);
-  --ink: var(--room-void-ink);
-  --ink-dim: var(--room-void-dim);
-  --ink-quiet: var(--room-void-quiet);
-  --ink-accent: var(--room-void-accent);
-  --ink-line: color-mix(in srgb, var(--ink) 22%, transparent);
-  --ink-line-strong: color-mix(in srgb, var(--ink) 44%, transparent);
+  --ground: var(--room-paper-ground);
+  --ink: var(--room-paper-ink);
+  --ink-dim: var(--room-paper-dim);
+  --ink-quiet: var(--room-paper-quiet);
+  --ink-accent: var(--room-paper-ink);
+  --ink-line: color-mix(in srgb, var(--ink) 18%, transparent);
+  --ink-line-strong: color-mix(in srgb, var(--ink) 34%, transparent);
+  background: var(--ground);
   color: var(--ink);
 }
 
@@ -2077,7 +2107,7 @@
 .entries__name {
   font-family: var(--font-display);
   font-size: var(--text-subheading);
-  font-weight: 400;
+  font-weight: var(--weight-display);
   line-height: 1.2;
   letter-spacing: 0.01em;
   text-transform: uppercase;
@@ -2086,7 +2116,7 @@
 .faq__q-text {
   font-family: var(--font-display);
   font-size: var(--text-subheading);
-  font-weight: 400;
+  font-weight: var(--weight-display);
   line-height: 1.2;
   letter-spacing: 0.01em;
   text-transform: uppercase;
@@ -2176,7 +2206,7 @@ html.js:not(.no-motion) [data-words] .scrub-word {
    The band it stands in is derived from its own size, the same way the
    masthead's is, so the error code can never end up printed across it. */
 .lost {
-  --doc-mark: clamp(112px, 21vw, 320px);
+  --doc-mark: 21rem;
   --doc-mark-top: calc(var(--nav-h) + var(--sp-5));
 }
 
@@ -2191,7 +2221,8 @@ html.js:not(.no-motion) [data-words] .scrub-word {
   right: 0;
   width: var(--doc-mark);
   aspect-ratio: 1;
-  background: var(--brand-magenta);
+  background-color: var(--brand-violet);
+  background-image: var(--brand-ramp);
   -webkit-mask-image: var(--x-mask);
   mask-image: var(--x-mask);
   -webkit-mask-size: contain;
