@@ -1,10 +1,13 @@
 /* ============================================================
    XStudioz: the cover's choreography
 
-   The whole motion vocabulary of this site is four properties: opacity, x,
-   one rotation, and one unitless number driving a clip-path. Nothing blurs,
-   nothing scales, nothing interpolates a colour, and no text is ever masked
-   or split into characters.
+   The whole motion vocabulary of this site is five properties: opacity, x,
+   rotation, scale, and one unitless number driving a clip-path. Nothing
+   blurs, nothing interpolates a colour, and no text is ever masked or split
+   into characters. Scale is new and it belongs to exactly one thing, the
+   travelling mark, which uses it in place of an opacity fade: an object that
+   leaves by shrinking to zero reads as departure, where the same object
+   fading reads as a rendering fault.
 
    Three rules govern everything below.
 
@@ -210,58 +213,171 @@ function sceneStudio(): void {
 }
 
 /* ------------------------------------------------------------
-   SCENE B, CLEARSPACE. The blade.
+   THE TRAVELLING MARK
 
-   The set piece, and the mirror of Scene A: its blade enters from the other
-   side, and its room change happens FIRST rather than in the middle.
+   One chromatic body for the whole document, scrubbed against document
+   progress. It replaced two static ramps, one behind the hero headline and
+   one behind the archive statement, and both are deleted rather than left
+   standing beside it.
 
-     0.00 → 0.26   the magenta blade sweeps in from the left
-     0.26 → 0.34   the intro leaves sideways, x to 200
-     0.34 → 0.48   the body arrives sideways from -220
-     0.48 → 0.56   the plate lands on a half turn about the mark's centre
-     0.56 → 0.80   the note resolves, word by word, centre outward
-     0.80 → 1.00   held.
+   FOUR NUMBERS, WRITTEN ON THE ROOT. Scale, turn, and travel in x and y. The
+   apertures in cover.css read them, so however many holes the page is given
+   they are all showing the same object at the same instant. Nothing else in
+   the system writes them.
 
-   Two 300vh circles used to converge here from off screen top and bottom.
-   They were the most recognisable borrowed mechanic on the page and they are
-   gone. The type in this scene is set in an ink that is legal on both the
-   paper it starts on and the magenta it ends on, so the ground changes under
-   a statement that never moves and is never hidden.
+   THE ENVELOPE IS DERIVED, NOT COPIED. The reference runs 1.0 -> 2.0 -> 0 ->
+   1.0 -> 0 against its own section boundaries. These keyframes are measured
+   off this document's boundaries at run time, so they hold at any width and
+   survive a font landing late:
+
+     0                 scale 3.20  rot   0   two arms crossing the slot
+     hero aperture out scale 4.40  rot   0   grown through the opening frame
+     capabilities in   scale 0     rot   0   HANDOVER OPENS
+     capabilities out  scale 0     rot 180   HANDOVER CLOSES, and the turn
+     archive in        scale 1.60  rot 180   returning, readable as a drawing
+     archive centred   scale 0.76  rot 180   the whole mark, half turned
+     archive out       scale 0.50  rot 180   leaving before the portal
+     end of document   scale 0     rot 180   gone
+
+   THE HANDOVER LIVES BETWEEN KEYFRAMES 2 AND 3, the two zeros either side of
+   #capabilities. That window is deliberately empty: a rotating index dial is
+   the likely next addition to that section, and two large gradient objects on
+   screen at once would read as patchwork. There is one chromatic body on this
+   page at any moment and it changes job rather than multiplying, so a dial
+   dropped into Capabilities needs no change here at all. Widen the window by
+   moving those two keyframes, never by adding a third object.
+
+   TURN IN HALVES ONLY, AND NEVER IN VIEW. The drawing maps onto itself 22
+   vertices out of 22 at a half turn about 49.90% / 50.71%, and 29 of 52 at a
+   quarter, so a half turn is the only rotation it can make honestly. A scrub
+   interpolates, and an interpolated 0 to 180 spends most of its range showing
+   the mark at angles the drawing does not have. So the whole turn is spent
+   inside the handover, where the scale is already 0: the object is seen at 0
+   degrees and at 180 degrees and at nothing in between. That is the claim the
+   mark makes about itself made literally, rather than shown as a spin.
    ------------------------------------------------------------ */
-function sceneClear(): void {
-  const track = document.querySelector<HTMLElement>('[data-scene="clearspace"]');
-  if (!track) return;
 
-  const blade = track.querySelector<HTMLElement>('[data-blade]');
-  const intro = track.querySelector<HTMLElement>('[data-clear-intro]');
-  const body = track.querySelector<HTMLElement>('[data-clear-body]');
-  const plate = track.querySelector<HTMLElement>('[data-clear-plate]');
-  const line = track.querySelector<HTMLElement>('[data-reveal-words]');
-  if (!blade || !intro || !body || !plate || !line) return;
+type MarkKey = { y: number; scale: number; rot: number; x: number; yOff: number };
 
-  gsap.set(body, { x: -220, opacity: 0 });
-  gsap.set(plate, { opacity: 0, transformOrigin: '49.90% 50.71%', rotation: -180 });
+/* Smoothstep across one segment. The scrub itself is one to one with the
+   wheel; this only rounds the corner where two keyframes meet, so the object
+   does not visibly change direction on a single frame. */
+function smooth(t: number): number {
+  return t * t * (3 - 2 * t);
+}
 
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: track,
-      start: 'top top',
-      end: 'bottom top',
-      scrub: SCRUB,
-      id: 'scene-clear',
-      invalidateOnRefresh: true,
+function travellingMark(): void {
+  const objects = Array.from(document.querySelectorAll<SVGElement>('.xwin__x'));
+  const heroWin = document.querySelector<HTMLElement>('.xwin--hero');
+  const workWin = document.querySelector<HTMLElement>('.xwin--work');
+  const caps = document.querySelector<HTMLElement>('#capabilities');
+  /* heroWin is gone with the hero aperture; the archive window is the
+     only one left, so only it is required. */
+  if (!objects.length || !workWin || !caps) return;
+
+  const root = document.documentElement;
+  let keys: MarkKey[] = [];
+
+  const docTop = (el: HTMLElement): number =>
+    el.getBoundingClientRect().top + window.scrollY;
+
+  const build = (): void => {
+    const vh = window.innerHeight;
+    const heroH = heroWin ? heroWin.offsetHeight : 0;
+    const workH = workWin.offsetHeight;
+    const heroTop = heroWin ? docTop(heroWin) : 0;
+    const workTop = docTop(workWin);
+    const heroOut = heroTop + heroH;
+    const capsIn = docTop(caps) - vh;
+    const capsOut = docTop(caps) + caps.offsetHeight;
+    const workIn = workTop - vh;
+    const workMid = workTop + workH / 2 - vh / 2;
+    const workOut = workTop + workH;
+    const end = Math.max(root.scrollHeight - vh, 1);
+
+    /* The lens starts below the header, so its middle is not the viewport's
+       middle. Every vertical figure below is stated against the lens rather
+       than against the window, which is what keeps the object landing where
+       the aperture actually is at any header height. */
+    /* The archive window is the only aperture left, so the lens geometry
+       is read from it rather than from the deleted hero one. */
+    const lens = workWin.querySelector<HTMLElement>('.xwin__lens');
+    const lr = lens ? lens.getBoundingClientRect() : { top: 0, height: vh };
+    const lensMid = lr.top + lr.height / 2;
+
+    /* Where the object has to sit for each aperture to be looking at
+       something. In the hero the band is a 180px slot across a 1600px object,
+       so it is aimed just under the counter, where both arms are in frame and
+       leave the sheet at the mark's own 40.82 degrees. In the archive the band
+       is tall enough to hold the whole drawing, so it is aimed at the middle. */
+    const heroAim = (heroTop + heroH / 2 - lensMid) / vh - 0.06;
+    const workAim = (vh / 2 - lensMid) / vh;
+
+    /* The phone gets its own ladder, the way the type does. A 4x object on a
+       1500px sheet puts two arms across the band and the rest off both edges,
+       which is the composition. The same 4x on a 390px sheet puts the whole
+       drawing off both edges and leaves two tips, which is not. Below the
+       desktop band the object is held near its own size and the aperture
+       shows the drawing rather than a section through it. */
+    const narrow = window.innerWidth < 900;
+    const S = narrow
+      ? { a: 0.55, b: 0.82, c: 0.9, d: 0.55, e: 0.42 }
+      : { a: 3.2, b: 4.4, c: 1.6, d: 0.76, e: 0.5 };
+
+    keys = [
+      /* The object no longer opens the page. The hero's full-bleed ramp is
+         back behind the headline, which is where the site's colour belongs:
+         a travelling mark cannot carry type (an X large enough to cover a
+         1116 by 420 headline box would be roughly 14,600px), so keeping it
+         there cost the opening frame its colour, 55.9 percent down to 5.1.
+         It now stays at zero until the archive, where nothing competes with
+         it and it is the only chromatic object on screen. */
+      { y: 0, scale: 0, rot: 0, x: -0.02, yOff: heroAim },
+      { y: heroOut, scale: 0, rot: 0, x: 0.06, yOff: heroAim - 0.05 },
+      { y: capsIn, scale: 0, rot: 0, x: 0.12, yOff: 0 },
+      { y: capsOut, scale: 0, rot: 180, x: -0.12, yOff: 0 },
+      { y: workIn, scale: S.c, rot: 180, x: -0.06, yOff: workAim + 0.06 },
+      { y: workMid, scale: S.d, rot: 180, x: 0, yOff: workAim },
+      { y: workOut, scale: S.e, rot: 180, x: 0.03, yOff: workAim },
+      { y: end, scale: 0, rot: 180, x: 0, yOff: workAim },
+    ];
+
+    /* A short document, a tall window or a resize can put two boundaries in
+       the same place. Keyframes have to stay strictly increasing or the
+       segment lookup divides by zero. */
+    for (let i = 1; i < keys.length; i++) {
+      if (keys[i].y <= keys[i - 1].y) keys[i].y = keys[i - 1].y + 1;
+    }
+  };
+
+  const write = (y: number): void => {
+    let i = 0;
+    while (i < keys.length - 2 && y > keys[i + 1].y) i++;
+    const a = keys[i];
+    const b = keys[i + 1];
+    const t = smooth(Math.min(1, Math.max(0, (y - a.y) / (b.y - a.y))));
+    const at = (k: 'scale' | 'rot' | 'x' | 'yOff'): number => a[k] + (b[k] - a[k]) * t;
+
+    root.style.setProperty('--mb-scale', at('scale').toFixed(4));
+    root.style.setProperty('--mb-rot', `${at('rot').toFixed(2)}deg`);
+    root.style.setProperty('--mb-x', `${(at('x') * window.innerWidth).toFixed(1)}px`);
+    root.style.setProperty('--mb-y', `${(at('yOff') * window.innerHeight).toFixed(1)}px`);
+  };
+
+  build();
+  write(window.scrollY);
+
+  ScrollTrigger.create({
+    id: 'travelling-mark',
+    trigger: document.body,
+    start: 'top top',
+    end: 'bottom bottom',
+    onUpdate: (self) => write(self.scroll()),
+    onRefresh: () => {
+      build();
+      write(window.scrollY);
     },
   });
-
-  wipe(blade, 0, 1, 0, 0.26, tl);
-
-  tl.to(intro, { x: 200, opacity: 0, ease: 'none', duration: 0.08 }, 0.26)
-    .to(body, { x: 0, opacity: 1, ease: 'none', duration: 0.14 }, 0.34)
-    .to(plate, { opacity: 1, rotation: 0, ease: 'none', duration: 0.08 }, 0.48);
-
-  resolveWords(line, tl, 0.56, 0.24);
-
-  tl.to({}, { duration: 0.2 }, 0.8);
 }
 
 /* ------------------------------------------------------------
@@ -305,37 +421,9 @@ function initEnters(): void {
 }
 
 /* ------------------------------------------------------------
-   THE REGISTRATION PROBE
-
-   Not motion. A real button, keyboard reachable, with aria-pressed carrying
-   the state and a readout whose two figures are both measured.
-   ------------------------------------------------------------ */
-function initRegistration(): void {
-  const reg = document.querySelector<HTMLElement>('.reg');
-  const btn = reg?.querySelector<HTMLButtonElement>('[data-reg-break]');
-  if (!reg || !btn) return;
-
-  const name = btn.querySelector<HTMLElement>('[data-reg-label]');
-  const out = btn.querySelector<HTMLElement>('[data-reg-out]');
-
-  btn.addEventListener('click', () => {
-    const broken = reg.classList.toggle('is-broken');
-    btn.setAttribute('aria-pressed', String(broken));
-    if (name) name.textContent = broken ? 'Restore registration' : 'Break registration';
-    if (out) {
-      out.textContent = broken
-        ? '90° · 29 of 52 · residual visible'
-        : '180° · 22 of 22 · residual 0';
-    }
-  });
-}
-
-/* ------------------------------------------------------------
    Boot
    ------------------------------------------------------------ */
 export function initCover(): void {
-  initRegistration();
-
   if (prefersReduced) {
     /* CSS already composes both scenes statically off html.no-motion, which
        main.ts sets before this runs. Nothing here may register a trigger,
@@ -344,11 +432,11 @@ export function initCover(): void {
   }
 
   initRotator();
+  travellingMark();
   sceneStudio();
-  sceneClear();
   initEnters();
 
-  /* Two of the scenes measure the viewport when they build their tweens, so
-     a font landing late or a rotation has to invalidate them. */
+  /* The scene measures the viewport when it builds its tweens, so a font
+     landing late or a rotation has to invalidate them. */
   ScrollTrigger.refresh();
 }

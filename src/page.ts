@@ -74,7 +74,7 @@ function boot(): void {
    the stagger is a per-word transition delay and the trigger is an
    IntersectionObserver.
 
-   DISPLAY LINES ONLY. Two per document at most, both of them Bebas at a
+   DISPLAY LINES ONLY. Two per document at most, both of them display type at a
    display step: the masthead title and the closing call. Nothing in the
    reading column is split. A reader who came to find out what a logo costs is
    reading a document, and a paragraph that resolves under them is a slideshow.

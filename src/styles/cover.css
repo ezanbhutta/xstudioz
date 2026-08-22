@@ -32,26 +32,119 @@
   overflow: hidden;
 }
 
-/* ---- The mark, as structure ----
-   Not an ornament in a corner. It is the second largest object in the frame
-   after the headline, it runs off the right edge of the page on purpose, and
-   its counter is punched to the ground so the paper reads through it. The
-   reference has no equivalent object, and using this one properly is the
-   cheapest way to stop looking like a restyle of that page. */
-.hero__mark {
-  position: absolute;
-  right: 0;
-  top: 12svh;
-  width: clamp(150px, 21vw, 320px);
-  aspect-ratio: 1;
+/* ============================================================
+   THE TRAVELLING MARK
+
+   ONE chromatic body for the whole document, and it is the mark.
+
+   WHAT IT REPLACED. Two static ramps: a full-bleed plate behind the hero
+   headline and a second, identical one behind the archive statement, each
+   2920 x 576 at 1500 and each carrying its own ghosted X in ramp ink. Two
+   plates is two events. This is one event that happens to be visible in two
+   places, and both plates are deleted rather than left standing beside it.
+
+   HOW IT IS BUILT. One SVG path, filled with the three-stop ramp declared in
+   svg-defs, sitting on a layer that is fixed to the VIEWPORT at z-index -1.
+   Its scale, its turn and its travel are four custom properties written by
+   one ScrollTrigger in motion/cover.ts. No canvas, no WebGL, no renderer to
+   fail: it is a path and a gradient, about 2KB, and it paints in the first
+   frame with or without the bundle.
+
+   WHY IT IS THE X AND NOT A SPHERE. The drawing maps onto itself 22 vertices
+   out of 22 at a half turn about 49.90% / 50.71% of its box, so it can be
+   turned and never read as upside down. That is exactly the property a
+   travelling object needs, and this brand already owns it.
+
+   THE APERTURES, AND WHY THE 24PX LAW SURVIVES.
+
+   The law is that nothing under 24px may ever stand on a gradient, and a
+   fixed layer behind the content means anything the object passes under is
+   standing on it. Tuning an envelope until it misses every label is not a
+   guarantee, it is a hope, so the object is not allowed to be seen anywhere
+   it has not been given a hole.
+
+   An aperture is an empty, full-bleed band in the flow carrying
+   `clip-path: inset(0)`. clip-path clips a position: fixed descendant WITHOUT
+   becoming its containing block, which is the whole mechanism: the lens
+   inside stays locked to the viewport, so the object appears to hold still
+   while the band slides over it, and it physically cannot paint one pixel
+   outside the band. The bands are empty by construction, so there is no text
+   in the system that can stand on this object at any scroll position, at any
+   width, in either theme.
+
+   Only one aperture is ever on screen at a time, which is why the reader sees
+   one object and not two.
+   ============================================================ */
+
+:root {
+  /* Sized against the SHORTER axis, with a floor in the base, so it is never
+     a letterbox smear on a wide monitor and never a postage stamp on a tall
+     one. 306px at 1500 x 900. */
+  --mb-size: max(18rem, min(56vh, 60vw));
+
+  /* The static composition. These are the values the object holds with no
+     bundle, with scripting off, and under prefers-reduced-motion: the mark,
+     upright, at its own size, centred in whichever aperture is on screen.
+     motion/cover.ts overwrites them per frame and nothing else ever does. */
+  --mb-scale: 1;
+  --mb-rot: 0deg;
+  --mb-x: 0px;
+  --mb-y: 0px;
+}
+
+.xwin {
+  display: block;
+  position: relative;
+  /* Full bleed to both edges of the viewport from inside a padded container,
+     resolved against the container rather than assumed, so it is exact at
+     every width including above the 2200px page cap. */
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+  clip-path: inset(0);
   pointer-events: none;
 }
 
-.hero__mark-svg {
-  --xm-body: var(--brand-magenta);
-  --xm-counter: var(--ground);
-  width: 100%;
-  height: 100%;
+.xwin--hero {
+  height: 14rem;
+}
+
+.xwin--work {
+  height: 24rem;
+}
+
+/* The lens. Fixed to the viewport, so the object inside it is in viewport
+   coordinates no matter which band it is being seen through. It starts below
+   the header, which is what stops the object ever painting under nav links
+   that are set at 15px on a bar that is transparent until it is scrolled. */
+.xwin__lens {
+  display: block;
+  position: fixed;
+  inset: var(--nav-h) 0 0 0;
+  pointer-events: none;
+}
+
+/* The object. Centred with margins rather than a translate, so the translate
+   property is free to carry the travel and the three individual transform
+   properties stay readable as three separate decisions. */
+.xwin__x {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--mb-size);
+  height: var(--mb-size);
+  margin-left: calc(var(--mb-size) / -2);
+  margin-top: calc(var(--mb-size) / -2);
+  fill: url(#xg-body);
+  translate: var(--mb-x) var(--mb-y);
+  rotate: var(--mb-rot);
+  scale: var(--mb-scale);
+  transform-origin: var(--x-origin-x) var(--x-origin-y);
+  /* No will-change. Promoting this to its own layer rasterises the path once
+     at its base size and then stretches that bitmap, which at the scales the
+     hero uses puts a visible soft edge on a drawing whose whole point is that
+     its cut is exact. Repainting the path every frame is the cheaper mistake:
+     it is one filled path with no filter behind it. */
+  shape-rendering: geometricPrecision;
 }
 
 .hero__sheet {
@@ -107,35 +200,20 @@
   display: none;
 }
 
-.hero__floor {
-  display: grid;
-  grid-template-columns: minmax(0, auto) minmax(300px, 1fr);
-  align-items: end;
-  column-gap: clamp(30px, 5vw, 90px);
-  row-gap: var(--sp-6);
-}
-
+/* The headline is ink on the sheet, and that is the change pick 1 forced. It
+   stood on a full-bleed ramp in white, and a ramp that travels cannot hold
+   type: near black measures 2.50:1 at the violet end of the ramp, so it fails
+   even the 3:1 floor for large text, and white is invisible the moment the
+   object moves off. So the colour left the headline and became the object,
+   the headline took the room's own ink at 16.4:1, and the two are never on
+   top of one another again. */
 .hero__title {
   margin: 0;
-  color: var(--ink);
 }
 
 .hero__l {
   display: block;
   white-space: nowrap;
-}
-
-.hero__cluster {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-4);
-}
-
-.hero__act {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-4);
-  flex-wrap: wrap;
 }
 
 .hero__foot {
@@ -162,126 +240,79 @@
 }
 
 /* ============================================================
-   THE HERO PANEL
+   THE HERO, WITHOUT THE PANEL
 
-   Four treatments were built side by side and screenshot in the same browser
-   at the same width so they could be compared rather than remembered. What
-   ships is the fourth. The three that lost:
+   What stood here was a flat magenta slab with its top-left corner cut on the
+   plane angle, holding the lede and both controls and bleeding off the right
+   of the frame. It is deleted, and not moved onto the ramp: a body paragraph
+   set inside a clipped coloured box reads as a callout or a sticker, and it
+   put four lines of reading copy on a saturated field on the one frame that
+   has to be legible before it is anything.
 
-     A · paper      whole frame paper, colour only in the control and the
-                    mark. The most readable, and it undersold the brand: the
-                    only chromatic pixels in the opening frame were a
-                    hairline outline.
-     B · split      a corner to corner diagonal with the frame half paper and
-                    half magenta. Strong, but the cut ran straight through
-                    the lede and through half of a control, which is a
-                    contrast hazard before it is an aesthetic problem.
-     C · axis       centred stack with a deep violet band on the floor. The
-                    furthest from the reference and the worst on its own
-                    terms: the band ate the last line of the lede and took
-                    the second control down to an unreadable ratio.
+   Three things carry the composition now and none of them is a box.
 
-   What is kept from each: A's paper ground, B's diagonal stated as the
-   mark's own cut, and from C the decision that the mark is a structural
-   object rather than an ornament.
+     THE TYPE      the headline runs the full sheet at the display step with
+                   nothing overlapping it, which is what the panel was
+                   costing it: the third line used to disappear under the
+                   slab at every width above 1100.
+     THE MARK      the only chromatic object in the frame, on the ramp, at
+                   the scale of the headline rather than of an ornament, and
+                   bleeding off the right edge so it belongs to the sheet.
+     THE FLOOR     lede and controls sit under one hairline in the room's own
+                   ink, at a real measure, on paper.
    ============================================================ */
 
+/* The rows are closer than they were, and deliberately. The full-bleed ramp
+   that stood behind the headline carried 5.2rem of padding of its own, and
+   the aperture that replaced it is taller than that padding was. Tightening
+   the floor is what keeps the opening frame close to one viewport. */
 .hero__floor {
-  grid-template-columns: minmax(0, 1fr) min(44vw, 600px);
-  align-items: end;
-  column-gap: clamp(20px, 3vw, 54px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--sp-4);
+  align-items: start;
 }
 
-/* The panel IS the cluster rather than a plane behind it, so the text cannot
-   leave its own ground at any width. It bleeds off the right edge, which is
-   what makes it a piece of the page rather than a card sitting on one, and
-   its top-left corner is chamfered at --x-r, the mark's own cut. */
+/* The lede and the controls read as one row under a single rule, which is
+   the only structure the floor needs now that nothing is painted behind it.
+   The rule is the hairline the hero foot already uses, so the frame is ruled
+   twice at the same weight rather than once at two. */
 .hero__cluster {
-  --ink: var(--room-magenta-ink);
-  --ink-dim: var(--room-magenta-dim);
-  --ink-quiet: var(--room-magenta-quiet);
-  --ink-line: color-mix(in srgb, var(--room-magenta-ink) 26%, transparent);
-  /* The panel publishes its own ground as well as its ink. Without it the
-     controls inside read --ground off the section, which is paper, and a
-     solid pill on this panel came out near black on near black the moment
-     the reader was in the dark theme. */
-  --ground: var(--room-magenta-ground);
-  background: var(--brand-magenta);
-  color: var(--room-magenta-ink);
-  max-width: none;
-  gap: var(--sp-5);
-  padding: var(--sp-6) var(--gutter) var(--sp-6) var(--sp-6);
-  margin-right: calc(var(--gutter) * -1);
-  clip-path: polygon(7% 0, 100% 0, 100% 100%, 0 100%, 0 13%);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  column-gap: 5rem;
+  row-gap: var(--sp-5);
+  border-top: 1px solid var(--ink-line);
+  padding-top: var(--sp-5);
 }
 
+/* 58 characters. The paragraph is the one piece of running copy in the frame
+   and it is set at the reading measure rather than run to the column edge. */
 .hero__lede {
-  color: var(--room-magenta-ink);
-  max-width: 42ch;
+  color: var(--ink-dim);
+  max-width: 58ch;
 }
 
-/* The filled control inside the magenta cannot take the magenta room's own
-   pair, or it is a magenta fill on a magenta panel. It commits to the void
-   in both directions instead: near black filled with near white type at
-   17.71:1, and the same two swapped on hover. Both hexes are fixed, so the
-   control reads identically in daylight and in the dark. */
-.hero__cta {
-  --ink: var(--room-magenta-ink);
-  --ground: var(--room-void-ink);
+.hero__act {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
-@media (max-width: 1100px) {
-  .hero__floor {
-    grid-template-columns: 1fr;
-    align-items: start;
+@media (max-width: 900px) {
+  .hero__cluster {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  /* The panel bleeds both edges once the frame is one column, so it reads as
-     a band across the page rather than as a narrow slab pushed to one side.
-     Only the top-left corner is chamfered here, and the padding clears it, so
-     nothing inside is ever cut. The full-height diagonal that the desktop
-     panel can afford ran straight through the first character of every line
-     of the lede at this width. */
-  .hero__cluster {
-    margin-inline: calc(var(--gutter) * -1);
-    padding: var(--sp-5) var(--gutter);
-    clip-path: polygon(0 14%, 10% 0, 100% 0, 100% 100%, 0 100%);
+  .hero__act {
+    justify-content: flex-start;
   }
 
   .hero__lede {
     max-width: none;
-  }
-
-  /* Parked in the open band between the eyebrow and the headline, running
-     off the right edge. It is the one object in the frame allowed to touch
-     an edge, and it must clear the fixed header, which is why the top is
-     stated against --nav-h rather than left to the static position. */
-  .hero__mark {
-    right: calc(var(--gutter) * -1.4);
-    top: calc(var(--nav-h) + var(--sp-6));
-    width: clamp(104px, 30vw, 150px);
-  }
-}
-
-@media (max-width: 640px) {
-  .hero__head {
-    flex-direction: column;
-    gap: var(--sp-3);
-  }
-
-  .hero__state {
-    text-align: left;
-    min-width: 0;
-  }
-
-  .hero__state-item {
-    right: auto;
-    left: 0;
-  }
-
-  .hero__foot {
-    flex-direction: column;
-    gap: var(--sp-2);
   }
 }
 
@@ -313,10 +344,6 @@
   height: 320vh;
 }
 
-.scene--clear .scene__track {
-  height: 400vh;
-}
-
 .scene__stage {
   position: sticky;
   top: 0;
@@ -336,11 +363,19 @@
   padding-block: calc(var(--nav-h) + var(--gutter)) var(--gutter);
 }
 
+/* A 14px label with a ramp arriving underneath it partway through the scene.
+   Nothing under 24px may be set on a ramp, so rather than change the ink it
+   keeps its own ground: a paper chip, 16.4:1, legible over the sheet and over
+   every point of the ramp alike, and it adds white to the frame rather than
+   the near-black plate the first attempt used. */
 .scene__eyebrow {
   position: absolute;
   top: calc(var(--nav-h) + var(--gutter));
   left: var(--gutter);
-  color: var(--ink);
+  color: var(--room-paper-ink);
+  background: var(--room-paper-ground);
+  padding: 5px 10px;
+  margin: -5px -10px;
 }
 
 /* ---- The blade ----
@@ -366,23 +401,18 @@
   will-change: clip-path;
 }
 
+/* The plane is the ramp, not a flat hex. Both brand colours are on it and
+   the ramp is declared once in tokens.css, so the blade, the portal plate and
+   the closing bands on the interior documents are all sampling the same
+   drawing at the same 40.82 degrees. */
 .blade--right {
-  background: var(--brand-violet);
+  background-color: var(--brand-violet);
+  background-image: var(--brand-ramp-deep);
   clip-path: polygon(
     calc(100% - var(--wipe) * 169%) 0,
     100% 0,
     100% 100%,
     calc(169% - var(--wipe) * 169%) 100%
-  );
-}
-
-.blade--left {
-  background: var(--blade-clear);
-  clip-path: polygon(
-    0 0,
-    calc(var(--wipe) * 169% - 69%) 0,
-    calc(var(--wipe) * 169%) 100%,
-    0 100%
   );
 }
 
@@ -413,24 +443,29 @@
   will-change: transform, opacity;
 }
 
-/* Fixed brand magenta rather than the room's accent, because this one object
-   is on paper for the first third of the scene and on violet for the rest,
-   and a token that follows the room would change under it halfway through a
-   rotation. */
+/* The mark is on the ramp for the whole of the scrubbed scene, so it is set
+   in the one ink a ramp takes rather than in a brand hex that would vanish
+   into the plane behind it. In the static composition there is no ramp, so it
+   takes the ramp itself as a fill through #xg. */
 .turn__mark-svg {
-  fill: var(--brand-magenta);
+  fill: var(--ramp-ink);
+  opacity: 0.3;
   width: 100%;
   height: 100%;
 }
 
 /* The statement is real text at the display step, not glyphs riding an SVG
    path. It is centred, which is one of the few things on this page that is,
-   and it sits over the mark. */
+   and it sits over the mark.
+
+   White, because the ramp is behind it for the whole scrubbed scene. It is
+   display type, which is the only thing a ramp may carry: 3.75:1 at the
+   magenta corner against the 3:1 floor. */
 .turn__line {
   position: relative;
   margin: 0;
   text-align: center;
-  color: var(--ink);
+  color: var(--ramp-ink);
   max-width: var(--measure-display);
   will-change: transform, opacity;
 }
@@ -469,133 +504,31 @@
   grid-area: 1 / 1;
 }
 
-/* The payoff lands after the blade, so it is set against violet and not
-   against the paper the scene opened on. */
+/* The payoff lands after the blade, so the ramp is behind it. It holds a
+   57px statement, a paragraph and a link, and only the first of those three
+   may be set on a gradient, so the block keeps its own ground instead: the
+   sheet, square cornered, at the reading measure. Every ratio inside it is
+   the paper room's, which is 16.4:1 and 8.6:1, and no character of the
+   paragraph is ever on colour. */
 .scene--studio .payoff {
-  --ink: var(--room-violet-ink);
-  --ink-dim: var(--room-violet-dim);
-  --ink-quiet: var(--room-violet-quiet);
-  --ink-accent: var(--room-violet-accent);
-  --ink-line: color-mix(in srgb, var(--room-violet-ink) 26%, transparent);
-  color: var(--room-violet-ink);
+  --ink: var(--room-paper-ink);
+  --ink-dim: var(--room-paper-dim);
+  --ink-quiet: var(--room-paper-quiet);
+  --ink-accent: var(--room-paper-ink);
+  --ink-line: color-mix(in srgb, var(--room-paper-ink) 18%, transparent);
+  background: var(--room-paper-ground);
+  color: var(--room-paper-ink);
+  padding: 3.6rem;
+  /* Wide enough that the 57px statement keeps to three lines. At the reading
+     measure it broke to five and the block outgrew a stage that is exactly
+     one viewport tall, so the first line was cut off above the frame. */
+  max-width: min(100%, 1040px);
   align-self: center;
   /* Flush to the gutter like the eyebrow above it. Stacked in the same grid
      cell as the turn, the measure cap's auto right margin was resolving
      against a stretched column and leaving the block inset by 110px while
      the section label beside it sat at 20. */
   justify-self: start;
-  width: 100%;
-}
-
-/* ---- Scene B: the blade, the exchange, the word reveal ----
-
-   The two 300vh discs that used to converge here are gone, and with them the
-   single most recognisable borrowed mechanic on the page. What replaces them
-   is one blade entering from the opposite side to Scene A's, so the two set
-   pieces on this document are a mirrored pair rather than two versions of
-   the same move. */
-
-.scene__inner--clear {
-  justify-content: center;
-  align-items: var(--align, flex-start);
-}
-
-.clear__intro {
-  position: absolute;
-  left: var(--gutter);
-  right: var(--gutter);
-  top: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: var(--sp-4);
-  align-items: center;
-  will-change: transform;
-}
-
-/* One ink, legal on BOTH grounds this scene passes through, so the type is
-   set once and never changes, the blade passes underneath it, and there is
-   no frame in the scene where a word sits somewhere a reader cannot see it.
-   That is the inversion: the reference reveals the type with the ground, and
-   this reveals the ground under the type.
-
-   The pair resolves differently in the two themes and tokens.css states the
-   arithmetic that forces it. */
-.clear__eyebrow,
-.clear__statement {
-  color: var(--clear-ink);
-}
-
-.clear__statement {
-  margin: 0;
-  text-align: center;
-}
-
-.clear__line {
-  display: block;
-}
-
-.clear__body {
-  position: relative;
-  width: 100%;
-  will-change: transform;
-}
-
-.clear__note {
-  margin: 0;
-  color: var(--clear-ink);
-  text-align: var(--align);
-}
-
-.clear__plate {
-  position: absolute;
-  right: var(--gutter);
-  bottom: var(--gutter);
-  width: clamp(150px, 17vw, 260px);
-  margin: 0;
-  will-change: transform, opacity;
-}
-
-.clear__field {
-  position: relative;
-  aspect-ratio: 1;
-  border: 1px solid var(--clear-ink);
-}
-
-/* Three mark widths across, because the mark is one and the clearance is one
-   on each side. The field is sized first and the mark derived from it, so
-   the drawing cannot disagree with the unit. */
-.clear__box,
-.clear__mark {
-  position: absolute;
-  inset: 33.3333%;
-  width: 33.3334%;
-  height: 33.3334%;
-  pointer-events: none;
-}
-
-/* <use> builds a shadow tree and a class selector in this document cannot
-   reach inside one. Custom properties do inherit across that boundary, which
-   is why the two fills are addressed as properties on the host and not as
-   rules on the paths. */
-.clear__mark {
-  --xm-body: var(--clear-ink);
-  --xm-counter: var(--clear-counter);
-}
-
-.clear__cap {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--sp-3);
-  margin-top: var(--sp-2);
-  color: var(--clear-quiet);
-}
-
-@media (max-width: 900px) {
-  .clear__plate {
-    display: none;
-  }
 }
 
 /* ---- Static composition ----
@@ -604,8 +537,8 @@
    as an ordinary section. Nothing waits on a scroll position and nothing is
    left at an opacity a reader cannot get out of.
 
-   Scene B loses its discs entirely and takes the magenta room outright,
-   because the ink it is set in only exists against magenta. */
+   The scene takes its arriving room outright, because the inks inside it
+   were chosen against that ground and not against paper. */
 
 html:not(.js) .scene__track,
 html.no-motion .scene__track {
@@ -624,16 +557,12 @@ html:not(.js) .scene__inner,
 html.no-motion .scene__inner {
   height: auto;
   display: grid;
-  gap: clamp(30px, 4vw, 64px);
+  gap: 4rem;
   padding-block: 0;
 }
 
 html:not(.js) .scene__eyebrow,
-html.no-motion .scene__eyebrow,
-html:not(.js) .clear__intro,
-html.no-motion .clear__intro,
-html:not(.js) .clear__plate,
-html.no-motion .clear__plate {
+html.no-motion .scene__eyebrow {
   position: static;
   transform: none;
   inset: auto;
@@ -669,14 +598,9 @@ html.no-motion .turn__mark {
   translate: none;
   transform: none;
   opacity: 1;
-  width: clamp(160px, 26vw, 300px);
+  width: 20rem;
   margin-inline: auto;
   margin-bottom: var(--sp-5);
-}
-
-html:not(.js) .clear__plate,
-html.no-motion .clear__plate {
-  width: clamp(150px, 17vw, 260px);
 }
 
 html:not(.js) .blade,
@@ -684,28 +608,32 @@ html.no-motion .blade {
   display: none;
 }
 
-/* Each scene takes its arriving room outright, because the inks inside it
-   were chosen against that ground and not against paper. */
-html:not(.js) .scene--studio,
-html.no-motion .scene--studio {
-  --ground: var(--room-violet-ground);
-  --ink: var(--room-violet-ink);
-  --ink-dim: var(--room-violet-dim);
-  --ink-quiet: var(--room-violet-quiet);
-  --ink-accent: var(--room-violet-accent);
-  background: var(--ground);
+/* With no blade there is no ramp behind the statement, so the two things set
+   in ramp ink take the room's own ink back and the scene reads as an ordinary
+   paper section. */
+html:not(.js) .turn__line,
+html.no-motion .turn__line {
   color: var(--ink);
 }
 
-html:not(.js) .scene--clear,
-html.no-motion .scene--clear {
-  --ground: var(--blade-clear);
-  --ink: var(--clear-ink);
-  --ink-dim: var(--clear-ink);
-  --ink-quiet: var(--clear-quiet);
-  --ink-accent: var(--clear-ink);
-  background: var(--ground);
-  color: var(--ink);
+html:not(.js) .turn__mark-svg,
+html.no-motion .turn__mark-svg {
+  fill: url(#xg);
+  opacity: 1;
+}
+
+/* With no blade there is no ramp behind the payoff, so the sheet it carries
+   would be a white block on white. It gives the padding back. */
+html:not(.js) .scene--studio .payoff,
+html.no-motion .scene--studio .payoff {
+  padding: 0;
+}
+
+html:not(.js) .scene__eyebrow,
+html.no-motion .scene__eyebrow {
+  background: none;
+  padding: 0;
+  margin: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -723,13 +651,11 @@ html.no-motion .scene--clear {
   .scene__inner {
     height: auto;
     display: grid;
-    gap: clamp(30px, 4vw, 64px);
+    gap: 4rem;
     padding-block: 0;
   }
 
-  .scene__eyebrow,
-  .clear__intro,
-  .clear__plate {
+  .scene__eyebrow {
     position: static;
     transform: none;
     inset: auto;
@@ -753,7 +679,7 @@ html.no-motion .scene--clear {
     translate: none;
     transform: none;
     opacity: 1;
-    width: clamp(160px, 26vw, 300px);
+    width: 20rem;
     margin-inline: auto;
     margin-bottom: var(--sp-5);
   }
@@ -762,25 +688,25 @@ html.no-motion .scene--clear {
     display: none;
   }
 
-  .scene--studio {
-    --ground: var(--room-violet-ground);
-    --ink: var(--room-violet-ink);
-    --ink-dim: var(--room-violet-dim);
-    --ink-quiet: var(--room-violet-quiet);
-    --ink-accent: var(--room-violet-accent);
-    background: var(--ground);
+  .turn__line {
     color: var(--ink);
   }
 
-  .scene--clear {
-    --ground: var(--blade-clear);
-    --ink: var(--clear-ink);
-    --ink-dim: var(--clear-ink);
-    --ink-quiet: var(--clear-quiet);
-    --ink-accent: var(--clear-ink);
-    background: var(--ground);
-    color: var(--ink);
+  .turn__mark-svg {
+    fill: url(#xg);
+    opacity: 1;
   }
+
+  .scene--studio .payoff {
+    padding: 0;
+  }
+
+  .scene__eyebrow {
+    background: none;
+    padding: 0;
+    margin: 0;
+  }
+
 }
 
 /* ============================================================
@@ -794,12 +720,20 @@ html.no-motion .scene--clear {
    ============================================================ */
 
 .caps__intro {
-  margin-bottom: clamp(40px, 5vw, 80px);
+  margin-bottom: 5rem;
+}
+
+/* The plates carry the statements. Each one is the only chromatic surface in
+   its section and it bleeds to both edges of the viewport. */
+.caps__statement,
+.brief__statement,
+.process__statement,
+.qa__statement {
+  max-width: none;
 }
 
 .caps__statement {
   margin: 0;
-  color: var(--ink);
 }
 
 .caps__list {
@@ -861,18 +795,6 @@ html.no-motion .scene--clear {
   transform: translateX(6px);
 }
 
-.caps__seal {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--sp-4);
-  padding-top: var(--sp-3);
-  color: var(--ink-quiet);
-}
-
-.caps__seal .label {
-  color: inherit;
-}
-
 @media (max-width: 1024px) {
   .caps__link {
     grid-template-columns: 4ch minmax(0, 1fr) 30px;
@@ -905,16 +827,19 @@ html.no-motion .scene--clear {
    03 · THE BRIEF
    ============================================================ */
 
+/* One column. The statement sits on a plate that bleeds to both edges of the
+   viewport, so anything beside it in a second column would be standing on the
+   ramp at 15px, which nothing on this site is allowed to do. The copy reads
+   underneath, on the sheet. */
 .brief__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: clamp(30px, 5vw, 90px);
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4rem;
   align-items: start;
 }
 
 .brief__statement {
   margin: 0;
-  color: var(--ink);
 }
 
 .brief__copy {
@@ -930,216 +855,6 @@ html.no-motion .scene--clear {
 }
 
 /* ============================================================
-   04 · THE MARK
-   ============================================================ */
-
-.anatomy__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr) minmax(0, 1.1fr);
-  gap: clamp(30px, 4vw, 64px);
-  align-items: start;
-}
-
-.anatomy__plate {
-  margin: 0;
-}
-
-.fig {
-  width: 100%;
-  height: auto;
-  overflow: visible;
-}
-
-.fig__x {
-  --xm-body: var(--ink);
-  --xm-counter: var(--ground);
-}
-
-.anatomy__cap {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--sp-3);
-  margin-top: var(--sp-3);
-  color: var(--ink-quiet);
-  border-top: 1px solid var(--ink-line);
-  padding-top: var(--sp-2);
-}
-
-.anatomy__copy {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-4);
-}
-
-.anatomy__statement {
-  margin: 0;
-  color: var(--ink);
-}
-
-.anatomy__copy .body {
-  color: var(--ink-dim);
-  max-width: 52ch;
-}
-
-.anatomy__specs {
-  display: grid;
-  gap: var(--sp-2);
-  margin-top: var(--sp-2);
-}
-
-.anatomy__specs li {
-  display: grid;
-  grid-template-columns: 14ch minmax(0, 1fr);
-  gap: var(--sp-3);
-  border-top: 1px solid var(--ink-line);
-  padding-top: var(--sp-2);
-  color: var(--ink-dim);
-}
-
-.anatomy__specs .label {
-  color: var(--ink-quiet);
-}
-
-/* ---- Fig. 02, the registration proof ----
-   Two copies of one drawing, the upper turned a half turn about the measured
-   centre and composited with mix-blend-mode: difference. Identical layers
-   subtract to 0,0,0, and zero is black in every theme and in every room, so
-   the plate cannot follow the room around the page. --proof-field and
-   --proof-ink are the void and its ink, held still, which is the ground the
-   mark was actually drawn against. */
-
-.reg {
-  display: grid;
-  gap: var(--sp-4);
-  margin: 0;
-}
-
-.reg__field {
-  position: relative;
-  aspect-ratio: 1;
-  background: var(--proof-field);
-  border: 1px solid var(--ink-line-strong);
-  isolation: isolate;
-  overflow: hidden;
-}
-
-.reg__stack {
-  position: absolute;
-  inset: 14%;
-}
-
-.reg__x {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  fill: var(--proof-ink);
-}
-
-.reg__x--turn {
-  mix-blend-mode: difference;
-  transform-origin: var(--x-origin-x) var(--x-origin-y);
-  transform: rotate(180deg);
-  transition: transform 0.9s var(--ease-inout);
-}
-
-.reg.is-broken .reg__x--turn {
-  transform: rotate(90deg);
-}
-
-/* Above the blend group, not inside it, so it survives the cancellation. */
-.reg__target {
-  position: absolute;
-  inset: 14%;
-  z-index: 1;
-  stroke: var(--brand-magenta);
-  stroke-width: 0.7;
-  opacity: 0.55;
-  pointer-events: none;
-  transition: opacity 0.3s var(--ease-out);
-}
-
-.reg.is-broken .reg__target {
-  opacity: 1;
-}
-
-.reg__foot {
-  display: grid;
-  gap: var(--sp-3);
-}
-
-.reg__probe {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--sp-3);
-  width: 100%;
-  text-align: left;
-  padding: var(--sp-2) 0;
-  border-bottom: 1px solid var(--ink-line);
-  color: var(--ink);
-  transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
-}
-
-.reg__probe:hover {
-  border-bottom-color: var(--ink-line-strong);
-}
-
-.reg__read {
-  color: var(--ink-quiet);
-  font-variant-numeric: tabular-nums;
-  transition: color var(--dur-fast) ease;
-}
-
-.reg.is-broken .reg__read {
-  color: var(--ink-accent);
-}
-
-.reg__note {
-  color: var(--ink-dim);
-  max-width: 42ch;
-}
-
-.anatomy__grid:has([data-spec='rot']:hover) .reg__target {
-  opacity: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .reg__x--turn,
-  .reg__target {
-    transition: none;
-  }
-}
-
-/* If the engine cannot blend, the plate would show two solid marks on top of
-   each other and claim to be a proof. Better to show one and say nothing. */
-@supports not (mix-blend-mode: difference) {
-  .reg__x--turn {
-    display: none;
-  }
-
-  .reg__probe {
-    display: none;
-  }
-}
-
-@media (max-width: 1100px) {
-  .anatomy__grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  }
-
-  .anatomy__copy {
-    grid-column: 1 / -1;
-  }
-}
-
-@media (max-width: 700px) {
-  .anatomy__grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ============================================================
    05 · THE ARCHIVE
 
    The two title lines are centred individually, so they form a ragged
@@ -1150,124 +865,204 @@ html.no-motion .scene--clear {
 .work__box {
   display: flex;
   flex-direction: column;
-  gap: clamp(40px, 5vw, 80px);
+  gap: 5rem;
 }
 
-.work__void {
-  display: grid;
-  gap: var(--sp-3);
-  border: 1px dashed var(--ink-line-strong);
-  padding: clamp(30px, 4vw, 56px);
-}
-
-.work__void-a,
-.work__void-c {
-  color: var(--ink-quiet);
-}
-
-.work__void-c {
-  justify-self: end;
-}
-
-.work__void-b {
-  color: var(--ink-dim);
-  max-width: 52ch;
-}
-
+/* One column, because the statement is on a plate that bleeds to both edges
+   and a second column beside it would put 15px copy on the ramp. */
 .work__grid {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--sp-5);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 2.9333rem;
 }
 
+/* Ink on the sheet, for the same reason the headline is. The full-bleed ramp
+   that stood behind these two lines is deleted; the aperture above them is
+   where its colour went. */
 .work__statement {
   margin: 0;
-  color: var(--ink);
-  text-align: center;
+  text-align: var(--align);
 }
 
 .work__line {
   display: block;
 }
 
+/* It was centred at roughly 90 characters across a band the rest of the page
+   reads left, sitting high in a block far taller than it needed, with the
+   second line ending short under a nearly full first. Four faults, one cause:
+   it was never given a measure.
+
+   62 characters, flush with everything else on the sheet, and set on the
+   baseline of the statement beside it so the two are one row rather than a
+   paragraph floating in the top of an empty box. */
 .work__note {
   color: var(--ink-dim);
-  text-align: center;
+  text-align: var(--align);
+  max-width: 62ch;
+  margin: 0;
 }
+
+
+
+/* ---- THE PORTAL ----
+
+   The one link on this page that has to behave like a destination. What stood
+   here was a bordered box with everything crammed into its left quarter, two
+   thirds of the band empty, an arrow floating at the far right with nothing
+   relating it to anything, and the mark set inline after the word ARCHIVE
+   where it read as a typo rather than as a device. One weight, one size, one
+   alignment, and no hierarchy between the domain, the headline and the list.
+
+   COMPOSITION A, KEPT. An index row on paper carrying the domain and the four
+   service names, then a full-bleed plate on the ramp carrying three objects
+   and nothing else: the display line, the mark at the scale of the line, and
+   the arrow attached to the end of the line rather than pinned to an edge.
+
+   COMPOSITION B, REJECTED. The band split down the middle, display line left,
+   the four service names set at the heading step down the right. It filled
+   the width, but four 44px names read as a second headline arguing with the
+   first, and it forced the service names onto the ramp where the 24px floor
+   is the only thing keeping them legal. The index row does that job at label
+   scale, on paper, where a list of four things belongs. */
 
 .portal {
-  display: block;
-  border: 1px solid var(--ink-line-strong);
-  padding: clamp(24px, 3vw, 44px);
-  transition: border-color var(--dur-fast) ease;
-}
-
-.portal:hover,
-.portal:focus-visible {
-  border-color: var(--ink);
-}
-
-.portal__inner {
   display: grid;
-  gap: var(--sp-5);
+  gap: var(--sp-4);
 }
 
-.portal__top {
+/* The index. Domain at one end, the four names at the other, under one rule,
+   at the scale a list of four things wants to be read at. */
+.portal__index {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  gap: var(--sp-3);
+  gap: var(--sp-4) var(--sp-5);
+  flex-wrap: wrap;
+  border-top: 1px solid var(--ink-line-strong);
+  padding-top: var(--sp-3);
   color: var(--ink-quiet);
 }
 
-.portal__arr {
-  width: 16px;
-  height: 16px;
-  transition: transform var(--dur-fast) var(--ease-out);
-}
-
-.portal:hover .portal__arr {
-  transform: translate(4px, -4px);
-}
-
-.portal__title {
-  display: block;
+.portal__domain {
   color: var(--ink);
-  text-align: var(--align);
+}
+
+.portal__services {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-5);
+}
+
+/* The plate. Full bleed to both gutters, on the ramp, and cut on the mark's
+   own angle where it leaves the sheet at the bottom right, which is the one
+   place a 40.82 degree edge belongs: between two rooms. */
+.portal__plate {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--sp-5);
+  flex-wrap: wrap;
+  overflow: hidden;
+  min-height: 33.3333rem;
+  margin-inline: calc(var(--gutter) * -1);
+  padding: 5rem var(--gutter);
+  transition: filter var(--dur-med) var(--ease-out);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--portal-rise)),
+    calc(100% - var(--portal-run)) 100%,
+    0 100%
+  );
+  --portal-rise: 4rem;
+  --portal-run: calc(var(--portal-rise) * var(--cut-k));
+}
+
+/* The mark's real job on this plate: it is the size of the headline, it
+   bleeds off the right edge, and it makes the one rotation this drawing can
+   make honestly. 22 of its 22 counter vertices land on themselves at a half
+   turn about 49.90 / 50.71, so the turn finishes on a drawing identical to
+   the one it started from. */
+.portal__mark {
+  position: absolute;
+  top: 50%;
+  right: -4rem;
+  width: 30rem;
+  aspect-ratio: 1;
+  translate: 0 -50%;
+  opacity: 0.22;
+  pointer-events: none;
+}
+
+.portal__mark svg {
+  width: 100%;
+  height: 100%;
+  fill: var(--ramp-ink);
+  transform-origin: var(--x-origin-x) var(--x-origin-y);
+  transition: transform 0.9s var(--ease-inout);
+}
+
+.portal:hover .portal__mark svg,
+.portal:focus-visible .portal__mark svg {
+  transform: rotate(180deg);
+}
+
+/* White, at the display step, which is the only thing that may be set on a
+   ramp: 3.75:1 at the magenta corner, over the 3:1 floor for large text. */
+.portal__title {
+  position: relative;
+  display: block;
+  color: var(--ramp-ink);
+  text-align: start;
+  max-width: 14ch;
 }
 
 .portal__line {
   display: block;
 }
 
-.portal__x {
-  display: inline-block;
-  width: 0.62em;
-  height: 0.62em;
-  margin-left: 0.2em;
-  vertical-align: baseline;
+/* The arrow belongs to the line now. It sits on the last line's own baseline
+   at cap height, so it reads as the end of the sentence rather than as a
+   glyph that wandered to the far edge of a box. */
+.portal__go {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  /* On the baseline of the last line rather than under it, so the arrow is
+     the end of the sentence. The nudge is the display step's own descender
+     allowance, which is what puts the two on one optical line. */
+  margin-bottom: 0.16em;
+  color: var(--ramp-ink);
 }
 
-.portal__x svg {
-  width: 100%;
-  height: 100%;
-  fill: currentColor;
-  transition: transform 0.6s var(--ease-inout);
+.portal__arr {
+  width: 3.4rem;
+  height: 3.4rem;
+  stroke: currentColor;
+  stroke-width: 1;
+  transition: transform var(--dur-med) var(--ease-out);
 }
 
-.portal:hover .portal__x svg,
-.portal:focus-visible .portal__x svg {
-  transform: rotate(180deg);
+.portal:hover .portal__arr,
+.portal:focus-visible .portal__arr {
+  transform: translate(10px, -10px);
 }
 
-.portal__bottom {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2) var(--sp-4);
-  color: var(--ink-quiet);
-  border-top: 1px solid var(--ink-line);
-  padding-top: var(--sp-3);
+.portal:hover .portal__plate {
+  filter: saturate(1.12) brightness(1.04);
+}
+
+@media (max-width: 700px) {
+  .portal__index {
+    flex-direction: column;
+  }
+
+  .portal__mark {
+    opacity: 0.16;
+    width: min(52vw, 18.6667rem);
+  }
 }
 
 /* ============================================================
@@ -1275,8 +1070,7 @@ html.no-motion .scene--clear {
    ============================================================ */
 
 .process__statement {
-  margin: 0 0 clamp(40px, 5vw, 80px);
-  color: var(--ink);
+  margin: 0 0 5rem;
 }
 
 .process__steps {
@@ -1323,10 +1117,6 @@ html.no-motion .scene--clear {
   .process__steps {
     grid-template-columns: 1fr;
   }
-
-  .brief__grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* ============================================================
@@ -1338,14 +1128,13 @@ html.no-motion .scene--clear {
 
 .qa__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
-  gap: clamp(30px, 5vw, 90px);
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4rem;
   align-items: start;
 }
 
 .qa__statement {
   margin: 0;
-  color: var(--ink);
 }
 
 .qa__list {
@@ -1370,24 +1159,32 @@ html.no-motion .scene--clear {
   max-width: 62ch;
 }
 
+/* One inline-link treatment for the whole site. The word keeps the room's ink
+   at 16.4:1 and the rule carries the ramp, so neither brand colour is ever
+   set on its own and no character is ever under the floor.
+
+   Drawn as a background rule rather than as text-decoration: an underline
+   skips ink around a descender, and the gap it opens under a g, a y or a p is
+   where the stray light fragment was coming from. */
 .qa__a a {
-  color: var(--ink-accent);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  color: var(--ink);
+  text-decoration: none;
+  background-image: var(--brand-ramp);
+  background-repeat: no-repeat;
+  background-size: 100% 2px;
+  background-position: left calc(100% - 1px);
+  padding-bottom: 1px;
+  transition: background-size var(--dur-fast) var(--ease-out);
 }
 
-.qa__a a:hover {
+.qa__a a:hover,
+.qa__a a:focus-visible {
   color: var(--ink);
+  background-size: 100% 6px;
 }
 
 .qa__more {
   margin-top: var(--sp-2);
-}
-
-@media (max-width: 900px) {
-  .qa__grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* ============================================================
