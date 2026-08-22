@@ -18,7 +18,7 @@
    imported last, so it wins without needing !important. */
 
 .show-loader .loader {
-  animation: xz-loader-bail 0.4s 5s forwards;
+  animation: xz-loader-bail var(--dur) 5s forwards;
 }
 
 @keyframes xz-loader-bail {
@@ -43,12 +43,21 @@
   z-index: 90;
   background: var(--ground);
   border-top: 1px solid var(--ink-line);
-  transform: translateY(101%);
-  transition: transform 0.5s var(--ease-inout);
+  /* THE LAW. It rose straight out of the bottom edge, which is a direction
+     the mark has no account of. It now arrives up the arm by one rung and
+     takes its ink over the same duration on the same curve. Opacity rather
+     than distance is what keeps it invisible until it is wanted, so the
+     travel can stay on the ladder instead of having to clear the frame. */
+  opacity: 0;
+  pointer-events: none;
+  translate: calc(var(--d3x) * -1) calc(var(--d3y) * -1);
+  transition: opacity var(--dur) var(--curve), translate var(--dur) var(--curve);
 }
 
 .consent--in {
-  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+  translate: 0 0;
 }
 
 .consent__inner {
@@ -78,10 +87,11 @@
   background-repeat: no-repeat;
   background-size: 100% 1px;
   background-position: left calc(100% - 1px);
-  transition: background-size var(--dur-fast) var(--ease-out), color var(--dur-fast) ease;
+  transition: color var(--dur-half) var(--curve);
 }
 
-.consent__body a:hover {
+.consent__body a:hover,
+.consent__body a:focus-visible {
   color: var(--ink-accent);
   background-image: linear-gradient(var(--ink-accent), var(--ink-accent));
 }
@@ -128,8 +138,13 @@
 .skip-link {
   position: absolute;
   top: 0;
-  left: 50%;
-  transform: translate(-50%, -120%);
+  left: 0;
+  right: 0;
+  width: max-content;
+  /* Centred by margin rather than by a translate. The translate property has
+     to carry the law's displacement and nothing else, or a reader checking an
+     animation against the law would find a -50% in it that means layout. */
+  margin-inline: auto;
   z-index: 200;
   /* The void ground with the void ink, both taken from the room this element
      declares for itself further down the sheet. It used to be stated the
@@ -144,11 +159,19 @@
   font-weight: 500;
   padding: 10px var(--sp-4);
   border-radius: 0 0 var(--radius-ui) var(--radius-ui);
-  transition: transform var(--dur-fast) var(--ease-out);
+  /* Arrives DOWN the arm, because down the arm is where it is going: out of
+     the top edge and into the frame. One rung, one duration, one curve. */
+  opacity: 0;
+  pointer-events: none;
+  translate: var(--d3x) var(--d3y);
+  transition: opacity var(--dur-half) var(--curve),
+    translate var(--dur-half) var(--curve);
 }
 
 .skip-link:focus-visible {
-  transform: translate(-50%, 0);
+  opacity: 1;
+  pointer-events: auto;
+  translate: 0 0;
   outline-offset: -4px;
   outline-color: var(--ink);
 }
@@ -190,16 +213,14 @@
 }
 
 .crumbs a {
-  background-image: linear-gradient(var(--ink-dim), var(--ink-dim));
-  background-repeat: no-repeat;
-  background-size: 0% 1px;
-  background-position: left calc(100% - 1px);
-  transition: background-size var(--dur-fast) var(--ease-out), color var(--dur-fast) ease;
+  position: relative;
+  display: inline-block;
+  transition: color var(--dur-half) var(--curve);
 }
 
-.crumbs a:hover {
+.crumbs a:hover,
+.crumbs a:focus-visible {
   color: var(--ink);
-  background-size: 100% 1px;
 }
 
 .crumbs [aria-current='page'] {
@@ -467,7 +488,7 @@
   min-height: 44px;
   font-size: var(--text-body-sm);
   color: var(--ink-dim);
-  transition: color var(--dur-fast) ease;
+  transition: color var(--dur-half) var(--curve);
 }
 
 .doc__index a::before {
@@ -486,8 +507,8 @@
 .doc__prose {
   /* Single-column measure, matched to the grid track above so the reading
      width does not change when the layout collapses. Set in rem, not ch:
-     Satoshi's zero is wide, so 68ch renders about 79 characters here, well
-     past a comfortable line. */
+     the body face's zero is wider than its mean lowercase advance, so 68ch
+     renders well past a comfortable line here. */
   max-width: 37rem;
 }
 
@@ -565,13 +586,18 @@
   background-size: 100% 2px;
   background-position: left calc(100% - 1px);
   padding-bottom: 1px;
-  transition: background-size var(--dur-fast) var(--ease-out);
+  /* THE HOVER IS INK. It used to thicken the rule from 2px to 6px, which is a
+     growth: it has no direction, so the mark cannot account for it and the
+     law has nothing to say about it. An inline link cannot displace either,
+     because moving a word inside a paragraph re-flows the line under the
+     reader. So what is left is ink, which is lawful, is the honest affordance
+     anyway, and takes the short duration on the one curve. */
+  transition: color var(--dur-half) var(--curve);
 }
 
 :is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note) a:not(.pill):not(.ghost):not(.portal):not([class*="__link"]):not([class*="__more"]):hover,
 :is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note) a:not(.pill):not(.ghost):not(.portal):not([class*="__link"]):not([class*="__more"]):focus-visible {
-  color: var(--ink);
-  background-size: 100% 6px;
+  color: var(--ink-accent);
 }
 
 /* Running lists in the prose get the dash-and-number treatment. Lists that
@@ -760,7 +786,7 @@
   min-height: 44px;
   cursor: pointer;
   list-style: none;
-  transition: color var(--dur-fast) ease;
+  transition: color var(--dur-half) var(--curve);
 }
 
 .faq__q::-webkit-details-marker { display: none; }
@@ -794,31 +820,32 @@
   inset: 50% 0 auto 0;
   height: 1px;
   background: var(--ink-dim);
-  transition: transform 180ms var(--ease-out), background-color var(--dur-fast) ease;
+  transition: translate var(--dur-half) var(--curve),
+    background-color var(--dur-half) var(--curve);
 }
 
 /* The marker states open and closed by SHAPE: a plus closes into a minus.
-   It used to do it by turning one stroke through 90 degrees, which is the
-   single rotation this identity has no symmetry for. So the vertical stroke
-   is now drawn vertical, by geometry, and RETRACTS.
+   It turned one stroke through 90 degrees once, which is the single rotation
+   this identity has no symmetry for; it then RETRACTED on a scaleY, which is
+   a growth and has no direction the mark can account for either.
 
-   Which is also the better reading. The stroke is not spinning away, it is
-   withdrawing to make room for the answer that is about to claim it, which
-   is the same sentence as everything else on this site. */
-/* Drawn vertical, by geometry. It was inheriting the horizontal rule above and
-   only setting a scaleY on it, so both strokes lay on the same 1px line: the
-   closed state rendered a minus, the open state rendered the same minus, and
-   the marker could not state anything at all. Caught by looking at a rendered
-   FAQ row rather than at the rule. */
+   It now LEAVES, up the arm, by two rungs, which is far enough to clear a
+   14px box. That is the same sentence as everything else on this site: the
+   stroke is not shrinking away, it is withdrawing to make room for the answer
+   that is about to claim the space. The box clips it so it goes rather than
+   wanders across the row. */
+.faq__marker {
+  overflow: hidden;
+}
+
 .faq__marker::after {
   inset: 0 auto 0 calc(50% - 0.5px);
   width: 1px;
   height: auto;
-  transform: scaleY(1);
-  transform-origin: 50% 50%;
+  translate: 0 0;
 }
 
-.faq__item[open] .faq__marker::after { transform: scaleY(0); }
+.faq__item[open] .faq__marker::after { translate: var(--d2x) var(--d2y); }
 
 @media (hover: hover) {
   .faq__q:hover .faq__q-text { color: var(--ink); }
@@ -920,7 +947,7 @@
   padding-block: var(--sp-5);
   margin-inline: calc(-1 * var(--gutter));
   padding-inline: var(--gutter);
-  transition: background-color var(--dur-fast) ease;
+  transition: background-color var(--dur-half) var(--curve);
 }
 
 .related__link:hover {
@@ -931,11 +958,12 @@
   font-size: var(--text-subheading);
   font-weight: 400;
   line-height: var(--leading-solid);
-  transition: transform 0.45s var(--ease-out);
+  transition: translate var(--dur-half) var(--curve);
 }
 
-.related__link:hover .related__name {
-  transform: translateX(12px);
+.related__link:hover .related__name,
+.related__link:focus-visible .related__name {
+  translate: var(--d2x) var(--d2y);
 }
 
 .related__desc {
@@ -950,13 +978,15 @@
   justify-self: end;
   align-self: center;
   opacity: 0;
-  transform: translateX(-10px);
-  transition: opacity var(--dur-fast) ease, transform 0.45s var(--ease-out);
+  translate: calc(var(--d1x) * -1) calc(var(--d1y) * -1);
+  transition: opacity var(--dur-half) var(--curve),
+    translate var(--dur-half) var(--curve);
 }
 
-.related__link:hover .related__arr {
+.related__link:hover .related__arr,
+.related__link:focus-visible .related__arr {
   opacity: 1;
-  transform: translateX(0);
+  translate: 0 0;
 }
 
 /* ---------------- Journal ---------------- */
@@ -985,7 +1015,7 @@
   padding-block: var(--sp-5);
   margin-inline: calc(-1 * var(--gutter));
   padding-inline: var(--gutter);
-  transition: background-color var(--dur-fast) ease;
+  transition: background-color var(--dur-half) var(--curve);
 }
 
 .entries a:hover {
@@ -1001,11 +1031,12 @@
   font-weight: 400;
   line-height: var(--leading-solid);
   text-wrap: balance;
-  transition: transform 0.45s var(--ease-out);
+  transition: translate var(--dur-half) var(--curve);
 }
 
-.entries a:hover .entries__name {
-  transform: translateX(10px);
+.entries a:hover .entries__name,
+.entries a:focus-visible .entries__name {
+  translate: var(--d2x) var(--d2y);
 }
 
 .entries__desc {
@@ -1021,13 +1052,15 @@
   justify-self: end;
   align-self: center;
   opacity: 0;
-  transform: translateX(-10px);
-  transition: opacity var(--dur-fast) ease, transform 0.45s var(--ease-out);
+  translate: calc(var(--d1x) * -1) calc(var(--d1y) * -1);
+  transition: opacity var(--dur-half) var(--curve),
+    translate var(--dur-half) var(--curve);
 }
 
-.entries a:hover .entries__arr {
+.entries a:hover .entries__arr,
+.entries a:focus-visible .entries__arr {
   opacity: 1;
-  transform: translateX(0);
+  translate: 0 0;
 }
 
 /* ---------------- Closing call to action ---------------- */
@@ -1121,32 +1154,21 @@
   min-height: 44px;
   font-size: var(--text-body-sm);
   color: var(--ink-dim);
-  transition: color var(--dur-fast) ease;
+  transition: color var(--dur-half) var(--curve);
 }
 
-/* The underline was drawn in --canvas, which was the page colour when this
-   was written for the light world. On the dark ground that is a near-black
-   line on a near-black field, so the hover state existed but could not be
-   seen. It is drawn in the text colour now. */
-.footer__col a::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
+/* The rule sits on the type's own baseline rather than at the foot of the
+   44px target, and it ARRIVES: the pseudo-element, its rung and its curve are
+   declared once in components.css beside the other three standalone links.
+   It used to draw itself from the left on a scaleX, which is a growth with no
+   direction in it. */
+.footer__col a::before {
   bottom: calc(50% - 0.85em);
-  height: 1px;
-  background: var(--ink);
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform var(--dur-fast) var(--ease-out);
 }
 
-.footer__col a:hover {
+.footer__col a:hover,
+.footer__col a:focus-visible {
   color: var(--ink);
-}
-
-.footer__col a:hover::after {
-  transform: scaleX(1);
 }
 
 /* ---- Outbound channels ----
@@ -1175,9 +1197,9 @@
   border-bottom: var(--hairline);
 }
 
-/* The sliding underline belongs to the two sitemap columns. A channel row
-   is bounded by its own rules, so it lights up instead. */
-.footer__col--channels a::after {
+/* The arriving rule belongs to the two sitemap columns. A channel row is
+   bounded by its own rules, so it lights up instead. */
+.footer__col--channels a::before {
   content: none;
 }
 
@@ -1202,13 +1224,14 @@
   height: 12px;
   color: var(--ink-quiet);
   transition:
-    transform var(--dur-fast) var(--ease-out),
-    color var(--dur-fast) ease;
+    translate var(--dur-half) var(--curve),
+    color var(--dur-half) var(--curve);
 }
 
-.footer__col--channels a:hover .footer__channel-arr {
+.footer__col--channels a:hover .footer__channel-arr,
+.footer__col--channels a:focus-visible .footer__channel-arr {
   color: var(--ink);
-  transform: translate(2px, -2px);
+  translate: var(--d0x) var(--d0y);
 }
 
 .footer__col--channels a:hover .footer__channel-note {
@@ -1220,14 +1243,14 @@
    what actually carries the feedback and it survives. */
 @media (prefers-reduced-motion: reduce) {
   .footer__col a,
-  .footer__col a::after,
+  .footer__col a::before,
   .footer__channel-arr {
     transition: none;
   }
 
   .footer__col a:hover .footer__channel-arr,
   .footer__col--channels a:hover .footer__channel-arr {
-    transform: none;
+    translate: none;
   }
 }
 
@@ -1532,11 +1555,13 @@
 
 .doc,
 .lost {
-  /* Every displacement on an interior page is a fraction of one clearance,
-     so there is exactly one number to tune and it is derived from the mark.
-     0.25W, 6.5px at the nav mark's 26. Small on purpose: this is a page
-     giving way, not a page performing. */
-  --clear-nudge: calc(var(--clearspace) / 16);
+  /* The clearance displacement used to be a fraction of one clearance,
+     0.25W, on its own derivation. It is a rung of the law's ladder now,
+     because two derivations for the same distance is exactly the pile of
+     unrelated rules this rebuild exists to end. The shortest rung, 5.4px on
+     the 1500px sheet, and it travels the arm like everything else: rows above
+     the claimed one go UP the arm, rows below go DOWN it. Small on purpose:
+     this is a page giving way, not a page performing. */
 
   /* THE PLANE CUT, at band scale.
 
@@ -1565,17 +1590,17 @@
 
 @media (hover: hover) {
   .doc__index li {
-    transition: transform var(--dur-med) var(--ease-out);
+    transition: translate var(--dur-half) var(--curve);
   }
 
   .doc__index li:has(~ li:hover),
   .doc__index li:has(~ li:focus-within) {
-    transform: translateY(calc(var(--clear-nudge) * -1));
+    translate: var(--d0x) var(--d0y);
   }
 
   .doc__index li:hover ~ li,
   .doc__index li:focus-within ~ li {
-    transform: translateY(var(--clear-nudge));
+    translate: calc(var(--d0x) * -1) calc(var(--d0y) * -1);
   }
 }
 
@@ -1583,10 +1608,10 @@
    pointer exists. :focus-within on the li, because the focusable thing is
    the anchor inside it. */
 .doc__index li:has(~ li:focus-within) {
-  transform: translateY(calc(var(--clear-nudge) * -1));
+  translate: var(--d0x) var(--d0y);
 }
 .doc__index li:focus-within ~ li {
-  transform: translateY(var(--clear-nudge));
+  translate: calc(var(--d0x) * -1) calc(var(--d0y) * -1);
 }
 
 /* ---------------- The list rows part ----------------
@@ -1598,17 +1623,21 @@
 @media (hover: hover) {
   .related__row,
   .entries li {
-    transition: transform var(--dur-med) var(--ease-out);
+    transition: translate var(--dur-half) var(--curve);
   }
 
   .related__row:has(~ .related__row:hover),
-  .entries li:has(~ li:hover) {
-    transform: translateY(calc(var(--clear-nudge) * -1));
+  .related__row:has(~ .related__row:focus-within),
+  .entries li:has(~ li:hover),
+  .entries li:has(~ li:focus-within) {
+    translate: var(--d0x) var(--d0y);
   }
 
   .related__row:hover ~ .related__row,
-  .entries li:hover ~ li {
-    transform: translateY(var(--clear-nudge));
+  .related__row:focus-within ~ .related__row,
+  .entries li:hover ~ li,
+  .entries li:focus-within ~ li {
+    translate: calc(var(--d0x) * -1) calc(var(--d0y) * -1);
   }
 }
 
@@ -2157,13 +2186,13 @@
 
 html.js:not(.no-motion) [data-enter] {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+  translate: calc(var(--d2x) * -1) calc(var(--d2y) * -1);
+  transition: opacity var(--dur) var(--curve), translate var(--dur) var(--curve);
 }
 
 html.js:not(.no-motion) [data-enter].is-in {
   opacity: 1;
-  transform: none;
+  translate: 0 0;
 }
 
 /* Scoped to the split host, so the only .scrub-word elements that ever carry
@@ -2171,13 +2200,13 @@ html.js:not(.no-motion) [data-enter].is-in {
    frame by frame against the wheel and a transition on those would put the
    lit edge behind the scroll position. */
 html.js:not(.no-motion) [data-words] .scrub-word {
-  transition: opacity 0.55s var(--ease-out);
+  transition: opacity var(--dur) var(--curve);
 }
 
 @media (prefers-reduced-motion: reduce) {
   html.js [data-enter] {
     opacity: 1;
-    transform: none;
+    translate: none;
     transition: none;
   }
 

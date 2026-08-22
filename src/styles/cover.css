@@ -302,6 +302,49 @@
   justify-content: flex-end;
 }
 
+/* ============================================================
+   THE HERO HEAD, ON A PHONE
+
+   Measured, not judged. The eyebrow carried white-space: nowrap and the state
+   reserved 21ch beside it, which at 390 put the eyebrow's box at x=402 and the
+   state's at x=618 on a 390px screen: the agency name was sliced mid-word and
+   the one sentence on the site that says the studio is taking work sat
+   entirely off the right edge, with a rotator animating it where nobody could
+   see it. document.body.scrollWidth read 535 against a 390px viewport.
+
+   Both constraints exist to keep the two on ONE ROW, and one row is what does
+   not fit. Below 700px they stack: the eyebrow wraps to two lines and the
+   state takes its own row under it, both flush to the gutter. 700 is where
+   they stop fitting side by side, measured: 362 for the eyebrow, 30 of gap and
+   176 for the widest state is 568, which needs 648 of viewport with the
+   gutter on it.
+   ============================================================ */
+@media (max-width: 700px) {
+  .hero__head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-2);
+  }
+
+  .hero__eyebrow {
+    white-space: normal;
+  }
+
+  /* The row still reserves its own height, because the two labels are stacked
+     in one box and cross-resolve there. It just stops reserving a width the
+     screen does not have, and it reads from the gutter like everything else. */
+  .hero__state {
+    min-width: 0;
+    text-align: start;
+  }
+
+  .hero__state-item {
+    right: auto;
+    left: 0;
+    white-space: normal;
+  }
+}
+
 @media (max-width: 900px) {
   .hero__cluster {
     grid-template-columns: minmax(0, 1fr);
@@ -379,17 +422,23 @@
 }
 
 /* ---- The blade ----
-   The room change on this site is performed by ONE plane sweeping
-   HORIZONTALLY, with its leading edge cut on the mark's own diagonal. The
-   reference converges two circles vertically; a circle is not in this brand's
-   drawing and a vertical close is the move everybody makes.
+   THE ROOM CHANGE, AND THE LAW'S SECOND CONSEQUENCE AT ITS LARGEST SCALE.
+   One plane spanning the whole stage, so it cannot travel the arm without
+   opening a seam behind it; it carries the arm as its leading EDGE instead
+   and crosses on one axis. The reference converges two circles vertically; a
+   circle is not in this brand's drawing and a vertical close is the move
+   everybody makes.
 
-   The cut leans 69% of the width across 100% of the height, which at a 1500
-   by 900 stage puts the edge within a degree of 40.82, the angle the mark's
-   diagonals actually sit at (45 less --x-tau). The plane is driven by one
-   unitless custom property so the whole shape is a single number the
-   timeline writes, and at --wipe: 1 the polygon covers the stage exactly
-   with no seam at any corner.
+   THE RUN IS DERIVED, NOT MEASURED. It used to lean a flat 69% of the width
+   across 100% of the height, which is 40.82 degrees on a 1500 by 900 stage
+   and something else on every other one: at 1500 by 1200 the same polygon
+   draws 60.1 degrees. The run is now the rise through --cut-k, and the rise
+   is the stage's own 100vh, so the edge is the mark's angle at every viewport
+   and every aspect ratio.
+
+   The plane is driven by one registered number, the same --wipe the pill's
+   fill sweeps on, and at --wipe: 1 the polygon covers the stage exactly with
+   no seam at any corner.
 
    Painted first in the stage, so everything in the container is over it in
    paint order and no element needs a z-index of its own. */
@@ -397,6 +446,7 @@
   position: absolute;
   inset: 0;
   --wipe: 0;
+  --sweep-run: calc(100vh * var(--cut-k));
   pointer-events: none;
   will-change: clip-path;
 }
@@ -409,10 +459,10 @@
   background-color: var(--brand-violet);
   background-image: var(--brand-ramp-deep);
   clip-path: polygon(
-    calc(100% - var(--wipe) * 169%) 0,
     100% 0,
-    100% 100%,
-    calc(169% - var(--wipe) * 169%) 100%
+    calc(100% - var(--wipe) * (100% + var(--sweep-run))) 0,
+    calc(100% - var(--wipe) * (100% + var(--sweep-run)) + var(--sweep-run)) 100%,
+    100% 100%
   );
 }
 
@@ -429,15 +479,21 @@
 }
 
 .turn__mark {
-  position: absolute;
-  top: 50%;
-  left: 50%;
   /* Sized off the SMALLER of the two viewport axes, not the height alone.
      At 54vh a 844px tall phone gave a 456px mark on a 390px wide screen: it
      ran off both edges and read as wallpaper rather than as the mark. */
-  width: max(190px, min(48vh, 56vw, 520px));
-  aspect-ratio: 1;
-  translate: -50% -50%;
+  --turn-size: max(190px, min(48vh, 56vw, 520px));
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--turn-size);
+  height: var(--turn-size);
+  /* Centred with margins rather than a translate, the way the travelling
+     mark is. The translate and rotate properties on this site carry the law
+     and nothing else, so a reader checking an animation never finds a -50%
+     in one that means layout. */
+  margin-left: calc(var(--turn-size) / -2);
+  margin-top: calc(var(--turn-size) / -2);
   opacity: 0;
   pointer-events: none;
   will-change: transform, opacity;
@@ -515,14 +571,27 @@
    may be set on a gradient, so the block keeps its own ground instead: the
    sheet, square cornered, at the reading measure. Every ratio inside it is
    the paper room's, which is 16.4:1 and 8.6:1, and no character of the
-   paragraph is ever on colour. */
+   paragraph is ever on colour.
+
+   THE SHEET SWEEPS, THE COPY DOES NOT. The whole block used to arrive on one
+   opacity, which meant its paper ground was translucent for the length of the
+   arrival and 15px body copy stood on the ramp showing through it: at the
+   middle of the window the paragraph measured well under the floor. The
+   ground is now a plane of its own and it arrives the way every plane on this
+   site arrives, swept with its leading edge cut on the arm, and the copy
+   takes its ink only once the sheet is whole. So there is no frame in which
+   anything under 24px is standing on a gradient.
+
+   The run is written by motion/cover.ts, because the angle is the rise
+   through --cut-k and only script knows what this block's rise resolves to. */
 .scene--studio .payoff {
+  position: relative;
+  isolation: isolate;
   --ink: var(--room-paper-ink);
   --ink-dim: var(--room-paper-dim);
   --ink-quiet: var(--room-paper-quiet);
   --ink-accent: var(--room-paper-ink);
   --ink-line: color-mix(in srgb, var(--room-paper-ink) 18%, transparent);
-  background: var(--room-paper-ground);
   color: var(--room-paper-ink);
   padding: 3.6rem;
   /* Wide enough that the 57px statement keeps to three lines. At the reading
@@ -535,6 +604,23 @@
      against a stretched column and leaving the block inset by 110px while
      the section label beside it sat at 20. */
   justify-self: start;
+}
+
+.scene--studio .payoff::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--room-paper-ground);
+  /* --sweep-run is written on the host by motion/cover.ts and inherited
+     here. The fallback is only what the first frame draws with, before the
+     measurement lands. */
+  clip-path: polygon(
+    0 0,
+    calc(var(--wipe) * (100% + var(--sweep-run, 24rem))) 0,
+    calc(var(--wipe) * (100% + var(--sweep-run, 24rem)) - var(--sweep-run, 24rem)) 100%,
+    0 100%
+  );
 }
 
 /* ---- Static composition ----
@@ -601,12 +687,12 @@ html.no-motion .turn__line {
 html:not(.js) .turn__mark,
 html.no-motion .turn__mark {
   position: static;
-  translate: none;
+  rotate: none;
   transform: none;
   opacity: 1;
-  width: 20rem;
+  --turn-size: 20rem;
+  margin-block: 0 var(--sp-5);
   margin-inline: auto;
-  margin-bottom: var(--sp-5);
 }
 
 html:not(.js) .blade,
@@ -633,6 +719,11 @@ html.no-motion .turn__mark-svg {
 html:not(.js) .scene--studio .payoff,
 html.no-motion .scene--studio .payoff {
   padding: 0;
+}
+
+html:not(.js) .scene--studio .payoff::before,
+html.no-motion .scene--studio .payoff::before {
+  content: none;
 }
 
 html:not(.js) .scene__eyebrow,
@@ -682,12 +773,12 @@ html.no-motion .scene__eyebrow {
 
   .turn__mark {
     position: static;
-    translate: none;
+    rotate: none;
     transform: none;
     opacity: 1;
-    width: 20rem;
+    --turn-size: 20rem;
+    margin-block: 0 var(--sp-5);
     margin-inline: auto;
-    margin-bottom: var(--sp-5);
   }
 
   .blade {
@@ -705,6 +796,10 @@ html.no-motion .scene__eyebrow {
 
   .scene--studio .payoff {
     padding: 0;
+  }
+
+  .scene--studio .payoff::before {
+    content: none;
   }
 
   .scene__eyebrow {
@@ -757,7 +852,7 @@ html.no-motion .scene__eyebrow {
   gap: var(--sp-4);
   padding-block: var(--sp-3);
   color: var(--ink-dim);
-  transition: color var(--dur-fast) ease;
+  transition: color var(--dur-half) var(--curve);
 }
 
 .caps__link:hover,
@@ -782,10 +877,11 @@ html.no-motion .scene__eyebrow {
 
 .caps__desc {
   color: var(--ink-dim);
-  transition: color var(--dur-fast) ease;
+  transition: color var(--dur-half) var(--curve);
 }
 
-.caps__link:hover .caps__desc {
+.caps__link:hover .caps__desc,
+.caps__link:focus-visible .caps__desc {
   color: var(--ink);
 }
 
@@ -794,11 +890,12 @@ html.no-motion .scene__eyebrow {
   height: 18px;
   justify-self: end;
   stroke: currentColor;
-  transition: transform var(--dur-fast) var(--ease-out);
+  transition: translate var(--dur-half) var(--curve);
 }
 
-.caps__link:hover .caps__arr {
-  transform: translateX(6px);
+.caps__link:hover .caps__arr,
+.caps__link:focus-visible .caps__arr {
+  translate: var(--d1x) var(--d1y);
 }
 
 @media (max-width: 1024px) {
@@ -974,7 +1071,6 @@ html.no-motion .scene__eyebrow {
   min-height: 33.3333rem;
   margin-inline: calc(var(--gutter) * -1);
   padding: 5rem var(--gutter);
-  transition: filter var(--dur-med) var(--ease-out);
   clip-path: polygon(
     0 0,
     100% 0,
@@ -992,12 +1088,13 @@ html.no-motion .scene__eyebrow {
    turn about 49.90 / 50.71, so the turn finishes on a drawing identical to
    the one it started from. */
 .portal__mark {
+  --portal-mark: 30rem;
   position: absolute;
   top: 50%;
   right: -4rem;
-  width: 30rem;
-  aspect-ratio: 1;
-  translate: 0 -50%;
+  width: var(--portal-mark);
+  height: var(--portal-mark);
+  margin-top: calc(var(--portal-mark) / -2);
   opacity: 0.22;
   pointer-events: none;
 }
@@ -1006,13 +1103,13 @@ html.no-motion .scene__eyebrow {
   width: 100%;
   height: 100%;
   fill: var(--ramp-ink);
-  transform-origin: var(--x-origin-x) var(--x-origin-y);
-  transition: transform 0.9s var(--ease-inout);
+  transform-origin: var(--turn-origin);
+  transition: rotate var(--dur-double) var(--curve);
 }
 
 .portal:hover .portal__mark svg,
 .portal:focus-visible .portal__mark svg {
-  transform: rotate(180deg);
+  rotate: var(--half-turn);
 }
 
 /* White, at the display step, which is the only thing that may be set on a
@@ -1048,17 +1145,21 @@ html.no-motion .scene__eyebrow {
   height: 3.4rem;
   stroke: currentColor;
   stroke-width: 1;
-  transition: transform var(--dur-med) var(--ease-out);
+  transition: translate var(--dur-double) var(--curve);
 }
 
+/* The arrow leaves up the arm on the same duration the mark turns on, so the
+   two halves of this hover are one event rather than two. */
 .portal:hover .portal__arr,
 .portal:focus-visible .portal__arr {
-  transform: translate(10px, -10px);
+  translate: var(--d2x) var(--d2y);
 }
 
-.portal:hover .portal__plate {
-  filter: saturate(1.12) brightness(1.04);
-}
+/* A filter: saturate(1.12) brightness(1.04) sat on the plate here. It is not
+   a displacement, not a half turn and not the room's ink: it is a filter over
+   the brand ramp, which quietly puts a fourth colour on a surface the system
+   declares once. Deleted rather than exempted. The turn and the arrow are the
+   hover. */
 
 @media (max-width: 700px) {
   .portal__index {
@@ -1066,8 +1167,8 @@ html.no-motion .scene__eyebrow {
   }
 
   .portal__mark {
+    --portal-mark: min(52vw, 18.6667rem);
     opacity: 0.16;
-    width: min(52vw, 18.6667rem);
   }
 }
 
@@ -1180,13 +1281,15 @@ html.no-motion .scene__eyebrow {
   background-size: 100% 2px;
   background-position: left calc(100% - 1px);
   padding-bottom: 1px;
-  transition: background-size var(--dur-fast) var(--ease-out);
+  /* Ink, not a thickening. Same reasoning as the interior documents': a
+     growth has no direction, and an inline link cannot displace without
+     reflowing the line under the reader. */
+  transition: color var(--dur-half) var(--curve);
 }
 
 .qa__a a:hover,
 .qa__a a:focus-visible {
-  color: var(--ink);
-  background-size: 100% 6px;
+  color: var(--ink-accent);
 }
 
 .qa__more {
