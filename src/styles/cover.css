@@ -458,14 +458,20 @@
    path. It is centred, which is one of the few things on this page that is,
    and it sits over the mark.
 
-   White, because the ramp is behind it for the whole scrubbed scene. It is
-   display type, which is the only thing a ramp may carry: 3.75:1 at the
-   magenta corner against the 3:1 floor. */
+   INK, not white. This was white, on the stated reasoning that "the ramp is
+   behind it for the whole scrubbed scene", and that reasoning was wrong. Read
+   the scene: the statement resolves from 0 to 0.18 and leaves by 0.28, and
+   the blade does not arrive until 0.28. So the ramp is behind it for exactly
+   none of the time it is on screen. It was white type on paper for its whole
+   visible life, which is to say it was invisible until it left.
+
+   The payoff below is the line that genuinely does stand on the ramp, and
+   that one stays white. */
 .turn__line {
   position: relative;
   margin: 0;
   text-align: center;
-  color: var(--ramp-ink);
+  color: var(--ink);
   max-width: var(--measure-display);
   will-change: transform, opacity;
 }
