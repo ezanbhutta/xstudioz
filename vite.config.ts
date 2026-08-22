@@ -58,7 +58,7 @@ function graphFor(page: PageDef): object {
     email: SITE.email,
     description: SITE.blurb,
     foundingDate: SITE.founded,
-    slogan: 'A logo is a mark. A brand is a promise. We design both.',
+    slogan: 'We draw the mark and every rule that protects it.',
     logo: {
       '@type': 'ImageObject',
       '@id': `${SITE.origin}/#logo`,
@@ -260,8 +260,8 @@ function headFor(page: PageDef): string {
     '<link rel="manifest" href="/site.webmanifest" />',
 
     /* Self-hosted type — no third-party origins, so nothing to preconnect to */
-    '<link rel="preload" href="/fonts/Outfit-600.woff2" as="font" type="font/woff2" crossorigin />',
-    '<link rel="preload" href="/fonts/Manrope-400.woff2" as="font" type="font/woff2" crossorigin />',
+    '<link rel="preload" href="/fonts/FamiljenGrotesk-500.woff2" as="font" type="font/woff2" crossorigin />',
+    '<link rel="preload" href="/fonts/Inter-400.woff2" as="font" type="font/woff2" crossorigin />',
     '<link rel="preload" href="/fonts/Satoshi-500.woff2" as="font" type="font/woff2" crossorigin />',
 
     /* Entity graph */

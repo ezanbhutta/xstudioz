@@ -8,38 +8,53 @@
    hero composes on its own in the first frame, with or without the bundle,
    so there was nothing left for it to hide. */
 
-/* ---------------- Nav ---------------- */
+/* ---------------- Nav ----------------
+
+   THE LAW, ON THE HEADER. The bar leaves up the arm rather than straight up:
+   one nav height of rise, and the run that costs at 40.82 degrees, which is
+   --nav-h through --cut-k. It is the only element on the site whose travel is
+   measured off its own box rather than off a rung of the ladder, and it has
+   to be, because a header that stops half out of frame is a header that is
+   still covering the first line of the page.
+
+   THE BLEED. Travelling right opens a gap of exactly one run on the left, so
+   the bar's paint is carried on a layer bled by that much and the diagonal
+   never shows the page through itself. Same reasoning as the blade's 100vh of
+   overshoot, one order of magnitude down. */
 
 .nav {
+  --nav-run: calc(var(--nav-h) * var(--cut-k));
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 50;
-  transition: transform 0.55s var(--ease-inout), background-color 0.35s ease,
-    visibility 0s 0s;
+  transition: translate var(--dur) var(--curve), visibility 0s 0s;
 }
 
-.nav--scrolled {
-  background: var(--ground);
-}
-
-.nav--scrolled::after {
+/* The paint, on its own bled layer. Colour is a state rather than a movement,
+   so it changes on the short rung while the bar travels on the base one. */
+.nav::before {
   content: '';
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background: var(--ink-line);
+  z-index: -1;
+  inset: 0 0 0 calc(var(--nav-run) * -1);
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background-color var(--dur-half) var(--curve),
+    border-color var(--dur-half) var(--curve);
+}
+
+.nav--scrolled::before {
+  background: var(--ground);
+  border-bottom-color: var(--ink-line);
 }
 
 /* visibility drops with a delay so off-screen links leave the tab order */
 .nav--hidden {
-  transform: translateY(-101%);
+  translate: var(--nav-run) calc(var(--nav-h) * -1);
   visibility: hidden;
-  transition: transform 0.55s var(--ease-inout), background-color 0.35s ease,
-    visibility 0s 0.55s;
+  transition: translate var(--dur) var(--curve), visibility 0s var(--dur);
 }
 
 .nav__row {
@@ -94,7 +109,7 @@
   width: 26px;
   height: 26px;
   fill: var(--ink);
-  transition: fill var(--dur-fast) ease;
+  transition: fill var(--dur-half) var(--curve);
 }
 
 .nav__brand:hover .nav__mark {
@@ -118,24 +133,60 @@
   font-size: var(--text-body-sm);
   font-weight: 400;
   white-space: nowrap;
-  background-image: linear-gradient(var(--ink), var(--ink));
-  background-repeat: no-repeat;
-  background-size: 0% 1px;
-  background-position: left calc(100% - 1px);
-  transition: background-size var(--dur-fast) var(--ease-out);
   padding-block: 2px;
 }
 
-.nav__link:hover {
-  background-size: 100% 1px;
+/* ============================================================
+   THE RULE THAT ARRIVES
+
+   Every standalone link on this site states itself with one hairline, and
+   the hairline ARRIVES: it comes up the arm by one rung and takes its ink at
+   the same time. It does not grow from the left, which is the move every
+   site makes and which has no direction the mark can account for.
+
+   Ink and displacement together, because the rung is small enough that
+   travel alone would read as a jitter rather than as an arrival. Both are
+   lawful and both take the short duration and the one curve.
+   ============================================================ */
+.nav__link::before,
+.ghost::before,
+.crumbs a::before,
+.footer__col a::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--ink);
+  opacity: 0;
+  translate: calc(var(--d1x) * -1) calc(var(--d1y) * -1);
+  transition: opacity var(--dur-half) var(--curve),
+    translate var(--dur-half) var(--curve);
+}
+
+.nav__link:hover::before,
+.nav__link:focus-visible::before,
+.ghost:hover::before,
+.ghost:focus-visible::before,
+.crumbs a:hover::before,
+.crumbs a:focus-visible::before,
+.footer__col a:hover::before,
+.footer__col a:focus-visible::before {
+  opacity: 1;
+  translate: 0 0;
 }
 
 /* The page you are on wears the hover state permanently. That is the system's
-   existing underline held open, not a new indicator invented for the purpose,
+   existing hairline held open, not a new indicator invented for the purpose,
    and the aria-current that goes with it is set in src/lib/nav.ts. */
-.nav__link[aria-current='page'],
-.nav__menu-link[aria-current='page'] {
-  background-size: 100% 1px;
+.nav__link[aria-current='page']::before {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.nav__menu-link[aria-current='page'] span {
+  translate: var(--d2x) var(--d2y);
 }
 
 
@@ -165,12 +216,26 @@
 
 .nav__toggle-word { line-height: 1; }
 
-/* Two hairlines. Closed they are parallel; open they cross into the
-   studio's own mark. No icon file, nothing to migrate. */
+/* Two hairlines. Closed they are parallel; open they cross into the studio's
+   own mark. No icon file, nothing to migrate.
+
+   THE CROSSING IS DRAWN, NOT TURNED. It used to be two horizontal hairlines
+   put through rotate(45deg) and rotate(-45deg), which is both the wrong angle
+   for this drawing and a rotation the law does not have: the only turn on
+   this site is a half turn. So each arm is now CUT out of a full-box plane
+   with clip-path, at the arm's own 40.82 degrees, and the box's proportion is
+   the arm's too, height through --cut-k, so a corner-to-corner cut is that
+   angle by construction at any size.
+
+   --x-bar is the hairline's 1px measured across the cut rather than
+   perpendicular to it: 1 / sin(40.82) = 1.53. Without it the arms would draw
+   thinner than the two parallel hairlines they replace. */
 .nav__toggle-glyph {
+  --glyph-h: 12px;
+  --x-bar: 1.53px;
   position: relative;
-  width: 18px;
-  height: 12px;
+  width: calc(var(--glyph-h) * var(--cut-k));
+  height: var(--glyph-h);
   flex: none;
 }
 
@@ -180,14 +245,24 @@
   width: 100%;
   height: 1px;
   background: currentColor;
-  transition: transform 200ms var(--ease-out);
 }
 
 .nav__toggle-glyph i:nth-child(1) { top: 3px; }
 .nav__toggle-glyph i:nth-child(2) { bottom: 3px; }
 
-.nav__toggle-glyph--x i:nth-child(1) { top: 50%; transform: rotate(45deg); }
-.nav__toggle-glyph--x i:nth-child(2) { bottom: calc(50% - 1px); transform: rotate(-45deg); }
+.nav__toggle-glyph--x i {
+  top: 0;
+  bottom: 0;
+  height: auto;
+}
+
+.nav__toggle-glyph--x i:nth-child(1) {
+  clip-path: polygon(0 100%, var(--x-bar) 100%, 100% 0, calc(100% - var(--x-bar)) 0);
+}
+
+.nav__toggle-glyph--x i:nth-child(2) {
+  clip-path: polygon(0 0, var(--x-bar) 0, 100% 100%, calc(100% - var(--x-bar)) 100%);
+}
 
 /* ---- The overlay ---- */
 
@@ -226,21 +301,12 @@
     max(var(--sp-6), env(safe-area-inset-bottom)) max(var(--gutter), env(safe-area-inset-left));
 }
 
-/* One deliberate mark detail: a single beam laid across the panel at the
-   rig's own angle. It is the only decoration in here. */
-.nav__panel::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: conic-gradient(from calc(var(--rot) + 96deg) at 100% 0%,
-    transparent 0deg 6deg,
-    var(--lamp-a) 6deg 15deg,
-    transparent 15deg 360deg);
-  opacity: 0.22;
-  -webkit-mask-image: linear-gradient(200deg, #000 0%, transparent 62%);
-  mask-image: linear-gradient(200deg, #000 0%, transparent 62%);
-}
+/* A single beam used to be laid across this panel from a conic gradient
+   anchored on --rot, the lighting rig's registered angle. The rig was
+   deleted two rebuilds ago, so --rot has resolved to nothing ever since and
+   the whole declaration was invalid: the beam has not painted in months. It
+   also carried magenta on its own, which no chromatic surface on this site is
+   allowed to do. Removed rather than repaired. */
 
 .nav__panel > * { position: relative; }
 
@@ -286,10 +352,16 @@
 
 .nav__menu-link:last-child { border-bottom: var(--hairline); }
 
-.nav__menu-link span { display: inline-block; transition: transform 200ms var(--ease-out); }
+/* One rung up the arm. It was a flat 10px sideways, which is the same
+   distance with no angle in it. */
+.nav__menu-link span {
+  display: inline-block;
+  transition: translate var(--dur-half) var(--curve);
+}
 
 @media (hover: hover) {
-  .nav__menu-link:hover span { transform: translateX(10px); }
+  .nav__menu-link:hover span,
+  .nav__menu-link:focus-visible span { translate: var(--d2x) var(--d2y); }
 }
 
 .nav__panel-foot {
@@ -349,18 +421,21 @@ html.nav-open {
 
 /* ---- Motion ---- */
 
+/* The panel arrives up the arm by one rung, and the backdrop takes its ink
+   over the same duration on the same curve. Nothing here is a fade with a
+   drop in it any more. */
 @media (prefers-reduced-motion: no-preference) {
   .nav__dialog[open] .nav__panel {
-    animation: nav-panel-in 220ms var(--ease-out) both;
+    animation: nav-panel-in var(--dur-half) var(--curve) both;
   }
   .nav__dialog[open]::backdrop {
-    animation: nav-backdrop-in 180ms linear both;
+    animation: nav-backdrop-in var(--dur-half) var(--curve) both;
   }
 }
 
 @keyframes nav-panel-in {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: none; }
+  from { opacity: 0; translate: calc(var(--d1x) * -1) calc(var(--d1y) * -1); }
+  to   { opacity: 1; translate: 0 0; }
 }
 
 @keyframes nav-backdrop-in {
@@ -369,7 +444,6 @@ html.nav-open {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nav__toggle-glyph i,
   .nav__menu-link span {
     transition: none;
   }
@@ -394,7 +468,24 @@ html.nav-open {
   line-height: 1;
   overflow: hidden;
   isolation: isolate;
-  transition: color var(--dur-fast) ease;
+  transition: color var(--dur-half) var(--curve);
+}
+
+/* THE FILL IS THE ROOM CHANGE, AT CONTROL SCALE.
+
+   It used to rise straight up from below, which is a direction the mark has
+   no account of. It is now the same move the cover changes rooms with: one
+   plane crossing its frame with its leading edge cut on the arm, driven by
+   the one registered --wipe number, with the run derived from the rise
+   through --cut-k. The rise is the control's own 44px target floor, so the
+   edge is at 40.82 degrees on every pill on the site.
+
+   Read the polygon at --wipe 0 and it has no area; read it at 1 and it covers
+   the box with no seam at any corner. That is the whole mechanism, and it is
+   the blade's polygon with 44px where the blade has 100vh. */
+.pill {
+  --sweep-rise: 44px;
+  --sweep-run: calc(var(--sweep-rise) * var(--cut-k));
 }
 
 .pill::before {
@@ -402,27 +493,36 @@ html.nav-open {
   position: absolute;
   inset: -1px;
   background: var(--ink);
-  transform: translateY(101%);
-  transition: transform 0.45s var(--ease-inout);
   z-index: -1;
+  --wipe: 0;
+  clip-path: polygon(
+    0 0,
+    calc(var(--wipe) * (100% + var(--sweep-run))) 0,
+    calc(var(--wipe) * (100% + var(--sweep-run)) - var(--sweep-run)) 100%,
+    0 100%
+  );
+  transition: --wipe var(--dur) var(--curve);
 }
 
-.pill:hover {
+.pill:hover,
+.pill:focus-visible {
   color: var(--ground);
 }
 
-.pill:hover::before {
-  transform: translateY(0);
+.pill:hover::before,
+.pill:focus-visible::before {
+  --wipe: 1;
 }
 
 .pill__arr {
   width: 12px;
   height: 12px;
-  transition: transform var(--dur-fast) var(--ease-out);
+  transition: translate var(--dur-half) var(--curve);
 }
 
-.pill:hover .pill__arr {
-  transform: translate(2px, -2px);
+.pill:hover .pill__arr,
+.pill:focus-visible .pill__arr {
+  translate: var(--d0x) var(--d0y);
 }
 
 .nav__cta {
@@ -449,28 +549,25 @@ html.nav-open {
 
 .pill--solid::before {
   background: var(--ground);
-  transform: translateY(101%);
 }
 
-.pill--solid:hover {
+.pill--solid:hover,
+.pill--solid:focus-visible {
   color: var(--ink);
   border-color: var(--ink-line-strong);
 }
 
-.pill--solid:hover::before {
-  transform: translateY(0);
-}
-
-/* Without motion the fill still swaps, it just does not slide up. */
+/* Without motion the fill still swaps, it just does not sweep. */
 @media (prefers-reduced-motion: reduce) {
-  .pill--solid,
-  .pill--solid::before,
+  .pill,
+  .pill::before,
   .footer__utility a {
     transition: none;
   }
 }
 
 .ghost {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -480,25 +577,17 @@ html.nav-open {
   font-size: var(--text-body-sm);
   font-weight: 500;
   padding-block: var(--sp-1);
-  background-image: linear-gradient(var(--ink), var(--ink));
-  background-repeat: no-repeat;
-  background-size: 0% 1px;
-  background-position: left 100%;
-  transition: background-size var(--dur-fast) var(--ease-out);
-}
-
-.ghost:hover {
-  background-size: 100% 1px;
 }
 
 .ghost__arr {
   width: 12px;
   height: 12px;
-  transition: transform var(--dur-fast) var(--ease-out);
+  transition: translate var(--dur-half) var(--curve);
 }
 
-.ghost:hover .ghost__arr {
-  transform: translate(2px, -2px);
+.ghost:hover .ghost__arr,
+.ghost:focus-visible .ghost__arr {
+  translate: var(--d0x) var(--d0y);
 }
 
 /* .ghost--invert and .pill--invert used to live here, and .rule--invert in
@@ -536,13 +625,15 @@ html.nav-open {
   color: var(--ink);
 }
 
+/* The ground and the hairline are painted by .nav::before, which is bled by
+   one run so the diagonal exit never opens a seam. Only the inks are set
+   here. */
 .nav--scrolled {
   --ink: var(--room-paper-ink);
   --ground: var(--room-paper-ground);
   --ink-accent: var(--room-paper-ink);
-  background: var(--room-paper-ground);
+  --ink-line: var(--border);
   color: var(--room-paper-ink);
-  border-bottom: 1px solid var(--border);
 }
 
 /* The overlay menu is its own room and always the same one, so opening it
@@ -718,7 +809,7 @@ html.nav-open {
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--ink-quiet);
-  transition: color var(--dur-fast) ease;
+  transition: color var(--dur-half) var(--curve);
 }
 
 .footer__utility a:hover {

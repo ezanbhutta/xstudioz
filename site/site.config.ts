@@ -19,11 +19,18 @@ export const SITE = {
   /* Chromatic event of the brand, used for theme-color and schema. */
   brandColor: '#e634be',
   /* Must track --canvas in tokens.css. This is the colour a mobile browser
-     paints its own chrome with, so a stale value frames a dark page in the
-     old parchment. */
-  themeColor: '#09090b',
-  ogImage: '/og.png',
-  ogImageAlt: 'XStudioz. A logo is a mark, a brand is a promise.',
+     paints its own chrome with, so a stale value frames the page in the
+     wrong world. The site now defaults to paper, with dark opt-in through
+     the toggle rather than through prefers-color-scheme, so a media-scoped
+     pair would not follow the toggle. This tracks the default canvas, which
+     is what a first-time visitor actually sees. */
+  themeColor: '#f6f5f8',
+  /* New filename on purpose. The previous card was cached by every scraper
+     that had ever seen the site, and it still read "brand design studio" on
+     the abandoned parchment theme. A fresh path is the only reliable way to
+     make LinkedIn, Facebook, X and WhatsApp fetch the corrected artwork. */
+  ogImage: '/og-2.png',
+  ogImageAlt: 'XStudioz. We draw the mark and every rule that protects it.',
   /* Verified external profiles. Every URL here becomes an Organization
      `sameAs` edge, which is how search engines and LLMs resolve the string
      "XStudioz" to a single real entity rather than to one of the several

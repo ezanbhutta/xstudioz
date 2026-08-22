@@ -2,46 +2,43 @@
    XStudioz: Base: fonts, reset, primitive type, rooms
 
    Two families, self-hosted, both under the SIL Open Font License and both
-   free. Outfit carries every display size at one weight; Manrope carries
-   body and UI at three. Nothing on this site animates a weight axis and
-   nothing is bolded to make it matter.
+   free. Familjen Grotesk carries every display size at ONE weight, 500;
+   Inter carries body and UI at two, 400 and 500. Nothing on this site
+   animates a weight axis, nothing is synthesised, and nothing is bolded to
+   make it matter.
 
-   Bebas Neue was here and is gone. It is an uppercase-only condensed poster
-   face, so every display line on the site rendered as caps whatever the
-   markup said, and at 140px it read as a gig poster rather than as a studio.
-   Outfit is a geometric sans with real lowercase, so the display steps now
-   set in sentence case and the only capitals left on the page are the ones
-   .label and .subheading ask for.
+   The display face is a Scandinavian grotesk with real lowercase and a
+   narrow, slightly quirky rag: it sets 7.66 em of line for the hero's widest
+   row against the 8.09 the previous face needed, so three hard-broken lines
+   fit the sheet with room to spare at every width from 320 up.
+
+   500 rather than 600, and the two are not interchangeable. tokens.css
+   states that hierarchy on this site is carried by size and colour and never
+   by weight; a display step set at 600 contradicts that in the one place a
+   reader actually looks. There is now no weight above 500 anywhere in the
+   system, so there is no bold variant of anything to reach for.
    ============================================================ */
 
 @font-face {
-  font-family: 'Outfit';
-  src: url('/fonts/Outfit-600.woff2') format('woff2');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Manrope';
-  src: url('/fonts/Manrope-400.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Manrope';
-  src: url('/fonts/Manrope-500.woff2') format('woff2');
+  font-family: 'Familjen Grotesk';
+  src: url('/fonts/FamiljenGrotesk-500.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Manrope';
-  src: url('/fonts/Manrope-600.woff2') format('woff2');
-  font-weight: 600;
+  font-family: 'Inter';
+  src: url('/fonts/Inter-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-500.woff2') format('woff2');
+  font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
@@ -51,22 +48,26 @@
    lands. Every override below is computed off the two faces rather than
    copied: size-adjust is each family's mean lowercase advance divided by
    Arial's, and the ascent and descent are the face's own hhea values divided
-   back through that adjustment. */
+   back through that adjustment.
+
+   Measured on the shipped subsets, not on the upstream files. Arial's mean
+   lowercase advance is 0.48954 em; Familjen Grotesk 500 is 0.49494 and Inter
+   400 is 0.52603, which is where the two size-adjust figures come from. */
 @font-face {
-  font-family: 'Outfit Fallback';
+  font-family: 'Familjen Grotesk Fallback';
   src: local('Arial');
-  ascent-override: 94.89%;
-  descent-override: 24.67%;
+  ascent-override: 101.38%;
+  descent-override: 22.25%;
   line-gap-override: 0%;
-  size-adjust: 105.38%;
+  size-adjust: 101.1%;
 }
 @font-face {
-  font-family: 'Manrope Fallback';
+  font-family: 'Inter Fallback';
   src: local('Arial');
-  ascent-override: 99.84%;
-  descent-override: 28.1%;
+  ascent-override: 90.15%;
+  descent-override: 22.45%;
   line-gap-override: 0%;
-  size-adjust: 106.77%;
+  size-adjust: 107.45%;
 }
 
 /* Satoshi is retained for one job only: the wordmark in the header, which is
@@ -98,6 +99,24 @@ html {
 
 html,
 body {
+  overflow-x: clip;
+}
+
+/* THE PLATES BLEED, AND THE FLOW CLIPS THEM.
+
+   A plate reaches both edges of the viewport from inside a padded container
+   by pushing its pseudo-element out 50vw either side, so on a 390px phone the
+   hero's plate paints a box running -155 to 545. html and body already carry
+   overflow-x: clip, so none of that is ever visible and the page has never
+   scrolled sideways. It was still counted in document.body.scrollWidth, which
+   read 535 against a 390px viewport: the number an embed, a wrapping page or
+   a QA sweep reads when it asks whether this page overflows.
+
+   The flow clips at its own edge as well, so the answer that instrument gets
+   is the same one a reader gets. overflow-x only: the vertical axis stays
+   visible, so the sticky stages and the fixed apertures are untouched. */
+body > main,
+body > footer {
   overflow-x: clip;
 }
 
@@ -434,12 +453,14 @@ button {
   mask-repeat: no-repeat;
   -webkit-mask-position: center;
   mask-position: center;
-  transform-origin: var(--x-origin-x) var(--x-origin-y);
+  transform-origin: var(--turn-origin);
 }
 
+/* The law's second clause, in the furniture: the only rotation on this site
+   is a half turn about the point the drawing actually turns on. */
 section:nth-of-type(even) .section__head::after,
 article:nth-of-type(even) .section__head::after {
-  transform: rotate(180deg);
+  rotate: var(--half-turn);
 }
 
 

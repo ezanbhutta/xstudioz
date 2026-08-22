@@ -30,8 +30,12 @@ export const prefersReduced =
   staticMode ||
   rendererViewport;
 
-export const EASE = 'expo.out';
-export const EASE_INOUT = 'power4.inOut';
+/* THE ONE CURVE, and it is not named here. Two GSAP eases used to be
+   exported from this file, expo.out and power4.inOut, and between them and
+   the four CSS curves the stylesheets carried there were six easing shapes on
+   a site that claims to have one law. Everything now takes `curve` from
+   src/lib/law.ts, which is the same cubic-bezier the stylesheets take from
+   --curve, evaluated in script rather than approximated by a named preset. */
 
 /* ------------------------------------------------------------
    Scroll

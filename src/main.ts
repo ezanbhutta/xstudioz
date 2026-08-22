@@ -21,8 +21,6 @@ import './styles/doc.css';
 import './styles/cover.css';
 
 import {
-  gsap,
-  EASE_INOUT,
   prefersReduced,
   initNav,
   revealFailsafe,

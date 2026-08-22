@@ -217,24 +217,25 @@
   /* ============================================================
      3. TYPE
 
-     Two families. One weight for display, three for body. Every step of
+     Two families. One weight for display, two for body. Every step of
      hierarchy is carried by SIZE and COLOUR, never by weight, so there is no
      bold headline anywhere on this site.
 
-     Outfit 600 is a geometric sans with real lowercase, so a display line
-     sets in the case the copy is written in. The predecessor was caps-only
-     and turned every headline into a poster whatever the markup said.
+     Familjen Grotesk 500 is a Scandinavian grotesk with real lowercase, so a
+     display line sets in the case the copy is written in.
 
-     One display weight, and it is 600 rather than 400. The rule that
-     hierarchy is carried by size and colour and never by weight still holds:
-     600 is the only weight display type is ever set in, so there is no bold
-     variant of anything to reach for.
+     THE DISPLAY WEIGHT IS 500, and the drop from 600 is a correction rather
+     than a preference. The paragraph above says hierarchy is never carried by
+     weight; setting the display step at 600 said the opposite in the one
+     place a reader actually looks. 500 is now the heaviest weight in the
+     system in either family, so there is no bold variant of anything to
+     reach for and the rule and the values finally agree.
      ============================================================ */
-  --font-display: 'Outfit', 'Outfit Fallback', ui-sans-serif, system-ui,
+  --font-display: 'Familjen Grotesk', 'Familjen Grotesk Fallback',
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Inter', 'Inter Fallback', ui-sans-serif, system-ui,
     -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-sans: 'Manrope', 'Manrope Fallback', ui-sans-serif, system-ui,
-    -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --weight-display: 600;
+  --weight-display: 500;
 
   /* THE SCALE, AS ONE NUMBER
 
@@ -330,11 +331,29 @@
      170px line can press against the edge of the screen rather than sit
      politely inside a margin. */
   --page-max: min(2200px, 100vw);
-  /* One flat margin at every width. The site had 20px, which is the reference's
-     figure and reads as bleed rather than as breathing room, and a clamp would
-     make the page feel different on a phone than on a desktop. A single value
-     is the point: the sheet has the same edge wherever it is opened. */
-  --gutter: 40px;
+
+  /* THE MARGIN, AS A PROPORTION RATHER THAN AS A NUMBER.
+
+     It was a flat 40px at every width, on the reasoning that one value is the
+     same margin wherever the sheet is opened. That reasoning is wrong and the
+     arithmetic says so: 40px is 10.3% of a 390px phone and 2.7% of a 1500px
+     desktop. The same NUMBER is a generous margin on a phone and a cramped
+     one on a laptop, which is the opposite of what a single value was meant
+     to buy.
+
+     One expression, evaluated everywhere, no per-breakpoint override:
+
+       the floor    40px, so a small screen never gets tighter than it is now
+       the rate     4vw, which is the margin the desktop sheet actually wants
+       the ceiling  88px, which is 4vw at 2200 and is where it stops, because
+                    2200 is where the type ladder stops as well and a margin
+                    that kept growing past it would shrink the column while
+                    every step of type on it held still
+
+     Resolved: 40px from 320 to 1000, then 48 at 1200, 60 at 1500, 76.8 at
+     1920, and 88 from 2200 up. The crossover is 1000px, where 4vw is exactly
+     the floor, so there is no step anywhere in the range. */
+  --gutter: clamp(40px, 4vw, 88px);
   --col-gap: var(--sp-4);
   /* The header's own height, published so the hero and the scene can clear
      it. In the base with a pixel floor: the row is the mark plus two --sp-3,
@@ -379,13 +398,14 @@
 
   /* THE PLANE CUT.
 
-     45 degrees less the drawing's own 4.18 degree departure, so 40.82. Every
-     edge on this site that changes one thing into another is cut at it, and
-     the run is derived from the rise rather than picked: 1 / tan(40.82) =
-     1.1575. Stating the ratio rather than the angle is what lets a corner be
-     chamfered with clip-path and still be the same angle as the blade the
-     cover sweeps a room in with. */
-  --cut-k: 1.1575;
+     The law's second consequence, as a ratio. A plane that spans its frame
+     cannot travel the arm without opening a seam behind it, so it carries the
+     arm as its leading EDGE instead, and the run is derived from the rise
+     rather than picked: 1 / tan(40.82) = 1.157694. Stating the ratio rather
+     than the angle is what lets a corner be chamfered with clip-path and
+     still be the same 40.82 degrees as the blade the cover sweeps a room in
+     with and the fill inside every pill. */
+  --cut-k: 1.157694;
 
   /* Clearspace in the mark's own width, published live by lib/measure.ts. */
   --w: 22;
@@ -397,13 +417,64 @@
      zoomed screenshot. */
   --radius-ui: 0.715em;       /* 10px on a 14px control */
 
-  /* Motion. Six numbers cover the whole site.
-     Every entrance travels 20px or 50px and lasts 0.3s to 0.8s. Nothing
-     scales, nothing rotates, nothing blurs. */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-inout: cubic-bezier(0.65, 0.05, 0, 1);
-  --dur-fast: 0.3s;
-  --dur-med: 0.6s;
+  /* ============================================================
+     MOTION — THE LAW OF THE HALF TURN
+
+     Stated in full, in plain language, at the top of src/lib/law.ts. This
+     block is the same law's numbers, and nothing else in the system is
+     allowed to name a duration, a distance, an angle or a curve.
+
+     In one line: every translate on this site reads dy / dx = 0.863786,
+     every rotation is 180deg about 49.90% / 50.71%, every duration is one
+     of the three below and every curve is --curve.
+     ============================================================ */
+
+  /* THE ARM. 45 less the drawing's measured 4.18 degree departure. */
+  --arm: 40.82deg;
+  --arm-x: 0.756767;          /* cos 40.82 */
+  --arm-y: 0.653685;          /* sin 40.82 */
+
+  /* THE TURN, and the point the drawing actually turns about. Restated here
+     beside the rest of the law; --x-origin-x / -y above are the same two
+     figures, kept because the mark's own block is where they were measured. */
+  --half-turn: 180deg;
+  --turn-origin: var(--x-origin-x) var(--x-origin-y);
+
+  /* THE CURVE. The departure, the tangent of the arm, the arm, and rest. */
+  --curve: cubic-bezier(0.0418, 0.8639, 0.4082, 1);
+
+  /* THE LADDER OF TIME. The arm's angle in hundredths of a second, halved
+     and doubled on the same 2:1 the mark's stroke and cut corner sit at. */
+  --dur-half: 0.2041s;
+  --dur: 0.4082s;
+  --dur-double: 0.8164s;
+
+  /* THE LADDER OF DISTANCE. The mark's cut corner, 3.589% of its box, read
+     as ems of the page's base and doubled five times. 5.4px to 172.3px on
+     the 1500px sheet. */
+  --d0: 0.3589rem;
+  --d1: 0.7178rem;
+  --d2: 1.4356rem;
+  --d3: 2.8712rem;
+  --d4: 5.7424rem;
+  --d5: 11.4848rem;
+
+  /* One rung, resolved into its two components. Positive travels UP the arm,
+     which is right and up, so every y is negative. Every displacement in
+     every stylesheet is written as one of these six pairs or its negation,
+     which is what makes the law checkable by reading a declaration. */
+  --d0x: calc(var(--d0) * var(--arm-x));
+  --d0y: calc(var(--d0) * var(--arm-y) * -1);
+  --d1x: calc(var(--d1) * var(--arm-x));
+  --d1y: calc(var(--d1) * var(--arm-y) * -1);
+  --d2x: calc(var(--d2) * var(--arm-x));
+  --d2y: calc(var(--d2) * var(--arm-y) * -1);
+  --d3x: calc(var(--d3) * var(--arm-x));
+  --d3y: calc(var(--d3) * var(--arm-y) * -1);
+  --d4x: calc(var(--d4) * var(--arm-x));
+  --d4y: calc(var(--d4) * var(--arm-y) * -1);
+  --d5x: calc(var(--d5) * var(--arm-x));
+  --d5y: calc(var(--d5) * var(--arm-y) * -1);
 
   /* Hairlines */
   --hairline: 1px solid var(--ink-line);
@@ -461,6 +532,31 @@
      ============================================================ */
   --proof-field: #09090b;
   --proof-ink: #f2f1f6;
+}
+
+/* ============================================================
+   THE SWEEP
+
+   The law's second consequence, made into one declaration that three
+   different scales share. A plane that spans its frame crosses on one axis
+   with its leading edge cut on the arm, and the run is the rise through
+   --cut-k. --wipe is 0 with the plane off the frame and 1 with the frame
+   covered and no seam at any corner.
+
+   Registered rather than merely declared, because an unregistered custom
+   property is a token stream and cannot be interpolated: this is what lets a
+   pill's fill sweep on a plain CSS transition and the cover's blade sweep on
+   a scrubbed timeline, using the same polygon and the same number.
+
+   Inherited, because two of the three sweeps are painted by a pseudo-element
+   whose --wipe is written on its host: the pill's fill by ::before under a
+   hover, the payoff's sheet by ::before under a scrubbed timeline. The third,
+   the blade, sets it on itself and shadows whatever it inherits.
+   ============================================================ */
+@property --wipe {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
 }
 
 /* THE ONE MAPPING. Paper is what :root carries, so this block is the only
@@ -524,10 +620,10 @@
    BELOW THE DESKTOP BAND, THE LADDER IS HAND AUTHORED
 
    And it has to be. The hero sets three hard-broken lines that may not wrap,
-   and the widest renders 7.9707px of line for every 1px of font size in this
-   face. So the display can never exceed (width - 80) / 7.9707, while holding
+   and the widest renders 7.6633px of line for every 1px of font size in this
+   face. So the display can never exceed (width - 80) / 7.6633, while holding
    9.333:1 against a body that may not go under 15px needs a display of at
-   least 140px. Solve those two together and they only both hold from 1196px
+   least 140px. Solve those two together and they only both hold from 1153px
    up. That is a measured number rather than a preference: below it the
    single-scale law and the reading floor cannot both be true, so the law
    stops at 1200 and the band underneath is drawn by hand. Both reference
@@ -553,13 +649,19 @@
 
 /* THE PHONE. Fixed pixels, no viewport unit anywhere in the ladder, which is
    what both references do and what protects a small screen from a rule
-   written for a desk. 36px is the measured ceiling for the hero's widest line
-   at 375: 36 x 7.9707 = 286.97 against 295px of sheet. The breakpoint is 400
+   written for a desk. 36px is held from the previous face and now has room to
+   spare: 36 x 7.6633 = 275.88 against 295px of sheet. The breakpoint is 400
    rather than 768 because 9.333vw resolves to 37.3px there, so the step into
    fixed pixels is 1.3px and the reader never sees a seam. */
 @media (max-width: 25rem) {
   :root {
-    --text-display: 36px;
+    /* 36px, AND NOT WIDER THAN THE SHEET. The three hero lines may not wrap
+       and the widest renders 7.6633px of line for every 1px of font size, so
+       36px needs 275.9px of column: it has 295 at 375 and only 240 at 320,
+       where the first line used to run 36px off the sheet and be clipped.
+       The second term is that constraint written down rather than assumed, so
+       the step is 36px from 356px up and exactly what fits below it. */
+    --text-display: min(36px, calc((100vw - 2 * var(--gutter)) / 7.6633));
     --text-heading: 30px;
     --text-heading-sm: 25px;
     --text-subheading: 18px;
