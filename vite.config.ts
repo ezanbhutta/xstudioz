@@ -209,13 +209,12 @@ function headFor(page: PageDef): string {
     `<meta name="robots" content="${robots}" />`,
     `<meta name="author" content="${esc(SITE.name)}" />`,
     '<meta name="format-detection" content="telephone=no" />',
-    /* Both, now that both exist. This was pinned to dark for a long time
-       because declaring light on a page that only had a dark palette made the
-       browser render its own UI the wrong way round: light scrollbars and
-       form controls on a dark page, and a white flash before the stylesheet
-       painted. With a real daylight palette in the tokens the reason is gone,
-       and the browser should follow the same preference the CSS does. */
-    '<meta name="color-scheme" content="light dark" />',
+    /* Light, and only light. Declaring "light dark" told the browser the page
+       supports both, so a visitor whose operating system is dark got dark
+       scrollbars, dark form controls and a dark canvas painted behind a sheet
+       of paper. There is one palette on this site now and the browser should
+       be told which one it is. */
+    '<meta name="color-scheme" content="light" />',
     `<meta name="theme-color" content="${SITE.themeColor}" />`,
 
     /* Open Graph */
@@ -238,20 +237,11 @@ function headFor(page: PageDef): string {
     `<meta name="twitter:image" content="${abs(SITE.ogImage)}" />`,
     `<meta name="twitter:image:alt" content="${esc(SITE.ogImageAlt)}" />`,
 
-    /* The theme, resolved before the first paint.
-
-       The CSS already handles this on its own: the daylight palette is behind
-       a prefers-color-scheme query, so with scripting off the operating
-       system's preference still decides and nothing here is required. What
-       this adds is the remembered choice. Without it, someone who picked the
-       theme that opposes their OS would watch the page paint in the wrong one
-       and swap, on every navigation.
-
-       It is deliberately the smallest thing that can work: one attribute, set
-       synchronously in <head> before any stylesheet paints, wrapped in a try
-       because a blocked localStorage must not take the document down with it. */
-    '<script>try{var t=localStorage.getItem("xz-theme");if(t==="light"||t==="dark")' +
-      'document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>',
+    /* The theme-flash guard stood here and replayed a remembered "xz-theme"
+       into data-theme before the first paint. It is deleted with the control
+       that used to write that value: with the switch gone nothing can store a
+       choice, and leaving the reader would have stranded anyone who had ever
+       pressed the old button in a dark room with no way back out of it. */
 
     /* Icons and manifest */
     '<link rel="icon" type="image/svg+xml" href="/favicon.svg" />',
@@ -259,10 +249,10 @@ function headFor(page: PageDef): string {
     '<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />',
     '<link rel="manifest" href="/site.webmanifest" />',
 
-    /* Self-hosted type — no third-party origins, so nothing to preconnect to */
-    '<link rel="preload" href="/fonts/FamiljenGrotesk-400.woff2" as="font" type="font/woff2" crossorigin />',
-    '<link rel="preload" href="/fonts/Inter-400.woff2" as="font" type="font/woff2" crossorigin />',
-    '<link rel="preload" href="/fonts/Satoshi-500.woff2" as="font" type="font/woff2" crossorigin />',
+    /* Self-hosted type — no third-party origins, so nothing to preconnect to.
+       One variable file now carries display and body, so this is one preload
+       where it used to be three. */
+    '<link rel="preload" href="/fonts/Geist-var.woff2" as="font" type="font/woff2" crossorigin />',
 
     /* Entity graph */
     `<script type="application/ld+json">${JSON.stringify(graphFor(page))}</script>`,

@@ -248,48 +248,37 @@
     </section>
 
     <!-- ================= 01 · THE STUDIO ====================================
-         SCENE A. Opens on paper. Turns over to violet halfway through.
+         Paper, top to bottom, and nothing is pinned.
 
-         The pin is `position: sticky`, not a pinning library. The track is
-         320vh tall and the stage inside it is 100vh, stuck at top 0.
-
-           0.00 → 0.18   the statement resolves, word by word, from the
-                         centre of the line outward. Opacity only.
-           0.18 → 0.34   the statement leaves sideways
-           0.34 → 0.60   the violet plane sweeps in from the right and the
-                         mark turns a half turn about its measured centre.
-                         One event, so the two overlap on purpose.
-           0.60 → 0.78   the payoff arrives. Opacity, no travel at all.
-           0.78 → 1.00   nothing. Roughly two thirds of a viewport, held.
+         What stood here was a 200vh track holding a sticky 100vh stage: a
+         violet plane sweeping in on the mark's own angle, the mark turning a
+         half turn as it landed, the statement resolving word by word out of
+         the centre of the line, and a payoff panel arriving on a clip-path.
+         Every one of those was scrubbed against the wheel, and clause 6 of
+         the law is that nothing is. The section now reads in document order
+         and arrives once, like every other section on the site.
          ==================================================================== -->
     <section class="scene scene--studio room-paper" id="studio" aria-label="The studio">
-      <div class="scene__track" data-scene="studio">
+      <div class="scene__track">
         <div class="scene__stage">
-
-          <!-- The room turns over here. One violet plane sweeps in from the
-               right on a diagonal cut at the mark's own angle, and the mark
-               makes a single half turn about its measured centre of rotation
-               as the plane lands. Horizontal, and a rotation, because the
-               reference moves everything vertically and rotates nothing. -->
-          <span class="blade blade--right" data-blade aria-hidden="true"></span>
 
           <div class="container scene__inner">
 
             <p class="label scene__eyebrow">The Studio</p>
 
-            <div class="turn" data-turn-stage>
+            <div class="turn" data-enter>
               <!-- The single-path mark, not the two-path construction one.
                    Its counter is a real hole in one path, so whichever ground
                    is underneath reads through the drawing without anything
                    having to know which ground that currently is. -->
-              <div class="turn__mark" data-turn-mark aria-hidden="true">
+              <div class="turn__mark" aria-hidden="true">
                 <svg class="turn__mark-svg"><use href="#xmark" /></svg>
               </div>
 
-              <h2 class="turn__line display" data-reveal-words>Small on purpose. Serious by default.</h2>
+              <h2 class="turn__line display">Small on purpose. Serious by default.</h2>
             </div>
 
-            <div class="payoff measure-display" data-payoff>
+            <div class="payoff measure-display" data-enter>
               <p class="payoff__line heading">The studio stays small so the standard can stay high. The same process, the same care, whether it is a single mark or a full identity system.</p>
               <p class="payoff__note body">When you hire XStudioz, you work with the people who actually draw. No account managers, no hand-offs, no templates dressed up as design. Every brief is read, questioned, and answered with work we are prepared to defend.</p>
               <a class="ghost" href="https://portfolio.xstudioz.com" target="_blank" rel="noopener">
@@ -335,13 +324,11 @@
              turns on a clock: a scrubbed rotation is forbidden by the second
              clause of the law, so the wheel decides WHEN the dial steps and
              never WHERE it stops. -->
-        <div class="caps__index" data-caps>
+        <div class="caps__index">
           <div class="caps__stage">
-            <i class="caps__dial" aria-hidden="true"></i>
         <ul class="caps__list">
           <li class="caps__row">
             <a class="caps__link" href="/logo-design/">
-              <i class="caps__marker" aria-hidden="true"><svg><use href="#xmark" /></svg></i>
               <span class="caps__num label">01</span>
               <span class="caps__name heading" id="cap-name-01">Logo Design</span>
               <span class="caps__desc body" id="cap-desc-01">One mark, drawn until it holds. Concepts presented properly, never thumbnails in a grid.</span>
@@ -350,7 +337,6 @@
           </li>
           <li class="caps__row">
             <a class="caps__link" href="/brand-identity/">
-              <i class="caps__marker" aria-hidden="true"><svg><use href="#xmark" /></svg></i>
               <span class="caps__num label">02</span>
               <span class="caps__name heading" id="cap-name-02">Brand Identity</span>
               <span class="caps__desc body">Colour, type, voice, and the rules that hold them together across everything you ship.</span>
@@ -359,7 +345,6 @@
           </li>
           <li class="caps__row">
             <a class="caps__link" href="/brand-guidelines/">
-              <i class="caps__marker" aria-hidden="true"><svg><use href="#xmark" /></svg></i>
               <span class="caps__num label">03</span>
               <span class="caps__name heading">Brand Guidelines</span>
               <span class="caps__desc body">The document your brand lives by, written so your team can actually use it.</span>
@@ -368,7 +353,6 @@
           </li>
           <li class="caps__row">
             <a class="caps__link" href="/social-media-kits/">
-              <i class="caps__marker" aria-hidden="true"><svg><use href="#xmark" /></svg></i>
               <span class="caps__num label">04</span>
               <span class="caps__name heading">Social Media Kits</span>
               <span class="caps__desc body">Templates and systems that keep every post unmistakably yours.</span>
@@ -377,7 +361,6 @@
           </li>
           <li class="caps__row">
             <a class="caps__link" href="/stationery/">
-              <i class="caps__marker" aria-hidden="true"><svg><use href="#xmark" /></svg></i>
               <span class="caps__num label">05</span>
               <span class="caps__name heading">Stationery &amp; Collateral</span>
               <span class="caps__desc body">Cards, letterheads and decks. The brand you can put in someone’s hand.</span>
@@ -448,14 +431,6 @@
         <div class="section__head">
           <p class="label">The Archive</p>
         </div>
-
-        <!-- APERTURE 2 of 2, and the last thing the travelling mark is seen
-             through. The second full-bleed ramp on this page stood behind the
-             statement below and is deleted with the first. The mark arrives
-             here at its own size, turned a full 360 from where it started, and
-             leaves before the portal so the page never carries two large
-             chromatic objects at once. -->
-        <i class="xwin xwin--work" aria-hidden="true"><i class="xwin__lens"><svg class="xwin__x"><use href="#xmark" /></svg></i></i>
 
         <div class="work__grid">
           <h2 class="work__statement display" id="work-statement" data-enter>

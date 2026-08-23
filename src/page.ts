@@ -49,7 +49,6 @@ function boot(): void {
 
   initNav();
   markCurrentSection();
-  initWordResolve();
   initSectionEnters();
 
   /* Kept, and near enough free: an interior page registers no ScrollTrigger
@@ -64,108 +63,26 @@ function boot(): void {
 }
 
 /* ------------------------------------------------------------
-   THE WORD RESOLVE, ON A PAGE WITH NO TIMELINE
+   THE WORD RESOLVE IS DELETED.
 
-   The cover's reveal signature, brought across: words rather than characters,
-   lit from the CENTRE of the line outward in both directions, from a floor of
-   0.62. All three of those are stated in base.css and none of them changes
-   here. What changes is the driver. The cover scrubs the opacity of each word
-   against a pinned track; a document has no track, no pin and no timeline, so
-   the stagger is a per-word transition delay and the trigger is an
-   IntersectionObserver.
+   Every display line on a document, the masthead title and the closing call,
+   was broken into per-word spans and lit from the centre of the line outward
+   in both directions on a 0.055s stagger, from a floor of 0.62.
 
-   DISPLAY LINES ONLY. Two per document at most, both of them display type at a
-   display step: the masthead title and the closing call. Nothing in the
-   reading column is split. A reader who came to find out what a logo costs is
-   reading a document, and a paragraph that resolves under them is a slideshow.
+   Two reasons, and the second is why it could not simply be shortened.
 
-   Everything is additive and reversible by doing nothing: the words only
-   exist once this function has run, so a document whose bundle never arrives
-   paints every line at full strength in its first frame.
+   It is the wrong vocabulary. A heading that assembles itself one word at a
+   time is an animation being played at the reader, and any frame caught part
+   way through shows a title with holes in it. The law now asks for material
+   answering a pointer, and a heading is not a control.
+
+   And it rewrote text. splitWords read textContent, cleared the element and
+   rebuilt it out of spans, on fifteen routes whose copy is frozen. A reveal
+   worth 0.2s is not worth a function that can damage a sentence.
+
+   Display lines now arrive with the section they belong to, on [data-enter],
+   which is one mechanism for the whole site instead of two.
    ------------------------------------------------------------ */
-
-/* The masthead title, the closing call, and the 404's one line. The two
-   policy pages match the first of these through the shared class, which is
-   the point of selecting on class rather than adding an attribute to markup
-   this session does not own. */
-const DISPLAY_LINES = '.doc__head .doc__title, .doc__cta h2, .lost .doc__title';
-
-/* One word's worth of stagger. The line resolves over roughly a fifth of a
-   second either side of its centre and then holds, which is the same shape as
-   the cover's reveal without the scroll distance it has to spend it over. */
-const WORD_STEP = 0.055;
-
-/* Each word becomes its own inline-block span with real whitespace between
-   them, so the line still wraps, the accessible name is still the sentence,
-   and no glyph is addressed on its own. */
-function splitWords(host: HTMLElement): HTMLElement[] {
-  const source = (host.textContent ?? '').replace(/\s+/g, ' ').trim();
-  if (!source) return [];
-
-  const words: HTMLElement[] = [];
-  const frag = document.createDocumentFragment();
-
-  source.split(' ').forEach((word, i) => {
-    if (i > 0) frag.appendChild(document.createTextNode(' '));
-    const w = document.createElement('span');
-    w.className = 'scrub-word';
-    w.textContent = word;
-    frag.appendChild(w);
-    words.push(w);
-  });
-
-  host.textContent = '';
-  host.appendChild(frag);
-
-  return words;
-}
-
-function initWordResolve(): void {
-  if (prefersReduced) return;
-
-  const lines = Array.from(document.querySelectorAll<HTMLElement>(DISPLAY_LINES));
-  if (!lines.length) return;
-
-  const hosts: HTMLElement[] = [];
-
-  lines.forEach((line) => {
-    /* These titles are set as two <span class="line"> rows on purpose and the
-       rows are load bearing: they are what stops a display line from
-       rewrapping under its own leading. So each row is split in place and the
-       words are collected ACROSS the rows, which is what makes the centre the
-       centre of the whole title rather than of one row of it. */
-    const rows = Array.from(line.querySelectorAll<HTMLElement>('.line__in'));
-    const words = (rows.length ? rows : [line]).flatMap(splitWords);
-    if (!words.length) return;
-
-    const mid = (words.length - 1) / 2;
-    words.forEach((w, i) => {
-      w.style.transitionDelay = `${(Math.abs(i - mid) * WORD_STEP).toFixed(3)}s`;
-    });
-
-    line.setAttribute('data-words', '');
-    hosts.push(line);
-  });
-
-  if (!hosts.length) return;
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('is-lit');
-        observer.unobserve(entry.target);
-      });
-    },
-    { rootMargin: '0px 0px -8% 0px' }
-  );
-
-  hosts.forEach((el) => observer.observe(el));
-
-  /* Same guarantee as the section arrivals: no code path may leave readable
-     text below full strength because a trigger never fired. */
-  window.setTimeout(() => hosts.forEach((el) => el.classList.add('is-lit')), 4000);
-}
 
 /* ------------------------------------------------------------
    Section arrivals

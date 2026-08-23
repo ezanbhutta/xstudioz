@@ -23,16 +23,12 @@
          that sits at the end shares this one cell, so adding a control here
          never pushes the grid into a second row. -->
     <div class="nav__end">
-      <!-- Light switch. The glyph is a circle split down the middle, which is
-           the one theme control that needs no icon file and no explanation.
-           It starts hidden and src/lib/theme.ts reveals it, so a document
-           whose scripts never arrive does not show a control that cannot
-           work. -->
-      <button class="nav__theme" type="button" hidden>
-        <span class="nav__theme-glyph" aria-hidden="true"></span>
-        <span class="sr-only" data-theme-label>Switch to light mode</span>
-      </button>
-
+      <!-- The light switch stood here. It shipped with no CSS box at all, so
+           it measured 0 x 0 on all sixteen routes while still sitting at tab
+           stop 7 and announcing itself as "Switch to dark mode": a keyboard
+           reader landed on a control that was not drawn. It is deleted rather
+           than drawn, because this site is a light document by decision and a
+           working switch would offer a room nobody wants to be in. -->
       <a class="pill nav__cta" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
         <span>Start a project</span>
         <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
@@ -78,4 +74,3 @@
 </dialog>
 
 <script type="module" src="/src/lib/nav.ts"></script>
-<script type="module" src="/src/lib/theme.ts"></script>

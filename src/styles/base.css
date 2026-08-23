@@ -1,97 +1,53 @@
 /* ============================================================
    XStudioz: Base: fonts, reset, primitive type, rooms
 
-   Two families, self-hosted, both under the SIL Open Font License and both
-   free. Familjen Grotesk carries every display size at ONE weight, 500;
-   Inter carries body and UI at two, 400 and 500. Nothing on this site
-   animates a weight axis, nothing is synthesised, and nothing is bolded to
-   make it matter.
+   ONE FAMILY, ONE FILE. Geist, self-hosted, SIL Open Font License 1.1, a
+   single variable master covering 100 to 900 in 29KB. It replaces the four
+   static faces this site used to load, Familjen Grotesk at 400 and 500 and
+   Inter at 400 and 500, which came to 55KB across two families. Display and
+   body are now the same drawing at different sizes, so the page has one
+   voice rather than a headline voice and a paragraph voice.
 
-   The display face is a Scandinavian grotesk with real lowercase and a
-   narrow, slightly quirky rag: it sets 7.66 em of line for the hero's widest
-   row against the 8.09 the previous face needed, so three hard-broken lines
-   fit the sheet with room to spare at every width from 320 up.
+   WHY THE PREVIOUS FACE WENT. Familjen Grotesk shears every terminal off
+   axis: the foot of the t, the arm of the r, both ends of the s and the tail
+   of the y all finish on a diagonal. At 80px that shear is the loudest thing
+   in the hero and it reads as a cut rather than as a letter. Geist finishes
+   every terminal on the horizontal or the vertical and has no diagonal cut
+   anywhere in the lowercase.
 
-   500 rather than 600, and the two are not interchangeable. tokens.css
-   states that hierarchy on this site is carried by size and colour and never
-   by weight; a display step set at 600 contradicts that in the one place a
-   reader actually looks. There is now no weight above 500 anywhere in the
-   system, so there is no bold variant of anything to reach for.
+   MEASURED ON THE SHIPPED SUBSET, per em:
+     ascent  0.900   descent 0.250   so the content box is 1.150 em
+     cap     0.6855  x-height 0.4487
+     deepest ink descender 0.2188, from g j p q y
+   The line-box floor that falls out of those numbers is stated with
+   --lh-display-floor in tokens.css, and every display line-height on this
+   site is at or above it.
    ============================================================ */
 
-/* The Regular is the display face. The project shipped only the Medium, so
-   --weight-display: 400 was a request the stack could not fill: that file is
-   usWeightClass 500 with no variable axis, and no browser synthesises a
-   lighter weight, so every glyph over 21px painted at 500 whatever the token
-   said. Every reference this design was measured against puts its LIGHTEST
-   weight at its BIGGEST size, and this was the one thing stopping that. */
+/* One face, one file, the whole weight axis. Nothing on this site animates
+   the axis; it is declared as a range so the browser picks an instance
+   instead of synthesising one. */
 @font-face {
-  font-family: 'Familjen Grotesk';
-  src: url('/fonts/FamiljenGrotesk-400.woff2') format('woff2');
-  font-weight: 400;
+  font-family: 'Geist';
+  src: url('/fonts/Geist-var.woff2') format('woff2');
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
+/* The metric-matched fallback. Without it the first paint sets the headline
+   at Arial's metrics and the sheet reflows when the real face lands. Every
+   override is computed off Geist rather than copied: size-adjust is Geist's
+   mean lowercase advance divided by Arial's, 0.45930 over 0.48954, and the
+   ascent and descent are Geist's own values divided back through that
+   adjustment. */
 @font-face {
-  font-family: 'Familjen Grotesk';
-  src: url('/fonts/FamiljenGrotesk-500.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter-400.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter-500.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Metric-matched fallbacks. Without these the first paint sets the headline
-   in Arial at Arial's metrics and the whole sheet reflows when the real face
-   lands. Every override below is computed off the two faces rather than
-   copied: size-adjust is each family's mean lowercase advance divided by
-   Arial's, and the ascent and descent are the face's own hhea values divided
-   back through that adjustment.
-
-   Measured on the shipped subsets, not on the upstream files. Arial's mean
-   lowercase advance is 0.48954 em; Familjen Grotesk 500 is 0.49494 and Inter
-   400 is 0.52603, which is where the two size-adjust figures come from. */
-@font-face {
-  font-family: 'Familjen Grotesk Fallback';
+  font-family: 'Geist Fallback';
   src: local('Arial');
-  ascent-override: 101.38%;
-  descent-override: 22.25%;
+  ascent-override: 95.92%;
+  descent-override: 26.65%;
   line-gap-override: 0%;
-  size-adjust: 101.1%;
-}
-@font-face {
-  font-family: 'Inter Fallback';
-  src: local('Arial');
-  ascent-override: 90.15%;
-  descent-override: 22.45%;
-  line-gap-override: 0%;
-  size-adjust: 107.45%;
-}
-
-/* Satoshi is retained for one job only: the wordmark in the header, which is
-   drawn letterform and not running text. Every other use is gone. */
-@font-face {
-  font-family: 'Satoshi';
-  src: url('/fonts/Satoshi-500.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
+  size-adjust: 93.82%;
 }
 
 *,
@@ -172,6 +128,17 @@ button {
   background: none;
   border: none;
   cursor: pointer;
+}
+
+/* The user agent's own [hidden] rule is a plain `display: none` at author
+   level zero, so ANY display an author writes beats it. The footer ships
+   `<a href="#" data-consent-open hidden>` on every route and lib/consent.ts
+   takes the attribute off only when there is a choice to reopen, so the day
+   that anchor is given a display by some later component rule is the day a
+   live href="#" appears in the footer of sixteen pages. Stated once here
+   rather than repeated as a guard on every component that grows a box. */
+[hidden] {
+  display: none !important;
 }
 
 :focus-visible {
@@ -473,7 +440,7 @@ button {
 
 .heading-sm {
   font-size: var(--text-heading-sm);
-  line-height: 0.9;
+  line-height: var(--leading-tight);
 }
 
 .subheading {
@@ -622,51 +589,26 @@ article:nth-of-type(even) .section__head::after {
 }
 
 /* ============================================================
-   THE WORD RESOLVE
+   THE WORD RESOLVE IS DELETED.
 
-   This site's reveal signature, and it is deliberately NOT the reference's.
-   That page splits a display line into 196 characters and interpolates each
-   one from 0.5 to 1.0 under a single hard edge travelling left to right.
-   Three things are different here and each was chosen rather than inherited:
+   It was this site's reveal signature: every display line split into per-word
+   spans and lit from the centre of the line outward in both directions, from
+   a floor of 0.62, on the cover against a scrubbed track and on the interior
+   documents against an IntersectionObserver and a per-word transition delay.
 
-     GRANULARITY   words, not characters. A word is the smallest unit a
-                   reader actually takes in, so the line resolves as language
-                   rather than as a row of glyphs being switched on.
-     DIRECTION     from the CENTRE of the line outward in both directions,
-                   which is the mark's own behaviour: it has a real centre of
-                   rotation and everything about it is stated from there.
-     FLOOR         0.62, not 0.5, and the figure is computed rather than
-                   picked. At 0.5 the dim state of the magenta scene's line
-                   measures 2.57:1 against its ground, under the 3:1 floor
-                   for large text. At 0.62 it measures 3.26:1 on magenta,
-                   4.94:1 on paper and 7.01:1 in the dark.
+   A heading that assembles itself one word at a time is an animation being
+   played at the reader rather than a material answering one, and any frame
+   caught part way through it shows a title with holes in it. The mechanism
+   also rewrote textContent on fifteen routes whose copy is frozen, which is a
+   risk no 0.2s effect is worth carrying.
 
-   Opacity is still the only property involved, and the from-state is still
-   set in CSS rather than in script, so a document whose bundle never arrives
-   paints every line legible instead of blank.
+   Display lines now arrive with the section they belong to, on [data-enter],
+   which leaves the site with one arrival mechanism rather than two.
    ============================================================ */
-
-.scrub-word {
-  display: inline-block;
-  white-space: nowrap;
-  opacity: 0.62;
-  will-change: opacity;
-}
-
-.is-lit .scrub-word,
-.scrub-word.is-lit {
-  opacity: 1;
-}
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-
-  /* The page has to compose statically. Every word is handed back at full
-     strength and nothing waits on a scroll position. */
-  .scrub-word {
-    opacity: 1 !important;
   }
 }
 
@@ -735,10 +677,6 @@ body > footer {
 
   .lit {
     color: #000 !important;
-  }
-
-  .scrub-word {
-    opacity: 1 !important;
   }
 
   a {

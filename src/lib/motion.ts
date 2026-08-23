@@ -6,11 +6,6 @@
    on every document.
    ============================================================ */
 
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
-
 export const staticMode = new URLSearchParams(window.location.search).has('static');
 
 /* A viewport this shape belongs to a rendering engine, not a person.
@@ -40,15 +35,16 @@ export const prefersReduced =
 /* ------------------------------------------------------------
    Scroll
 
-   There is no smooth-scroll library on this site any more, and its absence
-   is a design decision rather than a saving.
+   There is no smooth-scroll library on this site and there is no animation
+   engine either. Both absences are the same decision.
 
-   Lenis was lerping the wheel at 0.115, and this page is now almost entirely
-   long scrubbed scenes. Smoothing makes a short animation feel luxurious and
-   a five viewport scrub feel unresponsive, because the timeline is always
-   catching up with an input the reader has already finished giving. Native
-   wheel scroll tracks one to one with no lerp, no easing tail and no inertia
-   layer, which is what makes a scrub read as precise rather than as swimming.
+   Lenis was lerping the wheel at 0.115 to make long scrubbed scenes feel
+   luxurious. There are no scrubbed scenes now, so there is nothing for a
+   lerp to smooth: native wheel scroll tracks one to one, which is what a
+   page that holds still is supposed to do. GSAP went with them. The cover
+   was its only caller, and what the cover does now is two class changes and
+   a set of CSS transitions, so a 70KB timeline engine was being shipped to
+   toggle an attribute.
 
    CSS `scroll-behavior: smooth` is kept. It only affects programmatic jumps,
    so anchor links still ease and the wheel still does not.
@@ -148,52 +144,32 @@ export function initNav(): void {
    in JS rather than CSS, which is why there is nothing left to clean up and
    why these documents have always been readable with the bundle blocked.
 
-   EASE and EASE_INOUT stay exported: main.ts still uses them for the loader
-   timeline and the cover's own choreography. */
+   Nothing replaced them and nothing exports an ease from here any more: the
+   one curve lives in src/lib/law.ts and in --curve, and every transition on
+   the site reads it from one of those two places. */
 
 /* ------------------------------------------------------------
    Reveal failsafe
-   No code path may leave readable text sitting at opacity 0.
 
-   Only elements that are already at or above the fold are forced, those should have played on load, so if they are still hidden
-   seconds later their trigger mismeasured and the page is broken.
-   Anything genuinely below the fold is left alone, because a reader
-   who lingers before scrolling should still get the animation.
+   No code path may leave readable text sitting at opacity 0. Arrivals are an
+   IntersectionObserver adding a class, so the failsafe is the same class
+   added unconditionally: after the delay, every [data-enter] on the document
+   is handed its ink whether it was ever seen or not.
+
+   This used to walk ScrollTrigger.getAll() and carried two guards, one for
+   pinned stages and one for scrubbed scenes, because forcing either to
+   progress 1 would throw the page to the end of a choreography nobody had
+   asked for. Neither exists now, so neither guard does, and the failsafe is
+   the one line it should always have been.
    ------------------------------------------------------------ */
 
 export function revealFailsafe(delay = 4000): void {
   if (prefersReduced) return;
 
   window.setTimeout(() => {
-    const fold = window.innerHeight;
-    ScrollTrigger.getAll().forEach((st) => {
-      if (st.progress > 0) return;
-
-      /* A pinned stage is scrubbed, not revealed. It sits at progress 0
-         because the reader has not entered its track yet, which is the
-         correct state, and forcing it to 1 would throw the hero to the end of
-         a choreography nobody asked for.
-
-         This guard was not needed while initCommonReveals existed, because
-         the once:true reveals vastly outnumbered the stages. With those gone
-         pins are most of what is registered, and without this line the
-         failsafe becomes the bug it was written to prevent. */
-      if (st.pin) return;
-
-      /* A scrubbed scene is not a reveal. It sits at progress 0 because the
-         reader has not entered its track yet, which is the correct state,
-         and forcing it to 1 would throw a five viewport scene to its last
-         frame before anyone had scrolled into it. The sticky scenes on the
-         cover carry no pin, so the guard above does not catch them. */
-      if (st.vars.scrub) return;
-
-      const el = st.trigger as HTMLElement | null;
-      if (!el) return;
-      // A zero-height viewport means nothing can ever come into view.
-      if (fold === 0 || el.getBoundingClientRect().top < fold) {
-        st.animation?.progress(1);
-      }
-    });
+    document
+      .querySelectorAll<HTMLElement>('[data-enter]')
+      .forEach((el) => el.classList.add('is-in'));
   }, delay);
 }
 
@@ -210,4 +186,3 @@ export function applyStaticScroll(): void {
   document.getElementById('nav')?.style.setProperty('display', 'none');
 }
 
-export { gsap, ScrollTrigger };

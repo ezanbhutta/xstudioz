@@ -50,7 +50,7 @@
      travel can stay on the ladder instead of having to clear the frame. */
   opacity: 0;
   pointer-events: none;
-  translate: calc(var(--d3x) * -1) calc(var(--d3y) * -1);
+  translate: calc(var(--d0x) * -1) calc(var(--d0y) * -1);
   transition: opacity var(--dur) var(--curve), translate var(--dur) var(--curve);
 }
 
@@ -172,7 +172,7 @@
      the top edge and into the frame. One rung, one duration, one curve. */
   opacity: 0;
   pointer-events: none;
-  translate: var(--d3x) var(--d3y);
+  translate: var(--d0x) var(--d0y);
   transition: opacity var(--dur-half) var(--curve),
     translate var(--dur-half) var(--curve);
 }
@@ -355,7 +355,9 @@
    glyph on fifteen interior routes was the one carrying no meaning. */
 .doc__ord {
   font-size: var(--text-display);
-  line-height: 0.8;
+  /* A lining numeral has no descender, so the floor does not bind here, but
+     the value is stated against the ladder rather than as a loose figure. */
+  line-height: var(--leading-solid);
   font-weight: 400;
   /* Cut out of the ground rather than set on it, so the number sits in the
      page. The outline was drawn at --ink-line-strong, 34% of the ink, which
@@ -459,6 +461,15 @@
      everything inside it and the tables could never use the room. */
   .doc--capability .doc__section > * {
     max-width: 37rem;
+  }
+
+  /* And the paragraph inside it takes the reading measure rather than the
+     column's. Two classes here beat the one-class rule further up the file,
+     which is why the running copy on the five capability pages was still
+     rendering 78 characters a line while every other route had come down. */
+  .doc--capability .doc__section > p,
+  .doc--capability .doc__section li {
+    max-width: var(--measure);
   }
 
   /* And released where it does not. */
@@ -566,6 +577,26 @@
   line-height: var(--leading-body);
 }
 
+/* THE MEASURE, ON THE THINGS THAT ARE READ. The reading column is 37rem so
+   that a spec table and a figure have room, and the running copy inside it
+   was inheriting that whole width: 555px is 78 to 81 characters a line, and
+   the closing paragraph and the FAQ answers were running 79 and 80. The cap
+   goes on the paragraph rather than on the column, which is the same
+   division the capability pages already make between a section and the
+   things inside it. */
+/* `.prose li` and not the bare-list scope the counters use: a measure is a
+   reading constraint, so it follows the copy rather than the decoration. The
+   only classed lists inside .prose anywhere on the site are .checklist, whose
+   items are read like any other line, and .journey, whose stages are 278px
+   grid cells the cap can never bind on. */
+.prose p,
+.prose li,
+.faq__a p,
+.qa__a,
+.doc__cta-copy .body {
+  max-width: var(--measure);
+}
+
 .prose p + p,
 .prose :is(ul, ol, table, .spec-wrap, .checklist, .answer) + p {
   margin-top: var(--sp-4);
@@ -603,7 +634,7 @@
    links, not inline ones: a journey stage and an archive entry are whole rows
    with their own affordance, and the rule was landing under every line of
    them. */
-:is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note) a:not(.pill):not(.ghost):not(.portal):not([class*="__link"]):not([class*="__more"]) {
+:is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note) a:not(.pill):not(.ghost):not(.portal):not(.doc__address):not([class*="__link"]):not([class*="__more"]) {
   color: var(--ink);
   background-image: var(--brand-ramp);
   background-repeat: no-repeat;
@@ -619,27 +650,53 @@
   transition: color var(--dur-half) var(--curve);
 }
 
-:is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note) a:not(.pill):not(.ghost):not(.portal):not([class*="__link"]):not([class*="__more"]):hover,
-:is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note) a:not(.pill):not(.ghost):not(.portal):not([class*="__link"]):not([class*="__more"]):focus-visible {
+:is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note) a:not(.pill):not(.ghost):not(.portal):not(.doc__address):not([class*="__link"]):not([class*="__more"]):hover,
+:is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note) a:not(.pill):not(.ghost):not(.portal):not(.doc__address):not([class*="__link"]):not([class*="__more"]):focus-visible {
   color: var(--ink-accent);
 }
 
-/* Running lists in the prose get the dash-and-number treatment. Lists that
-   are really components, .checklist, .entries, .related__list, bring their
-   own layout, so they are excluded here rather than having to undo it. */
-.prose :is(ul, ol):not(.checklist, .entries, .related__list, .journey) {
+/* ============================================================
+   RUNNING LISTS IN THE PROSE
+
+   A bare <ul> or <ol> in the reading column takes the dash-and-number
+   treatment. A list that is really a component brings its own layout and
+   must not.
+
+   THE SCOPE IS AN ALLOWLIST NOW, AND THAT IS THE FIX RATHER THAN A FOURTH
+   EXCLUSION. These five rules carried :not(.checklist, .entries,
+   .related__list) and two of them had grown a fourth entry, .journey, while
+   the other three had not. The three that had not are what put four stacked
+   numerals at the top-left of the reading grid on /process/: ol.journey took
+   `counter-increment` and an absolutely positioned ::before from this block,
+   its own li was excluded from the `position: relative` rule two rules up,
+   so all four counters resolved against .doc__grid at 60, 1106 and landed on
+   one another. A list that says nothing in the markup about wanting numbers
+   was being numbered.
+
+   A BLOCKLIST GOES STALE EVERY TIME A COMPONENT LIST IS ADDED, and it had
+   already gone stale twice. So the condition is inverted: I enumerated every
+   ul and ol inside .prose on all sixteen routes and there are 27 of them, 18
+   with no class attribute at all and 9 carrying one (.checklist eight times,
+   .journey once). "Has a class" and "is in the old exclusion list" agree on
+   every single one, with zero disagreements, and running copy on this site is
+   always authored as a bare list. :not([class]) is therefore the same set
+   today, one condition instead of four, and it cannot fall behind the next
+   component. Specificity is unchanged: an attribute selector and a class both
+   contribute 0,1,0 to :not().
+   ============================================================ */
+.prose :is(ul, ol):not([class]) {
   margin-top: var(--sp-4);
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
 }
 
-.prose :is(ul, ol):not(.checklist, .entries, .related__list, .journey) > li {
+.prose :is(ul, ol):not([class]) > li {
   position: relative;
   padding-left: var(--sp-4);
 }
 
-.prose ul:not(.checklist, .entries, .related__list) > li::before {
+.prose ul:not([class]) > li::before {
   content: '';
   position: absolute;
   left: 0;
@@ -649,16 +706,16 @@
   background: var(--ink-dim);
 }
 
-.prose ol:not(.checklist, .entries, .related__list) {
+.prose ol:not([class]) {
   counter-reset: n;
 }
 
-.prose ol:not(.checklist, .entries, .related__list) > li {
+.prose ol:not([class]) > li {
   counter-increment: n;
   padding-left: var(--sp-6);
 }
 
-.prose ol:not(.checklist, .entries, .related__list) > li::before {
+.prose ol:not([class]) > li::before {
   content: counter(n, decimal-leading-zero);
   position: absolute;
   left: 0;
@@ -1159,11 +1216,160 @@
   max-width: 52ch;
 }
 
-/* The last action on a document page, and it was 39px. Same floor as the
-   footer's control. */
-.doc__cta-copy .pill {
+/* ============================================================
+   THE ASK, ON A DOCUMENT
+
+   The same string three times, at three sizes, and the ranking is the whole
+   point. Measured before this: the homepage set inquire@xstudioz.com at 48px
+   underlined in the brand ramp, and the capability page, which is the page
+   somebody is on when they decide to hire, set the identical address at 15px
+   inside a 217 x 44 transparent pill, 7,935px down, with not one filled
+   control anywhere in its 9,331. The quiet one was on the page with the
+   intent. That is backwards, and it is fixed by treatment rather than by
+   copy, because there is no new copy: the address is already on every one of
+   these routes.
+
+     .doc__act      the head. A filled control beside the facts strip, so
+                    "how do I start" is answered at zero scroll the way the
+                    cover answers it, instead of at 7,079px.
+     .doc__midact   the middle. The address as type, one step down, at the
+                    point the document stops arguing and starts concluding.
+     .doc__cta .pill  the close. The cover's treatment exactly: the display
+                    step, the room's ink, and the ramp carried as a 3px rule
+                    rather than as text-decoration, because an underline
+                    skips ink around a descender and this string has a q and
+                    an @ in it.
+
+   THE CLOSE IS RESTYLED WHERE IT STANDS, not rebuilt. Thirteen routes carry
+   that anchor with a route-specific mailto subject on it, and two of those
+   files may not be touched at all, so the component is dissolved in CSS
+   instead: the border, the ground, the sweep and the 15px label all come
+   off, and what is left is the address at the size of the thing it is. One
+   selector list reaches all thirteen and every href survives untouched.
+
+   ONE FILLED CONTROL PER SCREEN. The head's is the only one on the route
+   with a ground behind it, and the next ask is thousands of pixels away, so
+   nothing on this site ever shows two fills competing for the same press.
+   ============================================================ */
+
+.doc__act {
+  margin-top: var(--sp-5);
+}
+
+/* THE ADDRESS AS TYPE. Shared by the middle and the close; only the step
+   differs, and it is set on each of them rather than here. */
+.doc__address,
+.doc__cta .pill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+  max-width: 100%;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  line-height: var(--leading-tight);
+  transition: color var(--dur-half) var(--curve);
+}
+
+/* Undoing the component. Everything the pill is as a control and nothing it
+   is as type. */
+.doc__cta .pill {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+  isolation: auto;
+}
+
+/* The sweep has nothing to fill any more. */
+.doc__cta .pill::before {
+  display: none;
+}
+
+.doc__address-text,
+.doc__cta .pill > span:not(.sr-only) {
+  display: inline-block;
+  background-image: var(--brand-ramp);
+  background-repeat: no-repeat;
+  background-size: 100% 3px;
+  background-position: left bottom;
+  padding-bottom: 8px;
+}
+
+.doc__address-arr,
+.doc__cta .pill .pill__arr {
+  /* Cap height of the step it sits beside, so it reads as the end of the
+     address rather than as an icon parked next to one. */
+  width: 0.62em;
+  height: 0.62em;
+  flex: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  transition: translate var(--dur-half) var(--curve);
+}
+
+@media (hover: hover) {
+  .doc__address:hover,
+  .doc__cta .pill:hover {
+    color: var(--ink-accent);
+  }
+}
+
+.doc__address:focus-visible,
+.doc__cta .pill:focus-visible {
+  color: var(--ink-accent);
+}
+
+.doc__address:hover .doc__address-arr,
+.doc__address:focus-visible .doc__address-arr,
+.doc__cta .pill:hover .pill__arr,
+.doc__cta .pill:focus-visible .pill__arr {
+  translate: var(--d0x) var(--d0y);
+}
+
+.doc__address:active .doc__address-arr,
+.doc__cta .pill:active .pill__arr {
+  translate: 0 0;
+}
+
+/* ---- The middle ----
+
+   A pause in the reading column, at the point the argument has been made.
+   It sits at the prose measure and takes the section rhythm above it, so it
+   reads as a considered break rather than as an advertisement dropped into
+   the page. One step under the close, because the close is the loudest ask
+   on the route and there may only be one of those. */
+.doc__midact {
+  /* The reading measure, stated here because this block sits between two
+     .doc__section elements rather than inside one, so the capability page's
+     own cap on section children never reaches it. */
+  max-width: 37rem;
+  margin-block: var(--sp-7);
+  padding-top: var(--sp-5);
+  border-top: var(--hairline);
+}
+
+.doc__midact .doc__address {
+  font-size: var(--text-subheading);
+  /* A standalone link on its own line, so the target floor applies to it.
+     The phone's subheading step is 18px, which is a 24.8px box once the rule
+     below it is counted, so 10px each side is what clears 44 at BOTH ends of
+     the ladder. Padding rather than a min-height, which would put the ramp
+     rule off the baseline. */
+  padding-block: 10px;
+}
+
+.doc__midact .doc__address-text {
+  background-size: 100% 2px;
+  padding-bottom: 5px;
+}
+
+/* ---- The close ---- */
+
+.doc__cta .pill {
   align-self: flex-start;
-  min-height: 44px;
+  font-size: var(--text-heading);
 }
 
 /* ---------------- 404 ---------------- */
@@ -1417,6 +1623,14 @@
 
   .doc__lede {
     max-width: 100%;
+  }
+
+  /* THE CLOSING ASK KEEPS ITS TARGET. At the phone's heading step the
+     address is 28px on the tight leading, which is a 38.8px box: the one
+     control on a document that the 44px floor was still missing. Padding
+     rather than a min-height, so the ramp rule stays on the baseline. */
+  .doc__cta .pill {
+    padding-block: 4px;
   }
 
   .related__arr,
@@ -1973,7 +2187,11 @@
   line-height: 1.45;
   text-transform: none;
   color: var(--ink);
-  max-width: 54ch;
+  /* Tighter in characters than the body's --measure, not looser. A larger
+     step wants a shorter line, and at 54ch this one was rendering 89
+     characters on /privacy/, the widest measure on the site after the
+     cover's own note. 45ch brings the worst of the sixteen ledes to 74. */
+  max-width: 45ch;
   margin-top: 3rem;
 }
 
@@ -2052,7 +2270,7 @@
   /* 1.02, up from 0.9. The figure was set against a 44px heading; at 32px it
      put the descenders of one line into the counters of the next on every
      two-line section title on fifteen routes. */
-  line-height: 1.02;
+  line-height: var(--leading-tight);
   color: var(--ink);
   border-top: 1px solid var(--ink-line);
   /* The pair the cover's chapter markers use, at the scale a document reads
@@ -2226,9 +2444,14 @@
   pointer-events: none;
 }
 
-.doc__cta-copy {
-  grid-column: 3;
-}
+/* `.doc__cta-copy { grid-column: 3 }` stood here, restating what the layout
+   block already says 1,236 lines earlier and, because it came after the
+   responsive block, quietly beating the `grid-column: 1` that collapses this
+   grid below 900px. So the closing column stayed a fifth of the sheet on a
+   phone. It cost nothing while the ask was a 217px pill that happened to fit;
+   at the address's real size it put 282px of type across a 140px column and
+   over the gradient plate beside it. Deleted rather than moved: one
+   declaration, in one place, and the media query wins again. */
 
 /* ---- Fixed chrome that sits outside every room ---- */
 
@@ -2320,27 +2543,11 @@ html.js:not(.no-motion) [data-enter].is-in {
   translate: 0 0;
 }
 
-/* Scoped to the split host, so the only .scrub-word elements that ever carry
-   a transition are the ones on a document. The cover's are interpolated
-   frame by frame against the wheel and a transition on those would put the
-   lit edge behind the scroll position. */
-html.js:not(.no-motion) [data-words] .scrub-word {
-  transition: opacity var(--dur) var(--curve);
-}
-
 @media (prefers-reduced-motion: reduce) {
   html.js [data-enter] {
     opacity: 1;
     translate: none;
     transition: none;
-  }
-
-  /* base.css already hands every word back at full strength. The delays are
-     written inline by script, so the transition is killed here as well and
-     nothing is left waiting on one. */
-  html.js [data-words] .scrub-word {
-    transition: none;
-    transition-delay: 0s !important;
   }
 }
 

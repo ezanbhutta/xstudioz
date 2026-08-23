@@ -32,22 +32,73 @@
   transition: translate var(--dur) var(--curve), visibility 0s 0s;
 }
 
-/* The paint, on its own bled layer. Colour is a state rather than a movement,
-   so it changes on the short rung while the bar travels on the base one. */
+/* ============================================================
+   THE HEADER IS GLASS, AND IT IS GLASS AT EVERY SCROLL POSITION.
+
+   The bar used to be transparent until the reader scrolled and then commit to
+   a flat paper ground. Two states meant two contrast arguments and the first
+   of them was "the header has no ground, so whatever is under it is what you
+   read the links on", which is not an argument.
+
+   It is one material now, always on, and the arithmetic is stated once in the
+   GLASS block of tokens.css. In short: the tint is 0.86, the worst composite
+   it can ever reach is the tint over pure black in daylight and over pure
+   white in the dark, and those measure 12.17:1 and 12.57:1 against the
+   header's own ink. No backdrop can be worse than those two, so the header's
+   links are legal over the hero's paper, over the chroma room, over the deep
+   violet colophon and over anything a later section paints, at every scroll
+   position, without any of them being known here.
+
+   THREE LAYERS, ON TWO PSEUDO-ELEMENTS AND NO EXTRA MARKUP.
+
+     ::before   the material: the tint, the blur, the saturation lift and the
+                lit edge. Bled one run to the left so the header's diagonal
+                exit never opens a seam, which is why the glass is on this
+                layer and not on .nav itself.
+     ::after    the grain. Glass with no surface texture reads as a
+                transparent box.
+
+   WHAT SCROLL IS ALLOWED TO CHANGE. The bottom hairline, and nothing else.
+   It is a boolean, which is the only thing clause 6 of the law lets a scroll
+   position decide: at the top of a document the bar is flush with the sheet
+   and needs no line under it, and once the page has moved the line says the
+   content is running underneath. Colour only, over the answer duration.
+   ============================================================ */
 .nav::before {
   content: '';
   position: absolute;
   z-index: -1;
   inset: 0 0 0 calc(var(--nav-run) * -1);
-  background: transparent;
+
+  background-color: var(--glass-tint);
+  -webkit-backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
+  backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
+
+  /* The lit edge, brighter on the top than the bottom, because the light on
+     this site comes from up the arm and an edge catches it on the face turned
+     toward it. Inset hairlines rather than a border, so the edge is inside
+     the material the way a bevel is rather than drawn around it. */
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-edge-lit),
+    inset 0 -1px 0 0 var(--glass-edge-shade);
+
   border-bottom: 1px solid transparent;
-  transition: background-color var(--dur-half) var(--curve),
-    border-color var(--dur-half) var(--curve);
+  transition: border-color var(--dur-half) var(--curve);
+}
+
+/* The grain, over the material and under the content. */
+.nav::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 0 calc(var(--nav-run) * -1);
+  background-image: var(--glass-grain);
+  opacity: var(--glass-grain-alpha);
+  pointer-events: none;
 }
 
 .nav--scrolled::before {
-  background: var(--ground);
-  border-bottom-color: var(--ink-line);
+  border-bottom-color: var(--glass-line);
 }
 
 /* visibility drops with a delay so off-screen links leave the tab order */
@@ -279,12 +330,36 @@
 }
 
 /* The dialog sits in the top layer, so it cannot be clipped by any ancestor
-   or by the fixed lighting rig underneath it. */
+   and nothing on the page can make it sample an empty backdrop.
+
+   The backdrop is the one blurred surface on the site that is allowed to be
+   thin, and it is thin for a reason rather than by taste: nothing is read on
+   it. It carries no text and no control. Its job is to push the document
+   behind the panel far enough back that the panel reads as being in front of
+   it, which is what a real 20px blur at 0.72 does and what the 2px it carried
+   before did not. */
 .nav__dialog::backdrop {
-  background: rgba(9, 9, 11, 0.72);
-  backdrop-filter: blur(2px);
+  background: rgb(9 9 11 / 0.72);
+  -webkit-backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
+  backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
 }
 
+/* THE PANEL IS THE SECOND AND LAST GLASS SURFACE ON THE SITE.
+
+   It is chrome: five links and an address, no running copy. It is also the
+   cheap one, because it is modal. Only one of these is ever on screen, the
+   document behind it does not scroll while it is open, and it therefore never
+   composites a blur against a moving backdrop. The header is the only surface
+   on the site that does.
+
+   Its tint is the VOID rather than the theme's canvas, in both themes,
+   because the overlay is its own room and opening it from a paper page and
+   from a dark page has always arrived at the same place. So the contrast is
+   the fixed pair and not a computed one: #f2f1f6 on #09090b at 0.86 over the
+   worst possible backdrop, pure white, composites to rgb(43,43,45) and
+   measures 12.57:1. That is the dark-theme figure from the GLASS block, and
+   it holds here in daylight too because this surface does not follow the
+   theme. */
 .nav__panel {
   position: relative;
   display: flex;
@@ -294,10 +369,28 @@
      areas so nothing lands under a notch or a home indicator */
   max-height: 100dvh;
   overflow-y: auto;
-  background: var(--ground);
   padding:
     max(var(--sp-4), env(safe-area-inset-top)) max(var(--gutter), env(safe-area-inset-right))
     max(var(--sp-6), env(safe-area-inset-bottom)) max(var(--gutter), env(safe-area-inset-left));
+
+  background-color: rgb(9 9 11 / var(--glass-alpha));
+  -webkit-backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
+  backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.13),
+    inset 0 -1px 0 0 rgb(0 0 0 / 0.42);
+}
+
+/* The grain, over the material and under the content. .nav__panel > * is
+   already position: relative, so this sits behind every child without a
+   z-index on any of them. */
+.nav__panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--glass-grain);
+  opacity: 0.055;
+  pointer-events: none;
 }
 
 /* A single beam used to be laid across this panel from a conic gradient
@@ -306,6 +399,98 @@
    the whole declaration was invalid: the beam has not painted in months. It
    also carried magenta on its own, which no chromatic surface on this site is
    allowed to do. Removed rather than repaired. */
+
+/* ============================================================
+   WHEN THE GLASS CANNOT BE GLASS
+
+   Four separate conditions, and they are four because no one of them catches
+   the others. Every branch lands on the SAME place: a fully opaque surface.
+   A fallback that thins the alpha instead is the classic mistake, because the
+   contrast the surface had was never coming from the fill.
+
+   1. THE FEATURE IS ABSENT. Nothing to sample, so the tint composites against
+      whatever is behind it and the surface is a translucent rectangle.
+
+   2. prefers-reduced-transparency. Chromium-only today, and on macOS it does
+      NOT follow the system Reduce Transparency setting, which is exactly the
+      audience it names. It is honoured because it costs nothing and it will
+      become correct, not because it can be relied on.
+
+   3. prefers-contrast. This is the one that actually catches the macOS
+      reader, because Increase Contrast does map here, and it is also the
+      right answer on its own terms: somebody asking for more contrast should
+      not be handed a surface whose whole idea is that things show through it.
+
+   4. forced-colors. The blur survives forced colours but backgrounds,
+      gradients and shadows do not, so the lit edge and the tint are both
+      destroyed and the bar becomes an unbounded field of system Canvas with
+      the page running under it. An explicit 1px border is the only thing that
+      keeps the surface a surface, and it has to be stated rather than
+      inherited from box-shadow.
+   ============================================================ */
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .nav::before {
+    background-color: var(--glass-solid);
+  }
+
+  .nav__panel {
+    background-color: var(--glass-solid);
+  }
+
+  .nav__dialog::backdrop {
+    background: rgb(9 9 11 / 0.94);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .nav::before {
+    background-color: var(--glass-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-bottom-color: var(--glass-line);
+  }
+
+  /* The grain is surface texture on a material. With no material it is dirt
+     on a solid bar, and a reader who asked for more contrast asked for less
+     of exactly this. */
+  .nav::after,
+  .nav__panel::before {
+    display: none;
+  }
+
+  .nav__panel {
+    background-color: #09090b;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .nav__dialog::backdrop {
+    background: rgb(9 9 11 / 0.94);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (forced-colors: active) {
+  /* Canvas and CanvasText are the system's own pair, so they are guaranteed
+     to meet whatever contrast the reader has chosen. The border is what stops
+     the bar dissolving into the page behind it once the shadows are gone. */
+  .nav::before {
+    background-color: Canvas;
+    border-bottom: 1px solid CanvasText;
+  }
+
+  .nav__panel {
+    background-color: Canvas;
+    border: 1px solid CanvasText;
+  }
+
+  .nav::after,
+  .nav__panel::before {
+    display: none;
+  }
+}
 
 .nav__panel > * { position: relative; }
 
@@ -439,6 +624,44 @@ html.nav-open {
 @keyframes nav-backdrop-in {
   from { opacity: 0; }
   to   { opacity: 1; }
+}
+
+/* ============================================================
+   THE ONE ROTATION ON THE SITE
+
+   Clause 5 of the law: 180 degrees about 49.90% / 50.71%, started by a click,
+   in one place. This is the place.
+
+   The close control's glyph is the studio's mark drawn as two crossed
+   hairlines, and the mark maps onto itself at a half turn: 22 of its 22
+   counter vertices land, against 29 of 52 at a quarter. So a half turn is the
+   only rotation this drawing can make and arrive as itself, which is why both
+   ends of this animation are the mark and nothing in between is.
+
+   It is TIMED, not scrubbed, and it plays through in one go. There is no
+   input that can hold it at 90 degrees, where the figure reads as a different
+   one. It takes the long rung, 0.4082s, because opening is the one thing on
+   this site a reader waits for rather than touches.
+
+   The origin is the drawing's measured centre of rotation and not the box
+   centre. Those are 0.1% and 0.71% apart, which is under a pixel at this
+   size, and it is stated correctly anyway: the claim this site makes is that
+   the box centre is the wrong point, and a control that turns about it would
+   be the one place the claim is not kept. */
+.nav__dialog[open] .nav__toggle-glyph--x {
+  transform-origin: var(--turn-origin);
+  animation: mark-half-turn var(--dur) var(--curve) both;
+}
+
+@keyframes mark-half-turn {
+  from { rotate: 0deg; }
+  to   { rotate: var(--half-turn); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav__dialog[open] .nav__toggle-glyph--x {
+    animation: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -603,42 +826,34 @@ html.nav-open {
    variants. Removed rather than left as decoration. */
 
 /* ============================================================
-   THE HEADER, OVER ROOMS
+   THE HEADER'S INK, WHICH IS NOW ONE VALUE AND NOT FOUR
 
-   The header is `position: fixed`, so it sits outside every room and cannot
-   inherit one. It carries its own two states instead.
+   The header used to borrow. Unscrolled it was transparent and took whatever
+   ink the document declared for the room its first section painted, through
+   --nav-ink; scrolled it dropped that and committed to the paper room. So the
+   bar had two inks, a document could hand it a third, and the contrast of any
+   of them depended on a section this stylesheet cannot see.
 
-   Unscrolled it is transparent and takes whatever ink the page declares for
-   the room its first section paints. A document sets --nav-ink once, on
-   <body>, and never thinks about it again.
+   With the material always on there is nothing to borrow from. The glass tint
+   is the THEME's canvas, #f6f5f8 in daylight and #09090b in the dark, so the
+   only ink that can be argued about it is the theme's own text colour. That
+   is what it takes, in both states, on every route: 12.17:1 and 12.57:1
+   against the worst composite the material can reach, as computed in the
+   GLASS block of tokens.css.
 
-   Scrolled it stops borrowing and commits: the paper ground with the sheet's
-   own ink under a hairline, which reads at 16.4:1 and is the same bar over
-   every section on the site. It was the void, and a near-black bar fixed to
-   the top of every route is a viewport's worth of darkness on a document that
-   is meant to be light.
+   --nav-ink and --nav-ground are gone with the borrowing. A document no
+   longer declares anything about the header, and there is no route on which
+   the header can be handed an ink that has not been measured.
    ============================================================ */
 
 .nav {
-  --ink: var(--nav-ink, var(--room-paper-ink));
-  --ground: var(--nav-ground, transparent);
+  --ink: var(--text);
   --ink-dim: color-mix(in srgb, var(--ink) 74%, transparent);
   --ink-quiet: color-mix(in srgb, var(--ink) 62%, transparent);
-  --ink-line: color-mix(in srgb, var(--ink) 22%, transparent);
+  --ink-line: var(--glass-line);
   --ink-line-strong: color-mix(in srgb, var(--ink) 44%, transparent);
   --ink-accent: var(--ink);
   color: var(--ink);
-}
-
-/* The ground and the hairline are painted by .nav::before, which is bled by
-   one run so the diagonal exit never opens a seam. Only the inks are set
-   here. */
-.nav--scrolled {
-  --ink: var(--room-paper-ink);
-  --ground: var(--room-paper-ground);
-  --ink-accent: var(--room-paper-ink);
-  --ink-line: var(--border);
-  color: var(--room-paper-ink);
 }
 
 /* The overlay menu is its own room and always the same one, so opening it
@@ -654,10 +869,11 @@ html.nav-open {
   color: var(--ink);
 }
 
-/* The wordmark is drawn letterform rather than running text, so it keeps
-   Satoshi. It is the one place on the site that still uses it. */
+/* The wordmark follows the one family like everything else. It used to be
+   the single remaining call on a second face, which cost a whole extra file
+   for eight glyphs. */
 .nav__name {
-  font-family: 'Satoshi', var(--font-sans);
+  font-family: var(--font-display);
 }
 
 /* Display type in the overlay follows the display family like everything
@@ -666,7 +882,7 @@ html.nav-open {
   font-family: var(--font-display);
   font-size: var(--text-heading-sm);
   font-weight: var(--weight-display);
-  line-height: 0.9;
+  line-height: var(--leading-tight);
 }
 
 /* ============================================================
@@ -940,11 +1156,11 @@ html.nav-open {
   .portal,
   .nav__link,
   .nav__menu-link,
-  .nav__theme,
   .nav__toggle,
   .nav__close,
   .nav__panel-mail,
   .brief__address,
+  .doc__address,
   .footer__col a,
   .crumbs a,
   .faq__q
@@ -960,11 +1176,11 @@ html.nav-open {
   .portal,
   .nav__link,
   .nav__menu-link,
-  .nav__theme,
   .nav__toggle,
   .nav__close,
   .nav__panel-mail,
   .brief__address,
+  .doc__address,
   .footer__col a,
   .crumbs a,
   .faq__q
@@ -977,7 +1193,7 @@ html.nav-open {
    instead, which is the same thing its hover already does and the only
    property a word in a sentence is allowed to change. */
 :is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note)
-  a:not(.pill):not(.ghost):not(.portal):not([class*='__link']):not([class*='__more']):active {
+  a:not(.pill):not(.ghost):not(.portal):not(.doc__address):not([class*='__link']):not([class*='__more']):active {
   color: var(--ink-accent);
 }
 
@@ -985,6 +1201,7 @@ html.nav-open {
    its own hover, and a control that is being pressed is not a control the
    pointer is travelling away from. */
 .pill:active .pill__arr,
+.doc__address:active .doc__address-arr,
 .ghost:active .ghost__arr,
 .caps__link:active .caps__arr,
 .brief__address:active .brief__address-arr {

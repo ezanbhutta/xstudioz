@@ -281,41 +281,41 @@
   /* ============================================================
      3. TYPE
 
-     Two families. One weight for display, two for body. Every step of
+     ONE FAMILY. Geist, one variable file, display and body. Every step of
      hierarchy is carried by SIZE and COLOUR, never by weight, so there is no
-     bold headline anywhere on this site.
+     bold headline anywhere on this site. --font-display and --font-sans name
+     the same stack on purpose: they stay as two tokens because the roles are
+     two, and a future change to one should not be forced onto the other.
 
-     Familjen Grotesk 500 is a Scandinavian grotesk with real lowercase, so a
-     display line sets in the case the copy is written in.
+     THE LINE-BOX FLOOR, DERIVED RATHER THAN GUESSED. Geist's content box is
+     1.150 em, sitting 0.900 above the baseline and 0.250 below. Its deepest
+     ink descender, from g j p q y, reaches 0.2188 em below the baseline. A
+     line box of height L puts its bottom edge at 0.250 + (L - 1.150) / 2 em
+     below the baseline, so the descender is inside the box when
 
-     THE DISPLAY WEIGHT IS 500, and the drop from 600 is a correction rather
-     than a preference. The paragraph above says hierarchy is never carried by
-     weight; setting the display step at 600 said the opposite in the one
-     place a reader actually looks. 500 is now the heaviest weight in the
-     system in either family, so there is no bold variant of anything to
-     reach for and the rule and the values finally agree.
-     ============================================================ */
-  --font-display: 'Familjen Grotesk', 'Familjen Grotesk Fallback',
-    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-sans: 'Inter', 'Inter Fallback', ui-sans-serif, system-ui,
+         0.250 + (L - 1.150) / 2 >= 0.2188   ->   L >= 1.0876
+
+     That is the floor. It is stated once, here, and every display line-height
+     in the system is set from it. The site has shipped a display line-height
+     of 1.00 twice, under two different faces, which put the descender outside
+     its own line box and left it depending on nothing above it ever clipping.
+     Nothing clips it today. This removes the dependency instead of the
+     symptom. */
+  --font-display: 'Geist', 'Geist Fallback', ui-sans-serif, system-ui,
     -apple-system, 'Segoe UI', Roboto, sans-serif;
-  /* STILL 500, AND THAT IS A LIMIT RATHER THAN A CHOICE. The lighter display
-     was asked for and it cannot be shipped from this repo: public/fonts holds
-     one Familjen Grotesk face, FamiljenGrotesk-500.woff2, and it is a static
-     500 with no fvar table. Declaring 400 here changes nothing on screen,
-     because font matching hands the request the nearest face it has and no
-     browser synthesises a LIGHTER weight. Writing 400 would therefore be a
-     value that reads as a decision and is not one.
+  --font-sans: 'Geist', 'Geist Fallback', ui-sans-serif, system-ui,
+    -apple-system, 'Segoe UI', Roboto, sans-serif;
 
-     The weight the frame actually lost is in the two changes underneath: the
-     display step came down from 140px to 100px, and the headline came off the
-     gradient onto paper. White on a saturated field is the heaviest object a
-     page can carry, and at 100px the stroke is 71 percent of what it was. */
-  /* 400 is the display weight and the Regular master is shipped:
-     public/fonts/FamiljenGrotesk-400.woff2, usWeightClass 400, declared in
-     base.css and preloaded. Before it existed this token was a request the
-     stack could not fill, because the only face loaded was a Medium with no
-     variable axis and no browser synthesises a lighter weight. */
+  /* The measured floor, and the value the display actually uses. The used
+     value carries 0.012 em of headroom over the floor so a future weight or
+     optical-size change cannot cross it silently. */
+  --lh-display-floor: 1.0876;
+  --lh-display: 1.1;
+
+  /* 400 across the board. Geist is variable from 100 to 900, so this is a
+     real instance rather than a request the stack cannot fill: the previous
+     face shipped as a static 500 and painted every display glyph at 500 no
+     matter what this token said. */
   --weight-display: 400;
 
   /* THE SCALE, AS ONE NUMBER
@@ -340,7 +340,7 @@
      THE FIGURES, resolved at 1500 wide: 100 / 48 / 32 / 21 / 16 / 13, and the
      ladder was re-solved rather than scaled. The old one was 140 / 57 / 44 /
      22 / 15 / 14, a 9.333:1 display-to-body ratio tuned when the display face
-     was condensed caps. Familjen Grotesk is a lowercase grotesque: it carries
+     was condensed caps. The display face is a lowercase grotesque: it carries
      far more ink per point at the same nominal size, so 140px of it is not
      140px of a condensed face, it is a wall.
 
@@ -403,29 +403,31 @@
      against body, which at 15 against 14 there simply was not. */
   --text-caption: 0.8667rem;
 
-  /* Display leading sits at or just over 100%. It was a flat 1 when the
-     display step was 140px, where the face's own ascent and descent already
-     put daylight between the lines. At 100px the same 1 welds them: the hero
-     sets three lines and the descender of one was landing in the counter of
-     the next. 1.04 was the smallest figure that separated them at 100px.
+  /* THE LEADING LADDER, SET FROM THE MEASURED FLOOR RATHER THAN BY EYE.
 
-     SOLID, NOW THAT THE SIZE CAME DOWN. Leading is a function of size and the
-     size moved: 1.04 of 80px is 83.2px of slug where 1.04 of 100px was 104,
-     so holding the ratio would have handed the smaller headline the same
-     proportional air and lost the close-set stack that makes a display block
-     read as one object. Every reference sets its display at or under 1.05 and
-     two of them go to 1.00 and 0.9375. Verified on the frame at 80px: the y
-     of "every" clears the t of "that" because they do not share a column, and
-     no descender on the hero lands in a counter. Body leading is 155 percent,
-     and that gap against a solid display carries most of the premium read. */
-  --leading-display: 1;
-  /* 0.95, up from 0.86. The figure was set against a 57px heading, where the
-     face's own ascent still left daylight between two lines; at 48px it
-     welded them, and the payoff panel rendered three lines whose descenders
-     landed inside the counters underneath. Leading is a function of size and
-     the size moved. */
-  --leading-tight: 0.95;
-  --leading-tight-mixed: 0.9;
+     --lh-display-floor is 1.0876 and it is derived in the TYPE block above
+     from Geist's own ascent, descent and deepest ink descender. Every display
+     leading below is at or over it, so no display line on this site puts its
+     descender outside its own line box. The site shipped 1.00 and 0.95 and
+     0.90 here under two different faces; both times the descender hung
+     outside the box and stayed visible only because nothing above it happened
+     to clip. This removes the dependency.
+
+     1.1 is close-set. It is 0.012 over the floor, which is the smallest
+     headroom that survives a weight change, and it still reads as a stacked
+     display block rather than as a paragraph: the hero's three lines close to
+     88px of slug at 80px of type. Body leading stays at 155 percent, and the
+     gap between a solid display and an open paragraph carries the premium
+     read. */
+  --leading-display: 1.1;
+  --leading-tight: 1.1;
+  --leading-tight-mixed: 1.1;
+
+  /* SOLID IS FOR ONE LINE THAT IS NOT DISPLAY TYPE: a table cell, a numeral,
+     a control label. It stays at 1 because a single line box is never
+     stacked against another one, and every element that uses it clears the
+     0.2188 em descender through its own padding, which is 11px against 15px
+     of type at the tightest. */
   --leading-solid: 1;
   --leading-body: 1.55;
 
@@ -474,7 +476,22 @@
   --measure-display: 82.667rem;   /* 1240px at 1500 */
   --measure-statement: 81.333rem; /* 1220px at 1500 */
   --measure-narrow: 53.867rem;    /*  808px at 1500 */
-  --measure: 68ch;            /* the reading column ceiling */
+  /* THE READING MEASURE, AND IT IS ONE NUMBER NOW.
+
+     It was declared at 68ch and used by nothing, while five separate caps of
+     58ch and 62ch were written out by hand next to the copy they held. Those
+     rendered 82, 84, 88 and 95 characters per line at 1500, measured by
+     drawing each paragraph's own text in a canvas at its own computed font
+     and dividing its content box by the mean advance. A line stops being a
+     measure somewhere around 75, so four of the five were columns rather
+     than measures.
+
+     48ch, because ch is the width of the face's zero and this face's zero is
+     wider than its mean lowercase advance: 1ch buys about 1.55 characters of
+     running copy here. 48 x 1.55 is 74, and the worst-inking paragraph on
+     the site lands at 74 rather than 95. Stated in ch rather than px so the
+     cap follows the step it caps. */
+  --measure: 48ch;            /* the reading column ceiling, about 74 cpl */
 
   /* Spacing rhythm, in the base. Every figure is its pixel value at 1500
      divided by 15, so the 1500px artboard is unchanged and every other width
@@ -583,15 +600,17 @@
   --radius-ui: 0.715em;       /* 10px on a 14px control */
 
   /* ============================================================
-     MOTION, THE LAW OF THE HALF TURN
+     MOTION, THE LAW OF THE SHORT ANSWER
 
      Stated in full, in plain language, at the top of src/lib/law.ts. This
      block is the same law's numbers, and nothing else in the system is
      allowed to name a duration, a distance, an angle or a curve.
 
-     In one line: every translate on this site reads dy / dx = 0.863786,
-     every rotation is 180deg about 49.90% / 50.71%, every duration is one
-     of the three below and every curve is --curve.
+     In one line: every translate on this site reads dy / dx = 0.863786 and
+     travels 5.4, 10.8 or 21.5px; the one rotation is 180deg about 49.90% /
+     50.71% and it is started by a click; every duration is one of the two
+     below; every curve is --curve; and nothing anywhere is driven by scroll
+     position.
      ============================================================ */
 
   /* THE ARM. 45 less the drawing's measured 4.18 degree departure. */
@@ -605,28 +624,38 @@
   --half-turn: 180deg;
   --turn-origin: var(--x-origin-x) var(--x-origin-y);
 
-  /* THE CURVE. The departure, the tangent of the arm, the arm, and rest. */
+  /* THE CURVE. The departure, the arm's slope, the arm, and rest. It leaves
+     fast and settles slowly, which is what a real surface does. */
   --curve: cubic-bezier(0.0418, 0.8639, 0.4082, 1);
 
-  /* THE LADDER OF TIME. The arm's angle in hundredths of a second, halved
-     and doubled on the same 2:1 the mark's stroke and cut corner sit at. */
+  /* THE LADDER OF TIME, CUT TO TWO RUNGS. The arm's angle in hundredths of a
+     second, and double it.
+
+     --dur-half is the ANSWER: the rung a surface takes when it responds to a
+     pointer, a focus or a press. --dur is the OPEN: the rung a surface takes
+     when it opens or closes, which is the one place on this site a reader is
+     waiting for something rather than touching it.
+
+     0.8164s is deleted. Past about 600ms a response stops reading as the
+     material moving under the finger and starts reading as an animation being
+     played at the reader, which is the whole of what was wrong here. */
   --dur-half: 0.2041s;
   --dur: 0.4082s;
-  --dur-double: 0.8164s;
 
-  /* THE LADDER OF DISTANCE. The mark's cut corner, 3.589% of its box, read
-     as ems of the page's base and doubled five times. 5.4px to 172.3px on
-     the 1500px sheet. */
+  /* THE LADDER OF DISTANCE, CUT TO THREE RUNGS. The mark's cut corner, 3.589%
+     of its box, read as ems of the page's base and doubled twice. 5.4px,
+     10.8px and 21.5px on the 15px root.
+
+     The three rungs above these, 43px, 86px and 172px, are deleted along with
+     every object that used them. A distance that large is an object
+     travelling across a page, and this site no longer has one. */
   --d0: 0.3589rem;
   --d1: 0.7178rem;
   --d2: 1.4356rem;
-  --d3: 2.8712rem;
-  --d4: 5.7424rem;
-  --d5: 11.4848rem;
 
   /* One rung, resolved into its two components. Positive travels UP the arm,
      which is right and up, so every y is negative. Every displacement in
-     every stylesheet is written as one of these six pairs or its negation,
+     every stylesheet is written as one of these three pairs or its negation,
      which is what makes the law checkable by reading a declaration. */
   --d0x: calc(var(--d0) * var(--arm-x));
   --d0y: calc(var(--d0) * var(--arm-y) * -1);
@@ -634,12 +663,86 @@
   --d1y: calc(var(--d1) * var(--arm-y) * -1);
   --d2x: calc(var(--d2) * var(--arm-x));
   --d2y: calc(var(--d2) * var(--arm-y) * -1);
-  --d3x: calc(var(--d3) * var(--arm-x));
-  --d3y: calc(var(--d3) * var(--arm-y) * -1);
-  --d4x: calc(var(--d4) * var(--arm-x));
-  --d4y: calc(var(--d4) * var(--arm-y) * -1);
-  --d5x: calc(var(--d5) * var(--arm-x));
-  --d5y: calc(var(--d5) * var(--arm-y) * -1);
+
+  /* ============================================================
+     THE GLASS
+
+     WHERE IT IS ALLOWED. Chrome only: the fixed header and the menu overlay.
+     Never behind body copy, never on a document, never over a paragraph.
+     Apple and Microsoft both state that rule independently and every teardown
+     this project ran confirmed it. A translucent panel under running text
+     puts the reader's line of type on a ground that changes as they scroll,
+     and no amount of tuning makes that safe.
+
+     WHY IT IS NOT ON PAPER SURFACES. Blur over a smooth gradient is the
+     identity function: there is nothing in a flat sheet for a blur to move,
+     so a blurred panel over the paper room is a tinted rectangle with a cost.
+     What makes glass read as glass is the SATURATION lift and the lit edge
+     picking up real contrast behind it, which needs a backdrop with something
+     in it. The header gets one, because it passes over the chroma room.
+
+     THE VALUES ARE APPLE'S, MEASURED, NOT A GENERATOR'S. saturate(180%) and
+     blur(20px), with the tint at 0.86. The 0.06 to 0.24 alphas a glassmorphism
+     generator produces are the reason most glass on the web reads as a
+     transparent box: the transparency a reader perceives comes from the blur,
+     the saturation lift and the edge, not from a thin fill.
+
+     THE ALPHA FLOOR IS COMPUTED, AND 0.86 CLEARS IT BY A WIDE MARGIN.
+
+     Bound the backdrop and the floor falls out. No backdrop can be darker
+     than black or lighter than white, so the worst composite a glass surface
+     can ever sit at is the tint over one of those two, and that is true at
+     EVERY scroll position by construction rather than by inspection.
+
+       daylight  tint #f6f5f8 at 0.86 over pure black -> rgb(212,211,213),
+                 relative luminance 0.6539. Against --text #16151a at 0.0078
+                 that is 12.17:1. The floor, where it would touch 4.5:1, is
+                 alpha 0.514.
+       dark      tint #09090b at 0.86 over pure white -> rgb(43,43,45),
+                 luminance 0.0243. Against --d-text #f2f1f6 at 0.8844 that is
+                 12.57:1. The floor here is alpha 0.587, and it is the binding
+                 one of the two.
+
+     So 0.86 sits 0.273 above the worst floor, and the header's label, its
+     five links and its control are legal over the paper room, over the chroma
+     room, over the deep violet colophon and over anything a future section
+     paints, without any of those having to be known.
+
+     THE COST. backdrop-filter is priced by blurred AREA and only weakly by
+     radius. This system buys exactly two blurred surfaces and only one of
+     them is ever composited during a scroll: the header, 1500 x 63 at the
+     desktop artboard, which is 94,500px or 7 percent of a 1500 x 900
+     viewport. The menu overlay is modal, so it is never on screen at the same
+     time as a scroll, and the page behind it does not move. Two scroll-linked
+     blurred surfaces cost more than eight static ones; this has one.
+     ============================================================ */
+
+  --glass-blur: 20px;
+  --glass-saturate: 180%;
+  --glass-alpha: 0.86;
+  --glass-tint: rgb(246 245 248 / var(--glass-alpha));
+
+  /* The fallback is FULLY OPAQUE and not thinner glass. A surface that cannot
+     blur has no material left to carry the separation, so it stops pretending
+     and becomes a solid bar. Thinning the alpha instead is how a fallback
+     ends up below the contrast floor the blur was never providing anyway. */
+  --glass-solid: #f6f5f8;
+
+  /* THE LIT EDGE. Brighter on the top than the bottom, because the light on
+     this site comes from up the arm and a real edge catches it on the face
+     turned toward it. Two inset hairlines rather than a border, so the edge
+     is inside the surface the way a bevel is. */
+  --glass-edge-lit: rgb(255 255 255 / 0.66);
+  --glass-edge-shade: rgb(22 21 26 / 0.05);
+  --glass-line: rgb(22 21 26 / 0.10);
+
+  /* THE GRAIN. Glass without noise reads as a transparent box: a real
+     material has a surface and a surface has texture. Generated rather than
+     shipped, as an feTurbulence data URI, so it costs no request and no file.
+     fractalNoise at 0.8 over three octaves is fine enough to read as surface
+     rather than as pattern at any zoom. */
+  --glass-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23g)'/%3E%3C/svg%3E");
+  --glass-grain-alpha: 0.032;
 
   /* Hairlines */
   --hairline: 1px solid var(--ink-line);
@@ -748,6 +851,19 @@
   --brand-a: var(--lamp-a);
   --selection-bg: var(--d-selection-bg);
   --selection-text: var(--d-selection-text);
+
+  /* THE GLASS, IN THE DARK. The alpha does not move: it is the tint that
+     flips, so the floor arithmetic above holds in both themes and there is
+     one number to check rather than two. The lit edge drops a long way,
+     because a bright hairline that reads as caught light on paper reads as a
+     drawn white line on the void, and the grain comes up, because noise at
+     3.2 percent is invisible on a near-black ground. */
+  --glass-tint: rgb(9 9 11 / var(--glass-alpha));
+  --glass-solid: #09090b;
+  --glass-edge-lit: rgb(255 255 255 / 0.13);
+  --glass-edge-shade: rgb(0 0 0 / 0.42);
+  --glass-line: rgb(242 241 246 / 0.12);
+  --glass-grain-alpha: 0.055;
 }
 
 /* ============================================================
@@ -773,6 +889,13 @@
    ============================================================ */
 :root {
   font-size: clamp(9px, 1.25vw, 15px);
+
+  /* ONE ROOM, DECLARED. The switch that used to reach :root[data-theme='dark']
+     is deleted and nothing writes that attribute any more, so the browser is
+     told plainly which palette this document has. Without it a visitor whose
+     operating system is dark gets the UA's own dark scrollbars, form controls
+     and canvas painted around a sheet of paper. */
+  color-scheme: light;
 }
 
 @media (min-width: 75rem) {
