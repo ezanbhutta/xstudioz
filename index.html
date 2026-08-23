@@ -207,7 +207,16 @@
         </div>
 
         <div class="hero__floor">
-          <h1 class="hero__title display plate">
+          <!-- THE RULE FIELD. The hero's colour, and it is 109px of it where
+               a 480px full-bleed slab used to stand. Thirteen 1px rules at a
+               9px pitch, each one carrying the brand ramp across its whole
+               length and the set of them ramped symmetrically on opacity, so
+               it reads as a glow with no blur, no blend and no second
+               gradient. It stops at the gutter rather than bleeding, so the
+               first chromatic thing on the page is measured against the
+               headline underneath it instead of against the screen. -->
+          <i class="rulefield" aria-hidden="true"></i>
+          <h1 class="hero__title display">
             <span class="hero__l">We draw the mark</span>
             <span class="hero__l">and every rule</span>
             <span class="hero__l">that protects it.</span>
@@ -311,12 +320,28 @@
         </div>
 
         <div class="caps__intro" data-enter>
-          <h2 class="caps__statement heading plate">Five things we make, drawn as one system.</h2>
+          <h2 class="caps__statement heading">Five things we make, drawn as one system.</h2>
         </div>
 
-        <ul class="caps__list" data-enter>
+        <!-- THE INDEX DIAL. The five rows are already numbered 01 to 05, so
+             the dial indexes copy that exists rather than inventing any word
+             of its own.
+
+             The track is 3 x 100vh and the stage inside it is one viewport,
+             stuck at the top, so the pin lasts exactly two viewports and each
+             of the five capabilities gets 40vh of wheel. The ring is one
+             large circle whose centre sits off the left edge of the column
+             and whose numerals hang off its rim. Scroll turns it, in half
+             turns on a clock: a scrubbed rotation is forbidden by the second
+             clause of the law, so the wheel decides WHEN the dial steps and
+             never WHERE it stops. -->
+        <div class="caps__index" data-caps>
+          <div class="caps__stage">
+            <i class="caps__dial" aria-hidden="true"></i>
+        <ul class="caps__list">
           <li class="caps__row">
             <a class="caps__link" href="/logo-design/">
+              <i class="caps__marker" aria-hidden="true"><svg><use href="#xmark" /></svg></i>
               <span class="caps__num label">01</span>
               <span class="caps__name heading" id="cap-name-01">Logo Design</span>
               <span class="caps__desc body" id="cap-desc-01">One mark, drawn until it holds. Concepts presented properly, never thumbnails in a grid.</span>
@@ -325,6 +350,7 @@
           </li>
           <li class="caps__row">
             <a class="caps__link" href="/brand-identity/">
+              <i class="caps__marker" aria-hidden="true"><svg><use href="#xmark" /></svg></i>
               <span class="caps__num label">02</span>
               <span class="caps__name heading" id="cap-name-02">Brand Identity</span>
               <span class="caps__desc body">Colour, type, voice, and the rules that hold them together across everything you ship.</span>
@@ -333,6 +359,7 @@
           </li>
           <li class="caps__row">
             <a class="caps__link" href="/brand-guidelines/">
+              <i class="caps__marker" aria-hidden="true"><svg><use href="#xmark" /></svg></i>
               <span class="caps__num label">03</span>
               <span class="caps__name heading">Brand Guidelines</span>
               <span class="caps__desc body">The document your brand lives by, written so your team can actually use it.</span>
@@ -341,6 +368,7 @@
           </li>
           <li class="caps__row">
             <a class="caps__link" href="/social-media-kits/">
+              <i class="caps__marker" aria-hidden="true"><svg><use href="#xmark" /></svg></i>
               <span class="caps__num label">04</span>
               <span class="caps__name heading">Social Media Kits</span>
               <span class="caps__desc body">Templates and systems that keep every post unmistakably yours.</span>
@@ -349,6 +377,7 @@
           </li>
           <li class="caps__row">
             <a class="caps__link" href="/stationery/">
+              <i class="caps__marker" aria-hidden="true"><svg><use href="#xmark" /></svg></i>
               <span class="caps__num label">05</span>
               <span class="caps__name heading">Stationery &amp; Collateral</span>
               <span class="caps__desc body">Cards, letterheads and decks. The brand you can put in someone’s hand.</span>
@@ -356,34 +385,49 @@
             </a>
           </li>
         </ul>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- ================= 03 · THE BRIEF =====================================
-         Room: violet. Ink: #ffffff at 7.94:1.
+         Room: CHROMA, GRADE A. Ink: #ffffff at 5.36:1, supporting at 4.77:1.
 
-         The conversion band, and the shortest section on the page at about
-         half a viewport. It takes its whole frame in one flat hex the same
-         way a five viewport scene does, because a room is a room whatever
-         its height.
+         The contact room, and the one place on this page the chroma decision
+         is actually spent. The section carries a 15px paragraph, a 13px label
+         and an address, so it is grade A by the only rule that picks a grade:
+         the smallest type the room contains. The ramp is laid over #09090b at
+         0.80, which moves the worst point from 3.75:1 to 5.36:1 and makes
+         every one of those sizes legal with margin.
+
+         It is a room rather than a band. The plate that used to stripe this
+         section was deleted for the reason stated in cover.css: a band is
+         over before a reader has arrived in it. A room can be committed to.
          ==================================================================== -->
-    <section class="brief section room-paper" id="brief" aria-label="Start a project">
+    <section class="brief section room-chroma" id="brief" aria-label="Start a project">
       <div class="container">
         <div class="section__head">
           <p class="label">The Brief</p>
         </div>
 
         <div class="brief__grid" data-enter>
-          <h2 class="brief__statement heading plate">Every brand here started as an email.</h2>
+          <h2 class="brief__statement heading-sm">Every brand here started as an email.</h2>
           <div class="brief__copy">
             <p class="body">
               Tell us what you’re building: the name, the audience, the ambition. We read every brief ourselves and reply with how we’d
               approach it, what it costs, and when you’ll have it. No forms,
               no middlemen. Just write.
             </p>
-            <a class="pill" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
-              <span>inquire@xstudioz.com</span>
-              <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+            <!-- THE ASK, AND IT IS NOT A BUTTON. The copy above says "No
+                 forms, no middlemen. Just write." and this used to render the
+                 thing to write to as a 220px hairline outline in the corner
+                 of a 1420px empty field, while a repeat "Start a project"
+                 4,900px further down was a solid black fill. The pill is
+                 deleted rather than restyled: the address does not need a
+                 component, it needs to be the size of the thing it is. -->
+            <a class="brief__address" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
+              <span class="brief__address-text">inquire@xstudioz.com</span>
+              <svg class="brief__address-arr" aria-hidden="true"><use href="#arr-ne" /></svg>
             </a>
           </div>
         </div>
@@ -476,7 +520,7 @@
           <p class="label">The Process</p>
         </div>
 
-        <h2 class="process__statement heading plate" data-enter>Four stages, the same every time.</h2>
+        <h2 class="process__statement heading-sm" data-enter>Four stages, the same every time.</h2>
 
         <ol class="process__steps" data-enter>
           <li class="process__step">
@@ -520,7 +564,7 @@
         </div>
 
         <div class="qa__grid" data-enter>
-          <h2 class="qa__statement heading plate">Asked before every brief.</h2>
+          <h2 class="qa__statement heading-sm">Asked before every brief.</h2>
 
           <div class="qa__list">
             <div class="qa__item">

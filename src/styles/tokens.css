@@ -105,8 +105,72 @@
   /* The one ink a ramp takes. 3.75:1 at the magenta end, 15.12:1 at the deep
      end, so the floor is the magenta corner in every case. */
   --ramp-ink: #ffffff;
-  --ramp-line: color-mix(in srgb, #ffffff 34%, transparent);
-  --ramp-line-strong: color-mix(in srgb, #ffffff 62%, transparent);
+  /* CORRECTED AGAINST RENDERED PIXELS. These two used to be 34% and 62% and
+     both were assumed rather than measured. On the pure ramp's worst point,
+     the magenta corner, white at 34% composites to #ef8ad8 and reads 1.49:1,
+     and white at 62% reads 2.44:1. Neither clears the 3:1 floor, so neither
+     could ever carry meaning on a full-strength ramp. A load-bearing line on
+     grade B is solid white at 3.75:1 and nothing else; 85% is the lowest
+     value that still passes, at 3.07:1, and it is the decorative one. */
+  --ramp-line: color-mix(in srgb, #ffffff 85%, transparent);
+  --ramp-line-strong: #ffffff;
+
+  /* ============================================================
+     THE CHROMA ROOM
+
+     A section commits its viewport to #09090b and lays --brand-ramp-deep over
+     it. Both brand colours are in the one declaration, at the mark's 40.82
+     degrees. Two grades, and THE GRADE IS CHOSEN BY THE SMALLEST TYPE THE
+     ROOM CONTAINS, never by taste.
+
+       grade A, --chroma-alpha 0.80 : anything down to 15px. .room-chroma
+       grade B, --chroma-alpha 1    : 24px and up, white ink only.
+                                      .room-chroma-display, and .room-ramp,
+                                      which is the same surface painted
+                                      directly because at full strength there
+                                      is no ground left to dim it with.
+
+     WHY TWO. The site's standing rule was that nothing under 24px may stand
+     on a ramp, because the worst point of any ramp containing pure magenta is
+     3.75:1 against white. Grade A buys the small type back by dimming the
+     ramp against the ground beneath it: the worst point moves to 5.36:1 with
+     white and 4.77:1 with #f2f1f6. Grade B keeps the pure #e634be at full
+     strength on the loudest surfaces, because a brand studio that never shows
+     its own magenta has wounded itself, and 3.75:1 is exactly the rule the
+     site already ships.
+
+     Every ratio below is the WORST point of the whole surface, measured on
+     rendered pixels, not the average and not an endpoint.
+     ============================================================ */
+
+  /* 0.83 IS THE HARD CEILING AND IT IS NOT 0.89. 0.89 is white's ceiling.
+     With #f2f1f6 in the system as a second legal ink the binding ceiling is
+     0.83, where the dim ink lands on 4.53:1. 0.80 ships, which leaves 0.86
+     ratio points on white and 0.27 on the dim ink. */
+  --chroma-alpha: 0.8;
+  --chroma-alpha-display: 1;
+
+  --room-chroma-ground: var(--brand-ground);   /* #09090b                  */
+  --room-chroma-ramp: var(--brand-ramp-deep);
+
+  --room-chroma-ink: #ffffff;        /*  5.36:1  body, 15px and up        */
+  --room-chroma-dim: #f2f1f6;        /*  4.77:1  supporting, 15px and up  */
+  /* EQUAL TO DIM ON PURPOSE. There is no third light ink with any margin:
+     #e8dcf7 is 4.08:1 and misses the body floor. On chroma the third step of
+     hierarchy is made with size and tracking, never with a lighter ink. The
+     token exists so inheritance cannot silently land on an illegal value. */
+  --room-chroma-quiet: #f2f1f6;      /*  4.77:1                            */
+  --room-chroma-accent: #e8dcf7;     /*  4.08:1  display only, 24px and up */
+  --room-chroma-line: rgba(255, 255, 255, 0.34);        /* 1.77:1 decorative   */
+  --room-chroma-line-strong: rgba(255, 255, 255, 0.7);  /* 3.35:1 load bearing */
+  --room-chroma-focus: #ffffff;      /*  5.36:1                            */
+
+  /* Grade B has no ink ladder. White is the only legal ink and a solid white
+     rule is the only legal load-bearing line: 3.75:1 on pure magenta, which
+     is the 3:1 large-text floor and nothing more. */
+  --room-chroma-display-ink: #ffffff;                    /* 3.75:1, 24px min */
+  --room-chroma-display-line: rgba(255, 255, 255, 0.85); /* 3.07:1           */
+  --room-chroma-display-line-strong: #ffffff;            /* 3.75:1           */
 
   /* ============================================================
      2. THE ROOMS
@@ -235,7 +299,24 @@
     ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-sans: 'Inter', 'Inter Fallback', ui-sans-serif, system-ui,
     -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --weight-display: 500;
+  /* STILL 500, AND THAT IS A LIMIT RATHER THAN A CHOICE. The lighter display
+     was asked for and it cannot be shipped from this repo: public/fonts holds
+     one Familjen Grotesk face, FamiljenGrotesk-500.woff2, and it is a static
+     500 with no fvar table. Declaring 400 here changes nothing on screen,
+     because font matching hands the request the nearest face it has and no
+     browser synthesises a LIGHTER weight. Writing 400 would therefore be a
+     value that reads as a decision and is not one.
+
+     The weight the frame actually lost is in the two changes underneath: the
+     display step came down from 140px to 100px, and the headline came off the
+     gradient onto paper. White on a saturated field is the heaviest object a
+     page can carry, and at 100px the stroke is 71 percent of what it was. */
+  /* 400 is the display weight and the Regular master is shipped:
+     public/fonts/FamiljenGrotesk-400.woff2, usWeightClass 400, declared in
+     base.css and preloaded. Before it existed this token was a request the
+     stack could not fill, because the only face loaded was a Medium with no
+     variable axis and no browser synthesises a lighter weight. */
+  --weight-display: 400;
 
   /* THE SCALE, AS ONE NUMBER
 
@@ -256,37 +337,121 @@
      put. With one base every step moves together and the ratio is 9.333:1 at
      1200, 1500, 1920 and 2200 without a single conditional.
 
-     THE FIGURES, resolved at 1500 wide: 140 / 57 / 44 / 22 / 15 / 14. Each
-     rem number below is that pixel figure divided by 15, so nothing on the
-     1500px artboard changed by a pixel and every other width now follows it.
+     THE FIGURES, resolved at 1500 wide: 100 / 48 / 32 / 21 / 16 / 13, and the
+     ladder was re-solved rather than scaled. The old one was 140 / 57 / 44 /
+     22 / 15 / 14, a 9.333:1 display-to-body ratio tuned when the display face
+     was condensed caps. Familjen Grotesk is a lowercase grotesque: it carries
+     far more ink per point at the same nominal size, so 140px of it is not
+     140px of a condensed face, it is a wall.
 
-     There is still nothing between 22 and 44, so any two things on screen are
-     unmistakably different ranks rather than nearly the same one. */
-  --text-display: 9.3333rem;
-  --text-heading: 3.8rem;
-  --text-heading-sm: 2.9333rem;
-  --text-subheading: 1.4667rem;
-  --text-body: 1rem;
+     THE RATIO IS NOW 6.25:1, and both ends moved toward each other. Display
+     fell 29 percent and body rose 7 percent, which is the trade a page makes
+     when it wants to be read rather than shouted at: the headline stops being
+     the only thing in the frame and the paragraph stops being furniture.
+
+     EVERY STEP WAS RE-JUDGED, not multiplied by a constant. A flat 0.714
+     would have given 100 / 40.7 / 31.4 / 15.7 / 10.7 / 10, which puts body
+     under the reading floor and closes heading against heading-sm at the same
+     1.30 they were already too close at. The gaps are opened instead:
+
+       display  : heading      2.08   was 2.46
+       heading  : heading-sm   1.50   was 1.30, the worst join on the old scale
+       heading-sm : subheading 1.52   was 2.00
+       subheading : body       1.31   was 1.47
+       body : caption          1.23   was 1.07, a step that did not exist
+
+     There is still nothing between 21 and 32, so any two things on screen are
+     unmistakably different ranks rather than nearly the same one.
+
+     THE 24PX FLOOR SURVIVES THE SHRINK. heading-sm is the smallest step that
+     ever stands on a gradient (.doc__section > h2 on fifteen interior
+     routes), and it lands at 32px here and is floored at 25px underneath the
+     desktop band, so nothing chromatic is ever under the law.
+
+     80PX, DOWN FROM 100, AND THE RATIO IS NOW 5.0:1. Judged on the rendered
+     hero at four widths rather than argued. The four references run their
+     display at 72, 48, 43.9 and 160px, and the three that sit under 80 all
+     set it in a Regular or lighter; the one that goes to 160 sets its running
+     prose at 12px, so its ratio is not a size anybody reads a headline at.
+     This face is a Medium, so it is the heaviest display on the list and had
+     the second largest size, which is the arithmetic behind "too boldish".
+
+     At 80 the three hero lines fall from a 312px block to a 250px block in a
+     900px viewport, which is 34.7 percent of the opening screen down to 27.7,
+     and the widest line inks 637px inside a 1380px column. The references
+     leave their display short of the measure by 25 percent (newgenre) and 42
+     percent (astro); this leaves 54 percent, so the headline reads as a
+     statement placed on the sheet rather than as a slab cut to fit it.
+
+     ONE CLIFF CLOSED AS A SIDE EFFECT. The band underneath sets the display
+     at 6.667vw, which is 79.9px at 1199. The desktop step was 100px at 1200,
+     so the ladder used to jump 20px across one pixel of resize. At 80px the
+     seam is 0.07px wide and the two bands finally meet. */
+  --text-display: 5.3333rem;
+  --text-heading: 3.2rem;
+  --text-heading-sm: 2.1333rem;
+  --text-subheading: 1.4rem;
+  --text-body: 1.0667rem;
   /* Not smaller than --text-body, and that is deliberate. Interior documents
      set real reading copy at this step (the FAQ answers, the spec tables),
      and 15px is the floor for anything a person is asked to read. It stays a
      separate token because the roles are still separate. */
   --text-body-sm: 1rem;
-  --text-caption: 0.9333rem;
+  /* 13px, down from 14. A label is furniture and it got finer as the display
+     got smaller, which is the half of the change that keeps the RANGE of the
+     page wide while its loudest end comes down. It also opens a real step
+     against body, which at 15 against 14 there simply was not. */
+  --text-caption: 0.8667rem;
 
-  /* Display leading sits at or below 100%, so lines physically touch. Body
-     leading is 125% to 160%. The contrast between the two carries most of
-     the premium read, and it costs nothing. */
+  /* Display leading sits at or just over 100%. It was a flat 1 when the
+     display step was 140px, where the face's own ascent and descent already
+     put daylight between the lines. At 100px the same 1 welds them: the hero
+     sets three lines and the descender of one was landing in the counter of
+     the next. 1.04 was the smallest figure that separated them at 100px.
+
+     SOLID, NOW THAT THE SIZE CAME DOWN. Leading is a function of size and the
+     size moved: 1.04 of 80px is 83.2px of slug where 1.04 of 100px was 104,
+     so holding the ratio would have handed the smaller headline the same
+     proportional air and lost the close-set stack that makes a display block
+     read as one object. Every reference sets its display at or under 1.05 and
+     two of them go to 1.00 and 0.9375. Verified on the frame at 80px: the y
+     of "every" clears the t of "that" because they do not share a column, and
+     no descender on the hero lands in a counter. Body leading is 155 percent,
+     and that gap against a solid display carries most of the premium read. */
   --leading-display: 1;
-  --leading-tight: 0.86;
+  /* 0.95, up from 0.86. The figure was set against a 57px heading, where the
+     face's own ascent still left daylight between two lines; at 48px it
+     welded them, and the payoff panel rendered three lines whose descenders
+     landed inside the counters underneath. Leading is a function of size and
+     the size moved. */
+  --leading-tight: 0.95;
   --leading-tight-mixed: 0.9;
   --leading-solid: 1;
   --leading-body: 1.55;
 
-  /* Tracking is optical, not uniform: positive at 14px, negative at 170px.
-     It stays in absolute em so it tracks the size through the fluid root. */
+  /* TRACKING EXISTS IN ONE PLACE ON THIS SITE, AND THIS IS IT.
+
+     There used to be a table: 0.02, 0.01, 0.005, 0, -0.005, -0.01, -0.02 and
+     -0.026em, thirty five declarations across five sheets, assigned per role.
+     Most of it was invisible. 0.005em on a 32px heading moves a pair by 0.16
+     of a pixel and 0.01em on 21px moves it by 0.21, so those values could not
+     be seen, could not be judged, and could only be inherited wrong.
+
+     Worse, most of the table was POSITIVE, on lowercase, in a grotesque drawn
+     to be set as it is. Loosening a 21px subheading is the one thing tracking
+     can do that actively makes a page look less resolved.
+
+     The references settle this. Three of the four set letter-spacing to zero
+     at every size on every element, one of them on a 136px numeral, across
+     122KB of stylesheet. The fourth uses exactly two values. None of the four
+     tracks a lowercase heading positively at any size.
+
+     So: 0.02em, on uppercase micro-labels, because uppercase at 13px is the
+     one case where the drawn fit is genuinely too tight. Nothing else on the
+     site names a tracking value, the display token is gone rather than set to
+     zero, and the rule is checkable by grep: letter-spacing should appear in
+     these sheets only as var(--tracking-label). */
   --tracking-label: 0.02em;
-  --tracking-display: -0.02em;
 
   /* ============================================================
      4. ALIGNMENT, THE OPEN QUESTION
@@ -418,7 +583,7 @@
   --radius-ui: 0.715em;       /* 10px on a 14px control */
 
   /* ============================================================
-     MOTION — THE LAW OF THE HALF TURN
+     MOTION, THE LAW OF THE HALF TURN
 
      Stated in full, in plain language, at the top of src/lib/law.ts. This
      block is the same law's numbers, and nothing else in the system is
@@ -621,50 +786,69 @@
 
    And it has to be. The hero sets three hard-broken lines that may not wrap,
    and the widest renders 7.6633px of line for every 1px of font size in this
-   face. So the display can never exceed (width - 80) / 7.6633, while holding
-   9.333:1 against a body that may not go under 15px needs a display of at
-   least 140px. Solve those two together and they only both hold from 1153px
-   up. That is a measured number rather than a preference: below it the
-   single-scale law and the reading floor cannot both be true, so the law
-   stops at 1200 and the band underneath is drawn by hand. Both reference
-   sites do exactly this.
+   face. So the display can never exceed (width - 2 * gutter) / 7.6633, while
+   holding the ratio against a body that may not go under 15px asks for a
+   display of 93.75px. Those two now both hold from 814px up rather than from
+   1153, which is the room the smaller display bought: the old 140px demand
+   needed 1153px of viewport before the sheet could carry it.
 
-   Body and caption are pinned in pixels here, at the floor, because a reading
-   size is a reading size on a phone as much as on a desk. The display step
-   stays viewport-linear at the same 9.333vw it has always been, which is the
-   only rate that keeps those three lines on the sheet at every width from 320
-   up. Heading and subheading take floors so they cannot fall through the body.
+   The band still starts at 1200 rather than at 814, because the reason to
+   draw it by hand is not only the arithmetic. Body and caption are pinned in
+   pixels here, at the floor, because a reading size is a reading size on a
+   phone as much as on a desk, and pinning them is what makes the ratio
+   deliberately COMPRESS as the sheet narrows: 6.25:1 at 1500 easing to 5.3:1
+   at 1200, which is the relationship a small screen wants. The display step
+   is viewport-linear at 6.667vw, down from 9.333, and 6.667 is 100px read
+   against the 1500px artboard rather than a chosen rate. Heading and
+   heading-sm take floors so neither can fall through the body, and the
+   heading-sm floor is 25px because that step stands on a gradient on fifteen
+   interior routes and the law says nothing under 24px ever may.
    ============================================================ */
 @media (max-width: 74.9375rem) {
   :root {
-    --text-display: 9.333vw;
-    --text-heading: max(30px, 3.8vw);
-    --text-heading-sm: max(25px, 2.933vw);
+    --text-display: 6.667vw;
+    --text-heading: max(28px, 3.2vw);
+    --text-heading-sm: max(25px, 2.133vw);
     --text-subheading: 18px;
     --text-body: 15px;
     --text-body-sm: 15px;
-    --text-caption: 14px;
+    --text-caption: 13px;
   }
 }
 
-/* THE PHONE. Fixed pixels, no viewport unit anywhere in the ladder, which is
-   what both references do and what protects a small screen from a rule
-   written for a desk. 36px is held from the previous face and now has room to
-   spare: 36 x 7.6633 = 275.88 against 295px of sheet. The breakpoint is 400
-   rather than 768 because 9.333vw resolves to 37.3px there, so the step into
-   fixed pixels is 1.3px and the reader never sees a seam. */
-@media (max-width: 25rem) {
+/* THE SMALL SHEET. One declaration, and it is the display step alone.
+
+   THE BREAKPOINT MOVED WITH THE RATE, and it had to. It was 400px because
+   9.333vw resolved to 37.3px there, one and a bit pixels off the 36px the
+   fixed band held, so the reader never saw a seam. At 6.667vw the same 36px
+   is not reached until 540, so leaving the breakpoint at 400 would have put a
+   9px cliff in the middle of the ladder: 26.7px on one side of it and 36 on
+   the other. 34rem is 544px, where 6.667vw resolves to 36.3px, so the join is
+   a third of a pixel wide again.
+
+   The other three steps are not restated here, and that is the simplification
+   this change bought rather than an omission. The band above already floors
+   heading at 28, heading-sm at 25 and subheading at 18, and all three floors
+   bite well before 544px, so a phone was reading exactly those numbers out of
+   a block that repeated them. Three duplicated values are three chances to
+   change one and forget the other. */
+@media (max-width: 34rem) {
   :root {
     /* 36px, AND NOT WIDER THAN THE SHEET. The three hero lines may not wrap
-       and the widest renders 7.6633px of line for every 1px of font size, so
-       36px needs 275.9px of column: it has 295 at 375 and only 240 at 320,
-       where the first line used to run 36px off the sheet and be clipped.
+       and the widest renders 7.9662px of line for every 1px of font size, so
+       36px needs 286.8px of column: it has 295 at 375 and only 240 at 320,
+       where the first line would otherwise run off the sheet and be clipped.
        The second term is that constraint written down rather than assumed, so
-       the step is 36px from 356px up and exactly what fits below it. */
-    --text-display: min(36px, calc((100vw - 2 * var(--gutter)) / 7.6633));
-    --text-heading: 30px;
-    --text-heading-sm: 25px;
-    --text-subheading: 18px;
+       the step is 36px from 367px up and exactly what fits below it.
+
+       7.9662, UP FROM 7.6633, BECAUSE THE TRACKING WENT TO ZERO. The old
+       figure was measured with -0.026em closing every pair, which took four
+       percent off the width of a line and was silently holding this formula
+       up. Deleting the tracking widened the widest hero line from 604px to
+       637px at 80px, and at 320 that is 249.4px of ink asking for a 240px
+       column. Re-measuring the constant is what keeps the phone from
+       clipping, and it is the one number that had to follow the tracking. */
+    --text-display: min(36px, calc((100vw - 2 * var(--gutter)) / 7.9662));
   }
 }
 

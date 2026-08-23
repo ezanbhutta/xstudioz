@@ -4,3 +4,7 @@ xstudioz-site.zip
 .DS_Store
 public/_measure-proof.html
 .spec/
+public/_chroma-darkground.html
+public/_chroma-inkswap.html
+public/_chroma-dither.html
+public/_chroma-dither-*.png

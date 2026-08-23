@@ -260,7 +260,7 @@ function headFor(page: PageDef): string {
     '<link rel="manifest" href="/site.webmanifest" />',
 
     /* Self-hosted type — no third-party origins, so nothing to preconnect to */
-    '<link rel="preload" href="/fonts/FamiljenGrotesk-500.woff2" as="font" type="font/woff2" crossorigin />',
+    '<link rel="preload" href="/fonts/FamiljenGrotesk-400.woff2" as="font" type="font/woff2" crossorigin />',
     '<link rel="preload" href="/fonts/Inter-400.woff2" as="font" type="font/woff2" crossorigin />',
     '<link rel="preload" href="/fonts/Satoshi-500.woff2" as="font" type="font/woff2" crossorigin />',
 

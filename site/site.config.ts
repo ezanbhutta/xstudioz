@@ -324,6 +324,43 @@ export const PAGES: PageDef[] = [
       'Reference for logo deliverable file formats (SVG, EPS, AI, PDF, PNG, WebP, ICO) with the correct use for each and a delivery checklist.',
   },
 
+  /* ---- Legal ----
+     Drafted from the verified cookie and processor inventory, in the
+     house voice. Both carry placeholders only the owner can fill, and
+     both need a solicitor's sign-off before ANALYTICS.enabled goes true.
+     Kept out of the sitemap until then: a policy that still says
+     [REGISTERED COMPANY NAME] should not be inviting crawlers. */
+  {
+    route: '/privacy/',
+    file: 'privacy/index.html',
+    title: 'Privacy Policy | XStudioz',
+    description:
+      'What XStudioz collects, why, how long it is kept, and the rights you have over it. Written plainly rather than defensively.',
+    label: 'Privacy',
+    entry: 'page',
+    priority: 0.3,
+    changefreq: 'yearly',
+    noindex: true,
+    parent: '/',
+    summary:
+      'Privacy policy. What personal data XStudioz collects, the lawful basis, processors, retention, international transfers and data subject rights.',
+  },
+  {
+    route: '/cookies/',
+    file: 'cookies/index.html',
+    title: 'Cookie Policy | XStudioz',
+    description:
+      'Every cookie this site can set, what each one does, how long it lasts, and how to change your mind at any time.',
+    label: 'Cookies',
+    entry: 'page',
+    priority: 0.3,
+    changefreq: 'yearly',
+    noindex: true,
+    parent: '/',
+    summary:
+      'Cookie policy. Full inventory of Google Analytics 4 and Microsoft Clarity cookies with names, durations and purposes, and how to accept or decline.',
+  },
+
   /* ---- Utility ---- */
   {
     route: '/404.html',
