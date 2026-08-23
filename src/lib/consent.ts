@@ -87,11 +87,43 @@ function loadClarity(): void {
   s.async = true;
   s.src = `https://www.clarity.ms/tag/${MEASURE.clarityId}`;
   document.head.appendChild(s);
+
+  /* Tell Clarity explicitly what it may store.
+
+     This is not optional for us. Clarity enforces Consent Mode by default
+     for visitors from the UK, EEA and Switzerland, so without a signal it
+     sits in a denied state and records nothing. Loading the script after
+     an accept is not itself the signal. Microsoft is plain about it: the
+     site owner is responsible for informing Clarity of consent changes.
+
+     analytics_Storage granted, because that is what the visitor agreed to.
+     ad_Storage stays DENIED regardless. We run no advertising, so Clarity
+     has no business setting Microsoft's advertising cookies here, and
+     denying it is what keeps the cookie policy short and true. */
+  window.clarity?.('consentv2', {
+    ad_Storage: 'denied',
+    analytics_Storage: 'granted',
+  });
+}
+
+/* A visitor who accepts and later declines must be un-tracked, not merely
+   stopped from being tracked further. Clarity clears its cookies when the
+   signal flips, so send the withdrawal rather than only forgetting locally. */
+function revokeClarity(): void {
+  window.clarity?.('consentv2', {
+    ad_Storage: 'denied',
+    analytics_Storage: 'denied',
+  });
 }
 
 function applyGranted(): void {
   grantGa4();
   loadClarity();
+}
+
+function applyDenied(): void {
+  window.gtag?.('consent', 'update', { analytics_storage: 'denied' });
+  revokeClarity();
 }
 
 /* ------------------------------------------------------------
@@ -144,6 +176,7 @@ function showBanner(): void {
   const banner = buildBanner(MEASURE, (choice) => {
     writeChoice(choice);
     if (choice === 'granted') applyGranted();
+    else applyDenied();
     banner.remove();
     document.dispatchEvent(new CustomEvent('xz:consent', { detail: choice }));
   });
@@ -166,6 +199,27 @@ export function reopenConsent(): void {
   if (!MEASURE) return;
   if (document.querySelector('.consent')) return;
   showBanner();
+}
+
+/* The ICO expects withdrawing consent to be as easy as giving it, so the
+   footer carries a permanent way back to the choice. The link lives in the
+   footer partial on every page but stays hidden until measurement is
+   actually switched on, because offering "Cookie settings" on a site that
+   sets no cookies is just confusing. */
+export function initConsentLink(): void {
+  const link = document.querySelector<HTMLElement>('[data-consent-open]');
+  if (!link) return;
+
+  if (!MEASURE) {
+    link.closest('li')?.remove();
+    return;
+  }
+
+  link.hidden = false;
+  link.addEventListener('click', (ev) => {
+    ev.preventDefault();
+    reopenConsent();
+  });
 }
 
 export function initConsent(): void {

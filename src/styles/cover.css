@@ -262,15 +262,91 @@
                    ink, at a real measure, on paper.
    ============================================================ */
 
+/* ============================================================
+   THE RULE FIELD
+
+   THE CHEAPEST CHROMA ON THE SITE, and the thing that let the largest box on
+   it be deleted. What stood behind this headline was a full-bleed plate
+   measuring 1500 x 480 in a 900px frame: more than half the opening screen
+   committed to one saturated field, with the type reversed out of it in
+   white. That is the single heaviest object a page can carry, and it is why
+   the frame read as bold before it read as anything.
+
+   WHAT REPLACED IT IS 109 PIXELS TALL. Thirteen 1px rules at a 9px pitch,
+   which is 12 x 9 + 1. Each rule carries the brand ramp across its whole
+   length rather than a flat hex, so both brand colours are on every one of
+   them and neither ever appears alone. The set is ramped on opacity from
+   0.14 at both edges to 1 in the middle, symmetrically, so the field reads as
+   a glow. There is no blur, no blend mode, no shadow and no second gradient
+   anywhere in it: it is one ramp and two masks.
+
+   HOW THE RAMP IS APPLIED WITHOUT THIRTEEN ELEMENTS. Two mask layers,
+   intersected. The first is a repeating 1px-on / 8px-off comb, which cuts the
+   ramp into rules. The second is the vertical opacity envelope. Intersecting
+   them multiplies the two, so each 1px rule takes exactly the envelope's
+   value at its own y and the whole field is one element with no children.
+
+   IT STOPS AT THE GUTTER. Every other chromatic surface on this page bleeds
+   to the screen edge; this one is measured against the headline underneath
+   it, which is what makes it read as a drawn element rather than as another
+   band. ============================================================ */
+.rulefield {
+  display: block;
+  /* 12 gaps of 9px plus the last rule. Stated as the arithmetic rather than
+     as 109px so the two figures cannot drift apart. */
+  --rf-pitch: 9px;
+  --rf-count: 13;
+  height: calc((var(--rf-count) - 1) * var(--rf-pitch) + 1px);
+  width: 100%;
+  background-image: var(--brand-ramp);
+  -webkit-mask-image:
+    repeating-linear-gradient(to bottom, #000 0 1px, transparent 1px var(--rf-pitch)),
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.14),
+      #000 50%,
+      rgba(0, 0, 0, 0.14)
+    );
+  mask-image:
+    repeating-linear-gradient(to bottom, #000 0 1px, transparent 1px var(--rf-pitch)),
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.14),
+      #000 50%,
+      rgba(0, 0, 0, 0.14)
+    );
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+  pointer-events: none;
+}
+
 /* The rows are closer than they were, and deliberately. The full-bleed ramp
    that stood behind the headline carried 5.2rem of padding of its own, and
    the aperture that replaced it is taller than that padding was. Tightening
-   the floor is what keeps the opening frame close to one viewport. */
+   the floor is what keeps the opening frame close to one viewport.
+
+   THE FIELD GETS ITS OWN GAP. Everything else in this stack is separated by
+   --sp-4; the rule field is separated from the headline by --sp-6, because it
+   is the only object in the column that is not type and the two would
+   otherwise read as one block. This is the first of the four places on the
+   page where the spacing is set by what the thing IS rather than by the
+   template slot it landed in. */
 .hero__floor {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   row-gap: var(--sp-4);
   align-items: start;
+}
+
+.hero__floor .rulefield {
+  margin-bottom: var(--sp-5);
+}
+
+/* Ink on the sheet. The plate that stood behind these three lines is gone,
+   so the headline takes the paper room's own ink at 16.4:1 and the frame
+   stops being a coloured box with type knocked out of it. */
+.hero__title {
+  color: var(--ink);
 }
 
 /* The lede and the controls read as one row under a single rule, which is
@@ -367,24 +443,41 @@
    duration of a scene is just the height of its parent and there is no pin
    spacer, no layout thrash and no scroll jump on refresh.
 
-   Progress runs 0 when the track's top reaches the viewport top and 1 when
-   its BOTTOM reaches the viewport top, so the scrub range in pixels equals
-   the track height exactly.
+   PROGRESS RUNS OVER THE PINNED RANGE, WHICH IS THE TRACK LESS THE STAGE, and
+   getting that wrong is what produced most of the dead frames in this scene.
+   A sticky element stops sticking the moment its containing block's BOTTOM
+   reaches the bottom of the viewport, so on a 2880px track over a 900px stage
+   the pin lasted 1,980px and the scrub was told to run for 2,880: the last
+   31 percent of the timeline played while the stage was already sliding up
+   out of the frame, which is exactly where the empty screens were captured.
+   The trigger ends on `bottom bottom` now rather than on `bottom top`, so the
+   two ranges are the same range and nothing is choreographed anywhere the
+   reader cannot see it.
    ============================================================ */
 
 .scene {
   position: relative;
 }
 
-/* 320vh here and 400vh on the second scene, set per scene rather than
-   shared. The reference runs its two set pieces at 500vh and 600vh with a
-   30% dead hold on each, which is 3.3 viewports of the document spent on a
-   frozen frame. These are shorter, unequal, and hold for 22% and 20%, so the
-   page keeps the stillness without asking anyone to scroll through it
-   twice. */
+/* 200vh, DOWN FROM 320, and the 1,080px that came off is the largest single
+   deletion in this pass.
+
+   The scene was 2,880px over a 900px stage: 3.2 viewports of scroll for a
+   composition that is reachable in one. Eleven frames were captured across
+   it and two of them were completely empty 1500 x 900 screens carrying a
+   single 14px label.
+
+   200vh IS ONE VIEWPORT OF PINNED SCROLL, EXACTLY. The stage is 100vh and a
+   sticky element holds for its track less its own height, so a 200vh track
+   pins for precisely 100vh: the whole scene is one screen's worth of wheel,
+   which is what the reading of it said it needed. The arrival is re-timed
+   inside that so no window is ever longer than about a ninth of a viewport
+   with only the blade moving in it, and the trailing hold is 26 percent,
+   which is a quarter of a screen of stillness rather than the viewport and a
+   half a 320vh track was spending on it. */
 .scene__track {
   position: relative;
-  height: 320vh;
+  height: 200vh;
 }
 
 .scene__stage {
@@ -503,9 +596,16 @@
    in the one ink a ramp takes rather than in a brand hex that would vanish
    into the plane behind it. In the static composition there is no ramp, so it
    takes the ramp itself as a fill through #xg. */
+/* 0.5, up from 0.3. The mark was held at a watermark's strength because it
+   stood behind the statement and cut edges through it. It no longer stands
+   behind anything: the statement has left the stage by 0.40 and the payoff
+   that follows carries an opaque ground the mark physically cannot show
+   through, so the one window where the mark is on screen is a window where it
+   is the only thing on screen. At 0.3 that frame read as an empty field with
+   a smudge in it. */
 .turn__mark-svg {
   fill: var(--ramp-ink);
-  opacity: 0.3;
+  opacity: 0.5;
   width: 100%;
   height: 100%;
 }
@@ -566,24 +666,34 @@
   grid-area: 1 / 1;
 }
 
-/* The payoff lands after the blade, so the ramp is behind it. It holds a
-   57px statement, a paragraph and a link, and only the first of those three
-   may be set on a gradient, so the block keeps its own ground instead: the
-   sheet, square cornered, at the reading measure. Every ratio inside it is
-   the paper room's, which is 16.4:1 and 8.6:1, and no character of the
-   paragraph is ever on colour.
+/* THE PANEL IS ONE OPAQUE OBJECT, AND THAT IS THE WHOLE FIX.
 
-   THE SHEET SWEEPS, THE COPY DOES NOT. The whole block used to arrive on one
-   opacity, which meant its paper ground was translucent for the length of the
-   arrival and 15px body copy stood on the ramp showing through it: at the
-   middle of the window the paragraph measured well under the floor. The
-   ground is now a plane of its own and it arrives the way every plane on this
-   site arrives, swept with its leading edge cut on the arm, and the copy
-   takes its ink only once the sheet is whole. So there is no frame in which
-   anything under 24px is standing on a gradient.
+   WHAT WAS WRONG, MEASURED. The ground was a plane on ::before that swept,
+   and the copy on top of it took its ink afterwards on its own opacity tween.
+   That is two arrivals for one object, and for the length of the second one
+   the ink was translucent: near-black at half alpha over this sheet resolves
+   to about #868686, which measures 3.4:1. Captured across eleven frames the
+   body copy read 4.1:1 and the headline 2.09:1, both under the site's own
+   floors, and the sentence arguing that this studio reads every brief
+   carefully was the one a reader could not read.
 
-   The run is written by motion/cover.ts, because the angle is the rise
-   through --cut-k and only script knows what this block's rise resolves to. */
+   WHAT IT IS NOW. The sweep moved from the ground to the WHOLE BLOCK. Ground
+   and ink are inside one clip-path, so a character is either outside the
+   plane and not painted at all, or inside it and standing on opaque paper at
+   the paper room's own 16.4:1 and 8.6:1. There is no intermediate alpha
+   anywhere in the arrival, on the ground or on the type, which is a stronger
+   statement than the ground merely being opaque first: nothing cross-fades
+   against anything, because nothing cross-fades.
+
+   It is still the law's second consequence at panel scale. A plane that spans
+   its frame carries the arm as its leading EDGE and crosses on one axis, and
+   the run is the rise through --cut-k, written by motion/cover.ts because
+   only a measurement knows what this block's rise resolves to.
+
+   --wipe DEFAULTS TO 1 HERE. Every other arrival on this site starts where it
+   finishes and is given its from-state in script, and this one now does too:
+   a document whose bundle never runs paints the panel whole rather than
+   clipping it to nothing. */
 .scene--studio .payoff {
   position: relative;
   isolation: isolate;
@@ -593,34 +703,37 @@
   --ink-accent: var(--room-paper-ink);
   --ink-line: color-mix(in srgb, var(--room-paper-ink) 18%, transparent);
   color: var(--room-paper-ink);
-  padding: 3.6rem;
-  /* Wide enough that the 57px statement keeps to three lines. At the reading
-     measure it broke to five and the block outgrew a stage that is exactly
-     one viewport tall, so the first line was cut off above the frame. */
-  max-width: min(100%, 1040px);
+  background: var(--room-paper-ground);
+  /* Unequal, for the reason every band on this site is now unequal: the
+     ascent is deeper than the cap height, so equal padding renders top
+     heavy. 60px above the cap line, 69px under the last descender. The
+     horizontal inset is its own gutter, so the type inside the panel starts
+     one gutter in from the panel's edge the way it does on the sheet. */
+  padding: 4rem 3.6rem 4.6rem;
+  /* THE FULL COLUMN, up from 1040px. At 1040 it was a card floating in 380px
+     of raw gradient with the section label sitting outside it, which reads as
+     a component dropped on a background. Gutter to gutter it reads as a page
+     laid over one, which is what it is. */
+  max-width: none;
   align-self: center;
   /* Flush to the gutter like the eyebrow above it. Stacked in the same grid
      cell as the turn, the measure cap's auto right margin was resolving
      against a stretched column and leaving the block inset by 110px while
      the section label beside it sat at 20. */
-  justify-self: start;
-}
-
-.scene--studio .payoff::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: var(--room-paper-ground);
-  /* --sweep-run is written on the host by motion/cover.ts and inherited
-     here. The fallback is only what the first frame draws with, before the
-     measurement lands. */
+  justify-self: stretch;
+  --wipe: 1;
   clip-path: polygon(
     0 0,
     calc(var(--wipe) * (100% + var(--sweep-run, 24rem))) 0,
     calc(var(--wipe) * (100% + var(--sweep-run, 24rem)) - var(--sweep-run, 24rem)) 100%,
     0 100%
   );
+}
+
+/* The paragraph keeps a real measure inside a block that is now 1420px wide.
+   Running body copy the full width of the panel would be 150 characters. */
+.scene--studio .payoff__note {
+  max-width: 62ch;
 }
 
 /* ---- Static composition ----
@@ -715,15 +828,14 @@ html.no-motion .turn__mark-svg {
 }
 
 /* With no blade there is no ramp behind the payoff, so the sheet it carries
-   would be a white block on white. It gives the padding back. */
+   would be a white block on white. It gives the padding, the ground and the
+   clip back and reads as an ordinary block on the sheet. */
 html:not(.js) .scene--studio .payoff,
 html.no-motion .scene--studio .payoff {
   padding: 0;
-}
-
-html:not(.js) .scene--studio .payoff::before,
-html.no-motion .scene--studio .payoff::before {
-  content: none;
+  background: none;
+  clip-path: none;
+  margin-inline: 0;
 }
 
 html:not(.js) .scene__eyebrow,
@@ -796,10 +908,9 @@ html.no-motion .scene__eyebrow {
 
   .scene--studio .payoff {
     padding: 0;
-  }
-
-  .scene--studio .payoff::before {
-    content: none;
+    background: none;
+    clip-path: none;
+    margin-inline: 0;
   }
 
   .scene__eyebrow {
@@ -824,8 +935,30 @@ html.no-motion .scene__eyebrow {
   margin-bottom: 5rem;
 }
 
-/* The plates carry the statements. Each one is the only chromatic surface in
-   its section and it bleeds to both edges of the viewport. */
+/* ============================================================
+   THE FOUR STATEMENTS, WHICH ARE NO LONGER FOUR PLATES
+
+   They measured 1420 x 205 each, to the pixel, in the same slot in four
+   consecutive sections. Four sentences with four completely different jobs,
+   emitted as one repeated piece of furniture, and scrolling past them the
+   page read as a sandwich rather than as a document.
+
+   ONE OF THE FOUR IS STILL A PLATE. .brief__statement, because it is the only
+   one of the four that asks the reader for something, and it is the taller
+   for being alone. The other three come off colour entirely and are ranked by
+   what they actually do:
+
+     .caps__statement    an ARGUMENT. Full heading step, ink on paper. It
+                         introduces the five things the studio sells, so it
+                         keeps its size and loses only its box.
+     .process__statement a CHAPTER MARKER. Down a rung to heading-sm, under a
+                         hairline, because "Four stages, the same every time"
+                         is a label on a list and was never an argument.
+     .qa__statement      the same, for the same reason.
+
+   The gradient now appears twice on this page as a field, not five times,
+   which is what makes the two remaining appearances mean anything.
+   ============================================================ */
 .caps__statement,
 .brief__statement,
 .process__statement,
@@ -835,54 +968,419 @@ html.no-motion .scene__eyebrow {
 
 .caps__statement {
   margin: 0;
+  color: var(--ink);
+  /* It runs to the display measure rather than to the column edge. On the
+     plate the full-bleed ground gave the line a right-hand boundary; on paper
+     there is nothing to stop it but this. */
+  max-width: var(--measure-statement);
+}
+
+/* The chapter markers. A hairline above and real clearance beneath, so the
+   rule reads as the top of a chapter rather than as a border on a box. The
+   two figures are unequal on purpose: 30px above the type and 46px below it,
+   because a rule sits on the cap line and the descent underneath needs the
+   larger share. */
+.process__statement,
+.qa__statement {
+  color: var(--ink);
+  border-top: 1px solid var(--ink-line);
+  padding-top: var(--sp-5);
+  max-width: var(--measure-narrow);
+}
+
+/* ============================================================
+   THE INDEX DIAL
+
+   The Orionix pick, adapted rather than pasted. A large circle whose centre
+   sits off the left edge of the column, the five capability numerals hanging
+   off its rim as spokes, and the wheel turning it while a stepped focus
+   lights one row and dims the other four. Not one word of copy was added:
+   the rows were already numbered 01 to 05 and the dial indexes what is
+   already written.
+
+   THE TRACK IS 3 x 100vh, NOT 5. Orionix spends 5.18 viewports on this and
+   the whole of this document is 11, so five would have made the page the
+   capabilities page. A 300vh track with a 100vh stage pins for exactly two
+   viewports, which is 40vh of wheel per capability. The mechanic survives
+   and the proportion does not break the page.
+
+   THE DIAL'S AXIS IS THE MARK'S OWN CENTRE OF ROTATION, and that is what
+   makes the turn lawful rather than merely allowed. The box is not square:
+   it is 1 / 0.4990 by 1 / 0.5071 of the radius, so the circle inscribed at
+   its top left has its centre at exactly 49.90% / 50.71% of the box. The one
+   point this drawing is permitted to turn about is therefore the point the
+   circle is actually drawn around, and a half turn about it moves the ring
+   by nothing at all. Set the box square instead and the same origin throws a
+   1080px circle 15px down the frame on every step.
+
+   WHAT TURNS, AND WHY IT IS NOT SCRUBBED. Clause two of the law says the only
+   rotation is a half turn and that it is never on the wheel, because a
+   scrubbed rotation is one a reader can park at 90 degrees, where 29 of the
+   drawing's 52 vertices land and the figure on screen is not this mark. So
+   the wheel decides WHEN the dial steps and never WHERE it stops: the ring's
+   rotation is HALF_TURN times the active index, tweened on a clock at the
+   long duration on the one curve. Five rows, four steps, 720 degrees end to
+   end, and every one of them a multiple of 180.
+
+   The gradient is what makes that turn visible. The rim is 2px of
+   --brand-ramp and the ramp runs at the mark's own 40.82 degrees across the
+   box, so a half turn swaps which end of the brand is at the top of the arc.
+   Nothing else about the ring moves, because there is nothing else to move.
+
+   THE FOCUS SWAP IS OPACITY AND IT IS STEPPED. No blur: the reference puts
+   filter: blur(4px) on five large text blocks, which is the most expensive
+   thing in its section and is doing work opacity already does.
+
+   THE DORMANT VALUE IS 0.62 AND IT IS A CONTRAST FLOOR RATHER THAN A TASTE.
+   These rows are five links a reader scans, not five slides. At 0.5 the
+   caption composites to 3.35:1 on paper and at 0.35, which is what the
+   teardown proposed, it is unreadable. 0.62 is the lowest value at which the
+   row's own ink still clears 4.5:1 against the sheet, measured on rendered
+   pixels. That is why the caption below comes up to full ink inside the dial:
+   at --ink-dim it would need 0.80 to stay legal, which is not a dim anybody
+   can see. Rank inside a row is carried by SIZE instead, 32px against 16px,
+   which is the same mechanism the chroma room uses for its third step.
+
+   THE HANDOVER WAS ALREADY BUILT. The travelling mark's envelope holds scale
+   0 across the whole of #capabilities, between the two keyframes its own
+   comment in motion/cover.ts reserves for exactly this, so the dial is the
+   only chromatic object on screen while it is on screen and two large
+   gradient objects never coexist.
+   ============================================================ */
+
+/* THE TRACK. Three viewports; the stage inside it is one, so the pin lasts
+   the track less one stage, which is 200vh of wheel for five rows. */
+.caps__index {
+  position: relative;
+  height: 300vh;
+}
+
+.caps__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* Cut top and bottom, which is the same crop the archive portal makes
+     against the viewport edge. `clip` rather than `hidden` so no scroll
+     container is created on either axis and the sticky stage still holds
+     against the viewport, and with a clip margin because the arrow at the
+     end of each row travels one rung up the arm on hover and its resting
+     place is the list's own right edge. One rung 2 of slack. */
+  overflow: clip;
+  overflow-clip-margin: 1.4356rem;
+}
+
+/* THE NUMERALS ARE THE SPOKES, and they are the ones already written in the
+   markup rather than a second set drawn on a ring. Each one is lifted out of
+   the grid and stood on the rim at its own row's height, so the five of them
+   trace the arc: the circle bulges 38.4px across the height of the list,
+   which is the curvature of something far larger than the frame, and the
+   numeral column follows it exactly. The marker straddles the rim just
+   outside them, so nothing is ever drawn on top of a numeral.
+
+   The column is 4.8rem rather than 4ch because it now has to hold the bulge
+   as well as two digits, and the list is indented to where the arc's
+   leftmost point lands. The name column starts within two pixels of where it
+   started before, so the rest of the row is untouched. */
+@media (min-width: 64rem) {
+  .caps__list {
+    margin-left: 11.5rem;
+  }
+
+  .caps__link {
+    grid-template-columns: 4.8rem minmax(0, 1fr) minmax(0, 34rem) 40px;
+  }
+
+  /* Out of the grid and onto the rim. Centred on its row rather than hung
+     from the top of it, because the rim x was solved for the row's middle and
+     a spoke that marks a different height than the one it was computed for is
+     not on the arc. */
+  .caps__num {
+    position: absolute;
+    left: var(--spoke-x, 0px);
+    top: 50%;
+    margin-top: -0.65em;
+    padding-top: 0;
+  }
+
+  /* THE OTHER THREE ARE PLACED EXPLICITLY, and they have to be. Taking the
+     numeral out of the flow leaves three items for four tracks, so auto
+     placement slides the name into the numeral's 4.8rem column and the
+     58px name wraps to three lines with its caption on top of it. */
+  .caps__name {
+    grid-column: 2;
+  }
+
+  .caps__desc {
+    grid-column: 3;
+  }
+
+  .caps__arr {
+    grid-column: 4;
+  }
+}
+
+.caps__dial {
+  --dial-r: 36rem;
+  /* The rim's rightmost point, in the stage's own coordinates. */
+  --dial-x: 12.6rem;
+  position: absolute;
+  z-index: 0;
+  /* THE BOX IS NOT SQUARE, AND THAT IS THE WHOLE POINT. Sized so the circle
+     inscribed at its top left corner has its centre at 49.90% / 50.71% of
+     it, which is where --turn-origin points and where this drawing is the
+     only place on the site allowed to turn about. */
+  width: calc(var(--dial-r) / 0.499);
+  height: calc(var(--dial-r) / 0.5071);
+  top: 50%;
+  left: calc(var(--dial-x) - var(--dial-r) * 2);
+  margin-top: calc(var(--dial-r) * -1);
+  background-image: var(--brand-ramp);
+  /* The ring, as a hole in a disc. An explicit circle radius rather than
+     closest-side, because closest-side resolves to half the SMALLER box
+     dimension and this box is deliberately not square.
+
+     THE STOPS ARE LENGTHS AND NOT PERCENTAGES. Written as calc(100% - 2px)
+     against a sized circle the figure is ambiguous; stated in the radius
+     itself there is nothing to interpret.
+
+     AND THERE IS A THIRD STOP, which is the one that actually makes a ring.
+     A radial gradient's last colour extends outward forever, so a two-stop
+     mask leaves everything OUTSIDE the circle opaque and the dial paints as
+     a 1080px slab. The old square version hid that behind border-radius: 50%,
+     which cannot be used here because the box is deliberately not square and
+     50% of it is an ellipse. Closing the gradient closes the hole properly. */
+  -webkit-mask-image: radial-gradient(
+    circle var(--dial-r) at var(--dial-r) var(--dial-r),
+    transparent 0 calc(var(--dial-r) - 2px),
+    #000 calc(var(--dial-r) - 2px) var(--dial-r),
+    transparent var(--dial-r)
+  );
+  mask-image: radial-gradient(
+    circle var(--dial-r) at var(--dial-r) var(--dial-r),
+    transparent 0 calc(var(--dial-r) - 2px),
+    #000 calc(var(--dial-r) - 2px) var(--dial-r),
+    transparent var(--dial-r)
+  );
+  /* Stated here as well as in script. GSAP writes its own transformOrigin the
+     first time it touches a transform, and the whole claim this site makes
+     is that the box centre is the wrong point. */
+  transform-origin: var(--turn-origin);
+  pointer-events: none;
+}
+
+/* Below the desktop band there is no channel, so there is no dial and no
+   track either: a 90px instrument drawn in a 40px gutter is a smudge, and
+   two empty viewports of pinned scroll under a list nobody can see the dial
+   beside is worse than a smudge. The list falls back to what it already was,
+   which is the half of the effect a small screen can carry. */
+@media (max-width: 63.9375rem) {
+  .caps__index {
+    height: auto;
+  }
+
+  .caps__stage {
+    position: relative;
+    height: auto;
+  }
+
+  .caps__dial,
+  .caps__marker {
+    display: none;
+  }
+}
+
+/* No bundle, reduced motion, or the ?static QA mode. The track collapses to
+   its content and the stage stops sticking, so the list reads top to bottom
+   as the ordinary section it was. Nothing waits on a scroll position and
+   nothing is left at an opacity a reader cannot get out of. */
+html:not(.js) .caps__index,
+html.no-motion .caps__index {
+  height: auto;
+}
+
+/* RELATIVE, NOT STATIC, AND THE CLIP STAYS. Both halves of that are one fix.
+   The dial's box is 1065px tall and hung off the middle of a stage that is
+   now only as tall as its list, so without a clip it reaches up over the
+   section head and draws an arc through the display line. And a static stage
+   does not clip it: an absolutely positioned element escapes the overflow of
+   any ancestor that is not in its own containing block chain, so unpinning
+   the stage by making it static silently handed the dial back to the index
+   and let it out. Relative keeps the containing block and the crop. */
+html:not(.js) .caps__stage,
+html.no-motion .caps__stage {
+  position: relative;
+  height: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caps__index {
+    height: auto;
+  }
+
+  .caps__stage {
+    position: relative;
+    height: auto;
+  }
+}
+
+/* The marker rides the rim. Its x is written by motion/cover.ts, because the
+   rim's x at a given row is sqrt(r squared less dy squared) and only a
+   measurement knows what dy is for a row whose height depends on how its
+   caption happened to wrap.
+
+   ONE MARKER PER ROW RATHER THAN ONE MARKER THAT TRAVELS, and that is the
+   law rather than an economy. A single marker moving between two points on a
+   circle traces an arbitrary dy over dx, and clause one says every
+   displacement on this site reads 0.863786 and no other value. So the marker
+   does not travel: five of them stand at their measured rim positions and
+   exactly one is visible. */
+.caps__marker {
+  position: absolute;
+  left: var(--marker-x, 0px);
+  top: 50%;
+  width: 2.1333rem;
+  height: 2.1333rem;
+  margin-top: -1.0667rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-half) var(--curve);
+}
+
+.caps__marker svg {
+  width: 100%;
+  height: 100%;
+  fill: url(#xg);
+  transform-origin: var(--turn-origin);
+}
+
+.caps__row[data-focus] .caps__marker {
+  opacity: 1;
+}
+
+/* THE STEPPED FOCUS. The default state is LIT, and script opts the list into
+   the swap in the same statement that registers the trigger, so a throw at
+   any point leaves five readable rows rather than four faded ones. */
+.caps__row {
+  transition: opacity var(--dur-half) var(--curve);
+}
+
+.caps__list[data-live] .caps__row {
+  opacity: 0.62;
+}
+
+.caps__list[data-live] .caps__row[data-focus] {
+  opacity: 1;
 }
 
 .caps__list {
+  position: relative;
+  z-index: 1;
   border-top: 1px solid var(--ink-line);
 }
 
+/* THE ROW HAS A FLOOR NOW. Four of the five measured 100.8px to the pixel
+   and the fifth collapsed to 80 for no reason anybody chose: its caption
+   happened to wrap to two lines instead of three. A minimum is a decision;
+   a height that falls out of a copy length is not. */
 .caps__row {
+  position: relative;
+  min-height: 6.6667rem;
   border-bottom: 1px solid var(--ink-line);
 }
 
+/* The focused row's rule takes the brand. It is the only place on this page
+   where a hairline is chromatic, and it is one row at a time. */
+.caps__row[data-focus] {
+  border-bottom-color: transparent;
+  background-image: var(--brand-ramp);
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: left bottom;
+}
+
+/* THE DESCRIPTION COLUMN CAME IN THE REST OF THE WAY. It was pinned at
+   x=1140 in a 1420px row, 1,060px from the name it belongs to, with a dead
+   channel between them and a 244px measure that forced two one-word last
+   lines. A first pass took it to x=975 by widening the measure to 26rem,
+   which fixed the widows and left roughly 495px of empty channel between the
+   end of the longest name and the start of its own caption.
+
+   34rem is 510px at 1500, and it puts the caption at x=855: close enough to
+   the name for the two to read as one object, still far enough that the row
+   is a row rather than a paragraph. The name column is what shrinks, and it
+   can afford to: the longest of the five names inks 268px against the 4ch
+   numeral column and has nothing else in it. */
 .caps__link {
   display: grid;
-  grid-template-columns: 4ch minmax(0, 1fr) minmax(0, 26ch) 40px;
+  grid-template-columns: 4ch minmax(0, 1fr) minmax(0, 34rem) 40px;
   align-items: center;
   gap: var(--sp-4);
-  padding-block: var(--sp-3);
+  padding-block: var(--sp-4);
   color: var(--ink-dim);
   transition: color var(--dur-half) var(--curve);
 }
 
-.caps__link:hover,
-.caps__link:focus-visible {
-  color: var(--ink-accent);
+@media (hover: hover) {
+  .caps__link:hover,
+  .caps__link:focus-visible {
+    color: var(--ink-accent);
+  }
 }
 
 .caps__num {
-  color: inherit;
+  color: var(--ink-quiet);
   align-self: start;
-  padding-top: 0.5em;
+  padding-top: 0.6em;
 }
 
 /* Wired to the switch like every other display line, so flipping --align to
    center genuinely centres the whole page rather than leaving six elements
-   behind at the left gutter. */
+   behind at the left gutter.
+
+   FULL INK, ON ALL FIVE. A 57px service name and its 15px caption used to
+   share a byte-identical rgb(74,72,84), so there was no hierarchy inside a
+   row at all. Name and footnote now separate by colour without reading a
+   word: 16.4:1 against 8.6:1. */
 .caps__name {
   margin: 0;
-  color: inherit;
+  color: var(--ink);
   text-align: var(--align);
+  font-size: var(--text-heading-sm);
 }
 
+/* THE LIST IS RANKED, and it is ranked DOWNWARD. Logo Design is what the H1,
+   the domain, the 404 and a 10,426px document are all about, and it was given
+   exactly the weight of Stationery & Collateral. Row 01 holds the heading
+   step; rows 02 to 05 sit a rung below it. Ranking down rather than up uses a
+   size the scale already owns and makes the page quieter rather than
+   louder. */
+.caps__row:first-child .caps__name {
+  font-size: var(--text-heading);
+}
+
+/* FULL INK, AND THE RANK MOVED TO SIZE. It was --ink-dim at 8.6:1, which
+   separated the caption from the name by colour without reading a word. The
+   dial dims a dormant row to 0.62, and --ink-dim taken to 0.62 composites to
+   #8b8a92 and measures 3.14:1 on the sheet, which is well under the floor for
+   a line somebody is asked to read. At full ink the same 0.62 composites to
+   #6c6a6e and measures 4.93:1, read off the rendered glyph cores rather than
+   computed, so the dim is legal at every step of the dial. The rank
+   inside a row is now carried by SIZE, 32px against 16px, which is the same
+   mechanism the chroma room uses for its own third step and is the only one
+   that survives an opacity swap. */
 .caps__desc {
-  color: var(--ink-dim);
+  color: var(--ink);
   transition: color var(--dur-half) var(--curve);
 }
 
-.caps__link:hover .caps__desc,
-.caps__link:focus-visible .caps__desc {
-  color: var(--ink);
+@media (hover: hover) {
+  .caps__link:hover .caps__desc,
+  .caps__link:focus-visible .caps__desc {
+    color: var(--ink);
+  }
 }
 
 .caps__arr {
@@ -898,7 +1396,14 @@ html.no-motion .scene__eyebrow {
   translate: var(--d1x) var(--d1y);
 }
 
-@media (max-width: 1024px) {
+/* 63.9375rem RATHER THAN 1024px, AND THE ONE PIXEL MATTERS. The dial's band
+   opens at min-width: 64rem, which is 1024px inclusive, so a block written as
+   max-width: 1024px matched at exactly 1024 as well and, being later in the
+   file, won. At that one width the numeral was still lifted out of the grid
+   by the dial's rules while the three-track layout underneath put the name
+   back in the numeral's column, and a 58px service name wrapped to three
+   lines with its own caption printed over it. The two bands now abut. */
+@media (max-width: 63.9375rem) {
   .caps__link {
     grid-template-columns: 4ch minmax(0, 1fr) 30px;
     align-items: start;
@@ -930,19 +1435,64 @@ html.no-motion .scene__eyebrow {
    03 · THE BRIEF
    ============================================================ */
 
-/* One column. The statement sits on a plate that bleeds to both edges of the
-   viewport, so anything beside it in a second column would be standing on the
-   ramp at 15px, which nothing on this site is allowed to do. The copy reads
-   underneath, on the sheet. */
+/* TWO COLUMNS AGAIN, AND THAT IS THE CHROMA DECISION SPENT RATHER THAN A
+   PREFERENCE REVERSED.
+
+   This was one column, and the comment that held it there said so plainly:
+   the statement sat on a plate, so anything beside it in a second column
+   would be 15px standing on the ramp, which nothing on this site was allowed
+   to do. That sentence was true of the ramp at full strength, where the worst
+   point is 3.75:1 against white and no ink clears 4.5:1 at both ends.
+
+   The section is a grade A chroma room now. The same ramp laid over #09090b
+   at 0.80 moves the worst point to 5.36:1 with white and 4.77:1 with
+   #f2f1f6, measured on rendered pixels across the whole surface with zero
+   pixels under 4.5. So the constraint is lifted by measurement, and the
+   layout it was forcing is lifted with it: the ask sits beside its statement
+   the way it was always meant to, and the room is filled by its own content
+   rather than by 700px of empty colour. */
 .brief__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 4rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 4rem var(--sp-7);
   align-items: start;
 }
 
+@media (max-width: 64rem) {
+  .brief__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* THE LAST PLATE ON THIS PAGE IS GONE, AND THAT IS THE CHROMA DECISION.
+
+   Measured before the change: eleven consecutive viewports of the homepage
+   ran 1.3, 0.0, 56.8, 0.2, 26.0, 3.7, 51.8, 0.0, 12.3, 25.7 and 16.3 percent
+   chromatic. Four separate colour moments, and the 26.0 was this plate: a
+   205px band inside an otherwise white section. The other three are rooms the
+   reader walks into and stays in for a screen or more. This one was a stripe.
+
+   The references are unanimous on the shape rather than on the amount. One
+   spends 48 percent of its document on colour but in exactly three blocks.
+   One measures 17.2 percent mean and puts every bit of it in two, with
+   thirteen consecutive frames under 15 percent in between. One paints four
+   full-bleed rooms and leaves everything else on paper. None of the four
+   sprinkles a band through a paper section, because a band cannot be
+   committed to: it is over before the reader has arrived in it.
+
+   SO THE SECTION IS RANKED BY WHAT IT DOES INSTEAD. The plate was carrying
+   the emphasis that the section's own ask should carry. With it gone the
+   statement steps down a rung to heading-sm and the address underneath keeps
+   the full heading step, so the loudest object in the section is the thing
+   the frozen copy points at: "No forms, no middlemen. Just write." The pair
+   is set close, as one object, with the section's air around it rather than
+   between them. The only brand colour left in the section is the 3px rule
+   under the address, which is the site's inline-link treatment at the one
+   size that can afford it, and it now reads as the accent it always was. */
 .brief__statement {
   margin: 0;
+  color: var(--ink);
+  max-width: var(--measure-narrow);
 }
 
 .brief__copy {
@@ -955,6 +1505,81 @@ html.no-motion .scene__eyebrow {
 .brief__copy .body {
   color: var(--ink);
   max-width: 52ch;
+}
+
+/* ============================================================
+   THE ADDRESS
+
+   The homepage's conversion moment, set at the size of a conversion moment.
+   It is the heading step in the room's own ink, underlined with a rule rather
+   than with text-decoration, because an underline skips ink around a
+   descender and the @ and the q in this string both have one.
+
+   IT IS NOT THE LOUDEST OBJECT IN ITS SECTION AND IT SHOULD NOT BE. The
+   statement above it is the same 48px on the brand ramp in white, so the
+   plate still outranks it by treatment while the address outranks every other
+   piece of type on the sheet by size. That is the ranking the frozen copy is
+   already doing: the plate says why to write, the address is where.
+   ============================================================ */
+.brief__address {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-heading);
+  font-weight: var(--weight-display);
+  line-height: var(--leading-tight);
+  /* Ink, not a displacement. The one hover this control has is the rule
+     under it going to full strength, and the arrow travelling one rung. */
+  transition: color var(--dur-half) var(--curve);
+}
+
+/* The rule carries the ramp, which is the site's one inline-link treatment at
+   the one size that can afford it. Drawn as a background rather than as
+   text-decoration for the same reason every other link on the site is: an
+   underline skips ink around a descender, and this string has a q and an @ in
+   it. 8px of offset, which is where the rule clears the q's tail. */
+.brief__address-text {
+  display: inline-block;
+  background-image: var(--brand-ramp);
+  background-repeat: no-repeat;
+  background-size: 100% 3px;
+  background-position: left bottom;
+  padding-bottom: 8px;
+}
+
+/* IN THE CHROMA ROOM THE RULE COMES OFF THE RAMP, and it has to. The rule is
+   the ramp, the ground is now the same ramp, and a gradient drawn on top of
+   itself is not a link treatment, it is an invisible line. It takes the
+   room's load-bearing boundary instead: white at 70 percent, which measures
+   3.35:1 against the worst composited point and is the only value on grade A
+   that may carry meaning. 34 percent measures 1.77:1 and is decorative.
+
+   SPELLED AS A GRADIENT RATHER THAN AS A BACKGROUND-COLOUR, because
+   background-size does not constrain a colour: it fills the padding box, and
+   the first attempt at this put a white slab behind the whole address. */
+.room-chroma .brief__address-text {
+  background-image: linear-gradient(
+    var(--ink-line-strong),
+    var(--ink-line-strong)
+  );
+}
+
+.room-chroma .brief__address:hover .brief__address-text,
+.room-chroma .brief__address:focus-visible .brief__address-text {
+  background-image: linear-gradient(var(--ink), var(--ink));
+}
+
+.brief__address-arr {
+  /* Cap height of the step it sits beside, so it reads as the end of the
+     address rather than as an icon parked next to one. */
+  width: 0.62em;
+  height: 0.62em;
+  flex: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  transition: translate var(--dur-half) var(--curve);
 }
 
 /* ============================================================
@@ -982,9 +1607,19 @@ html.no-motion .scene__eyebrow {
 
 /* Ink on the sheet, for the same reason the headline is. The full-bleed ramp
    that stood behind these two lines is deleted; the aperture above them is
-   where its colour went. */
+   where its colour went.
+
+   IT DROPS A RUNG, TO THE HEADING STEP. Two display lines stood here and a
+   third stood 400px below them inside the portal, all at the same size, and
+   the section was spending 1,981px on 52 words while the process gets 752px
+   for 87. "This page is the studio. The proof lives next door." is a preamble:
+   it introduces the one control in the section. "Open the archive" is the
+   control, it keeps the display step, and now it is the only thing at that
+   size in its own section. */
 .work__statement {
   margin: 0;
+  font-size: var(--text-heading);
+  line-height: var(--leading-tight);
   text-align: var(--align);
 }
 
@@ -1176,8 +1811,12 @@ html.no-motion .scene__eyebrow {
    06 · THE PROCESS
    ============================================================ */
 
+/* 46px of clearance under the marker, not 30. It is the smaller of the two
+   figures the marker itself is set with inverted: the rule belongs to the
+   type above it and the four columns underneath need to read as a separate
+   object. */
 .process__statement {
-  margin: 0 0 5rem;
+  margin: 0 0 var(--sp-6);
 }
 
 .process__steps {
@@ -1252,7 +1891,6 @@ html.no-motion .scene__eyebrow {
 .qa__item {
   display: grid;
   gap: var(--sp-2);
-  border-top: 1px solid var(--ink-line);
   padding-top: var(--sp-4);
 }
 
@@ -1324,4 +1962,96 @@ html.no-motion .scene__eyebrow {
    ============================================================ */
 .cover {
   --nav-ink: var(--room-paper-ink);
+}
+
+/* ============================================================
+   THE RHYTHM
+
+   Five sections on this page computed padding-top: 120px and
+   padding-bottom: 120px, ten identical values, 240px between every pair. That
+   is not a rhythm, it is a metronome, and it throws away the only tool a page
+   has for saying "these two things belong together" and "now something else
+   begins". Even the air told a reader the page had no opinion about what
+   mattered, which was the whole charge.
+
+   FIVE SEAMS, FIVE SIZES, HARDCODED HERE RATHER THAN DERIVED FROM A TOKEN,
+   because a figure that comes out of a token is a figure the generator chose
+   and every one of these is chosen by what sits on either side of it. Read
+   down the page the seams go 100, 320, 180, 136, 120: no two the same, and
+   the order is not a ramp, because the page is not a ramp.
+
+     caps -> brief    100px. ATTACHED. The brief answers the list directly
+                      above it: "five things we make", then "every brand here
+                      started as an email". They are one argument in two
+                      halves and the air should not pretend otherwise.
+     brief -> work    320px. THE HARDEST GEAR CHANGE ON THE PAGE, from an ask
+                      to a body of work that lives somewhere else entirely.
+                      It is the one seam that should feel like turning a page,
+                      and it is the widest by more than a factor of two. It
+                      also puts real ground under the address, which is the
+                      one object on this page a reader is meant to act on.
+     work -> process  180px. Leaving a room and arriving at an explanation.
+                      Wide enough to be a chapter break, well short of the
+                      one above it.
+     process -> qa    136px. TWO LISTS IN A ROW, so they sit closer. Four
+                      stages and three questions are the same kind of object
+                      and the page should not pretend they are separate
+                      arguments.
+     qa -> footer     120px. Left alone as the reference the other four are
+                      unequal against. A page needs something regular in it
+                      or the irregularity has nothing to be irregular about.
+
+   THE TWO LISTS ALSO GOT SHORTER, WHICH IS THE OTHER HALF OF THE RHYTHM.
+   .process is the tightest section on the page at 84 over 64, because four
+   stages named in four words are a list and a list can be tight. .work keeps
+   the largest top padding of any section because the archive portal is the
+   one thing on this page every reviewer named as the best thing on it, and it
+   deserves to be arrived at rather than bumped into.
+
+   The site already contained exactly one asymmetric spacing value, .related
+   at 150px 40px 90px on the interior documents, and it is the only place a
+   hand was visible anywhere in 5,613 lines. It is preserved untouched. These
+   are five more like it.
+   ============================================================ */
+
+.caps {
+  padding-bottom: 2.6667rem;
+}
+
+/* THE 320px SEAM SURVIVES, SPLIT DIFFERENTLY, because the section is a room
+   now and not a stretch of paper. It used to spend 180 of the 320 under the
+   address, on the reasoning that the address sits on nothing and has to take
+   its clearance from the block. It sits on a ground now, and 180px of empty
+   colour under an email address is a room with nothing in the bottom third of
+   it. The room closes near its content at 96px and the remaining 224 is on
+   the paper side, where air belongs. Read down the page the five seams are
+   still 100, 320, 180, 136, 120. */
+.brief {
+  padding-top: 4rem;
+  padding-bottom: 6.4rem;
+}
+
+.work {
+  padding-top: 14.9333rem;
+  padding-bottom: 6.4rem;
+}
+
+.process {
+  padding-top: 5.6rem;
+  padding-bottom: 4.2667rem;
+}
+
+.qa {
+  padding-top: 4.8rem;
+}
+
+/* The ask needs room under it and the section no longer supplies 120px of it.
+   The address is the last object in the section and it sits on nothing, so it
+   takes its clearance from the block rather than from the band. */
+.brief__grid {
+  gap: 3.6rem;
+}
+
+.brief__copy {
+  gap: 3.2rem;
 }

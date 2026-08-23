@@ -119,7 +119,6 @@
 .nav__name {
   font-size: var(--text-body-sm);
   font-weight: 500;
-  letter-spacing: 0.01em;
 }
 
 .nav__links {
@@ -346,7 +345,6 @@
   border-top: var(--hairline);
   font-size: 2.9333rem;
   line-height: 1.15;
-  letter-spacing: -0.01em;
   color: var(--ink);
 }
 
@@ -445,6 +443,13 @@ html.nav-open {
 
 @media (prefers-reduced-motion: reduce) {
   .nav__menu-link span {
+    transition: none;
+  }
+
+  /* The header still leaves the frame, because leaving is what it is for. It
+     stops travelling to get there. */
+  .nav,
+  .nav::before {
     transition: none;
   }
 }
@@ -662,7 +667,6 @@ html.nav-open {
   font-size: var(--text-heading-sm);
   font-weight: var(--weight-display);
   line-height: 0.9;
-  letter-spacing: 0.01em;
 }
 
 /* ============================================================
@@ -717,47 +721,99 @@ html.nav-open {
   color: var(--ink-quiet);
 }
 
+/* THE STAGE IS EXACTLY AS TALL AS THE PLATE, and it clips on one axis only.
+
+   min-height was the mark's own size, so the stage stood 5px taller than the
+   band behind it and the mark's top and bottom tips protruded into the paper
+   as two detached slivers. In the rendered frame those read as a rendering
+   fault rather than as a crop, which is the one thing the archive portal
+   4,000px earlier gets right and this did not.
+
+   `overflow: visible clip` is x then y: the vertical axis crops the mark to
+   the band's own edges, and the horizontal axis stays open because the plate
+   behind it bleeds out of this box by 50vw either side and clipping x here
+   would delete the bleed. */
 .footer__stage {
   position: relative;
-  min-height: var(--footer-mark);
+  min-height: 0;
+  overflow: visible clip;
   display: flex;
   align-items: center;
 }
 
-/* The mark closes the document. Now that the footer is paper it is the one
-   chromatic object down here, so it is set at full strength on the ramp
-   rather than at 16 percent of an accent, and it carries both brand colours
-   the way every other chromatic surface on the site does. Nothing about it
+/* THE MARK IS ON THE PLATE NOW, AND IT LEAVES THE FRAME.
+
+   It used to stand beside the plate on paper, in the ramp as a fill, at
+   right: 0 of the container. The plate could not reach it, because the plate
+   bleeds 50vw from the STATEMENT's box and the statement is only 441px wide:
+   the colour stopped at x=1251 in a 1500px viewport and the mark's two arms
+   stuck out past the end of it into white paper with a gap between them. The
+   last screen of the site closed on what read as a rendering bug.
+
+   It is the portal's move at footer scale now: the mark set in the one ink a
+   ramp takes, cropped by the frame on the right and by the band's own edges
+   top and bottom, so it leaves as one continuous form. Nothing about it
    moves. */
 .footer__x {
   position: absolute;
-  right: 0;
+  /* Past the gutter and past the screen. The footer carries overflow-x: clip,
+     so the drawing is cut by the viewport edge exactly the way the portal's
+     is. */
+  right: calc(var(--gutter) * -1 - 4rem);
   top: 50%;
   transform: translateY(-50%);
   width: var(--footer-mark);
   height: var(--footer-mark);
+  /* Above the plate, and it has to be stated. The statement carries
+     `isolation: isolate`, so its z-index: -1 ground is sealed inside its own
+     stacking context and the whole statement paints as one atomic unit AFTER
+     this element, which is its earlier sibling. Without this the plate was
+     painting straight over the mark and the drawing was invisible. */
+  z-index: 1;
   pointer-events: none;
 }
 
 .footer__x-svg {
   width: 100%;
   height: 100%;
-  fill: url(#xg);
+  fill: var(--ramp-ink);
+  opacity: 0.22;
 }
 
 /* The last statement on every route, and it closes on the brand. The plate
    bleeds to both edges of the viewport behind it and the mark sits on the
    plate in ramp ink, so the two objects that close the document are one
    surface rather than a display line and a decoration beside it. */
+.footer__title::before {
+  /* THE BLEED IS OVERRIDDEN, because -50vw is measured from THIS box and this
+     box is capped at the mark's width off the column. At 100px the statement
+     is 441px wide, so 50vw of overshoot landed at x=1251 in a 1500 viewport
+     and left an 86px strip of unexplained white paper at the right of the
+     last screen on the site. -100vw cannot fall short at any width, and the
+     overshoot costs nothing: the footer clips on x. */
+  right: -100vw;
+}
+
 .footer__title {
   position: relative;
   font-family: var(--font-display);
   font-size: var(--text-display);
   font-weight: var(--weight-display);
   line-height: var(--leading-display);
-  letter-spacing: var(--tracking-display);
   max-width: calc(100% - var(--footer-mark) - var(--sp-5));
   color: var(--ink);
+}
+
+/* THE 6PX STAGGER, FIXED BY HAND AND ONLY THIS ONE. Measured on the rendered
+   frame at 1500: the ink of the L in "Let's make" starts at x=67 and the ink
+   of the y in "your mark." starts at x=61, so the two lines of one display
+   block begin 6px apart. Nobody can name a side bearing and everybody can see
+   that the closing line of the site is misaligned with itself. This is a
+   correction to one pair of lines, not the beginning of a per-initial offset
+   table: a lookup table of optical corrections is still a lookup table and it
+   would drift silently the moment a word changed. */
+.footer__title .line:first-child .line__in {
+  text-indent: -6px;
 }
 
 .footer__ctas {
@@ -770,7 +826,11 @@ html.nav-open {
 .footer__ctas-note {
   font-size: var(--text-body);
   color: var(--ink-dim);
-  max-width: 42ch;
+  /* The sentence measures 377.86px. A cap of 42ch resolved to 421.3, which
+     is wide enough, but it is a cap stated in a unit that moves with the face
+     and the sentence is fixed: 26rem is 390px, which clears the measured line
+     by 12px and cannot land under it when the body step next moves. */
+  max-width: 26rem;
 }
 
 .footer__rule {
@@ -842,5 +902,109 @@ html.nav-open {
 
   .footer__meta-right {
     margin-left: 0;
+  }
+}
+
+/* ============================================================
+   THE PRESS, AND THE POINTER GRAMMAR
+
+   `grep -c ':active'` across the five stylesheets returned 0 across 5,613
+   lines. Nothing on this site acknowledged being touched, anywhere, which is
+   the clearest single piece of evidence a site was looked at and never used.
+   On a phone there is no hover at all, so a press state is the only feedback
+   a finger ever gets, and this site had none.
+
+   THE PRESS IS ONE RUNG DOWN THE ARM. The obvious spelling is `translate: 0
+   1px`, and it is illegal here: the law says every displacement on this site
+   lies on the mark's arm at dy/dx = 0.863786, and there is no vertical move
+   and no third direction. So a pressed control travels the law's smallest
+   rung, --d0, which is 5.4px resolved into 4.1 across and 3.5 down, and it
+   travels DOWN the arm because a press is a control giving way rather than
+   arriving. The duration is --dur-half and the curve is the one curve.
+
+   THE GRAMMAR IS INVERTED, AND THIS IS THE ORIONIX PICK ADAPTED RATHER THAN
+   PASTED. The reference contracts its controls on a spring and gives its
+   content no pointer response at all. The second half transfers exactly; the
+   first cannot, because a spring is a second easing shape and scale on this
+   site belongs to one object. What transfers is the RULE: only a control
+   answers the pointer, and it answers by travelling the arm. Nothing that is
+   merely content (a statement, a paragraph, a caption, a plate) has a
+   hover, a press or a cursor change anywhere in the system.
+   ============================================================ */
+
+:is(
+  .pill,
+  .ghost,
+  .caps__link,
+  .related__link,
+  .portal,
+  .nav__link,
+  .nav__menu-link,
+  .nav__theme,
+  .nav__toggle,
+  .nav__close,
+  .nav__panel-mail,
+  .brief__address,
+  .footer__col a,
+  .crumbs a,
+  .faq__q
+):active {
+  translate: calc(var(--d0x) * -1) calc(var(--d0y) * -1);
+}
+
+:is(
+  .pill,
+  .ghost,
+  .caps__link,
+  .related__link,
+  .portal,
+  .nav__link,
+  .nav__menu-link,
+  .nav__theme,
+  .nav__toggle,
+  .nav__close,
+  .nav__panel-mail,
+  .brief__address,
+  .footer__col a,
+  .crumbs a,
+  .faq__q
+) {
+  transition: translate var(--dur-half) var(--curve);
+}
+
+/* An inline link inside running copy cannot displace: moving a word inside a
+   paragraph reflows the line under the reader's eye. It presses on ink
+   instead, which is the same thing its hover already does and the only
+   property a word in a sentence is allowed to change. */
+:is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note)
+  a:not(.pill):not(.ghost):not(.portal):not([class*='__link']):not([class*='__more']):active {
+  color: var(--ink-accent);
+}
+
+/* The arrow inside a pressed control comes back to rest. It is displaced by
+   its own hover, and a control that is being pressed is not a control the
+   pointer is travelling away from. */
+.pill:active .pill__arr,
+.ghost:active .ghost__arr,
+.caps__link:active .caps__arr,
+.brief__address:active .brief__address-arr {
+  translate: 0 0;
+}
+
+/* THE HOVERS ARE GATED ON A REAL POINTER. Six hover rules on the cover, and
+   none of them was behind a query, so a tapped capability row and a tapped
+   archive portal stayed lit after the finger left: on touch a :hover sticks
+   until something else is tapped, which reads as the row having been
+   selected. */
+@media (hover: none) {
+  .caps__link:hover,
+  .caps__link:hover .caps__desc,
+  .portal:hover .portal__mark svg,
+  .portal:hover .portal__arr,
+  .brief__address:hover,
+  .qa__a a:hover {
+    color: inherit;
+    translate: 0 0;
+    rotate: 0deg;
   }
 }

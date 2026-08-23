@@ -18,7 +18,7 @@
    imported last, so it wins without needing !important. */
 
 .show-loader .loader {
-  animation: xz-loader-bail var(--dur) 5s forwards;
+  animation: xz-loader-bail var(--dur) 5s var(--curve) forwards;
 }
 
 @keyframes xz-loader-bail {
@@ -110,9 +110,18 @@
   white-space: nowrap;
 }
 
+/* The states stay, they just stop travelling. Both of these arrive up the arm
+   and take their ink; with motion off they simply take their ink. */
 @media (prefers-reduced-motion: reduce) {
-  .consent {
+  .consent,
+  .skip-link {
     transition: none;
+    translate: none;
+  }
+
+  .consent--in,
+  .skip-link:focus-visible {
+    translate: none;
   }
 }
 
@@ -244,7 +253,6 @@
   /* Sentence case, so it needs the leading that clears a descender rather
      than the uppercase one. */
   line-height: var(--leading-tight-mixed);
-  letter-spacing: var(--tracking-display);
   max-width: 17ch;
   text-wrap: balance;
 }
@@ -252,7 +260,6 @@
 .doc__lede {
   font-size: var(--text-subheading);
   line-height: 1.28;
-  letter-spacing: 0.005em;
   color: var(--ink);
   max-width: 34ch;
   margin-top: 3rem;
@@ -311,7 +318,11 @@
   gap: 3rem;
   align-items: start;
   border-top: var(--hairline);
-  padding-top: var(--sp-6);
+  /* 30px, down from 46, so this rule stands the same distance above the first
+     section heading as every other section's rule stands above its own. The
+     two figures were 77 and 30 while the section openings were plates and the
+     difference was invisible under 152px of colour. */
+  padding-top: var(--sp-5);
 }
 
 /* ============================================================
@@ -336,11 +347,16 @@
    It repeats the number already in the eyebrow, carries no information of
    its own, and is hidden from assistive tech. */
 
+/* THE WATERMARK NUMERAL SITS ON THE DISPLAY STEP, NOT ABOVE IT. This was
+   6.9333rem, a figure set when the display step was 140px and the numeral was
+   comfortably the second largest thing on the page. The display has come down
+   twice since and the numeral did not follow, so a decorative aria-hidden
+   "01" was rendering at 104px on a page whose own title was 80: the largest
+   glyph on fifteen interior routes was the one carrying no meaning. */
 .doc__ord {
-  font-size: 6.9333rem;
+  font-size: var(--text-display);
   line-height: 0.8;
   font-weight: 400;
-  letter-spacing: -0.02em;
   /* Cut out of the ground rather than set on it, so the number sits in the
      page. The outline was drawn at --ink-line-strong, 34% of the ink, which
      measured 2.10:1 against paper once the masthead stopped being deep violet.
@@ -412,9 +428,19 @@
     grid-column: 2;
   }
 
+  /* IT STANDS ON THE BAND'S FLOOR, and it no longer has to be placed by hand.
+     The folio used to hang from the top of a four-row span with a measured
+     negative margin, because the only fixed thing near it was the plate and
+     the distance to the plate had to be counted backwards. Row 1 is now the
+     band itself, because the register line's margin is what gives that row
+     its height, so the numeral is simply aligned to the end of it with the
+     same 24px of clearance a designer would leave. Change the band and the
+     folio follows without a second figure being re-solved. */
   .doc--capability .doc__ord {
     grid-column: 1;
-    grid-row: 1 / span 4;
+    grid-row: 1;
+    align-self: end;
+    margin-bottom: var(--doc-mark-top);
   }
 
   .doc--capability .doc__grid {
@@ -522,7 +548,6 @@
   font-size: var(--text-heading-sm);
   font-weight: 400;
   line-height: var(--leading-solid);
-  letter-spacing: 0.005em;
   text-wrap: balance;
   margin-bottom: var(--sp-5);
 }
@@ -539,7 +564,6 @@
 .prose li {
   font-size: var(--text-body);
   line-height: var(--leading-body);
-  letter-spacing: 0.01em;
 }
 
 .prose p + p,
@@ -661,7 +685,6 @@
 .answer p {
   font-size: var(--text-body);
   line-height: 1.45;
-  letter-spacing: 0.01em;
 }
 
 .answer p + p {
@@ -715,7 +738,12 @@
   line-height: var(--leading-body);
 }
 
-.spec th {
+/* Scoped to thead rather than to th, so the row header underneath never has
+   to undo a tracking it should not have inherited. The column header is an
+   uppercase label and takes the label's tracking; the row header is sentence
+   case running copy and takes none, which is now the absence of a
+   declaration rather than a second declaration cancelling the first. */
+.spec thead th {
   font-size: var(--text-caption);
   font-weight: 500;
   letter-spacing: var(--tracking-label);
@@ -726,8 +754,6 @@
 
 .spec tbody th {
   font-size: var(--text-body-sm);
-  letter-spacing: 0.01em;
-  text-transform: none;
   color: var(--ink);
   font-weight: 500;
 }
@@ -794,10 +820,17 @@
 /* Scoped through .faq__q so it outranks `.doc__section h3`, which otherwise
    adds its section-heading margins inside the summary and inflates every
    row to about 129px. */
+/* 21px, the subheading rung, and it is the rung this exact content already
+   carries on the homepage, /logo-design/, /process/ and /brand-guidelines/.
+   On the one route whose entire job is questions, the questions were set at
+   the same 15px as their own answers, so a visitor landing on the site's cost
+   page saw twenty grey lines and not one word of substance. */
 .faq__q .faq__q-text {
-  font-size: var(--text-body);
-  font-weight: 500;
-  line-height: 1.35;
+  font-size: var(--text-subheading);
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  text-transform: none;
+  line-height: 1.2;
   text-wrap: balance;
   margin: 0;
 }
@@ -865,6 +898,36 @@
   color: var(--ink-dim);
 }
 
+/* THE PANEL ARRIVES ON THE SAME CURVE THE MARKER PROMISED IT ON. The marker
+   retracts its vertical stroke over 0.2041s and then the answer it announces
+   teleported into place underneath it. That marker is the one gesture on this
+   page somebody clearly stopped and thought about, and it was being undone by
+   the thing it opens.
+
+   Built on ::details-content, which is the only construction that opens a
+   real <details> to its own content height without a measured pixel anywhere
+   and without a wrapper element in twenty places of markup.
+   interpolate-size is scoped to the item rather than set on :root, because on
+   :root it would quietly make every `auto` on the site animatable. Guarded, so
+   an engine without it keeps exactly today's behaviour: the panel appears,
+   just without the curve. */
+@supports (interpolate-size: allow-keywords) and (selector(::details-content)) {
+  .faq__item {
+    interpolate-size: allow-keywords;
+  }
+
+  .faq__item::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition: block-size var(--dur) var(--curve),
+      content-visibility var(--dur) allow-discrete;
+  }
+
+  .faq__item[open]::details-content {
+    block-size: auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .faq__marker::before,
   .faq__marker::after { transition: none; }
@@ -908,10 +971,20 @@
   border-bottom: var(--hairline);
 }
 
+/* The weight and the leading are gone rather than restated. This rule sits
+   later in the cascade than .subheading at the same specificity, so its 500
+   and its 1.35 were quietly beating the display weight and the display
+   leading on the only heading on the site that carried the class and not the
+   look. It was the one element over 16px painting at a different weight from
+   every other element over 16px. */
+/* Sentence case here for the same reason it is sentence case on /faq/: this
+   is the identical content, three of the same twenty questions, and it should
+   not read as a label on one route and as a question on another. .subheading
+   sets the uppercase for the furniture that wants it, so this turns it off
+   for the one consumer that is running type. */
 .qa__q {
-  font-weight: 500;
-  line-height: 1.35;
   margin-bottom: var(--sp-3);
+  text-transform: none;
   text-wrap: balance;
 }
 
@@ -1761,27 +1834,61 @@
    gone rather than restated. Measured under a nav link at scroll 0: 16.4:1 in
    daylight, 17.7:1 in the dark. */
 
+/* THE MASTHEAD BAND, WHICH USED TO BE 384px OF CLEARANCE.
+
+   It was derived honestly and it was still not a design: the band was where
+   the mark starts, plus the mark, plus one gap, which is the room the mark
+   needs and nothing about what the band IS. Measured on all fifteen interior
+   routes it ran from the breadcrumb's floor at y=118 to the eyebrow at y=502,
+   and on the ten routes with no folio in them every one of those 384 pixels
+   was empty paper across 1,065 of the 1,380 the column is wide. It read as
+   deliberate space, but it had not been designed, only left.
+
+   IT IS A STATED INTERVAL NOW, AND THE FIGURE COMES OFF THE TYPE LADDER. The
+   band is two display steps, which is exactly the height of the two-line
+   title it introduces: 160px at 1500, and it moves with the type at every
+   other width because the display step does. THE MARK IS THE SAME FIGURE, so
+   the object at the right of the band is precisely as tall as the title
+   underneath it, and the band's floor is the plate's ceiling.
+
+   So all four of the band's edges are stated by something in it. The rule at
+   the top is its ceiling and the eyebrow hangs off it. The mark's height is
+   its depth. The plate is its floor. On the five capability routes the folio
+   stands on that floor. Nothing is left over.
+
+   The title comes up 146px on all fifteen routes as a consequence, which is
+   the other half of the fix: that space goes to the document below rather
+   than to the gap above. */
 .doc__head {
-  /* One figure for the mark, and the open band above the eyebrow derived from
-     it rather than guessed: where the mark starts, plus the mark, plus one
-     gap. Change the mark's size and the band follows it, so the two can never
-     disagree and the title can never be run into. The clamp is the cover's
-     own, unchanged, so the object is the same size on a document as it is on
-     the poster. */
-  --doc-mark: 21rem;
+  --doc-band: calc(var(--text-display) * 2);
+  --doc-mark: var(--doc-band);
   --doc-mark-top: 1.6rem;
 
   position: relative;
-  padding: 0 0 5rem;
+  /* The rule is the band's ceiling and it belongs to the band, not to the
+     line that rides it. On the capability routes the eyebrow is a grid item
+     in the second track, so a border there stopped at x=315 and read as an
+     underline for a label rather than as the top of a masthead. Here it runs
+     the full column on all fifteen. */
+  border-top: 1px solid var(--ink-line-strong);
+  padding: var(--sp-3) 0 5rem;
   margin-bottom: 4.8rem;
+}
 
-  /* Stated as padding rather than as a min-height with the content pushed to
-     the floor, because the capability pages turn this element into a grid at
-     901px and a grid has no justify-content: flex-end to give way to. Padding
-     is the one mechanism that composes identically in both. */
-  padding-top: calc(
-    var(--doc-mark-top) + var(--doc-mark) + 3rem
-  );
+/* THE REGISTER LINE. The eyebrow used to sit at the FLOOR of the band, 384px
+   below the breadcrumb with nothing in between, which is why the band read as
+   a gap: the first thing in it arrived at the end of it. It rides the band's
+   ceiling now, on the rule that states where the masthead begins, which is
+   the same furniture every section head on the cover opens with. */
+.doc__head .doc__eyebrow {
+  color: var(--ink-quiet);
+  /* The rest of the band, carried by the one element that sits at its top.
+     Stated as the band less what the register line itself occupies, so the
+     floor lands on --doc-band exactly and the plate begins there. Margin
+     rather than padding on the head, because the capability routes turn this
+     element into a grid at 901px and a grid item's margin is what sets the
+     height of the row it stands in. */
+  margin-bottom: calc(var(--doc-band) - var(--sp-3) - 1.3em);
 }
 
 /* The mark. Painted as a mask rather than as markup, so it reaches all
@@ -1793,7 +1900,10 @@
 .doc__head::before {
   content: '';
   position: absolute;
-  top: var(--doc-mark-top);
+  /* Hung from the band's ceiling, so its top edge is the rule and its bottom
+     edge is the plate. It is not floating in a gap any more; it is the depth
+     of the band, drawn. */
+  top: 0;
   right: calc(var(--gutter) * -1);
   width: var(--doc-mark);
   aspect-ratio: 1;
@@ -1810,10 +1920,6 @@
   pointer-events: none;
 }
 
-.doc__head .doc__eyebrow {
-  color: var(--ink-quiet);
-  margin-bottom: var(--sp-4);
-}
 
 /* The display step, the same one the cover's hero is set at, which is the
    single strongest seam between a document and the poster it came from.
@@ -1829,7 +1935,6 @@
   font-size: var(--text-display);
   font-weight: var(--weight-display);
   line-height: var(--leading-display);
-  letter-spacing: var(--tracking-display);
   text-align: var(--align);
   color: var(--ramp-ink);
   text-wrap: balance;
@@ -1866,7 +1971,6 @@
   font-size: var(--text-subheading);
   font-weight: 400;
   line-height: 1.45;
-  letter-spacing: 0;
   text-transform: none;
   color: var(--ink);
   max-width: 54ch;
@@ -1898,64 +2002,82 @@
 
 /* ---- How a section opens ----
 
-   Every section of every document opens on the brand. The heading is a plate:
-   a full-bleed ramp carrying one line at the 44px step, with the reading
-   column underneath it on the sheet. That is the whole colour system of this
-   site restated at document scale, and it is what lets the page be a light
-   document and still arrive loud.
+   IT NO LONGER OPENS ON THE BRAND, AND THAT IS THE INTERIOR'S HALF OF THE
+   CHROMA DECISION.
 
-   It replaces a hairline rule with a 12px tick cut into it at 45 degrees. The
-   tick was drafting-sheet furniture and it went with the rest of that
-   language; the plate's own edge is the rule now.
+   Every section of every document used to open on a full-bleed ramp plate.
+   On /logo-design/ that is six of them, and measuring the route one viewport
+   at a time gives 38.6, 16.6, 13.8, 13.7, 13.8, 15.1, 12.4, 0.1, 23.0, 38.3
+   and 16.6 percent chromatic. The mean is 18.4, which sounds correct and is
+   not, because the SHAPE is wrong: nine of eleven screens sit between 12 and
+   17 percent. Colour is present everywhere on the route and committed to
+   nowhere. A reader scrolling that page passes a magenta band roughly every
+   thousand pixels and stops seeing any of them, which is the precise
+   definition of decoration.
 
-   The seal survives, in ramp ink. It maps onto itself 22 vertices of 22 at a
-   half turn, so an upright seal and a turned one are the same object, and a
-   reader who notices the alternation finds nothing changing.
+   The reference that measures most premium runs 92 percent on one screen and
+   59 on one other, with thirteen consecutive screens under 15 in between. The
+   one that spends 48 percent of its document on gradient spends it in three
+   blocks. None of them sprinkles.
 
-   ::before carries the bleed rather than a negative margin, because the
-   reading column is one track of a three column grid and a negative margin
-   would only reach the edge of that track.
+   So a document now carries the same three-block structure the cover does:
+   the masthead, one closing call, and the footer. Everything in between is
+   paper, and the section openings become what they always were, which is
+   chapter markers on a reading document. They keep the size, the family and
+   the weight; they lose the field and take a hairline instead.
 
-   It bleeds RIGHT ONLY, and that is a correction rather than a style. A plate
-   bleeding both ways crossed the sticky page index in the left track, which
-   put a column of 15px links on the ramp. The plate starts at the reading
-   column and runs off the right edge of the page; the index stays on the
-   sheet beside it. */
+   THIS IS THE SAME EDIT THE COVER ALREADY MADE, carried through. On the cover
+   .process__statement and .qa__statement came off their plates onto paper
+   under a rule, for the same reason and with the same treatment: 30px above
+   the type and 46px below, unequal because a rule sits on the cap line and
+   the descent underneath needs the larger share. A chapter marker looks the
+   same on both halves of the site now, which is what makes it a system rather
+   than two habits.
+
+   THE 24PX FLOOR STOPS BEING LOAD-BEARING HERE. heading-sm at 32px was the
+   smallest step on the site that ever stood on a gradient, and it was floored
+   at 25px underneath the desktop band solely to keep this rule legal. Nothing
+   chromatic carries type on a document any more, so the floor is now slack
+   rather than binding, and the rule survives because it costs nothing.
+
+   The seal survives, in the page's own ink. It maps onto itself 22 vertices
+   of 22 at a half turn, so an upright seal and a turned one are the same
+   object, and a reader who notices the alternation finds nothing changing. */
 .doc__section > h2 {
   position: relative;
   isolation: isolate;
   font-family: var(--font-display);
   font-size: var(--text-heading-sm);
   font-weight: var(--weight-display);
-  line-height: 0.9;
-  letter-spacing: 0.01em;
-  color: var(--ramp-ink);
-  padding: 6.4rem 0;
+  /* 1.02, up from 0.9. The figure was set against a 44px heading; at 32px it
+     put the descenders of one line into the counters of the next on every
+     two-line section title on fifteen routes. */
+  line-height: 1.02;
+  color: var(--ink);
+  border-top: 1px solid var(--ink-line);
+  /* The pair the cover's chapter markers use, at the scale a document reads
+     at. No horizontal padding, because there is no field to be inset from any
+     more: the type starts exactly where the reading column starts and where
+     every paragraph under it starts, which is the alignment a rule above a
+     heading is for. */
+  padding: 2rem 0 3.0667rem;
 }
 
-.doc__section > h2::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: -50vw;
-  background-color: var(--brand-violet);
-  background-image: var(--brand-ramp-deep);
-  pointer-events: none;
+/* THE FIRST SECTION DOES NOT DRAW ITS OWN RULE, because the grid already drew
+   one 47px above it. Two identical hairlines that close together at a join is
+   the signature of a component nobody watched being assembled, and it is the
+   same defect the .qa__item border pair was. One rule opens the document and
+   the heading takes its clearance from that rule instead of from a second. */
+.doc__section:first-of-type > h2 {
+  border-top: 0;
+  padding-top: 0;
 }
 
-/* Below the three column breakpoint the index is above the prose rather than
-   beside it, so there is nothing on the left for the plate to run into and it
-   takes the whole sheet again. Stated here rather than in the layout block
-   further up, because a media query that sits earlier in the file than the
-   rule it overrides does not override anything. */
-@media (max-width: 900px) {
-  .doc__section > h2::before {
-    left: calc(var(--gutter) * -1);
-  }
-}
+/* The narrow-sheet override that pulled the plate's bleed out to the gutter
+   is gone with the plate it was correcting. A rule that starts and ends with
+   the reading column needs no breakpoint: it is the column's own width at
+   every viewport, which is one fewer media query and one fewer thing that can
+   be right at 1500 and wrong at 900. */
 
 /* The seal is gone from the section head. It sat at the right edge of the
    reading column, and once the heading became a plate the column edge is
@@ -1969,7 +2091,6 @@
   font-size: var(--text-subheading);
   font-weight: var(--weight-display);
   line-height: 1.2;
-  letter-spacing: 0.01em;
   text-transform: uppercase;
   color: var(--ink);
 }
@@ -1978,7 +2099,6 @@
 .prose li {
   font-size: var(--text-body);
   line-height: var(--leading-body);
-  letter-spacing: 0;
 }
 
 /* The direct answer to the question a section asks. It was a violet box with
@@ -2088,7 +2208,6 @@
   font-size: var(--text-heading);
   font-weight: var(--weight-display);
   line-height: var(--leading-tight);
-  letter-spacing: -0.01em;
 }
 
 /* The plate itself, escaping the container to both edges of the viewport.
@@ -2138,17 +2257,23 @@
   font-size: var(--text-subheading);
   font-weight: var(--weight-display);
   line-height: 1.2;
-  letter-spacing: 0.01em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
+/* A QUESTION IS SET AS A QUESTION, NOT AS A LABEL. Twenty of these are the
+   entire job of the /faq/ route, and they were arriving uppercase and tracked
+   at the size the route's own answers are set at, which is the treatment this
+   sheet gives a table header. Uppercase is for furniture: an eyebrow, a
+   column head, a numeral. A sentence that ends in a question mark is running
+   type, it keeps its ascenders and descenders so its shape can be scanned,
+   and its tracking goes with the case that asked for it. The size is
+   unchanged; only the costume is. */
 .faq__q-text {
   font-family: var(--font-display);
   font-size: var(--text-subheading);
   font-weight: var(--weight-display);
   line-height: 1.2;
-  letter-spacing: 0.01em;
-  text-transform: uppercase;
 }
 
 .qa__statement,

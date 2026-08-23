@@ -19,6 +19,20 @@
    system, so there is no bold variant of anything to reach for.
    ============================================================ */
 
+/* The Regular is the display face. The project shipped only the Medium, so
+   --weight-display: 400 was a request the stack could not fill: that file is
+   usWeightClass 500 with no variable axis, and no browser synthesises a
+   lighter weight, so every glyph over 21px painted at 500 whatever the token
+   said. Every reference this design was measured against puts its LIGHTEST
+   weight at its BIGGEST size, and this was the one thing stopping that. */
+@font-face {
+  font-family: 'Familjen Grotesk';
+  src: url('/fonts/FamiljenGrotesk-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @font-face {
   font-family: 'Familjen Grotesk';
   src: url('/fonts/FamiljenGrotesk-500.woff2') format('woff2');
@@ -187,7 +201,8 @@ button {
 /* ============================================================
    THE ROOMS
 
-   There are two now, not five. Paper, and the ramp.
+   There are three now, not five. Paper, and the chroma room in its two
+   grades.
 
    The five flat rooms were magenta, violet, deep violet, void and paper, and
    each committed a whole viewport to one hex. Two of those are gone as
@@ -201,14 +216,22 @@ button {
    right in the markup and wrong on screen is the failure mode this whole
    naming scheme exists to prevent.
 
-   WHAT MAY BE SET ON A RAMP. Display type in white, and nothing under 24px.
-   The arithmetic is in tokens.css: the worst point of any ramp containing
-   pure magenta is 3.75:1 against white, which clears the 3:1 large-text floor
-   and misses the 4.5:1 body floor, and no ink clears 4.5:1 at both ends.
-   Body copy, labels and captions live on paper.
+   WHAT MAY BE SET ON A RAMP, AND WHY THERE ARE NOW TWO ANSWERS. The old rule
+   was one sentence: display type in white, nothing under 24px, because the
+   worst point of any ramp containing pure magenta is 3.75:1 against white,
+   which clears the 3:1 large-text floor and misses the 4.5:1 body floor, and
+   no ink clears 4.5:1 at both ends.
+
+   That rule survives, and it is now GRADE B. Grade A is the room that buys
+   the small type back: the same ramp laid over #09090b at 0.80, so the worst
+   point moves to 5.36:1 with white and 4.77:1 with #f2f1f6 and 15px is legal
+   with margin. The grade is chosen by the smallest type the room contains and
+   by nothing else. Every figure is in the CHROMA ROOM block of tokens.css and
+   every one of them was measured on rendered pixels.
    ============================================================ */
 
 .room-paper,
+.room-chroma,
 .room-ramp,
 .room-magenta,
 .room-violet,
@@ -227,11 +250,87 @@ button {
   --ink-accent: var(--room-paper-accent);
 }
 
+/* ------------------------------------------------------------
+   GRADE A, THE READING GRADE. --chroma-alpha 0.80, type down to 15px.
+
+   The section commits its whole viewport to #09090b and the ramp is laid over
+   it on a pseudo-element. THE OPACITY IS ON ::before AND NOWHERE ELSE: put it
+   on the section and the type fades with the ground, and every ratio in the
+   token block becomes fiction.
+
+   The composited hexes are not baked in as literal stops either, tidier
+   though that would be. --brand-ramp-deep stays the declaration, dimmed by
+   the ground beneath it, so both fixed brand colours are still literally in
+   the source and a change to the ramp propagates.
+
+   TWO LEGAL INKS, AND THE THIRD STEP IS SIZE. --ink and --ink-dim are white
+   and #f2f1f6. --ink-quiet is the same #f2f1f6 on purpose, because there is
+   no third light ink with margin, and the token exists so inheritance cannot
+   land somewhere illegal.
+   ------------------------------------------------------------ */
+.room-chroma {
+  position: relative;
+  isolation: isolate;
+
+  --ground: var(--room-chroma-ground);
+  --ink: var(--room-chroma-ink);
+  --ink-dim: var(--room-chroma-dim);
+  --ink-quiet: var(--room-chroma-quiet);
+  --ink-accent: var(--room-chroma-accent);
+  --ink-line: var(--room-chroma-line);
+  --ink-line-strong: var(--room-chroma-line-strong);
+  --focus: var(--room-chroma-focus);
+  --interactive: #ffffff;
+  --interactive-text: var(--room-chroma-ground);
+  --selection-bg: #ffffff;
+  --selection-text: var(--room-chroma-ground);
+}
+
+.room-chroma::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--room-chroma-ramp);
+  opacity: var(--chroma-alpha);
+  pointer-events: none;
+}
+
+/* Exactly one element child per chroma section, so this has one target. */
+.room-chroma > * {
+  position: relative;
+  z-index: 1;
+}
+
+.room-chroma ::selection {
+  background: #ffffff;
+  color: var(--room-chroma-ground);
+}
+
+/* GRADE B, THE DISPLAY GRADE. --chroma-alpha 1, 24px minimum, white only.
+
+   Same room and same ramp with nothing dimming it, so this is the true
+   #e634be at full strength and the ink ladder collapses to one entry. It is
+   also exactly what .room-ramp below already paints, and the two spellings
+   are kept because a section is a room and a plate is a plate: the plate
+   paints the ramp directly, since at full strength there is no ground left
+   underneath for a ::before to dim it against. */
+.room-chroma-display {
+  --chroma-alpha: var(--chroma-alpha-display);
+  --ink: var(--room-chroma-display-ink);
+  --ink-dim: var(--room-chroma-display-ink);
+  --ink-quiet: var(--room-chroma-display-ink);
+  --ink-accent: var(--room-chroma-display-ink);
+  --ink-line: var(--room-chroma-display-line);
+  --ink-line-strong: var(--room-chroma-display-line-strong);
+}
+
 /* One chromatic surface, stated once. Every consumer samples this rather than
    declaring its own, so a band, a blade and a plate cannot drift onto three
    versions of the brand. The background-color under the image is the violet
    stop, so a surface whose gradient fails to paint still lands on a brand
-   colour with legal ink rather than on nothing. */
+   colour with legal ink rather than on nothing. This is grade B by direct
+   paint: 3.75:1 against white at the magenta corner, 24px minimum. */
 .room-ramp,
 .room-magenta,
 .room-violet,
@@ -279,11 +378,19 @@ button {
    of one: at 375 that left a 44px headline 215px to fit into and the first
    line ran off the screen. */
 
+/* THE PADDING IS UNEQUAL, and equal padding was the purest formula tell on
+   the site. It was 5.2rem top and bottom on all six plates, and every one of
+   them rendered top heavy, by a different amount at each size, because a
+   font's ascent is deeper than its cap height: the ink starts lower in the
+   box than the box's own top edge suggests. Nobody can name the offset and
+   everybody sees the band sitting low in its own colour. 4.2rem over 5.6rem
+   is 63px over 84px at 1500, which puts the cap line and the baseline the
+   same distance from their own edges. */
 .plate {
   position: relative;
   isolation: isolate;
   color: var(--ramp-ink);
-  padding-block: 5.2rem;
+  padding-block: 4.2rem 5.6rem;
 }
 
 .plate::before {
@@ -330,7 +437,6 @@ button {
   font-size: var(--text-body);
   font-weight: 400;
   line-height: var(--leading-body);
-  letter-spacing: 0;
 }
 
 .body-sm {
@@ -338,7 +444,6 @@ button {
   font-size: var(--text-body-sm);
   font-weight: 400;
   line-height: var(--leading-body);
-  letter-spacing: 0;
 }
 
 /* The four display steps. One family, one weight, four sizes, and the gap
@@ -359,25 +464,21 @@ button {
 .display {
   font-size: var(--text-display);
   line-height: var(--leading-display);
-  letter-spacing: var(--tracking-display);
 }
 
 .heading {
   font-size: var(--text-heading);
   line-height: var(--leading-tight);
-  letter-spacing: -0.01em;
 }
 
 .heading-sm {
   font-size: var(--text-heading-sm);
   line-height: 0.9;
-  letter-spacing: 0.01em;
 }
 
 .subheading {
   font-size: var(--text-subheading);
   line-height: 1.2;
-  letter-spacing: 0.01em;
   text-transform: uppercase;
 }
 
@@ -454,6 +555,16 @@ button {
   -webkit-mask-position: center;
   mask-position: center;
   transform-origin: var(--turn-origin);
+}
+
+/* THE SEAL TAKES THE ROOM'S OWN BOUNDARY VALUE ON CHROMA. 0.42 of white
+   composites to #bd80c6 against the worst point of a grade A ground and
+   measures 2.97:1, which is under even the decorative reading and rendered
+   the seal as a smudge. 0.70 is the room's load-bearing line value and
+   measures 3.35:1, so the furniture is set at the same strength as every
+   other boundary in the room rather than at the paper figure carried in. */
+.room-chroma .section__head::after {
+  opacity: 0.7;
 }
 
 /* The law's second clause, in the furniture: the only rotation on this site
@@ -606,6 +717,7 @@ body > footer {
   /* Flat colour grounds cost a cartridge and say nothing on paper. Every
      room prints as white with black ink. */
   .room-paper,
+  .room-chroma,
   .room-magenta,
   .room-violet,
   .room-deep,
@@ -613,6 +725,12 @@ body > footer {
   body {
     background: #fff !important;
     color: #000 !important;
+  }
+
+  /* The chroma room's ramp lives on a pseudo-element, so it has to be taken
+     off separately or the whole band prints as a solid sheet of magenta. */
+  .room-chroma::before {
+    display: none !important;
   }
 
   .lit {
