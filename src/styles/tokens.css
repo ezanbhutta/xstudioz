@@ -715,6 +715,40 @@
      viewport. The menu overlay is modal, so it is never on screen at the same
      time as a scroll, and the page behind it does not move. Two scroll-linked
      blurred surfaces cost more than eight static ones; this has one.
+
+     WHY THERE IS NO THIRD, AND IT IS MEASURED RATHER THAN ASSERTED.
+
+     The question put to this pass was whether glass could leave the chrome
+     and stand on the page, over the chroma room, where the ramp at 0.80 over
+     near-black has real tonal range behind it. It was tested rather than
+     argued: a probe panel over seven candidate surfaces on the real pages,
+     captured four times each with backdrop-filter none, blur only, saturate
+     only and both, and diffed on the rendered pixels.
+
+     Over the chroma room, on a region with no type behind it, blur(20px)
+     alone changed the panel by a maximum of 4 of 255 on any channel, a mean
+     of 0.795, and 0.13 percent of pixels. That is the identity function to
+     within rounding. saturate(180%) alone changed 100 percent of the pixels
+     by a mean of 73. So on this site's own dark room the SATURATION carries
+     the whole material and the blur carries nothing, because the room is
+     --brand-ramp-deep dimmed against a flat ground and a Gaussian blur of a
+     smooth two-stop ramp returns the ramp.
+
+     The only regions where the blur did work were the ones with type behind
+     them: 211 of 255 over the 48px statement, 225 over the 16px paragraph.
+     Those are precisely the regions glass may not stand on, so the blur only
+     earns its cost where it is not allowed to be.
+
+     The rest failed on the same arithmetic or on an ancestor. The masthead
+     plate and the archive portal's plate are the ramp at full strength, so
+     the same identity applies; the portal's plate also carries a clip-path,
+     which makes it a backdrop root, so anything inside it would sample
+     nothing at all. The capability rows and the closing bands stand on paper,
+     where saturate(180%) moved 4 of 255 and the blur only smeared the
+     document's own body copy.
+
+     So no page-body glass ships. The blurred area added by this pass is ZERO,
+     and the three surfaces above are still the only three on the site.
      ============================================================ */
 
   --glass-blur: 20px;
@@ -748,47 +782,45 @@
   --hairline: 1px solid var(--ink-line);
 
   /* ============================================================
-     THE DARK ROOM
+     WHAT USED TO BE HERE: THE DARK ROOM
 
-     Parked under --d-* so every colour in the system has one home. The
-     mapping block below only ever points a real token at one of these.
+     Eleven --d-* colours, and the :root[data-theme='dark'] block below the
+     sweep that mapped every real token onto them. 3,489 bytes of source, 912
+     minified, 198 gzipped, shipped on all sixteen routes, and nothing could
+     reach one byte of it.
 
-     This used to be the other way round: :root carried the void and daylight
-     was reached for through a preference query. The site shipped as a
-     near-black document and measured about half its pixels chromatic or dark
-     on the cover. Paper is the base now and this is the opt-in.
+     THREE DOORS, ALL BRICKED UP. The switch that wrote data-theme is deleted
+     from partials/nav.html. The inline guard that replayed a remembered
+     xz-theme into the attribute before first paint is deleted from
+     vite.config.ts. And there was deliberately no prefers-color-scheme query,
+     so an operating system could not open it either. The mapping had also
+     rotted while nobody could see it: it pointed --brand-a at --lamp-a, which
+     is the pure magenta, not the darkened one, and would have set 3.45:1 type
+     the moment anything did reach it.
 
-     Only the PAPER room follows the theme. The brand ramp is the same two
-     hexes in the dark as in daylight, because the brand is not a preference.
+     DELETED RATHER THAN KEPT WARM. Dead code with no owner and no door is not
+     a feature in waiting, it is bytes every visitor pays for. What replaces it
+     is the one line that actually matters to a reader whose machine is dark:
+     :root { color-scheme: light } further down, which tells the browser to
+     paint its scrollbars, form controls and canvas for the room this document
+     is, instead of building a dark frame around a sheet of paper.
+
+     THE DARK VALUES THE SITE STILL USES ARE NOT THESE, and never were. Every
+     dark surface that survives is a ROOM, and a room carries its own measured
+     ink ladder in the block above: --room-void-* for the overlay menu,
+     --room-chroma-* for the chroma room, --room-deep-* for the colophon.
+     Those are live, they are what dark glass stands on, and not one of them
+     was ever a preference.
      ============================================================ */
-
-  --d-canvas: #09090b;        /* the void. matches portfolio.xstudioz.com  */
-  --d-canvas-raised: #101014; /* a plane lifted just off the void          */
-  --d-canvas-panel: #16161c;  /* a second, quieter plane                   */
-
-  --d-text: #f2f1f6;          /* 17.7:1 on the void */
-  --d-text-secondary: #a9a9b6;/*  8.6:1             */
-  --d-text-muted: #8a8a97;    /*  5.8:1             */
-
-  --d-border: #23232b;
-  --d-border-strong: #3a3a45;
-
-  --d-focus: #f2f1f6;
-
-  /* Kept, and inert: the rig no longer paints in either room. */
-  --l-lamp-strength: 0;
-  --l-lit-base: #3a3745;
 
   /* #e634be measures 3.45:1 on paper, under the 4.5 floor for the places it
      is set as text. Darkened at constant hue and saturation (313.5deg,
-     78.1%), so it is the same magenta carrying the same weight on the sheet
-     that it carries in the dark. */
+     78.1%), so it is the same magenta carrying the same weight wherever the
+     brand is set as type. */
   --l-brand-a: #c0189a;       /* 5.04:1 on paper */
 
   --selection-bg: #38016c;
   --selection-text: #ffffff;
-  --d-selection-bg: var(--brand-magenta);
-  --d-selection-text: #09090b;
 
   /* ============================================================
      THE PROOF PLATE
@@ -827,37 +859,32 @@
   initial-value: 0;
 }
 
-/* THE ONE MAPPING. Paper is what :root carries, so this block is the only
-   place the site ever goes dark, and it is reached only by an explicit
-   choice: the switch in the header writes data-theme and an inline script in
-   <head> replays it before first paint.
+/* ============================================================
+   GLASS, IN A DARK ROOM
 
-   There is deliberately no prefers-color-scheme query here. The site is a
-   light document by decision, not by circumstance, and a reader whose
-   machine happens to be dark is still shown the sheet until they ask
-   otherwise. The switch is one press away and it is remembered. */
-:root[data-theme='dark'] {
-  color-scheme: dark;
+   These six values used to live inside :root[data-theme='dark'], where they
+   were the glass half of a theme nobody could switch on. They are not theme
+   values and never were: this site has no dark theme and it does have dark
+   ROOMS, and a material behaves differently in a dark room whatever the
+   document around it is made of. So they are a scope a surface opts into,
+   which is the same shape .room-chroma and .room-void already have.
 
-  --canvas: var(--d-canvas);
-  --canvas-raised: var(--d-canvas-raised);
-  --canvas-panel: var(--d-canvas-panel);
-  --text: var(--d-text);
-  --text-secondary: var(--d-text-secondary);
-  --text-muted: var(--d-text-muted);
-  --border: var(--d-border);
-  --border-strong: var(--d-border-strong);
-  --focus: var(--d-focus);
-  --brand-a: var(--lamp-a);
-  --selection-bg: var(--d-selection-bg);
-  --selection-text: var(--d-selection-text);
+   THE ALPHA DOES NOT MOVE. It is the tint that flips, so the floor
+   arithmetic in the GLASS block holds for both and there is one number to
+   check rather than two: tint #09090b at 0.86 over the worst backdrop a
+   surface can ever have, pure white, composites to rgb(43,43,45), and that
+   measures 12.57:1 against #f2f1f6. It is the binding one of the two floors,
+   at alpha 0.587, which 0.86 clears by 0.273.
 
-  /* THE GLASS, IN THE DARK. The alpha does not move: it is the tint that
-     flips, so the floor arithmetic above holds in both themes and there is
-     one number to check rather than two. The lit edge drops a long way,
-     because a bright hairline that reads as caught light on paper reads as a
-     drawn white line on the void, and the grain comes up, because noise at
-     3.2 percent is invisible on a near-black ground. */
+   THE LIT EDGE DROPS A LONG WAY, because a bright hairline that reads as
+   caught light on paper reads as a drawn white line on the void. THE GRAIN
+   COMES UP, because noise at 3.2 percent is invisible on a near-black ground.
+
+   Consumed today by the overlay menu's panel, which stands in the void room
+   and was carrying all six of these hard coded in components.css while an
+   identical set sat unreachable in the theme block.
+   ============================================================ */
+.glass--dark {
   --glass-tint: rgb(9 9 11 / var(--glass-alpha));
   --glass-solid: #09090b;
   --glass-edge-lit: rgb(255 255 255 / 0.13);

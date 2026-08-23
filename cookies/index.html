@@ -103,6 +103,26 @@
               </p>
             </section>
 
+            <!-- A RUNG OF THE ASK, AT A SECTION BOUNDARY AND NOWHERE ELSE.
+                 Measured at 390x844 before this: the body of this document ran
+                 for whole screens at a time with nothing in it to act on, and
+                 across the sixteen routes 90 of 175 viewport-heights held no
+                 call to action at all. The rungs are placed by rule rather than
+                 by feel: one at the section boundary nearest the middle of any
+                 gap wider than two screens, repeated until no gap is left or
+                 three have been placed. Three is the cap, so a document is never
+                 more than five asks from end to end including its head and its
+                 close, and every one of them lands where the reader was already
+                 stopping. No new copy: same address, same route subject, and the
+                 quiet treatment, which is type over a hairline rather than a
+                 control. -->
+            <p class="doc__midact">
+              <a class="doc__address" href="mailto:inquire@xstudioz.com?subject=Cookie%20policy%20question">
+                <span class="doc__address-text">inquire@xstudioz.com</span>
+                <svg class="doc__address-arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+              </a>
+            </p>
+
             <section class="doc__section" id="what">
               <h2>What a cookie is</h2>
               <p>
@@ -170,6 +190,13 @@
                 particular is recorded as a click and nothing more.
               </p>
             </section>
+
+            <p class="doc__midact">
+              <a class="doc__address" href="mailto:inquire@xstudioz.com?subject=Cookie%20policy%20question">
+                <span class="doc__address-text">inquire@xstudioz.com</span>
+                <svg class="doc__address-arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+              </a>
+            </p>
 
             <section class="doc__section" id="clarity">
               <h2>Session recording cookies</h2>
@@ -317,6 +344,13 @@
               </p>
             </section>
 
+            <p class="doc__midact">
+              <a class="doc__address" href="mailto:inquire@xstudioz.com?subject=Cookie%20policy%20question">
+                <span class="doc__address-text">inquire@xstudioz.com</span>
+                <svg class="doc__address-arr" aria-hidden="true"><use href="#arr-ne" /></svg>
+              </a>
+            </p>
+
             <section class="doc__section" id="choice">
               <h2>Changing your mind</h2>
               <p>
@@ -351,6 +385,40 @@
 
           </div>
         </div>
+
+        <!-- This route already closed on a .doc__cta, so it was never
+             stranded the way /privacy/ was. What it did not have was the
+             "read next" rung the other thirteen document routes carry, which
+             is the last thing standing between its final paragraph and the
+             footer. Same rule as /privacy/: every string here already exists
+             somewhere on this site, the privacy policy's row taking that
+             page's own lede. -->
+        <section class="related" aria-labelledby="related-head">
+          <p class="label doc__eyebrow" id="related-head">Read next</p>
+          <ul class="related__list">
+            <li class="related__row">
+              <a class="related__link" href="/privacy/">
+                <span class="related__name">Privacy Policy</span>
+                <span class="related__desc body-sm">This site collects very little, because it does very little. What follows is all of it.</span>
+                <svg class="related__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+              </a>
+            </li>
+            <li class="related__row">
+              <a class="related__link" href="/faq/">
+                <span class="related__name">Questions</span>
+                <span class="related__desc body-sm">Cost, time, revisions, file formats and copyright. Answered without the hedging.</span>
+                <svg class="related__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+              </a>
+            </li>
+            <li class="related__row">
+              <a class="related__link" href="/about/">
+                <span class="related__name">The Agency</span>
+                <span class="related__desc body-sm">Small on purpose. Who you would actually be working with, and how the studio is run.</span>
+                <svg class="related__arr" aria-hidden="true"><use href="#arr-e" /></svg>
+              </a>
+            </li>
+          </ul>
+        </section>
 
       </div>
 

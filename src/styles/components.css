@@ -24,6 +24,10 @@
 
 .nav {
   --nav-run: calc(var(--nav-h) * var(--cut-k));
+  /* The drawing's size in the bar. Named because the brand's touch target is
+     derived from it below the desktop band, where the mark is the whole
+     lockup and a target measured off the grid column is the wrong box. */
+  --nav-mark: 26px;
   position: fixed;
   top: 0;
   left: 0;
@@ -157,8 +161,8 @@
 }
 
 .nav__mark {
-  width: 26px;
-  height: 26px;
+  width: var(--nav-mark);
+  height: var(--nav-mark);
   fill: var(--ink);
   transition: fill var(--dur-half) var(--curve);
 }
@@ -373,12 +377,15 @@
     max(var(--sp-4), env(safe-area-inset-top)) max(var(--gutter), env(safe-area-inset-right))
     max(var(--sp-6), env(safe-area-inset-bottom)) max(var(--gutter), env(safe-area-inset-left));
 
-  background-color: rgb(9 9 11 / var(--glass-alpha));
+  /* The six dark-room values are the .glass--dark scope's now, carried on
+     this element in partials/nav.html. They used to be hard coded here while
+     an identical set sat unreachable inside the deleted theme block. */
+  background-color: var(--glass-tint);
   -webkit-backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
   backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
   box-shadow:
-    inset 0 1px 0 0 rgb(255 255 255 / 0.13),
-    inset 0 -1px 0 0 rgb(0 0 0 / 0.42);
+    inset 0 1px 0 0 var(--glass-edge-lit),
+    inset 0 -1px 0 0 var(--glass-edge-shade);
 }
 
 /* The grain, over the material and under the content. .nav__panel > * is
@@ -389,7 +396,7 @@
   position: absolute;
   inset: 0;
   background-image: var(--glass-grain);
-  opacity: 0.055;
+  opacity: var(--glass-grain-alpha);
   pointer-events: none;
 }
 
@@ -460,7 +467,7 @@
   }
 
   .nav__panel {
-    background-color: #09090b;
+    background-color: var(--glass-solid);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
@@ -586,10 +593,9 @@ html.nav-open {
 /* ---- Below the desktop band ---- */
 
 @media (max-width: 1024px) {
-  /* scoped to .nav__row so these beat the later .pill display rule rather
+  /* scoped to .nav__row so this beats the later .pill display rule rather
      than losing to it on source order at equal specificity */
-  .nav__row .nav__links,
-  .nav__row .nav__cta {
+  .nav__row .nav__links {
     display: none;
   }
 
@@ -599,6 +605,114 @@ html.nav-open {
 
   .nav__row {
     grid-template-columns: 1fr auto;
+  }
+}
+
+/* ============================================================
+   THE HEADER KEEPS ITS ASK ON A PHONE, AND THE WORDMARK STANDS DOWN
+
+   .nav__cta used to be display: none below the desktop band, so the whole
+   header on a phone was one 76.8 x 44 control saying "Menu". Measured on
+   /logo-design/ at 390 that left nine consecutive viewports, 7,445px, with
+   nothing tappable that was not the hamburger.
+
+   IT DID NOT FIT, AND THIS IS THE ARITHMETIC. At 390 the row has 314.8px
+   between the gutters and the four things wanting it come to 329.3:
+   brand ink 98.4, row gap 11.4, "Start a project" 142.7, "Menu" 76.8. A
+   14.5px deficit.
+
+   WHAT GIVES IS THE RENDERING OF THE WORDMARK, NOT THE WORD. Below the width
+   where all four fit, .nav__name goes to .sr-only and the lockup is the mark
+   alone. Nothing is deleted: "XStudioz" is still in the DOM, still inside the
+   anchor, and the anchor still carries aria-label="XStudioz, home", so the
+   accessible name of the home link is unchanged in every mode. What is freed
+   is the name's 62.4px plus the lockup's 10px gap, which is 72.4px against a
+   14.5px deficit.
+
+   THE BREAKPOINT IS DERIVED, NOT CHOSEN. The four things fit while the
+   usable row is at least their sum, and that crossing was measured rather
+   than computed off a stale token: see the figure in the media query below.
+
+   THE MARK IS STILL A TARGET. .nav__brand is the 1fr column of a two column
+   grid, so it stays the full width of that column and its 44px ::after hit
+   area goes with it. The mark does not shrink to a 26px tap.
+   ============================================================ */
+@media (max-width: 1024px) {
+  /* The lockup becomes the mark. .sr-only's own declarations rather than the
+     class, because the class would have to be written into partials/nav.html
+     and would then hide the wordmark on the desktop too. clip-path: inset(50%)
+     on a 1px box is the treatment every assistive technology reads. */
+  .nav__name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* Nothing left to space away from. */
+  .nav__brand {
+    gap: 0;
+  }
+
+  /* The label may not wrap. At 320 the row is 240px between gutters, and a
+     control allowed to break "Start a project" over two lines takes the bar
+     from 62px to 66px and pushes the mark to zero width. */
+  .nav__cta > span,
+  .nav__toggle-word {
+    white-space: nowrap;
+  }
+
+  /* The mark may not be squeezed either. An SVG in a flex row is shrinkable
+     by default and it was measuring 0 x 26 at 320 and 6.8 x 26 at 390. */
+  .nav__mark {
+    flex: none;
+  }
+
+  /* THE TARGET IS THE MARK'S NOW, NOT THE COLUMN'S. .nav__brand is the 1fr
+     column of the row, and its 44px hit area spanned the whole of it: 693px
+     of header that navigates home at 1024, and only 31.1px at 320, which is
+     under the floor in the other direction. Both are the same mistake, which
+     is measuring the target off the layout instead of off the drawing. A
+     44px square centred on the mark is 9px of overhang each side at every
+     width in this band, and at 320 its right edge lands 2.7px clear of the
+     call to action rather than under it. */
+  .nav__brand::after {
+    left: calc((var(--nav-mark) - 44px) / 2);
+    right: auto;
+    width: 44px;
+  }
+}
+
+/* THE NARROW END, WHERE THE MARK ALONE IS STILL NOT ENOUGH.
+
+   Freeing the wordmark buys 72.4px and the deficit at 390 is 14.5, so the
+   phone band is comfortable. 320 is not: 240px of usable row against a
+   26px mark, an 11.4px column gap, a 76.8px "Menu" and a 142.7px
+   "Start a project" is 22.6px short.
+
+   Two decorative pixels give way rather than any word. The header CTA drops
+   the leaving arrow, which is aria-hidden and carries no meaning a screen
+   reader hears, and takes the rung below for its side padding. That is 22px
+   and 8.4px, which clears the 22.6px with room. The label, the border, the
+   fill behaviour and the 44px target are all untouched.
+
+   THE BREAKPOINT IS THE MEASURED CROSSING. Everything in the row is pinned in
+   pixels or in rem against a 9px root below 720px, so the row's demand is
+   constant at 262.6px while the usable width is viewport minus the 40px
+   gutters. Those meet at 342.6px, and 360 is the first common device width
+   above it. */
+@media (max-width: 359px) {
+  .nav__cta .pill__arr {
+    display: none;
+  }
+
+  .nav__cta {
+    gap: 0;
+    padding-inline: var(--sp-2);
   }
 }
 
