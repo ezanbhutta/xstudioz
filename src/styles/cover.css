@@ -55,6 +55,86 @@
    ============================================================ */
 
 
+/* ============================================================
+   THE COVER HAS NO RUN OF ITS OWN, AND THAT IS A MEASURED DECISION
+
+   A band was built here first, drawn to the whole viewport so that it and
+   the bar's copy of it were one continuous diagonal at rest: sharp on the
+   sheet, soft where it passed under the header. That is law 4, and law 4 is
+   worth about 15 percent. It was deleted after it was looked at, and the
+   geometry is the argument.
+
+   THE BAR IS AT THE TOP OF THE FRAME AND THE COPY IS AT THE BOTTOM OF IT,
+   AND A 40.82 DEGREE LINE THROUGH ONE PASSES THROUGH THE OTHER. Solved on
+   the rendered page at 1500 by 900: the bar occupies the band's own axis
+   from -831 to +206, and the lede occupies it from -277 to +112. The only
+   offsets that leave the lede clear put the band's edge into the bar at
+   x=1399 of 1500, which is a corner triangle and not a crossing. Every
+   offset that crosses the bar properly runs the band through the headline,
+   the lede, or both, and the shipped attempt did exactly that.
+
+   SO THE RUN LIVES WHERE THERE IS GLASS TO SEE IT THROUGH. That is law 3
+   restated as a design rule rather than as a measurement: the form must sit
+   under the panel and elsewhere on the page counts for nothing. A band on
+   paper that no panel crosses is not depth, it is a chromatic wash behind
+   type, and it is charged against the contrast of everything it passes. The
+   header carries its own run in components.css, at every scroll position on
+   all sixteen routes, which is the surface that needed one. The chroma room
+   and the archive plate carry theirs, and on both of those the band DOES
+   cross a pane's edge, so law 4 is bought where it can be had honestly.
+
+   THE HERO KEEPS ITS OWN COLOUR AND IT ALWAYS DID. The rule field is 109px
+   of the brand ramp standing above the headline, measured against it rather
+   than bled to the frame. It is on paper, in front of the reader, where a
+   blur cannot eat it, which is the other half of law 1.
+   ============================================================ */
+
+/* ============================================================
+   THE SIGNATURE MOMENT, AND THE THING THAT MOVES IS THE GLASS.
+
+   What stood here was the argument for having no signature at all, and the
+   geometry in it was right as far as it went. Clause 1 fixes every
+   displacement on this site to the arm, 40.82 degrees. The band RUNS at
+   40.82 degrees, so translating the band along the arm maps it onto itself
+   and shows the reader nothing; every direction in which the band's own edge
+   would visibly move is perpendicular to the arm and is therefore illegal.
+   Rotation is clause 5 and belongs to a drawing that is deleted. Growth is
+   the vocabulary that was judged and rejected two rebuilds ago. All of that
+   still holds, word for word.
+
+   IT ONLY HOLDS WHILE THE BAND IS THE THING MOVING. The band is not the only
+   object in the composition. The pane over it is a second surface, it is out
+   of flow, and it may travel the arm like anything else on this site. So the
+   pane moves and the band holds still: the same relative displacement with
+   the subject swapped, and the swap is the whole gesture. A material arriving
+   over a form, rather than a form being pushed around behind one.
+
+   WHAT THE READER SEES, ON THE PORTAL PLATE. The band's leading edge crosses
+   the pane, so at rest the same run is sharp on the ramp and soft behind the
+   glass. The gesture begins with no pane at all and the run sharp end to end.
+   Over 408ms a frosted plane comes up the arm one rung and resolves, and the
+   stretch of run it lands on goes soft under it while the rest stays sharp.
+   That is one sentence about the material, and the portal plate is the only
+   place on this site that can say it: a full strength ramp, a band wide
+   enough to survive an 8px blur, and a pane, all inside one Backdrop Root.
+
+   IT IS THE SITE'S ONE ARRIVAL SHAPE, ON PURPOSE. Up the arm, one rung,
+   --dur, the one curve, opacity 0 to 1. The law leaves exactly one shape and
+   inventing a second for this would be an exemption wearing a signature's
+   name. What makes it the signature is not the shape. It is that the thing
+   arriving is a MATERIAL, and that its arrival changes something else on the
+   page: every other arrival on this site moves a block of type and leaves
+   what it lands on exactly as it found it.
+
+   The mechanism is at THE SIGNATURE, further down this file, beside the pane
+   it belongs to.
+   ============================================================ */
+
+/* Below the desktop band the sheet is 390px wide. The band keeps the
+   viewport's box at every width, so there is nothing to reposition; only its
+   width moves, and it moves on --band-w, which is stated in vw against the
+   blur rather than in a fluid root. */
+
 .hero__sheet {
   position: relative;
   flex: 1;
@@ -123,6 +203,29 @@
 [data-rotator='0'] .hero__state-item:nth-of-type(2),
 [data-rotator='1'] .hero__state-item:nth-of-type(1) {
   opacity: 0;
+}
+
+/* THE THIRD STATE, AND IT IS THE REDUCED-MOTION ONE.
+
+   Under reduce the script used to decline entirely, which left the second
+   label carrying [hidden] and meant a reader who had asked for less motion
+   never saw "Taking work for 2026". A motion preference is a request about
+   movement, not a reason to withhold a line of copy.
+
+   So reduce gets a layout rather than an animation: both labels out of the
+   stack, in the flow, one under the other, with no transition to hold and no
+   timer to wait for. The row stops reserving a fixed height because it is no
+   longer one box with two things crossing inside it. */
+[data-rotator='static'] .hero__state {
+  height: auto;
+  min-width: 0;
+}
+
+[data-rotator='static'] .hero__state-item {
+  position: static;
+  display: block;
+  opacity: 1;
+  transition: none;
 }
 
 /* The headline is ink on the sheet. It stood on a full-bleed ramp in white,
@@ -425,36 +528,23 @@
   color: var(--ink-dim);
 }
 
-/* ---- The mark ----
-   An ordinary block above the statement rather than an axis the statement is
-   hung from. It is the only thing on the site drawn at this size and it does
-   not move: it used to grow out of scale 0 and turn a half turn as the wheel
-   went round, which is the clearest single example of the vocabulary that was
-   rejected. */
+/* ---- The statement ----
+   THE MARK ABOVE THIS LINE IS DELETED. It was 380px of the drawing standing
+   on the sheet as an ordinary block, and it is one of the instances the
+   owner's ruling covers: at that size it is the brand mark used as
+   decoration rather than as a signature, which is the reading the ruling
+   rejects. Nothing replaces it. The statement is the only thing in this
+   section that was ever saying anything, and a display line on paper with
+   air around it is the section, not a caption under a logo.
+
+   .turn survives as the grid because the statement is still centred in it
+   and forty one elements' worth of naming does not need to churn for one
+   deletion. */
 .turn {
   position: relative;
   display: grid;
   justify-items: center;
   width: 100%;
-}
-
-.turn__mark {
-  /* Sized off the SMALLER of the two viewport axes, not the height alone.
-     At 54vh a 844px tall phone gave a 456px mark on a 390px wide screen: it
-     ran off both edges and read as wallpaper rather than as the mark. */
-  --turn-size: max(190px, min(34vh, 42vw, 380px));
-  width: var(--turn-size);
-  height: var(--turn-size);
-  margin-block-end: var(--sp-5);
-  pointer-events: none;
-}
-
-/* The ramp itself as a fill, through the shared #xg gradient, because there
-   is no ramp plane behind it to be set against any more. */
-.turn__mark-svg {
-  fill: url(#xg);
-  width: 100%;
-  height: 100%;
 }
 
 /* The statement is real text at the display step, not glyphs riding an SVG
@@ -634,13 +724,22 @@
    is actually pointing at or has tabbed to, which is the same single lit
    hairline answering an intent instead of a wheel. Nothing moves: the rule
    changes colour, over the answer duration, on the one curve. */
-.caps__row:hover,
 .caps__row:focus-within {
   border-bottom-color: transparent;
   background-image: var(--brand-ramp);
   background-repeat: no-repeat;
   background-size: 100% 1px;
   background-position: left bottom;
+}
+
+@media (hover: hover) {
+  .caps__row:hover {
+    border-bottom-color: transparent;
+    background-image: var(--brand-ramp);
+    background-repeat: no-repeat;
+    background-size: 100% 1px;
+    background-position: left bottom;
+  }
 }
 
 /* THE DESCRIPTION COLUMN CAME IN THE REST OF THE WAY. It was pinned at
@@ -733,9 +832,14 @@
   transition: translate var(--dur-half) var(--curve);
 }
 
-.caps__link:hover .caps__arr,
 .caps__link:focus-visible .caps__arr {
   translate: var(--d1x) var(--d1y);
+}
+
+@media (hover: hover) {
+  .caps__link:hover .caps__arr {
+    translate: var(--d1x) var(--d1y);
+  }
 }
 
 /* 63.9375rem RATHER THAN 1024px, AND THE ONE PIXEL MATTERS. The dial's band
@@ -928,9 +1032,14 @@
   );
 }
 
-.room-chroma .brief__address:hover .brief__address-text,
 .room-chroma .brief__address:focus-visible .brief__address-text {
   background-image: linear-gradient(var(--ink), var(--ink));
+}
+
+@media (hover: hover) {
+  .room-chroma .brief__address:hover .brief__address-text {
+    background-image: linear-gradient(var(--ink), var(--ink));
+  }
 }
 
 .brief__address-arr {
@@ -1080,40 +1189,193 @@
   --portal-run: calc(var(--portal-rise) * var(--cut-k));
 }
 
-/* The mark's real job on this plate: it is the size of the headline, it
-   bleeds off the right edge, and it makes the one rotation this drawing can
-   make honestly. 22 of its 22 counter vertices land on themselves at a half
-   turn about 49.90 / 50.71, so the turn finishes on a drawing identical to
-   the one it started from. */
-.portal__mark {
-  --portal-mark: 30rem;
+/* ============================================================
+   THE PLATE'S RUN, AND THE TURN THAT WENT WITH THE MARK
+
+   660px of the drawing stood here, bleeding off the right gutter, and it
+   made a half turn on hover. Both are deleted and the two reasons are
+   independent, which is worth saying because either alone would have done
+   it.
+
+   THE OWNER'S RULING covers the drawing at this size: it is the brand mark
+   used as architecture, which is the reading that was rejected.
+
+   THE LAW covers the turn. Clause 5 allows a half turn because the drawing
+   maps onto itself at 180 degrees and at no other angle, and it requires the
+   turn to play through in one go. A `transition` on hover can be caught part
+   way, and it was: traced, a pointer pulling away mid-turn walked the
+   drawing back down through 128.8, 108.1, 95.1, 83.4, 65.4, 42.8, 21.1 and
+   6.5 degrees, and at every one of those only 29 of the drawing's 52
+   vertices land. That is the exact condition clause 5 names as reading "as a
+   different figure". The repair the law prescribes for a gesture it cannot
+   hold is deletion, not a better trigger.
+
+   THE BAND REPLACES THE MARK AND MOVES NOTHING. The plate is still the
+   strongest backdrop on the site, because everything the physics asks for is
+   already in here and stays: the ramp at full strength, an edge large enough
+   to survive an 8px blur, and a clip-path that keeps both of them inside the
+   one Backdrop Root the pane samples. The run crosses the pane's own edge,
+   so the reader sees the same band sharp on the ramp and soft behind the
+   glass. The arrow is the whole of the hover now.
+   ============================================================ */
+.portal__band {
+  --band-at: -14%;
+}
+
+/* ============================================================
+   THE PANE ON THE PLATE
+
+   The one surface on this site that clears the lab's glass floor in BOTH
+   rooms without an argument, because it is the only one where everything the
+   physics asks for was already present and only the panel was missing: a
+   full-strength ramp, an edge large enough to survive the blur, and a
+   container that keeps them together.
+
+   IT USED TO CARRY NOTHING AND IT USED TO BE IN THE WRONG PLACE. It was a
+   690 by 240 rectangle floating in the top right of the plate with no type,
+   no edge and nothing behind it but the mark it crossed. Measured, it read
+   40.84 in both rooms, which is the best number on the site; looked at, it
+   read as a rendering artifact, because a frosted rectangle standing on its
+   own in the corner of a gradient is a thing a reader has to invent a reason
+   for. With the mark gone the reason it was written to have was gone too.
+
+   IT IS THE PLATE THE DISPLAY LINE IS SET ON NOW. Same element, same alpha,
+   same grain, moved to the bottom left and sized off the line it stands
+   under, so "Open the archive" and its arrow are set on a material rather
+   than straight onto the ramp. That is a job, it is the only job available
+   here, and it uses copy that was already on the plate: no sentence is
+   written, moved or reworded to pay for it.
+
+   IT IS STILL NOT GLASS BEHIND BODY COPY. The rule is about reading copy, and
+   the only thing on this surface is the display step at 93px plus a 51px
+   arrow. White on the pane's own composite over the ramp's worst corner is
+   5.80:1 with the band clear of it and 3.68:1 with the band under it, both
+   over the 3:1 large-text floor. Nothing under 24px comes near it: the four
+   service names and the domain stay on paper above the plate, where they
+   were.
+
+   THE CLIP-PATH ON THE HOST IS A BACKDROP ROOT AND IT IS NOT A PROBLEM, which
+   was measured rather than assumed after the earlier pass asserted the
+   opposite and shipped no glass because of it. A root limits the backdrop to
+   what is painted INSIDE it, below the panel. The ramp is inside. The band is
+   inside. Both survive.
+   ============================================================ */
+.portal__glass {
   position: absolute;
-  top: 50%;
-  right: -4rem;
-  width: var(--portal-mark);
-  height: var(--portal-mark);
-  margin-top: calc(var(--portal-mark) / -2);
-  opacity: 0.22;
+  z-index: 0;
+  /* Off the frame's left edge and standing on the plate's own bottom
+     padding, so it is a fragment the line sits on rather than a box drawn
+     around the line. The 5rem is the plate's padding restated: the pane's
+     floor is where the plate's content floor is. */
+  left: 0;
+  bottom: 3.4rem;
+  inline-size: min(43rem, 46vw);
+  block-size: 17.3333rem;
+
+  /* Declared as a pair on this element for the substitution reason set out
+     on .brief__glass: a tint written on :root already carries :root's alpha. */
+  --glass-alpha: var(--glass-alpha-quiet);
+  --glass-tint: rgb(9 9 11 / var(--glass-alpha));
+  --glass-grain-alpha: 0.055;
+
+  background-color: var(--glass-tint);
+  -webkit-backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
+  backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.22),
+    inset 0 -1px 0 0 rgb(0 0 0 / 0.34);
   pointer-events: none;
 }
 
-.portal__mark svg {
-  width: 100%;
-  height: 100%;
-  fill: var(--ramp-ink);
-  transform-origin: var(--turn-origin);
-  transition: rotate var(--dur) var(--curve);
+.portal__glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--glass-grain);
+  opacity: var(--glass-grain-alpha);
+  pointer-events: none;
 }
 
-.portal:hover .portal__mark svg,
-.portal:focus-visible .portal__mark svg {
-  rotate: var(--half-turn);
+/* ============================================================
+   THE SIGNATURE
+
+   Once per load, on the pane's first crossing into view, which is the
+   boolean of clause 6 and has no intermediate value a reader can park at.
+   The argument for it is at the top of this file. The trigger is four lines
+   in motion/cover.ts and all it does is add one class.
+
+   THE FROM-STATE IS NOT A RESTING STYLE, for the reason src/lib/arrive.ts
+   sets out at length. .portal__glass on its own declares no opacity and no
+   translate, so it paints finished in its first frame whether or not a byte
+   of script ever runs, on a blocked bundle, in a renderer with no viewport,
+   or with an observer that never crosses. Everything the gesture needs lives
+   inside the keyframe and cannot outlive it.
+
+   `backwards` AND NOT `forwards`, for the same reason the arrivals give: a
+   filled animation holds its last frame at animation priority, which outranks
+   every normal declaration under it permanently. It would buy nothing here
+   either way, because the `to` frame IS the resting style by construction.
+
+   OPACITY AND TRANSLATE ONLY. Both belong to the compositor, neither is a
+   layout property, and the pane is out of flow besides, so the gesture cannot
+   move a neighbour and CLS stays at the zero it was measured at.
+   ============================================================ */
+@keyframes sign-frost {
+  from {
+    opacity: 0;
+    translate: calc(var(--d2x) * -1) calc(var(--d2y) * -1);
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.portal__glass.is-signed {
+  animation: sign-frost var(--dur) var(--curve) backwards;
+}
+
+/* Both switches, and they are the two the arrivals already use. Under either
+   one the class is never added, because the script declines before it reaches
+   the element; these exist for the case where the preference changes under a
+   class that is already on. Removing the animation returns the pane to a
+   resting state that was always the finished one, so there is no half played
+   gesture to unwind and nothing is ever left blank. */
+@media (prefers-reduced-motion: reduce) {
+  .portal__glass.is-signed {
+    animation: none;
+  }
+}
+
+html.no-motion .portal__glass.is-signed {
+  animation: none;
+}
+
+/* Below the desktop band the plate is 300px tall and the display line takes
+   most of it, so the pane is the plate's whole lower half rather than a
+   fragment of it. It still stands under the line and it still bleeds off the
+   left edge; only its two figures move. */
+@media (max-width: 700px) {
+  .portal__glass {
+    bottom: 2rem;
+    inline-size: 86vw;
+    block-size: 12rem;
+  }
 }
 
 /* White, at the display step, which is the only thing that may be set on a
-   ramp: 3.75:1 at the magenta corner, over the 3:1 floor for large text. */
+   ramp: 3.75:1 at the magenta corner, over the 3:1 floor for large text, and
+   5.80:1 where it now stands, because the pane under it darkens the worst
+   corner rather than lightening it.
+
+   z-index rather than position alone. The pane is an earlier sibling with
+   z-index 0, so a positioned line at auto would paint above it anyway; the
+   index is stated because the relationship between the two is the point of
+   both of them and it should not depend on source order surviving an edit. */
 .portal__title {
   position: relative;
+  z-index: 1;
   display: block;
   color: var(--ramp-ink);
   text-align: start;
@@ -1148,25 +1410,31 @@
 
 /* The arrow leaves up the arm on the same duration the mark turns on, so the
    two halves of this hover are one event rather than two. */
-.portal:hover .portal__arr,
 .portal:focus-visible .portal__arr {
   translate: var(--d2x) var(--d2y);
+}
+
+@media (hover: hover) {
+  .portal:hover .portal__arr {
+    translate: var(--d2x) var(--d2y);
+  }
 }
 
 /* A filter: saturate(1.12) brightness(1.04) sat on the plate here. It is not
    a displacement, not a half turn and not the room's ink: it is a filter over
    the brand ramp, which quietly puts a fourth colour on a surface the system
-   declares once. Deleted rather than exempted. The turn and the arrow are the
-   hover. */
+   declares once. Deleted rather than exempted. The arrow is the hover. */
 
 @media (max-width: 700px) {
   .portal__index {
     flex-direction: column;
   }
 
-  .portal__mark {
-    --portal-mark: min(52vw, 18.6667rem);
-    opacity: 0.16;
+  /* The plate is 300px tall here and the display line takes most of it, so
+     the run is pulled back toward the frame's left edge and its second edge
+     leaves the plate entirely. One edge, at every width, is the whole rule. */
+  .portal__band {
+    --band-at: -8%;
   }
 }
 
@@ -1288,9 +1556,14 @@
   transition: color var(--dur-half) var(--curve);
 }
 
-.qa__a a:hover,
 .qa__a a:focus-visible {
   color: var(--ink-accent);
+}
+
+@media (hover: hover) {
+  .qa__a a:hover {
+    color: var(--ink-accent);
+  }
 }
 
 .qa__more {
@@ -1298,20 +1571,23 @@
 }
 
 /* ============================================================
-   ENTRANCES
+   ENTRANCES ARE SHARED NOW, and this block is a signpost rather than a rule.
 
-   The whole vocabulary, for the whole page. Opacity and y, one distance,
-   one duration, once. Elements carrying [data-enter] start where they
-   finish and are given their from-state in script, so a document whose
-   bundle never arrives paints every one of them finished.
+   The vocabulary, the keyframe, the travel, the stagger step and both
+   reduced-motion switches are in base.css, which the cover and the fifteen
+   documents both import, so there is one arrival on this site rather than a
+   cover one and a document one that drifted apart.
+
+   The reduced-motion override that used to be here read
+
+     [data-enter] { opacity: 1 !important; transform: none !important }
+
+   and it was already wrong twice over: nothing on the site sets `transform`
+   on an arrival, it sets the `translate` property, so the `!important` was
+   guarding a declaration that did not exist; and the from-state it was
+   guarding against has been taken off the resting element entirely. Under
+   reduce there is now nothing to override, because there is nothing to undo.
    ============================================================ */
-
-@media (prefers-reduced-motion: reduce) {
-  [data-enter] {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-}
 
 /* The cover used to declare --nav-ink here, because the header borrowed its
    ink from whichever room the page's first section painted. The header is
@@ -1383,6 +1659,179 @@
 .brief {
   padding-top: 4rem;
   padding-bottom: 6.4rem;
+  /* The band is drawn to the whole room and runs off all four of its edges.
+     Without this it would leak into the two paper sections either side of
+     the room, which is the one thing a room may not do.
+     overflow is NOT one of the six things that make a Backdrop Root, so the
+     glass panel inside this section is unaffected by it; the section's
+     isolation: isolate is a root and was measured harmless, twice. */
+  overflow: hidden;
+}
+
+/* ============================================================
+   THE BRIEF'S PLANE, AND WHY THIS IS THE ONE ROOM THAT GETS ONE
+
+   Two facts about this section decided it. It is the only room on the site
+   that is dark in BOTH themes, so one material serves both. And the whole of
+   its left half is empty at every width: the statement is one 32px line and
+   the copy column starts at x=760, which leaves 663 x 220 of nothing that
+   this build did not have to take from anything.
+
+   THE PANEL CARRIES NO TYPE, ON PURPOSE, AND THAT IS WHAT MAKES IT WORK. The
+   collision stated in tokens.css is real: on the void, a glass surface can be
+   legible or can read as glass, not both. The header carries five links, so
+   the header is legible first and stops at a tinted window. This carries
+   nothing, so it is free to go to the quiet alpha and reach the lab's floor
+   in both rooms. It is the same decision made twice with opposite answers,
+   and the difference is what is standing on the surface.
+
+   WHAT IT IS. One run of the room's luminous fill at the arm's own angle,
+   crossing the section from its floor to its left gutter, with a frosted
+   plane laid over it so that the same band is sharp outside the plane and
+   soft inside it. That is law 4 built rather than described, and it is the
+   reason the panel is placed to CROSS one edge of the band rather than to
+   sit inside it. A plane that lands wholly inside a fill measured 0.73.
+   ============================================================ */
+/* THE OFFSET IS NOT TASTE, IT IS A CLEARANCE. The room is 407px tall and two
+   things stand in it that the loud fill may not go behind: the section label
+   at its ceiling and the 32px statement below it. The loud pair composites to
+   luminance 0.4818 on this ground, where white ink measures 1.97:1, so the
+   band is held in the room's lower left rather than dimmed to suit the type.
+
+   ONE NUMBER DOES IT, and that is the point of expressing the band as an
+   offset from the box's centre along its own perpendicular rather than as a
+   pair of edge insets: the question a placement answers is "where is the
+   panel", and this is the answer to it in one figure. Negative is up the
+   sheet and to the left. */
+.brief__depth {
+  --band-at: -21%;
+}
+
+.brief__glass {
+  position: absolute;
+  z-index: 0;
+  left: var(--gutter);
+  bottom: 1.6rem;
+  inline-size: min(40rem, 44vw);
+  block-size: 10.6667rem;
+
+  /* BOTH OF THESE ARE DECLARED HERE AND THAT IS NOT REDUNDANT. A custom
+     property's value is substituted against the element it is DECLARED on,
+     so --glass-tint as written on :root already carries :root's own
+     --glass-alpha and re-declaring the alpha alone would change nothing.
+     This project has produced a 0x0 control twice by assuming otherwise. The
+     tint is restated on the same element as the alpha it reads. */
+  --glass-alpha: var(--glass-alpha-quiet);
+  --glass-tint: rgb(9 9 11 / var(--glass-alpha));
+
+  background-color: var(--glass-tint);
+  -webkit-backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
+  backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
+
+  /* THE VOID'S EDGE, HARD CODED FOR THE SAME REASON .glass--dark EXISTS. This
+     room is dark in daylight and dark on the void, so the material may not
+     follow the document's theme. 0.66 white reads as light caught on a bevel
+     when there is paper under it and as a drawn white outline when there is
+     not, so on the void the highlight drops to 0.13 and the separation is
+     carried by the shade underneath instead. */
+  --glass-grain-alpha: 0.055;
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.13),
+    inset 0 -1px 0 0 rgb(0 0 0 / 0.42);
+  pointer-events: none;
+}
+
+/* The grain. A material has a surface and a surface has texture; without it
+   the panel reads as a transparent box rather than as a thing. It sits ABOVE
+   the blur, never in its sampling path, which is the only placement that is
+   safe: fine structure BEHIND glass measured below the flat control in every
+   one of the lab's four attempts at it. */
+.brief__glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--glass-grain);
+  opacity: var(--glass-grain-alpha);
+  pointer-events: none;
+}
+
+/* Below the desktop band the room's two columns stack, so the copy comes
+   down into the space the plane was standing in and there is no longer a
+   half of the section that is reliably empty. The band stays, because it is
+   behind the room's own ground and costs nothing; the plane goes, because a
+   frosted panel under a 15px paragraph is the one thing this site does not
+   do. */
+@media (max-width: 64rem) {
+  .brief__glass {
+    display: none;
+  }
+
+  .brief__depth {
+    --band-at: -12%;
+  }
+
+  /* ============================================================
+     THE READING GETS A GROUND HERE, AND IT IS A CONTRAST REPAIR.
+
+     Measured on composited pixels rather than on tokens, across all sixteen
+     routes and both rooms: this paragraph, 15px, on / at 390 by 844, read a
+     tenth percentile of 3.91 and a worst point of 3.69 against a backdrop of
+     rgb(183,103,189), where the floor for its size is 4.5. It failed
+     identically in daylight and on the void, which is the tell that the cause
+     is a brand colour: the two hues do not follow the theme.
+
+     THE BACKDROP IS NOT THE ROOM. The room is grade A and was measured as
+     one: the ramp at 0.80 over #09090b, white on it at 5.36:1, legal down to
+     13px with margin. It is the BAND on top of the room. .depth--void carries
+     the lifted pair at 0.42, and 0.42 is a figure measured against the VOID,
+     which is what that band sits on everywhere else it is used. Over a bright
+     ramp instead of a dark ground the same alpha composites far lighter, and
+     nothing on this site checks a band against the surface it lands on.
+
+     ABOVE THIS WIDTH THE BAND MISSES THE COPY, which is why the section
+     measures clean at 1500: the room's two columns are side by side, the band
+     is held down in the empty lower left at -21%, and the pane crosses one of
+     its edges. Below 64rem the columns stack, the copy comes down into the
+     space the band was standing in, and the pane is switched off six lines
+     above this. So the band is running behind reading copy with nothing over
+     it, which is the exact condition this file's hero block rejects: a band no
+     panel crosses is not depth, it is a chromatic wash charged against the
+     contrast of everything it passes.
+
+     SO THE READING COMES OFF THE BAND RATHER THAN THE BAND OFF THE ROOM. The
+     copy takes the material the section already carries, with the one change
+     --glass-solid is named for: it stops being translucent. No blur, no tint
+     over a backdrop, nothing sampled. The same bevel the pane wears, on an
+     opaque ground. A surface that has to hold a 15px paragraph cannot be one
+     a backdrop shows through, and the band keeps its full strength everywhere
+     that nothing is read.
+
+     IT IS THE PORTAL PANE'S SHAPE, and that is not decoration either. It
+     bleeds off the left gutter and stops at a right edge one reading measure
+     in, so it is a fragment the copy stands on rather than a box drawn around
+     it, which is the same sentence .portal__glass is placed by six hundred
+     lines up. Full bleed was measured and rejected at the top of the band: at
+     1000px the copy is capped at 48ch and a slab running to both gutters puts
+     500px of flat black beside it, which is a letterbox. The cap is the
+     measure plus the two gutters it sits between, so below roughly 480 the
+     sheet is the room's full width because the copy is, and above it the room
+     keeps its own colour on the side where nothing is read.
+
+     #09090b RATHER THAN THE TOKEN, for the reason .brief__glass hard codes its
+     own edges forty lines up: this room is dark in daylight and dark on the
+     void, so its material may not follow the document's theme, and
+     light-dark() would put near white behind white type in daylight. It is
+     the void half of --glass-solid, restated for a room that has only one. */
+  .brief__copy {
+    position: relative;
+    background-color: #09090b;
+    margin-inline: calc(var(--gutter) * -1);
+    padding: var(--sp-5) var(--gutter);
+    max-width: calc(var(--measure) + var(--gutter) * 2);
+    box-shadow:
+      inset 0 1px 0 0 rgb(255 255 255 / 0.13),
+      inset 0 -1px 0 0 rgb(0 0 0 / 0.42);
+  }
 }
 
 .work {

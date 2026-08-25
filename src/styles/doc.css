@@ -90,10 +90,16 @@
   transition: color var(--dur-half) var(--curve);
 }
 
-.consent__body a:hover,
 .consent__body a:focus-visible {
   color: var(--ink-accent);
   background-image: linear-gradient(var(--ink-accent), var(--ink-accent));
+}
+
+@media (hover: hover) {
+  .consent__body a:hover {
+    color: var(--ink-accent);
+    background-image: linear-gradient(var(--ink-accent), var(--ink-accent));
+  }
 }
 
 .consent__actions {
@@ -227,9 +233,14 @@
   transition: color var(--dur-half) var(--curve);
 }
 
-.crumbs a:hover,
 .crumbs a:focus-visible {
   color: var(--ink);
+}
+
+@media (hover: hover) {
+  .crumbs a:hover {
+    color: var(--ink);
+  }
 }
 
 .crumbs [aria-current='page'] {
@@ -442,7 +453,10 @@
     grid-column: 1;
     grid-row: 1;
     align-self: end;
-    margin-bottom: var(--doc-mark-top);
+    /* 24px, and it was --doc-mark-top before the mark that named it was
+       deleted. It is stated as its own figure now rather than borrowed from
+       an object that no longer exists. */
+    margin-bottom: var(--sp-3);
   }
 
   .doc--capability .doc__grid {
@@ -536,9 +550,14 @@
   line-height: 1.9;
 }
 
-.doc__index a:hover,
 .doc__index a.is-current {
   color: var(--ink);
+}
+
+@media (hover: hover) {
+  .doc__index a:hover {
+    color: var(--ink);
+  }
 }
 
 .doc__prose {
@@ -650,9 +669,14 @@
   transition: color var(--dur-half) var(--curve);
 }
 
-:is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note) a:not(.pill):not(.ghost):not(.portal):not(.doc__address):not([class*="__link"]):not([class*="__more"]):hover,
 :is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note) a:not(.pill):not(.ghost):not(.portal):not(.doc__address):not([class*="__link"]):not([class*="__more"]):focus-visible {
   color: var(--ink-accent);
+}
+
+@media (hover: hover) {
+  :is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note) a:not(.pill):not(.ghost):not(.portal):not(.doc__address):not([class*="__link"]):not([class*="__more"]):hover {
+    color: var(--ink-accent);
+  }
 }
 
 /* ============================================================
@@ -937,10 +961,19 @@
 
 .faq__item[open] .faq__marker::after { translate: var(--d2x) var(--d2y); }
 
+/* SCOPED TO summary, AND THAT IS A CORRECTION RATHER THAN A TIGHTENING.
+   .faq__q is used twice on this site: 20 of them are <summary> elements
+   inside a real <details>, which are controls, and 32 are plain <h3>
+   headings above answers that are always open, which are not. The rule was
+   written for the first kind and was lighting the second kind too, so a
+   heading in the middle of a static question and answer answered the pointer
+   and did nothing when you clicked it. The file's own grammar is that only a
+   control responds; this is that grammar applied to the one selector that
+   spans both. */
 @media (hover: hover) {
-  .faq__q:hover .faq__q-text { color: var(--ink); }
-  .faq__q:hover .faq__marker::before,
-  .faq__q:hover .faq__marker::after { background: var(--ink); }
+  summary.faq__q:hover .faq__q-text { color: var(--ink); }
+  summary.faq__q:hover .faq__marker::before,
+  summary.faq__q:hover .faq__marker::after { background: var(--ink); }
 }
 
 .faq__q:focus-visible {
@@ -985,9 +1018,25 @@
   }
 }
 
+/* The marker's two hairlines, and the panel they open.
+
+   THE PANEL IS HERE RATHER THAN IN THE ONE BLOCK IN components.css, and it
+   is the single exception to it. ::details-content is a pseudo-element, so
+   the rule above it carries class-plus-pseudo-element specificity that a
+   type-prefixed class cannot reach from an earlier file without going to
+   !important. It is stated beside the rule it undoes instead, which is where
+   it can be checked against it.
+
+   A panel that opens by animating its own height is the most literal motion
+   on any of the fifteen documents: twenty of them, each growing from zero to
+   its content height over 408ms. Under reduce it opens. */
 @media (prefers-reduced-motion: reduce) {
   .faq__marker::before,
   .faq__marker::after { transition: none; }
+
+  .faq__item::details-content {
+    transition: none;
+  }
 }
 
 .faq__a p {
@@ -1080,8 +1129,10 @@
   transition: background-color var(--dur-half) var(--curve);
 }
 
-.related__link:hover {
-  background-color: var(--ground);
+@media (hover: hover) {
+  .related__link:hover {
+    background-color: var(--ground);
+  }
 }
 
 .related__name {
@@ -1091,9 +1142,14 @@
   transition: translate var(--dur-half) var(--curve);
 }
 
-.related__link:hover .related__name,
 .related__link:focus-visible .related__name {
   translate: var(--d2x) var(--d2y);
+}
+
+@media (hover: hover) {
+  .related__link:hover .related__name {
+    translate: var(--d2x) var(--d2y);
+  }
 }
 
 .related__desc {
@@ -1113,10 +1169,16 @@
     translate var(--dur-half) var(--curve);
 }
 
-.related__link:hover .related__arr,
 .related__link:focus-visible .related__arr {
   opacity: 1;
   translate: 0 0;
+}
+
+@media (hover: hover) {
+  .related__link:hover .related__arr {
+    opacity: 1;
+    translate: 0 0;
+  }
 }
 
 /* ---------------- Journal ---------------- */
@@ -1148,8 +1210,10 @@
   transition: background-color var(--dur-half) var(--curve);
 }
 
-.entries a:hover {
-  background-color: var(--ground);
+@media (hover: hover) {
+  .entries a:hover {
+    background-color: var(--ground);
+  }
 }
 
 .entries .label {
@@ -1164,9 +1228,14 @@
   transition: translate var(--dur-half) var(--curve);
 }
 
-.entries a:hover .entries__name,
 .entries a:focus-visible .entries__name {
   translate: var(--d2x) var(--d2y);
+}
+
+@media (hover: hover) {
+  .entries a:hover .entries__name {
+    translate: var(--d2x) var(--d2y);
+  }
 }
 
 .entries__desc {
@@ -1187,10 +1256,16 @@
     translate var(--dur-half) var(--curve);
 }
 
-.entries a:hover .entries__arr,
 .entries a:focus-visible .entries__arr {
   opacity: 1;
   translate: 0 0;
+}
+
+@media (hover: hover) {
+  .entries a:hover .entries__arr {
+    opacity: 1;
+    translate: 0 0;
+  }
 }
 
 /* ---------------- Closing call to action ---------------- */
@@ -1321,11 +1396,16 @@
   color: var(--ink-accent);
 }
 
-.doc__address:hover .doc__address-arr,
 .doc__address:focus-visible .doc__address-arr,
-.doc__cta .pill:hover .pill__arr,
 .doc__cta .pill:focus-visible .pill__arr {
   translate: var(--d0x) var(--d0y);
+}
+
+@media (hover: hover) {
+  .doc__address:hover .doc__address-arr,
+  .doc__cta .pill:hover .pill__arr {
+    translate: var(--d0x) var(--d0y);
+  }
 }
 
 .doc__address:active .doc__address-arr,
@@ -1445,9 +1525,14 @@
   bottom: calc(50% - 0.85em);
 }
 
-.footer__col a:hover,
 .footer__col a:focus-visible {
   color: var(--ink);
+}
+
+@media (hover: hover) {
+  .footer__col a:hover {
+    color: var(--ink);
+  }
 }
 
 /* ---- Outbound channels ----
@@ -1507,14 +1592,22 @@
     color var(--dur-half) var(--curve);
 }
 
-.footer__col--channels a:hover .footer__channel-arr,
 .footer__col--channels a:focus-visible .footer__channel-arr {
   color: var(--ink);
   translate: var(--d0x) var(--d0y);
 }
 
-.footer__col--channels a:hover .footer__channel-note {
-  color: var(--ink-dim);
+@media (hover: hover) {
+  .footer__col--channels a:hover .footer__channel-arr {
+    color: var(--ink);
+    translate: var(--d0x) var(--d0y);
+  }
+}
+
+@media (hover: hover) {
+  .footer__col--channels a:hover .footer__channel-note {
+    color: var(--ink-dim);
+  }
 }
 
 /* The hover states stay, they just stop travelling. Both of these move a
@@ -1527,9 +1620,11 @@
     transition: none;
   }
 
-  .footer__col a:hover .footer__channel-arr,
-  .footer__col--channels a:hover .footer__channel-arr {
-    translate: none;
+  @media (hover: hover) {
+    .footer__col a:hover .footer__channel-arr,
+    .footer__col--channels a:hover .footer__channel-arr {
+      translate: none;
+    }
   }
 }
 
@@ -1781,7 +1876,12 @@
 }
 
 @media (hover: hover) {
-  .journey__link:hover .journey__name { color: var(--lamp-a); }
+  /* --brand-a, not --lamp-a. --lamp-a is the pure #e634be, which is the brand
+     FILL and measures 3.45:1 as type on paper: this rule was setting a hover
+     colour under the 4.5 floor on every light document. --brand-a is the same
+     magenta told which room it is in, 5.04:1 darkened on the sheet and 5.30:1
+     pure on the void. A hover state is still text and still has to pass. */
+  .journey__link:hover .journey__name { color: var(--brand-a); }
 }
 
 .journey__link:focus-visible {
@@ -2075,8 +2175,10 @@
    than to the gap above. */
 .doc__head {
   --doc-band: calc(var(--text-display) * 2);
-  --doc-mark: var(--doc-band);
-  --doc-mark-top: 1.6rem;
+  /* The mark that stated the band's depth is gone and --doc-band is not.
+     Every measurement in this masthead hangs off the type ladder rather than
+     off a drawing: the band is two display steps, the eyebrow rides its
+     ceiling and the plate is its floor. See .doc__head::before below. */
 
   position: relative;
   /* The rule is the band's ceiling and it belongs to the band, not to the
@@ -2105,32 +2207,84 @@
   margin-bottom: calc(var(--doc-band) - var(--sp-3) - 1.3em);
 }
 
-/* The mark. Painted as a mask rather than as markup, so it reaches all
-   fifteen documents without an element being added to any of them, including
-   the two whose markup this session may not touch. It carries the ramp rather
-   than a flat hex, because neither brand colour is ever set on its own
-   anywhere on this site, and a mask takes a background image as readily as it
-   takes a background colour. */
+/* ============================================================
+   THE MASTHEAD'S RUN, AND WHAT IT REPLACED
+
+   690px of the mark was hung here, from one nav height above the band, so
+   that its crown sat behind the fixed bar and its body came out below it. It
+   is deleted under the owner's ruling on the drawing at architectural scale,
+   and the measurement agrees with the ruling rather than resisting it:
+   through the bar's own content-free pixels at the top of a document it read
+   6.15 in daylight and 5.35 on the void, which is barely off the paint floor
+   for the largest object on the page.
+
+   THE BAND FILLS THE BAND, AND THAT IS THE WHOLE PLACEMENT. --doc-band is
+   two display steps of stated empty paper on fifteen routes; the mark used to
+   be the thing standing in it. The run occupies it exactly: from the rule
+   that is the masthead's ceiling to the plate that is its floor, bleeding
+   past both gutters, so what is on the sheet is a fragment of something
+   larger held between two real edges rather than an object placed in a
+   corner. Its lower edge is occluded by the title's full-bleed plate rather
+   than cut, because the plate paints after this in tree order.
+
+   IT DOES NOT CROSS THE BAR, AND IT DID IN THE FIRST PASS. Running it up
+   past the header bought law 4's comparison and cost two things for it. It
+   ran out of the masthead's bottom and across the lede at 21px, which is a
+   chromatic wash behind body copy. And the header carries its own run now,
+   so a second one crossing the bar at a different offset put two unrelated
+   diagonals in the same 74px strip. Bounded to the masthead it is one clean
+   object and the bar is another.
+
+   --doc-band IS UNTOUCHED. The masthead's spacing is stated by the type
+   ladder: the band is two display steps, the eyebrow rides its ceiling and
+   the plate is its floor. Nothing here moves any of that.
+
+   THE FILL IS THE CAPPED DEPTH PAIR, NOT THE FULL RAMP, and that is a
+   contrast decision. The band passes behind the eyebrow at 13px, the lede at
+   21px and the breadcrumb on every one of the fifteen routes, with nothing
+   over it. The full ramp's violet end is 3.13:1 against --text. The capped
+   pair is 6.55:1 in daylight and 5.43:1 on the void, both clear of the
+   4.5:1 body floor.
+   ============================================================ */
 .doc__head::before {
   content: '';
   position: absolute;
-  /* Hung from the band's ceiling, so its top edge is the rule and its bottom
-     edge is the plate. It is not floating in a gap any more; it is the depth
-     of the band, drawn. */
+  /* The masthead's own box: its ceiling is the rule this element's host
+     draws, its floor is --doc-band, and it bleeds past both gutters. No new
+     figure is introduced; change the type ladder and the band follows. */
   top: 0;
+  left: calc(var(--gutter) * -1);
   right: calc(var(--gutter) * -1);
-  width: var(--doc-mark);
-  aspect-ratio: 1;
-  background-color: var(--brand-violet);
-  background-image: var(--brand-ramp);
-  -webkit-mask-image: var(--x-mask);
-  mask-image: var(--x-mask);
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
+  height: var(--doc-band);
+  /* Assembled here rather than read from a token for the substitution reason
+     set out in tokens.css: a gradient declared at :root freezes :root's stops
+     into itself, and these two stops are what the theme flips. */
+  background-image: linear-gradient(
+    var(--ramp-angle),
+    var(--depth-a) 0%,
+    var(--depth-b) 100%
+  );
+  --band-near: calc(50% + var(--band-at, 0px));
+  --band-far: calc(50% + var(--band-at, 0px) + var(--band-w));
+  -webkit-mask-image: linear-gradient(
+    var(--band-angle),
+    transparent 0 var(--band-near),
+    #000 var(--band-near) var(--band-far),
+    transparent var(--band-far) 100%
+  );
+  mask-image: linear-gradient(
+    var(--band-angle),
+    transparent 0 var(--band-near),
+    #000 var(--band-near) var(--band-far),
+    transparent var(--band-far) 100%
+  );
+  /* Solved rather than nudged. The leading edge lands in the masthead's
+     empty half and the trailing edge runs off the right gutter, so what is
+     in the band is a fragment entering the page rather than a parallelogram
+     standing in the middle of it. That is the same test the 404's attempt
+     failed: a band with both edges inside the frame and no surface crossing
+     it reads as an artifact, however correct its angle is. */
+  --band-at: 20%;
   pointer-events: none;
 }
 
@@ -2505,92 +2659,61 @@
 }
 
 /* ============================================================
-   ARRIVALS
+   ARRIVALS ARE NOT DECLARED HERE ANY MORE, and the three rules that used to
+   be at this line are deleted rather than moved.
 
-   The whole interior motion budget, and it is now the cover's own signature
-   rather than a second, quieter one.
+   What stood here was the from-state written onto the resting element:
 
-   THE WORD RESOLVE. Display lines resolve word by word from the centre of the
-   line outward, from a floor of 0.62 to 1. Granularity, direction and floor
-   are all stated in base.css, which is where the mechanism lives, and this
-   file changes only what drives it: the cover scrubs the opacity against a
-   pinned timeline, and a document has no timeline, so the stagger is a
-   transition delay written per word by page.ts and the trigger is the
-   IntersectionObserver that already runs there.
+     html.js:not(.no-motion) [data-enter] { opacity: 0; translate: ... }
 
-   It is applied to DISPLAY LINES ONLY. There are two on a document, the
-   masthead title and the closing call, and on the 404 there is one. Nothing
-   in the reading column is split, nothing there waits on a scroll position,
-   and no paragraph on this site is ever touched by it.
+   Two things were wrong with it and only one of them is style.
 
-   The from-state is a legible 0.62 rather than 0, the words are only ever
-   created by script, and the delays are inline, so a document whose bundle
-   never arrives paints every line finished in its first frame.
+   IT NEVER MATCHED. `html.js` is added by an inline script in the head of
+   index.html and by nothing else. No interior document has that script, so
+   on the fifteen routes this file exists to dress, the selector could not
+   match, and neither could its `.is-in` partner. `grep -c data-enter` over
+   the same fifteen files returned zero anyway, so page.ts was running an
+   IntersectionObserver over an empty list and a four-second failsafe over
+   the same empty list. The whole interior arrival system was three rules,
+   two functions and no elements.
 
-   [data-enter] is kept because the failsafe and the observer in page.ts are
-   written against it and a later section on one of these pages must inherit
-   the guarantee rather than rediscover it.
+   AND IT WAS THE DANGEROUS SHAPE. A from-state that lives on the resting
+   element is a promise that something will come and take it off. If the
+   bundle throws, if the observer never crosses, if a renderer reports a
+   viewport no scroll can satisfy, the promise is not kept and the reader is
+   looking at a page whose copy is present, selectable, indexable and
+   invisible. That is the exact failure this project has already shipped once.
+
+   The replacement is in base.css, it is one @keyframes, and the from-state
+   exists only while the animation is running. `[data-enter]` alone declares
+   nothing at all, so every route paints finished in its first frame with the
+   bundle blocked, and both entries share one mechanism instead of keeping
+   two out of step.
    ============================================================ */
-
-html.js:not(.no-motion) [data-enter] {
-  opacity: 0;
-  translate: calc(var(--d2x) * -1) calc(var(--d2y) * -1);
-  transition: opacity var(--dur) var(--curve), translate var(--dur) var(--curve);
-}
-
-html.js:not(.no-motion) [data-enter].is-in {
-  opacity: 1;
-  translate: 0 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html.js [data-enter] {
-    opacity: 1;
-    translate: none;
-    transition: none;
-  }
-}
 
 /* ============================================================
    THE 404
 
-   No masthead, so no mark came with one. It is still a document and it still
-   opens on paper, so it takes the same object in the same place.
+   No masthead, so no mark came with one, and no band comes with one either.
+
+   THE 336px MARK THAT STOOD HERE IS DELETED with the rest of them, and it
+   took 405px of padding off the top of the page with it: the grid was pushed
+   down by the mark's own height plus two clearances, which is most of a
+   screen of a 404 spent standing out of the way of a decoration.
+
+   A BAND WAS TRIED IN ITS PLACE AND IT DID NOT SURVIVE BEING LOOKED AT. The
+   fifteen documents can carry one because their title is a full-bleed plate
+   and the band's lower edge disappears under it. This route has no plate at
+   the top, so the band ended on a hard horizontal cut in open paper and read
+   as a floating parallelogram: a rendering artifact rather than a fragment
+   of anything. The 404 takes the header's own run like every other route and
+   nothing else, and the error code opens the page.
    ============================================================ */
 
 .lost {
   position: relative;
 }
 
-/* .lost is a section rather than something inside .container, so it already
-   spans the viewport and the mark reaches the edge of the page at right: 0.
-   The band it stands in is derived from its own size, the same way the
-   masthead's is, so the error code can never end up printed across it. */
-.lost {
-  --doc-mark: 21rem;
-  --doc-mark-top: calc(var(--nav-h) + var(--sp-5));
-}
-
 .lost__grid {
-  padding-top: calc(var(--doc-mark-top) + var(--doc-mark) + var(--sp-5));
-}
-
-.lost::before {
-  content: '';
-  position: absolute;
-  top: var(--doc-mark-top);
-  right: 0;
-  width: var(--doc-mark);
-  aspect-ratio: 1;
-  background-color: var(--brand-violet);
-  background-image: var(--brand-ramp);
-  -webkit-mask-image: var(--x-mask);
-  mask-image: var(--x-mask);
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  pointer-events: none;
+  padding-top: calc(var(--nav-h) + var(--sp-6));
 }
