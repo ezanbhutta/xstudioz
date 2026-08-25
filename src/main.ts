@@ -23,7 +23,6 @@ import './styles/cover.css';
 import {
   prefersReduced,
   initNav,
-  revealFailsafe,
   applyStaticScroll,
 } from './lib/motion';
 import { initUnit } from './lib/measure';
@@ -64,7 +63,6 @@ function boot(): void {
 
   initCover();
 
-  revealFailsafe();
   applyStaticScroll();
 }
 

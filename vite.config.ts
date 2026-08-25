@@ -209,13 +209,21 @@ function headFor(page: PageDef): string {
     `<meta name="robots" content="${robots}" />`,
     `<meta name="author" content="${esc(SITE.name)}" />`,
     '<meta name="format-detection" content="telephone=no" />',
-    /* Light, and only light. Declaring "light dark" told the browser the page
-       supports both, so a visitor whose operating system is dark got dark
-       scrollbars, dark form controls and a dark canvas painted behind a sheet
-       of paper. There is one palette on this site now and the browser should
-       be told which one it is. */
-    '<meta name="color-scheme" content="light" />',
-    `<meta name="theme-color" content="${SITE.themeColor}" />`,
+    /* Both, because there are two rooms again. This mirrors the
+       `color-scheme: light dark` on :root in tokens.css, and the two have to
+       agree: the meta is what the browser reads before any stylesheet has
+       arrived, so it is what decides the colour of the canvas painted behind
+       the very first frame. Declaring only "light" here while the stylesheet
+       declares both is how a dark reader gets a white flash. */
+    '<meta name="color-scheme" content="light dark" />',
+
+    /* Theme colour follows the room the reader is actually in. SITE.themeColor
+       is the paper hex and stays the default for any browser that ignores the
+       media attribute; the dark entry is the void, which is what the dark
+       room's --canvas resolves to. site.config.ts is not edited for this: the
+       second value is the brand ground, which is already fixed. */
+    `<meta name="theme-color" content="${SITE.themeColor}" media="(prefers-color-scheme: light)" />`,
+    '<meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)" />',
 
     /* Open Graph */
     `<meta property="og:site_name" content="${esc(SITE.name)}" />`,
@@ -237,11 +245,29 @@ function headFor(page: PageDef): string {
     `<meta name="twitter:image" content="${abs(SITE.ogImage)}" />`,
     `<meta name="twitter:image:alt" content="${esc(SITE.ogImageAlt)}" />`,
 
-    /* The theme-flash guard stood here and replayed a remembered "xz-theme"
-       into data-theme before the first paint. It is deleted with the control
-       that used to write that value: with the switch gone nothing can store a
-       choice, and leaving the reader would have stranded anyone who had ever
-       pressed the old button in a dark room with no way back out of it. */
+    /* THE FLASH GUARD, and it is four statements because that is all it has
+       to be. Every colour in the system is a light-dark() pair keyed on
+       color-scheme, so the system case needs no script: this runs only to
+       replay an EXPLICIT choice before the first paint.
+
+       It is inline and synchronous in <head> on purpose. Deferred to the
+       module bundle it would run after the first frame, which is precisely
+       the flash it exists to prevent.
+
+       THE MIGRATION IS THE REASON FOR THE try/catch AND THE VALUE CHECK.
+       Readers of the previous build still have xz-theme in localStorage, and
+       the build after it deleted the control that could change it. Anyone
+       carrying 'dark' from then lands in the dark room, which is now a real
+       room with a real way out of it, and anyone carrying a value that is
+       neither word has it ignored and falls through to the system. Storage
+       can also be blocked outright, in which case the page is simply the
+       system's, which is the correct answer rather than an error. */
+    `<script>${[
+      "try{",
+      "var t=localStorage.getItem('xz-theme');",
+      "if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);",
+      "}catch(e){}",
+    ].join('')}</script>`,
 
     /* Icons and manifest */
     '<link rel="icon" type="image/svg+xml" href="/favicon.svg" />',

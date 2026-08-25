@@ -511,10 +511,12 @@ button {
   background: currentColor;
   color: var(--ink);
   opacity: 0.42;
-  /* Base64 rather than percent-encoded: the minifier could not parse the
-     scheme inside a percent-encoded payload and failed the build on it. */
-  -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9Jzc1OCAzMzUgNDA0IDQwNCc+PHBhdGggZD0nTTEwNDEuNCw3MzJjLTMuNywwLTcuNC0xLjQtMTAuMi00LjNsLTUxLjktNTEuOWMtMi45LTIuOS00LjUtNy4xLTQuMi0xMS4zbDEuOC0yNC44LTg4LDg4Yy01LjYsNS42LTE0LjgsNS42LTIwLjUsMGwtOTYuMS05Ni4xYy0yLjctMi43LTQuMy02LjQtNC4zLTEwLjJzMS42LTcuNSw0LjMtMTAuMmw3MS4xLTcxLjEtNzEuMS03MS4xYy0yLjctMi43LTQuMy02LjQtNC4zLTEwLjJzMS42LTcuNSw0LjMtMTAuMmw5Ni4xLTk2LjFjNS42LTUuNiwxNC44LTUuNiwyMC41LDBsNTEuOSw1MS45YzIuOSwyLjksNC41LDcuMSw0LjIsMTEuM2wtMS44LDI0LjgsODgtODhjMi43LTIuNyw2LjQtNC4zLDEwLjItNC4zaDBjMy44LDAsNy41LDEuNiwxMC4yLDQuM2w5Ni4xLDk2LjFjNS42LDUuNiw1LjYsMTQuOCwwLDIwLjVsLTcxLjEsNzEuMSw3MS4xLDcxLjFjNS42LDUuNiw1LjYsMTQuOCwwLDIwLjVsLTk2LjEsOTYuMWMtMi45LDIuOS02LjUsNC4zLTEwLjIsNC4zWk04MDMuMSw2MjEuNGw3NS42LDc1LjYsMTA1LjMtMTA1LjNjNC4zLTQuMywxMC44LTUuNSwxNi4zLTIuOSw1LjUsMi41LDguOCw4LjIsOC40LDE0LjJsLTQuMiw1NywzNywzNyw3NS42LTc1LjYtNzEuMS03MS4xYy01LjYtNS42LTUuNi0xNC44LDAtMjAuNWw3MS4xLTcxLjEtNzUuNi03NS42LTEwNS4yLDEwNS4yYy00LjMsNC4zLTEwLjgsNS41LTE2LjMsMi45cy04LjgtOC4yLTguNC0xNC4ybDQuMi01Ny0zNy0zNy03NS42LDc1LjYsNzEuMSw3MS4xYzUuNiw1LjYsNS42LDE0LjgsMCwyMC41bC03MS4xLDcxLjFoMFonLz48L3N2Zz4=");
-  mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9Jzc1OCAzMzUgNDA0IDQwNCc+PHBhdGggZD0nTTEwNDEuNCw3MzJjLTMuNywwLTcuNC0xLjQtMTAuMi00LjNsLTUxLjktNTEuOWMtMi45LTIuOS00LjUtNy4xLTQuMi0xMS4zbDEuOC0yNC44LTg4LDg4Yy01LjYsNS42LTE0LjgsNS42LTIwLjUsMGwtOTYuMS05Ni4xYy0yLjctMi43LTQuMy02LjQtNC4zLTEwLjJzMS42LTcuNSw0LjMtMTAuMmw3MS4xLTcxLjEtNzEuMS03MS4xYy0yLjctMi43LTQuMy02LjQtNC4zLTEwLjJzMS42LTcuNSw0LjMtMTAuMmw5Ni4xLTk2LjFjNS42LTUuNiwxNC44LTUuNiwyMC41LDBsNTEuOSw1MS45YzIuOSwyLjksNC41LDcuMSw0LjIsMTEuM2wtMS44LDI0LjgsODgtODhjMi43LTIuNyw2LjQtNC4zLDEwLjItNC4zaDBjMy44LDAsNy41LDEuNiwxMC4yLDQuM2w5Ni4xLDk2LjFjNS42LDUuNiw1LjYsMTQuOCwwLDIwLjVsLTcxLjEsNzEuMSw3MS4xLDcxLjFjNS42LDUuNiw1LjYsMTQuOCwwLDIwLjVsLTk2LjEsOTYuMWMtMi45LDIuOS02LjUsNC4zLTEwLjIsNC4zWk04MDMuMSw2MjEuNGw3NS42LDc1LjYsMTA1LjMtMTA1LjNjNC4zLTQuMywxMC44LTUuNSwxNi4zLTIuOSw1LjUsMi41LDguOCw4LjIsOC40LDE0LjJsLTQuMiw1NywzNywzNyw3NS42LTc1LjYtNzEuMS03MS4xYy01LjYtNS42LTUuNi0xNC44LDAtMjAuNWw3MS4xLTcxLjEtNzUuNi03NS42LTEwNS4yLDEwNS4yYy00LjMsNC4zLTEwLjgsNS41LTE2LjMsMi45cy04LjgtOC4yLTguNC0xNC4ybDQuMi01Ny0zNy0zNy03NS42LDc1LjYsNzEuMSw3MS4xYzUuNiw1LjYsNS42LDE0LjgsMCwyMC41bC03MS4xLDcxLjFoMFonLz48L3N2Zz4=");
+  /* One payload, stated in tokens.css, because this is now the only place on
+     the site that paints the drawing from a mask. It used to be written out
+     here in full alongside an identical copy in the token, which is two
+     places for one 1.4KB string. */
+  -webkit-mask-image: var(--x-mask);
+  mask-image: var(--x-mask);
   -webkit-mask-size: contain;
   mask-size: contain;
   -webkit-mask-repeat: no-repeat;
@@ -613,6 +615,85 @@ article:nth-of-type(even) .section__head::after {
 }
 
 /* ============================================================
+   ARRIVALS
+
+   The whole vocabulary, for all sixteen routes, in one keyframe. The
+   reasoning is written out in full at the top of src/lib/arrive.ts; what
+   matters when reading CSS is the one line below this paragraph, and it is
+   the line that is not here.
+
+   THERE IS NO [data-enter] RULE. An element carrying the attribute declares
+   no opacity, no translate and no transition, so it is painted final in its
+   first frame on every route whether or not a single byte of script ever
+   runs. The from-state lives inside @keyframes and nowhere else, which means
+   it cannot outlive the animation that contains it. This replaces a pair of
+   rules in doc.css that put the from-state on the resting element behind
+   html.js, where a bundle that failed to boot, a renderer with no viewport
+   or an observer that never crossed would have left readable copy at opacity
+   0 with no way back. Two of those three had already happened on this site.
+
+   THE TRAVEL IS ONE RUNG, --d2, 21.5px resolved into 16.3 across and 14.1 up
+   so |dy/dx| reads 0.863786. It starts DOWN the arm and comes UP it to rest,
+   which is clause 1: a surface arriving comes up the arm. The duration is
+   --dur. The curve is the one curve. Nothing here is scrubbed and nothing
+   here has an intermediate state a reader can hold.
+
+   NO LAYOUT PROPERTY IS TOUCHED. opacity and translate only, both of which
+   the compositor owns, so an arrival cannot move a neighbour and CLS stays
+   where it was measured.
+   ============================================================ */
+
+@keyframes enter-arm {
+  from {
+    opacity: 0;
+    translate: calc(var(--d2x) * -1) calc(var(--d2y) * -1);
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+[data-enter].is-in {
+  /* `backwards`, AND IT IS NOT `both`. Backwards is what makes the stagger
+     work: during its delay a member holds the from-state instead of standing
+     at rest waiting its turn.
+
+     Forwards is deliberately NOT added, and the reason is a bug that would
+     have been invisible until somebody used a pointer. A filled animation
+     holds its final value at animation priority, which outranks every normal
+     declaration in the cascade, permanently. Any element carrying an arrival
+     would have had `opacity: 1; translate: 0 0` welded to it, and every
+     hover, focus and press rule on this site that answers by travelling the
+     arm would have silently stopped working on it and on its neighbours,
+     including the two list mechanisms in doc.css that displace a row's
+     siblings. It buys nothing either way, because the `to` frame is the
+     resting style by construction: releasing the properties at the end
+     returns the element to values that render identically. */
+  animation: enter-arm var(--dur) var(--curve) calc(var(--enter-i, 0) * var(--enter-step))
+    backwards;
+}
+
+/* Both switches, and they are not the same switch. The media query catches a
+   reader who has asked the operating system for less motion. .no-motion is
+   set in script and catches the three cases a media query cannot see: ?static,
+   a renderer viewport reporting an impossible height, and prefers-reduced
+   read through matchMedia before the class list is touched. Under either one
+   the page is COMPLETE AND STILL, because .is-in is the only thing the
+   animation hangs off and removing the animation returns the element to a
+   resting state that was always the finished one. */
+@media (prefers-reduced-motion: reduce) {
+  [data-enter].is-in {
+    animation: none;
+  }
+}
+
+html.no-motion [data-enter].is-in {
+  animation: none;
+}
+
+/* ============================================================
    WHAT USED TO BE HERE
 
    The lighting rig: a registered --rot angle, a 120s rotation, two conic
@@ -635,6 +716,153 @@ article:nth-of-type(even) .section__head::after {
   color: var(--ink-accent);
 }
 
+/* ============================================================
+   THE DEPTH LAYER
+
+   One class, five placements, and it is the only thing on this site that
+   exists so that something else can be seen THROUGH it.
+
+   IT USED TO BE THE MARK, DRAWN AT ARCHITECTURAL SCALE. That is out, by the
+   owner's ruling, and the replacement was measured rather than chosen: a
+   single run of colour at the arm's own 40.82 degrees, wide enough to
+   survive the blur, placed so that exactly ONE of its two edges passes under
+   each panel. The whole argument, and the sixteen candidates it beat, is in
+   the DEPTH LAYER block of tokens.css and in .spec/backdrop-physics.md.
+
+   WHY ONE EDGE AND NOT A FIELD OF THEM. Measured at matched ink, one edge
+   crossing the panel returns 19.09 in daylight and 22.73 on the void; two
+   return 9.63 and 11.25; three return 8.60 and 9.78. Partial edges average
+   each other out under a blur and a single step survives it. More structure
+   is not richer here, it is quieter AND weaker, which is the only reason a
+   stripe field was never on the table.
+
+   THE FORM IS A MASK AND THE FILL IS A GRADIENT, WHICH IS WHY BOTH ROOMS
+   WORK FROM ONE ELEMENT. The mask carries the geometry, so the band's angle
+   and width are stated once. The background carries the colour, so the room
+   and the theme decide whether the band is chromatic on paper or luminous on
+   the void, which is the finding law 6 is about. Neither knows about the
+   other.
+
+   THE MASK IS ON THE ELEMENT AND THE ALPHA IS NOT. mask-image makes this a
+   Backdrop Root, which is harmless because nothing with a backdrop-filter is
+   ever a DESCENDANT of a depth band. Element opacity would be a second root
+   for no benefit. The alpha lives in the gradient stops instead, where it
+   can be read off the token and checked against the contrast floor.
+
+   IT IS NEVER A WATERMARK, which is a placement rule rather than a colour
+   one. Every one of these runs off all four edges of its container, has
+   content standing on top of it, and is cut by the surface it passes under.
+   ============================================================ */
+.depth {
+  position: absolute;
+  /* THE BOX IS THE CONTAINER, NOT THE DRAWING. A mask's gradient line is
+     measured across the element's own box, so the band can only be placed
+     against a panel if the two share a coordinate space. Every instance
+     below therefore fills its positioned ancestor and moves the BAND inside
+     it with --band-at, rather than moving a small box around. */
+  inset: 0;
+  /* Under everything in its container. The containers it is used in all
+     establish their own stacking context or clip, so this never has to
+     out-rank anything outside the section it belongs to. */
+  z-index: 0;
+
+  /* THE GRADIENT IS ASSEMBLED HERE RATHER THAN AT :root, and that is the one
+     line in this block that had to be moved rather than written. A custom
+     property is substituted against the element it is DECLARED on: a
+     gradient written at :root carries :root's stops permanently, and a room
+     or a modifier that redeclares a stop lower down changes nothing at all.
+     Assembling it on the consuming element is what makes .depth--void and
+     the theme blocks both work, and it is the difference between the chroma
+     room's pane measuring 10.62 and measuring 2.36 from one geometry. */
+  --depth-ramp: linear-gradient(var(--ramp-angle), var(--depth-a) 0%, var(--depth-b) 100%);
+  --depth-loud-ramp: linear-gradient(
+    var(--ramp-angle),
+    var(--depth-loud-a) 0%,
+    var(--depth-loud-b) 100%
+  );
+
+  background-image: var(--depth-ramp);
+
+  /* THE TWO EDGES, STATED ONCE. --band-at is the offset of the LEADING edge
+     from the box's centre, measured along the band's own perpendicular, so a
+     placement is one number per surface and that number is the answer to one
+     question: where does the panel sit. Positive is down the sheet and to
+     the right, which is the direction the gradient line runs.
+
+     THE OFFSET IS A PERCENTAGE AND THE WIDTH IS NOT, and the split is the
+     whole reason the band survives a phone. A percentage is read against the
+     gradient line, which is the box's own diagonal extent, so a placement
+     expressed that way holds its position in the composition at every
+     viewport. The WIDTH is measured against the BLUR, which is 8 real pixels
+     and does not scale with anything, so it is stated in vw with a floor. A
+     band placed in px drifts off frame as the box narrows; a band sized in
+     percent thins below the radius it has to beat.
+
+     Both stops of each edge are written at the same position, so each is a
+     step and not a ramp. A soft edge is a smooth fill, and a smooth fill is
+     the thing that measured 3.92. */
+  --band-near: calc(50% + var(--band-at, 0%));
+  --band-far: calc(50% + var(--band-at, 0%) + var(--band-w));
+  --band: linear-gradient(
+    var(--band-angle),
+    transparent 0 var(--band-near),
+    #000 var(--band-near) var(--band-far),
+    transparent var(--band-far) 100%
+  );
+  -webkit-mask-image: var(--band);
+  mask-image: var(--band);
+  pointer-events: none;
+}
+
+/* For the surfaces that carry no type at all, on any route, at any width,
+   and for the one that carries type only THROUGH glass. Nothing reads
+   directly on these, so the fill is not bounded by a contrast floor and goes
+   where the lab says instead.
+
+   The header's band is in the second category and it is worth stating why it
+   is legal. The bar's alpha floor is derived against pure black and pure
+   white, so no backdrop can make the bar's own links worse than the two
+   figures the GLASS block already clears. A full-strength band under the
+   tint sits strictly between those bounds. The cap exists for a band that
+   passes behind type with nothing over it, which is the cover's and the
+   masthead's case and not the bar's. */
+.depth--loud {
+  background-image: var(--depth-loud-ramp);
+}
+
+/* THE ROOM WINS OVER THE THEME, and this is the same opt-in shape
+   .glass--dark already uses for the same reason. Two rooms on this site are
+   near-black in DAYLIGHT as well as on the void: the chroma section and the
+   ramp plate. A band inside one of them may not take the document's fill,
+   because in daylight that fill is chromatic and chromatic on near-black is
+   what the lab measured at 4.92 against the same geometry's 48.03. It takes
+   the luminance-lifted pair in both themes instead. */
+.depth--void {
+  --depth-a: color-mix(in srgb,
+    color-mix(in srgb, #f2f1f6 76%, var(--brand-magenta)) 42%, transparent);
+  --depth-b: color-mix(in srgb,
+    color-mix(in srgb, #f2f1f6 76%, var(--brand-violet)) 42%, transparent);
+  /* 0.42, WHICH IS THE LAB'S OWN FIGURE FOR THIS BAND. The pair used to be
+     drawn at full opacity, which is what the mark wanted: a drawing reads as
+     a drawing and a solid one reads best. A band is not a drawing. At full
+     opacity it covers the ramp it is standing on, so the room loses its own
+     colour under a pale slab and the panel over it stops sampling a ramp at
+     all; measured, it also puts the two surfaces at 45 and 47, which is
+     nearly twice what any of them needs. At 0.42 the ramp reads straight
+     through the band, the step at its edge is still a step, and the sweep
+     that chose the figure is in the second amendment of
+     .spec/backdrop-physics.md: one edge at 0.45 measured 19.09 in daylight
+     and 22.73 on the void against a paint floor near 3. */
+  --depth-loud-a: color-mix(in srgb,
+    color-mix(in srgb, #f2f1f6 76%, var(--brand-magenta)) 42%, transparent);
+  --depth-loud-b: color-mix(in srgb,
+    color-mix(in srgb, #f2f1f6 76%, var(--brand-violet)) 42%, transparent);
+}
+
+/* A blurred surface is priced by area and this is the form under all five of
+   them. A reader who has asked for less motion has not asked for less
+   material, so the band stays; there is nothing here to switch off. */
+
 /* Anything above the ground */
 body > header,
 body > main,
@@ -646,8 +874,7 @@ body > footer {
 /* ---------- Print ---------- */
 @media print {
   .nav,
-  .skip-link,
-  .footer__x {
+  .skip-link {
     display: none !important;
   }
 
@@ -672,6 +899,18 @@ body > footer {
   /* The chroma room's ramp lives on a pseudo-element, so it has to be taken
      off separately or the whole band prints as a solid sheet of magenta. */
   .room-chroma::before {
+    display: none !important;
+  }
+
+  /* THE DEPTH LAYER AND EVERY PANE OVER IT COME OFF. The whole mechanism is
+     one form seen through a blurred surface, and a printer has neither: the
+     backdrop-filter is dropped, so a pane prints as a grey box, and a
+     full-bleed band prints as most of a cartridge. The masthead's band is a
+     pseudo-element for the same reason the ramp above is. */
+  .depth,
+  .brief__glass,
+  .portal__glass,
+  .doc__head::before {
     display: none !important;
   }
 

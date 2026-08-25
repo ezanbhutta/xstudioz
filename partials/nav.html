@@ -1,6 +1,23 @@
 <a class="skip-link" href="#top">Skip to content</a>
 
 <header class="nav" id="nav">
+  <!-- THE BAR'S OWN RUN, AND IT TRAVELS WITH THE BAR.
+
+       The header is fixed and the page scrolls under it, so a form drawn into
+       a document is under the bar at scroll 0 and nowhere else. That is what
+       the shipped arrangement was: measured through the bar's content-free
+       pixels on the built site it read 9.40 at the top of the cover and 5.87,
+       11.35 and 6.05 at three stations further down. This layer is fixed with
+       the bar, so the blur has the same edge to sample at every scroll
+       position on all sixteen routes.
+
+       Two elements: the outer one clips to the bar and carries the same one
+       run of left bleed the glass does, so the diagonal exit never opens a
+       seam; the inner one is the band, drawn to the viewport's own box so it
+       lands on the same pixels as the cover's copy of it. See
+       components.css. -->
+  <i class="nav__band" aria-hidden="true"><i class="depth" aria-hidden="true"></i></i>
+
   <div class="container nav__row">
     <a class="nav__brand" href="/" aria-label="XStudioz, home">
       <!-- The unit. A manual states clearspace in the mark's own width, and on a
@@ -23,12 +40,35 @@
          that sits at the end shares this one cell, so adding a control here
          never pushes the grid into a second row. -->
     <div class="nav__end">
-      <!-- The light switch stood here. It shipped with no CSS box at all, so
-           it measured 0 x 0 on all sixteen routes while still sitting at tab
-           stop 7 and announcing itself as "Switch to dark mode": a keyboard
-           reader landed on a control that was not drawn. It is deleted rather
-           than drawn, because this site is a light document by decision and a
-           working switch would offer a room nobody wants to be in. -->
+      <!-- THE LIGHT SWITCH, DRAWN THIS TIME.
+
+           The last one shipped with no CSS box at all: 0 x 0 on all sixteen
+           routes, still at tab stop 7, still announcing "Switch to dark
+           mode". A keyboard reader landed on a control that was not there.
+           Two things caused that and both are fixed here.
+
+           IT IS NOT HIDDEN BY AN ATTRIBUTE. The old one carried `hidden` and
+           waited for script to remove it, which is a race a `display` rule
+           can win. This one is shown by exactly one condition, in CSS:
+           [data-theme-state], which src/lib/theme.ts writes onto the button
+           the moment it wires it up. The control is drawn if and only if the
+           code that makes it work is running, and until then it is
+           display: none, which keeps it out of the tab order rather than
+           leaving an invisible stop in it.
+
+           IT HAS A REAL BOX. 26px of drawing inside a 44px target, the same
+           treatment .nav__brand and .nav__toggle already take.
+
+           THERE ARE TWO OF THESE and only ever one on screen. The header row
+           below 1025px is already 22.6px short at 320 before anything is
+           added to it, so the header copy stands down there and the panel
+           copy takes over inside the menu. Same class, same script, same
+           three states. -->
+      <button class="nav__theme" type="button">
+        <span class="nav__theme-face" aria-hidden="true"></span>
+        <span class="sr-only" data-theme-label>Switch to light mode</span>
+      </button>
+
       <a class="pill nav__cta" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
         <span>Start a project</span>
         <svg class="pill__arr" aria-hidden="true"><use href="#arr-ne" /></svg>
@@ -46,6 +86,16 @@
 </header>
 
 <dialog class="nav__dialog" id="nav-menu" aria-labelledby="nav-menu-title">
+
+  <!-- THE PANEL'S OWN RUN, AND IT HAS TO BE IN HERE RATHER THAN ON THE PAGE.
+       The overlay opens at any scroll position on any of sixteen routes, so
+       nothing drawn into a document can be relied on to land under it. The
+       dialog is in the top layer and this is painted before the panel, so the
+       panel's blur samples it directly: the surface stops depending on what
+       happens to be behind the overlay and carries its own backdrop.
+       Measured before any form existed here: 0.21 on a phone, 0.19 at 768. -->
+  <i class="depth depth--loud depth--void nav__depth" aria-hidden="true"></i>
+
   <div class="nav__panel glass--dark">
     <h2 class="sr-only" id="nav-menu-title">Menu</h2>
 
@@ -69,8 +119,18 @@
       <a class="nav__panel-mail" href="mailto:inquire@xstudioz.com?subject=Project%20brief%20for%20XStudioz">
         inquire@xstudioz.com
       </a>
+
+      <!-- The phone's copy of the switch. The header cannot carry it below
+           1025px without breaking the row arithmetic, and a reader on a
+           phone is the one most likely to have a system preference worth
+           honouring, so it stands here instead of nowhere. -->
+      <button class="nav__theme nav__theme--panel" type="button">
+        <span class="nav__theme-face" aria-hidden="true"></span>
+        <span class="sr-only" data-theme-label>Switch to light mode</span>
+      </button>
     </div>
   </div>
 </dialog>
 
 <script type="module" src="/src/lib/nav.ts"></script>
+<script type="module" src="/src/lib/theme.ts"></script>

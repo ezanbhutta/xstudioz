@@ -27,7 +27,8 @@ import './styles/doc.css';
    construction plate and the dimension line are 31,212 bytes of CSS that no
    URL reachable from this entry can render. */
 
-import { prefersReduced, initNav, revealFailsafe, applyStaticScroll } from './lib/motion';
+import { prefersReduced, initNav, applyStaticScroll } from './lib/motion';
+import { initArrivals } from './lib/arrive';
 import { initUnit } from './lib/measure';
 import { initConsent } from './lib/consent';
 import { initAnalytics } from './lib/analytics';
@@ -49,15 +50,7 @@ function boot(): void {
 
   initNav();
   markCurrentSection();
-  initSectionEnters();
-
-  /* Kept, and near enough free: an interior page registers no ScrollTrigger
-     at all, so this is one timer over an empty list. It stays because the
-     guarantee it encodes, no code path may leave readable content in a
-     state a reader cannot get out of, is a property of the site, not of the
-     reveals it used to police, and a later section on one of these pages
-     must inherit it rather than rediscover it. */
-  revealFailsafe();
+  initArrivals();
 
   applyStaticScroll();
 }
@@ -85,42 +78,22 @@ function boot(): void {
    ------------------------------------------------------------ */
 
 /* ------------------------------------------------------------
-   Section arrivals
+   SECTION ARRIVALS MOVED TO src/lib/arrive.ts, and the function that used to
+   be here was doing nothing at all.
 
-   The one piece of motion an interior document has, and it is deliberately
-   not the cover's machinery: no timeline, no ScrollTrigger, no stage. An
-   IntersectionObserver adds a class and CSS does the rest, with the
-   from-state declared in doc.css behind html.js so a document whose bundle
-   never arrives is painted finished in its first frame.
+   It queried `[data-enter]`, and `grep -c data-enter` over the fifteen
+   interior routes returned zero on every one of them. It then registered an
+   IntersectionObserver over that empty list and a four-second failsafe over
+   the same empty list, on every document, on every load. The CSS it was
+   written against, in doc.css, was gated on `html.js`, and no interior page
+   has ever carried the inline script that adds that class. Three layers of a
+   mechanism, none of which could reach the other two.
 
-   Same vocabulary as the cover: opacity and y, 20px of travel, half a
-   second, once. A reading page is read, so nothing here scrubs, nothing
-   pins, and no paragraph is split into characters.
+   Both of those are repaired: the sections below now carry the attribute,
+   and the shared module hangs the from-state off a keyframe instead of off
+   the resting element, so a document whose bundle never boots is still the
+   finished document rather than a blank one.
    ------------------------------------------------------------ */
-function initSectionEnters(): void {
-  if (prefersReduced) return;
-
-  const targets = Array.from(document.querySelectorAll<HTMLElement>('[data-enter]'));
-  if (!targets.length) return;
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('is-in');
-        observer.unobserve(entry.target);
-      });
-    },
-    { rootMargin: '0px 0px -12% 0px' }
-  );
-
-  targets.forEach((el) => observer.observe(el));
-
-  /* No code path may leave readable text at an opacity a reader cannot get
-     out of. If a trigger has not fired within four seconds, everything is
-     handed back regardless of where the page is. */
-  window.setTimeout(() => targets.forEach((el) => el.classList.add('is-in')), 4000);
-}
 
 /* The section index highlights whichever section is in view. Purely a state
    readout: it changes a colour, moves nothing, and the links work regardless.

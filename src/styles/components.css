@@ -8,6 +8,54 @@
    hero composes on its own in the first frame, with or without the bundle,
    so there was nothing left for it to hide. */
 
+/* ============================================================
+   THE BAR'S BOX, AT REST
+
+   --nav-h is declared in tokens.css as max(4.2rem, 56px) and the bar has
+   never been that tall. lib/motion.ts republishes the property off the
+   rendered bar with a ResizeObserver, which makes the travel, the run and
+   every clearance follow a measurement instead of a guess, and that is the
+   right mechanism. This declaration is about the frames BEFORE the
+   measurement lands, and about the documents where it never lands at all.
+
+   THE TOKEN'S FALLBACK WAS WRONG IN BOTH DIRECTIONS AND IT COST A SHIFT.
+   Measured on the built site the bar is 62 at 390, 63 at 760, 66.5 at 900,
+   69.59 at 1024 and 74 at 1500; the token resolves to 56, 56, 56, 56 and 63.
+   So the first frame laid every document out against a bar 6 to 13.6px
+   shorter than the one being painted, the ResizeObserver then corrected the
+   property, and the correction MOVED THE PAGE: layout-shift on /about/ at
+   1500 measured 0.007985, sourced to HEADER.doc__head and the breadcrumb OL,
+   72ms after navigation. A measurement that has to change something to be
+   right is a measurement that shifts the page.
+
+   SO THE RESTING VALUE IS THE BAR'S CONSTRUCTION RATHER THAN A RUNG. The row
+   is one 44px touch target between two --sp-3 of padding, and that is not
+   ladder arithmetic, it is the two rules the bar is actually built from: the
+   touch floor and the spacing rhythm. Written that way it is EXACT at every
+   width the site has: 320, 360, 375, 390, 428, 600, 760, 767, 768, 900,
+   1000, 1024, 1025, 1100, 1200, 1280, 1500, 1600, 1920, 2200 and 2560 all
+   agree with the rendered bar to LayoutUnit precision. So motion.ts's write
+   confirms this number instead of correcting it, and there is nothing left
+   to shift.
+
+   IT IS STILL A FALLBACK AND NOT THE TRUTH. Nothing here knows what a longer
+   label or a different face does to the row; the measurement does, it still
+   wins, and this is what the page gets until it arrives and if it never
+   does. The pair is the same contract lib/measure.ts states for --w: the
+   token carries a sane resting value, the rect carries the fact.
+
+   WHY IT IS HERE RATHER THAN IN tokens.css. The number is not a token. It is
+   a consequence of two rules that both live in this file, the 44px floor
+   .nav__theme and .nav__toggle take and the --sp-3 padding on .nav__row, so
+   it belongs where a reader can see what it is made of. components.css is
+   imported after tokens.css by both entry points, so this is the later
+   declaration at equal specificity and it wins by source order rather than
+   by weight.
+   ============================================================ */
+:root {
+  --nav-h: calc(44px + var(--sp-3) * 2);
+}
+
 /* ---------------- Nav ----------------
 
    THE LAW, ON THE HEADER. The bar leaves up the arm rather than straight up:
@@ -55,6 +103,11 @@
 
    THREE LAYERS, ON TWO PSEUDO-ELEMENTS AND NO EXTRA MARKUP.
 
+     .nav__band the run. One element, below both pseudo-elements, carrying
+                the band the glass has to blur. It is markup rather than a
+                third pseudo-element because it has to CLIP: the band is
+                drawn to the whole viewport so it lines up with the cover's
+                copy of it, and the bar is 74px of that viewport.
      ::before   the material: the tint, the blur, the saturation lift and the
                 lit edge. Bled one run to the left so the header's diagonal
                 exit never opens a seam, which is why the glass is on this
@@ -90,6 +143,66 @@
   transition: border-color var(--dur-half) var(--curve);
 }
 
+/* ============================================================
+   THE BAR CARRIES ITS OWN RUN, AND THAT IS THE WHOLE REPAIR
+
+   THE OLD ANSWER ONLY EVER WORKED AT THE TOP OF A PAGE. The cover put a
+   1200px mark in its hero and the interior documents put a 690px one in
+   their masthead, and both of those are objects in the DOCUMENT: they are
+   under the bar at scroll 0 and nowhere else. The bar is fixed. Measured on
+   the built site inside the bar's own content-free pixels, the shipped
+   arrangement read 9.40 at the top of the cover, 6.15 at the top of a
+   document, and 5.87, 11.35 and 6.05 at three stations further down. A
+   surface that is glass in the first screenful and paint for the other
+   eight is not a material, it is a screenshot.
+
+   SO THE RUN TRAVELS WITH THE BAR. This layer is fixed, it is inside the
+   header's own stacking context, and it paints under both of the header's
+   pseudo-elements, so the blur samples it at every scroll position on all
+   sixteen routes and the number stops depending on which section happens to
+   be underneath.
+
+   IT IS TWO ELEMENTS AND BOTH ARE LOAD-BEARING. The outer one is the clip:
+   it is the bar's box, bled one run to the left exactly as the glass is, so
+   the band never shows through the seam the diagonal exit opens. The inner
+   one is the band, and it fills that box rather than the viewport, so its
+   mask reads the BAR's own diagonal extent and the placement is a percentage
+   of the thing it is placed in. A first pass gave it the whole viewport so
+   that a copy of the band on the cover's sheet would land on identical
+   pixels; the sheet's copy is deleted, for the reason written out at the top
+   of cover.css, and with it the only reason the two boxes had to match.
+
+   NEITHER IS A BACKDROP ROOT FOR THE GLASS. overflow is not one of the six
+   things that make one, and in any case the clip is a SIBLING of ::before
+   rather than an ancestor of it. The mask on the inner element makes that
+   element a root, which is harmless: nothing with a backdrop-filter is
+   inside it.
+
+   THE FILL IS THE CAPPED PAIR AND THE BAR'S OWN ALPHA FLOOR IS WHY THAT IS A
+   CHOICE RATHER THAN A CONSTRAINT. Nothing reads directly on this band: the
+   header's five links, its label and its control all sit on the GLASS, whose
+   floor is derived against pure black and pure white, so no backdrop can
+   push them below the two figures the GLASS block already clears. The capped
+   pair is taken anyway, because the bar is 74px of a paper page on eleven
+   routes and a full-strength ramp in it reads as a coloured header rather
+   than as something caught in the glass.
+   ============================================================ */
+.nav__band {
+  position: absolute;
+  z-index: -2;
+  inset: 0 0 0 calc(var(--nav-run) * -1);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.nav__band .depth {
+  /* Between the lockup and the links at the desktop width, and the whole of
+     the bar's open half below it, where the links stand down. Solved on the
+     rendered bar rather than nudged: the offset that puts the run's leading
+     edge at 12 percent of the bar's width. */
+  --band-at: -29%;
+}
+
 /* The grain, over the material and under the content. */
 .nav::after {
   content: '';
@@ -112,12 +225,42 @@
   transition: translate var(--dur) var(--curve), visibility 0s var(--dur);
 }
 
+/* ============================================================
+   THE ROW STANDS ON THE TOUCH FLOOR WHETHER ANYTHING CLAIMS IT OR NOT
+
+   THE BAR USED TO BE TWO DIFFERENT HEIGHTS ON THE SAME PAGE. Above 1025px
+   the only thing in the row with a 44px box is .nav__theme, and that control
+   is drawn by [data-theme-state], which lib/theme.ts writes as it wires the
+   button up. Everything else up there is smaller: the lockup is 26, the
+   links are 27.25, the pill is 33. So the first frame rendered a 63px bar,
+   theme.ts landed, the bar became 74, and the ResizeObserver in motion.ts
+   dutifully republished --nav-h from 63 to 74, which is where the 0.007985
+   of layout-shift on /about/ came from. With scripting off the button never
+   arrives and the bar stays 63 for good, 11px shorter than the clearance
+   every document reserves for it.
+
+   ONE min-height ENDS BOTH. The row's content box cannot go under the same
+   44px floor its controls already take, so the bar is 74 at 1500 in the
+   first frame, after theme.ts, and with the bundle blocked entirely: one
+   box, three states, nothing to republish and nothing to move.
+
+   IT IS min-height AND NOT height, AND THAT IS THE WHOLE DIFFERENCE. Pinning
+   the row to --nav-h would compress three controls that are sitting exactly
+   on the 44px floor, and it would close a loop as well: --nav-h is written
+   from this row's rendered box, so feeding it back in gives the measurement
+   its own output to read and any overshoot would ratchet and never come
+   down. This floor is stated in what the row is made of instead: the same
+   44px and two --sp-3 the resting --nav-h above is built from, and
+   deliberately not var(--nav-h), so the two agree by construction rather
+   than by circulation.
+   ============================================================ */
 .nav__row {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: var(--sp-4);
   padding-block: var(--sp-3);
+  min-height: calc(44px + var(--sp-3) * 2);
 }
 
 /* The end of the row. One grid cell holding the switch, the call to action
@@ -132,10 +275,15 @@
 
 /* The three header controls are 26 to 33px tall, which is smaller than a
    finger wants on the tablet widths where the desktop header is still shown.
-   The fix is a hit area rather than a bigger box: growing them to 44px would
-   push the header from 63px to 74px on every page, which is a layout change,
-   not a repair. Each control keeps its size and gains an invisible target
-   that reaches the 44px floor. Vertical only, so neighbours never overlap. */
+   The fix is a hit area rather than a bigger box for the two that cannot take
+   one: .nav__brand and .nav__link are inline and sizing them would reflow the
+   row. Each keeps its size and gains an invisible target that reaches the 44px
+   floor. Vertical only, so neighbours never overlap.
+
+   .nav__cta is NOT one of those. It is a .pill, and .pill carries
+   `overflow: hidden` for the --wipe clip, which crops this ::after to the
+   pill's own box and left the target at 34px. It takes the real 44px box
+   further down instead, which its overflow cannot clip. */
 .nav__brand,
 .nav__link,
 .nav__cta {
@@ -167,7 +315,17 @@
   transition: fill var(--dur-half) var(--curve);
 }
 
-.nav__brand:hover .nav__mark {
+/* The brand link answered a pointer and answered nothing else: it had a
+   hover and no focus partner, so a reader arriving on it by keyboard got the
+   shared outline and none of the ink every other control on the site changes.
+   Splitting the hover out for touch is what made the omission visible. */
+@media (hover: hover) {
+  .nav__brand:hover .nav__mark {
+    fill: var(--ink-accent);
+  }
+}
+
+.nav__brand:focus-visible .nav__mark {
   fill: var(--ink-accent);
 }
 
@@ -219,16 +377,22 @@
     translate var(--dur-half) var(--curve);
 }
 
-.nav__link:hover::before,
 .nav__link:focus-visible::before,
-.ghost:hover::before,
 .ghost:focus-visible::before,
-.crumbs a:hover::before,
 .crumbs a:focus-visible::before,
-.footer__col a:hover::before,
 .footer__col a:focus-visible::before {
   opacity: 1;
   translate: 0 0;
+}
+
+@media (hover: hover) {
+  .nav__link:hover::before,
+  .ghost:hover::before,
+  .crumbs a:hover::before,
+  .footer__col a:hover::before {
+    opacity: 1;
+    translate: 0 0;
+  }
 }
 
 /* The page you are on wears the hover state permanently. That is the system's
@@ -243,6 +407,188 @@
   translate: var(--d2x) var(--d2y);
 }
 
+
+/* ============================================================
+   THE LIGHT SWITCH
+
+   THE CONTROL IS DRAWN BY ONE CONDITION AND IT IS THE SAME CONDITION THAT
+   MAKES IT WORK. src/lib/theme.ts writes data-theme-state onto the button as
+   it wires it up, and that attribute is the only selector that gives this
+   thing a box. No `hidden`, no class toggled from script, and therefore no
+   race between an attribute and a display rule: with the script blocked the
+   button is display: none, which keeps it out of the tab order rather than
+   parking a 0 x 0 stop in it. That is the exact fault the previous switch
+   shipped with, and it is repaired by mechanism rather than by care.
+
+   THE GLYPH IS A DISC CUT ON THE MARK'S OWN ARM. One straight boundary at
+   40.82 degrees across a circle, which is the only angle any edge on this
+   site is allowed to take. Three states, and each is legible without a label:
+
+     system   half paper, half void. The disc is showing that it is not
+              deciding: both rooms are present in it.
+     light    the whole disc is paper.
+     dark     the whole disc is void.
+
+   THE TWO HALVES ARE FIXED HEXES, NOT ROOM TOKENS. #f6f5f8 and #09090b, in
+   both themes. The disc is a diagram OF the two rooms, so it has to mean the
+   same thing while standing in either one; painting it from --ink and
+   --ground would make the light state invisible in the light room and the
+   dark state invisible in the dark room, which is precisely when a reader
+   needs to see which one they are in.
+
+   319.18deg IS 40.82 DEGREES, ARRIVED AT HONESTLY. A CSS gradient angle names
+   the direction of the gradient LINE, and the colour boundary runs
+   perpendicular to it. A boundary lying along the arm therefore needs a
+   gradient line at 360 - 40.82. It is written as that subtraction so the one
+   number in it is the drawing's.
+
+   THE STATE CHANGE IS A CROSS-FADE, NOT A CUT, and it is a real interpolation
+   because both stops are registered custom properties. A gradient built from
+   unregistered properties is a token stream and jumps; registered as <color>
+   it tweens. One curve, and the OPEN duration, because this is a state change
+   rather than an answer to a pointer.
+   ============================================================ */
+@property --theme-lit {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #f6f5f8;
+}
+
+@property --theme-shade {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #09090b;
+}
+
+.nav__theme {
+  /* THE DISC'S SIZE IS THE CONTROL'S OWN, AND THAT IS NOT FUSSINESS.
+
+     It read var(--nav-mark) first, which is 26px and correct in the header.
+     The panel copy stands inside <dialog>, which is a SIBLING of .nav and not
+     a descendant, so --nav-mark resolved to nothing there, `width` was
+     invalid, and the drawing measured 0 x 0 while its 44px button sat in the
+     tab order looking fine to every check that measured the button. That is
+     the same phantom the last switch shipped, reached by a different route,
+     and it is caught here by giving the control the number rather than
+     borrowing one from an ancestor it does not always have. 26px is still the
+     mark's size in the bar; it is now stated where the control can always
+     read it. */
+  --theme-disc: 26px;
+
+  /* Drawn only once the script that operates it has claimed it. */
+  display: none;
+  align-items: center;
+  justify-content: center;
+  /* The same 44px floor .nav__toggle and .nav__brand take, with the drawing
+     sitting at its own 26px inside it. */
+  min-height: 44px;
+  min-width: 44px;
+  border-radius: var(--radius-ui);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.nav__theme[data-theme-state] {
+  display: inline-flex;
+}
+
+.nav__theme-face {
+  width: var(--theme-disc);
+  height: var(--theme-disc);
+  flex: none;
+  border-radius: 50%;
+
+  /* THE RING, AND IT IS LOAD BEARING IN TWO OF THE SIX COMBINATIONS. In the
+     light state on a light page, and in the dark state on a dark page, the
+     disc is one flat hex matching its surroundings and this hairline is the
+     only thing that makes it a control at all. So it carries the 3:1 non-text
+     floor by itself, and the figures are the COMPOSITED ones rather than the
+     token's: inside .nav, --ink-quiet is --ink at 62 percent, not the
+     --text-muted the token block describes.
+
+       header, light   #16151a at 62% over paper  -> rgb(107,106,110)  4.94:1
+       header, dark    #f2f1f6 at 62% over void   -> rgb(153,153,157)  7.01:1
+       menu panel      --room-void-quiet #8a8a97 opaque on void        5.84:1
+
+     In the other four combinations the disc carries a hard edge between its
+     own two halves, which measures 18.32:1 and needs no help. */
+  box-shadow: inset 0 0 0 1px var(--ink-quiet);
+
+  background-image: linear-gradient(
+    calc(360deg - var(--arm)),
+    var(--theme-shade) 50%,
+    var(--theme-lit) 50%
+  );
+
+  transition:
+    --theme-lit var(--dur) var(--curve),
+    --theme-shade var(--dur) var(--curve);
+}
+
+/* THE THREE STATES. system is the initial value of both properties and needs
+   no rule; the two explicit choices collapse the disc onto one hex. */
+.nav__theme[data-theme-state='light'] .nav__theme-face {
+  --theme-shade: #f6f5f8;
+}
+
+.nav__theme[data-theme-state='dark'] .nav__theme-face {
+  --theme-lit: #09090b;
+}
+
+/* WHICH COPY IS ON SCREEN. Exactly one, at every width, and the selectors say
+   which by naming the ancestor rather than the modifier, because the panel
+   copy does not live in .nav__row and a rule scoped to that row can never
+   reach it. Both rules override the [data-theme-state] display above, so a
+   stood-down copy is display: none and out of the tab order rather than
+   merely invisible. */
+.nav__theme--panel {
+  margin-left: auto;
+}
+
+/* Desktop: the bar carries it, so the panel copy stands down. */
+@media (min-width: 1025px) {
+  .nav__panel .nav__theme[data-theme-state] {
+    display: none;
+  }
+}
+
+/* Below the desktop band the header row is already 22.6px short at 320, so
+   the header copy stands down and the menu carries the control instead. */
+@media (max-width: 1024px) {
+  .nav__row .nav__theme[data-theme-state] {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav__theme-face {
+    transition: none;
+  }
+}
+
+/* forced-colors destroys background-image, so the disc would be an empty
+   ring in every state and the control would stop saying anything. The two
+   halves come back as a border pair the system is guaranteed to render. */
+@media (forced-colors: active) {
+  .nav__theme-face {
+    forced-color-adjust: none;
+    background-image: none;
+    background-color: Canvas;
+    box-shadow: inset 0 0 0 1px CanvasText;
+  }
+
+  .nav__theme[data-theme-state='dark'] .nav__theme-face {
+    background-color: CanvasText;
+  }
+
+  .nav__theme[data-theme-state='system'] .nav__theme-face {
+    background-image: linear-gradient(
+      calc(360deg - var(--arm)),
+      CanvasText 50%,
+      Canvas 50%
+    );
+  }
+}
 
 /* ============================================================
    Navigation: the menu control and its overlay
@@ -333,19 +679,63 @@
   overflow: hidden;
 }
 
-/* The dialog sits in the top layer, so it cannot be clipped by any ancestor
-   and nothing on the page can make it sample an empty backdrop.
+/* ============================================================
+   THE BACKDROP IS A SCRIM AND IT IS NO LONGER A BLURRED SURFACE.
 
-   The backdrop is the one blurred surface on the site that is allowed to be
-   thin, and it is thin for a reason rather than by taste: nothing is read on
-   it. It carries no text and no control. Its job is to push the document
-   behind the panel far enough back that the panel reads as being in front of
-   it, which is what a real 20px blur at 0.72 does and what the 2px it carried
-   before did not. */
+   It was the sixth blurred surface on the site and it was the only one that
+   could not justify its own cost, for three reasons that were all measured.
+
+   IT IS VISIBLE IN A 424px WINDOW OF VIEWPORT WIDTHS AND NOWHERE ELSE. Below
+   600 the panel is full bleed, so the backdrop composites zero visible
+   pixels. At 1025 and up the toggle is display: none and the overlay cannot
+   be opened at all. Everything it did, it did between those two numbers.
+
+   IT WAS PAINT ANYWAY. Measured through its own visible region at 900px:
+   0.87 in daylight and 0.88 on the void, against a paint floor near 2. At
+   0.72 the scrim passes 28 percent of a backdrop that is an ordinary page,
+   and a Gaussian blur of an ordinary page is an ordinary page.
+
+   AND ON A PHONE IT WAS THE MOST EXPENSIVE THING ON THE SITE. At 390 by 844
+   the panel is full bleed and sits directly on a full-viewport blurred
+   backdrop, so two full-viewport blurs stacked: 129.1ms to open at 6x CPU
+   throttle against 52.0ms without, for a surface with no visible pixels.
+
+   The scrim stays, because pushing the document back behind the panel is a
+   real job and a flat 0.72 does it. Only the blur is gone.
+   ============================================================ */
 .nav__dialog::backdrop {
   background: rgb(9 9 11 / 0.72);
-  -webkit-backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
-  backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
+}
+
+/* THE OVERLAY'S RUN, INSIDE THE DIALOG RATHER THAN ON THE PAGE.
+
+   The panel is full-bleed below 600px and a 420px sheet above it, and it can
+   be opened at any scroll position on any of sixteen routes. Nothing drawn
+   into a document can be relied on to land under it, which is why the earlier
+   survey's answer for this surface was "no page-drawn form". The dialog is
+   the answer instead: it is in the top layer, so no ancestor can clip it, and
+   a form painted inside it BEFORE the panel is exactly what the panel's blur
+   samples. The surface stops depending on what is behind the overlay and
+   carries its own backdrop, on every route, at every scroll position.
+
+   ONE EDGE CROSSES THE SHEET. Between 600 and 1024 the panel is a sheet on
+   the right and the band's leading edge runs through it, so the same run is
+   sharp on the scrim and soft inside the sheet. Below 600 the panel covers
+   the frame, so the band is the panel's entire backdrop and the comparison is
+   the one thing this width does not get. */
+.nav__depth {
+  --band-at: -14%;
+
+  /* THE BRIGHTEST FILL ON THE SITE, and the panel's own tint is what makes it
+     legal. This surface's tint is the void at 0.62 in both themes, which
+     passes 38 percent of whatever is behind it, so a near-white form under it
+     composites to luminance 0.1026 and the panel's #f2f1f6 links measure
+     6.12:1 on it. Swept on rendered pixels: the 76 percent lift the chroma
+     room uses tops out at 4.1 here, and the lift has to go to 88 before the
+     surface leaves the paint floor at all. The hue chain survives the lift;
+     only the luminance moves, which is what law 6 asks for. */
+  --depth-loud-a: color-mix(in srgb, #ffffff 88%, var(--brand-magenta));
+  --depth-loud-b: color-mix(in srgb, #ffffff 88%, var(--brand-violet));
 }
 
 /* THE PANEL IS THE SECOND AND LAST GLASS SURFACE ON THE SITE.
@@ -445,6 +835,10 @@
     background-color: var(--glass-solid);
   }
 
+  /* The scrim thickens when nothing behind it can be a material. The other
+     two surfaces go fully opaque here; this one only ever had to separate
+     the panel from the page, and 0.94 does that with the page still faintly
+     present, which is what tells a reader the overlay is over something. */
   .nav__dialog::backdrop {
     background: rgb(9 9 11 / 0.94);
   }
@@ -474,8 +868,6 @@
 
   .nav__dialog::backdrop {
     background: rgb(9 9 11 / 0.94);
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
   }
 }
 
@@ -554,7 +946,16 @@
   .nav__menu-link:focus-visible span { translate: var(--d2x) var(--d2y); }
 }
 
+/* The mail address and the light switch share this row: the address is the
+   thing a reader came here for and the switch is the thing they can only
+   reach from here, so they sit at opposite ends of one line rather than
+   stacking and pushing the panel taller. align-items keeps the 44px disc
+   centred against the address's own 44px box. */
 .nav__panel-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
   padding-top: var(--sp-6);
 }
 
@@ -846,14 +1247,24 @@ html.nav-open {
   transition: --wipe var(--dur) var(--curve);
 }
 
-.pill:hover,
 .pill:focus-visible {
   color: var(--ground);
 }
 
-.pill:hover::before,
+@media (hover: hover) {
+  .pill:hover {
+    color: var(--ground);
+  }
+}
+
 .pill:focus-visible::before {
   --wipe: 1;
+}
+
+@media (hover: hover) {
+  .pill:hover::before {
+    --wipe: 1;
+  }
 }
 
 .pill__arr {
@@ -862,14 +1273,31 @@ html.nav-open {
   transition: translate var(--dur-half) var(--curve);
 }
 
-.pill:hover .pill__arr,
 .pill:focus-visible .pill__arr {
   translate: var(--d0x) var(--d0y);
 }
 
+@media (hover: hover) {
+  .pill:hover .pill__arr {
+    translate: var(--d0x) var(--d0y);
+  }
+}
+
+/* THE HEADER CTA TAKES THE REAL 44px BOX, NOT A HIT AREA.
+
+   It used to carry `min-height: 0` and lean on the shared `.nav__cta::after`
+   target instead, on the grounds that a 44px box would push the bar from 63
+   to 74. The bar is 74 now, by construction: --nav-h is 44px plus a --sp-3
+   either side, so the row's content band is exactly 44px at every width and
+   a full-height pill fits it without changing the bar at all.
+
+   The hit area was never working here anyway. `.pill` carries
+   `overflow: hidden` for the --wipe clip, which cropped the 44px ::after to
+   the pill's own 33px box, so the control that opens the studio's only
+   conversion path had a 34px target on a phone. A real box cannot be
+   clipped by its own overflow. */
 .nav__cta {
   padding: 8px var(--sp-3);
-  min-height: 0;
 }
 
 /* The solid variant. Every other .pill on the site is an outline that fills
@@ -893,10 +1321,16 @@ html.nav-open {
   background: var(--ground);
 }
 
-.pill--solid:hover,
 .pill--solid:focus-visible {
   color: var(--ink);
   border-color: var(--ink-line-strong);
+}
+
+@media (hover: hover) {
+  .pill--solid:hover {
+    color: var(--ink);
+    border-color: var(--ink-line-strong);
+  }
 }
 
 /* Without motion the fill still swaps, it just does not sweep. */
@@ -927,9 +1361,14 @@ html.nav-open {
   transition: translate var(--dur-half) var(--curve);
 }
 
-.ghost:hover .ghost__arr,
 .ghost:focus-visible .ghost__arr {
   translate: var(--d0x) var(--d0y);
+}
+
+@media (hover: hover) {
+  .ghost:hover .ghost__arr {
+    translate: var(--d0x) var(--d0y);
+  }
 }
 
 /* .ghost--invert and .pill--invert used to live here, and .rule--invert in
@@ -1020,9 +1459,6 @@ html.nav-open {
    colour is still here and it is the mark, on the ramp, at the scale it had
    as a field: one chromatic object rather than one chromatic wall. */
 .footer {
-  /* One source for the mark's size. The statement reserves exactly this much
-     room on its right, so the two can never collide at any viewport. */
-  --footer-mark: 24rem;
   --ground: var(--room-paper-ground);
   --ink: var(--room-paper-ink);
   --ink-dim: var(--room-paper-dim);
@@ -1071,49 +1507,30 @@ html.nav-open {
   align-items: center;
 }
 
-/* THE MARK IS ON THE PLATE NOW, AND IT LEAVES THE FRAME.
+/* THE MARK ON THE PLATE IS DELETED, AND THE PLATE IS WHAT IS LEFT.
 
-   It used to stand beside the plate on paper, in the ramp as a fill, at
-   right: 0 of the container. The plate could not reach it, because the plate
-   bleeds 50vw from the STATEMENT's box and the statement is only 441px wide:
-   the colour stopped at x=1251 in a 1500px viewport and the mark's two arms
-   stuck out past the end of it into white paper with a gap between them. The
-   last screen of the site closed on what read as a rendering bug.
+   It was 384px of the drawing in ramp ink at 0.22, cropped by the frame on
+   the right, sitting on the closing plate of all sixteen routes. It is one
+   of the instances the owner's ruling covers, and it is the plainest of
+   them: the mark at architectural scale, used as decoration, on every page.
 
-   It is the portal's move at footer scale now: the mark set in the one ink a
-   ramp takes, cropped by the frame on the right and by the band's own edges
-   top and bottom, so it leaves as one continuous form. Nothing about it
-   moves. */
-.footer__x {
-  position: absolute;
-  /* Past the gutter and past the screen. The footer carries overflow-x: clip,
-     so the drawing is cut by the viewport edge exactly the way the portal's
-     is. */
-  right: calc(var(--gutter) * -1 - 4rem);
-  top: 50%;
-  transform: translateY(-50%);
-  width: var(--footer-mark);
-  height: var(--footer-mark);
-  /* Above the plate, and it has to be stated. The statement carries
-     `isolation: isolate`, so its z-index: -1 ground is sealed inside its own
-     stacking context and the whole statement paints as one atomic unit AFTER
-     this element, which is its earlier sibling. Without this the plate was
-     painting straight over the mark and the drawing was invisible. */
-  z-index: 1;
-  pointer-events: none;
-}
+   NOTHING REPLACES IT AND NOTHING NEEDS TO. The plate was never a backdrop
+   for anything, because there is no glass down here: the footer is the one
+   place on the site where the ramp is simply a ground under a display line.
+   Deleting the drawing leaves a full-bleed chromatic plate with the last
+   sentence of the document set across it, and that is a stronger closing
+   frame than a plate with a logo parked at the end of it.
 
-.footer__x-svg {
-  width: 100%;
-  height: 100%;
-  fill: var(--ramp-ink);
-  opacity: 0.22;
-}
+   THE STATEMENT TAKES THE ROOM BACK. It was capped at the column less the
+   mark's 384px plus a gap, purely so the two could not collide. There is
+   nothing left to collide with, so the line runs the full column and the
+   closing display step is finally set at the width the rest of the site sets
+   it at. --footer-mark is deleted with it. */
 
 /* The last statement on every route, and it closes on the brand. The plate
-   bleeds to both edges of the viewport behind it and the mark sits on the
-   plate in ramp ink, so the two objects that close the document are one
-   surface rather than a display line and a decoration beside it. */
+   bleeds to both edges of the viewport behind it, so the object that closes
+   the document is one surface rather than a display line and a decoration
+   beside it. */
 .footer__title::before {
   /* THE BLEED IS OVERRIDDEN, because -50vw is measured from THIS box and this
      box is capped at the mark's width off the column. At 100px the statement
@@ -1130,7 +1547,6 @@ html.nav-open {
   font-size: var(--text-display);
   font-weight: var(--weight-display);
   line-height: var(--leading-display);
-  max-width: calc(100% - var(--footer-mark) - var(--sp-5));
   color: var(--ink);
 }
 
@@ -1202,8 +1618,10 @@ html.nav-open {
   transition: color var(--dur-half) var(--curve);
 }
 
-.footer__utility a:hover {
-  color: var(--ink);
+@media (hover: hover) {
+  .footer__utility a:hover {
+    color: var(--ink);
+  }
 }
 
 /* ============================================================
@@ -1220,14 +1638,6 @@ html.nav-open {
   .footer__ctas .pill {
     width: 100%;
     justify-content: space-between;
-  }
-
-  .footer__title {
-    max-width: 100%;
-  }
-
-  .footer__x {
-    opacity: 0.1;
   }
 
   .footer__meta-right {
@@ -1262,12 +1672,28 @@ html.nav-open {
    hover, a press or a cursor change anywhere in the system.
    ============================================================ */
 
+/* THE LIST IS THE WHOLE POINT AND IT HAS TO BE COMPLETE. Fifteen controls
+   answered a press and five did not, which on a phone is five controls that
+   give a finger no answer at all. The five added: the header's own brand
+   link, the sticky section index that every document carries, the journal's
+   entry rows, the process page's stage links, and the footer's utility row.
+   A control missing from this list is a control that only works with a mouse.
+
+   AND ONE ENTRY WAS NARROWED RATHER THAN ADDED. `.faq__q` matched twice on
+   this site: 20 <summary> elements, which are controls, and 32 <h3> headings
+   above answers that are always open, which are not. Pressing a heading in
+   the middle of a static question and answer moved it 5.4px down the arm and
+   then did nothing, which is the file's own rule broken by a class name that
+   spans two kinds of element. It is scoped to summary here and at its hover
+   in doc.css. */
 :is(
   .pill,
   .ghost,
   .caps__link,
   .related__link,
+  .entries a,
   .portal,
+  .nav__brand,
   .nav__link,
   .nav__menu-link,
   .nav__toggle,
@@ -1275,9 +1701,12 @@ html.nav-open {
   .nav__panel-mail,
   .brief__address,
   .doc__address,
+  .doc__index a,
+  .journey__link,
   .footer__col a,
+  .footer__utility a,
   .crumbs a,
-  .faq__q
+  summary.faq__q
 ):active {
   translate: calc(var(--d0x) * -1) calc(var(--d0y) * -1);
 }
@@ -1287,7 +1716,9 @@ html.nav-open {
   .ghost,
   .caps__link,
   .related__link,
+  .entries a,
   .portal,
+  .nav__brand,
   .nav__link,
   .nav__menu-link,
   .nav__toggle,
@@ -1295,18 +1726,99 @@ html.nav-open {
   .nav__panel-mail,
   .brief__address,
   .doc__address,
+  .doc__index a,
+  .journey__link,
   .footer__col a,
+  .footer__utility a,
   .crumbs a,
-  .faq__q
+  summary.faq__q
 ) {
   transition: translate var(--dur-half) var(--curve);
+}
+
+/* ============================================================
+   THE POINTER VOCABULARY STANDS DOWN UNDER REDUCE, AND UNTIL NOW IT DID NOT
+
+   The site already wrote reduce blocks for the header, the menu links, the
+   consent bar, the skip link, the theme switch, the FAQ marker, the footer
+   channel arrows and the three sibling-displacement lists. It had NOT
+   written one for the arrows, the two list names or the press, so measured
+   under an emulated reduce the archive arrow still travelled 21.5px over
+   408ms across 51 sampled frames, the capabilities arrow 10.8px and the pill
+   arrow 5.4px. That is not a decision, it is nine rules that were missed
+   while eleven of the same kind were caught, and the inconsistency is the
+   argument for fixing it.
+
+   WHAT GOES IS THE EASING, NOT THE STATE. Every one of these still displaces
+   under the pointer, because the displacement is what says the control is
+   under the pointer and a control that answers nothing is worse for
+   everybody. It arrives instantly instead of over 408ms, which is what a
+   reader asking for less motion is asking for: no frames, not no feedback.
+   That is the same answer .doc__index li and .footer__channel-arr already
+   give, and this makes the whole vocabulary consistent with them.
+
+   THE `html` PREFIX IS A CASCADE FIX AND NOT A HABIT. Four of these
+   selectors are declared in cover.css and doc.css, both of which are
+   imported AFTER this file, so a plain class here would lose to them on
+   source order at equal specificity and the block would be one more rule
+   that reads correctly and renders nothing. This project has shipped that
+   defect twice. One type selector puts every line below out of reach of any
+   later file without inventing an !important, and it is what lets the whole
+   vocabulary be stated once rather than split across three stylesheets.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  /* The arrows: five controls, one grammar. */
+  html .pill__arr,
+  html .ghost__arr,
+  html .caps__arr,
+  html .portal__arr,
+  html .brief__address-arr,
+  html .doc__address-arr,
+  html .related__arr,
+  html .entries__arr,
+
+  /* The two list names, which travel beside their own arrow. */
+  html .related__name,
+  html .entries__name,
+
+  /* The press. One rule covers twenty controls and it was the largest single
+     omission here. */
+  html :is(
+      .pill,
+      .ghost,
+      .caps__link,
+      .related__link,
+      .entries a,
+      .portal,
+      .nav__brand,
+      .nav__link,
+      .nav__menu-link,
+      .nav__toggle,
+      .nav__close,
+      .nav__panel-mail,
+      .brief__address,
+      .doc__address,
+      .doc__index a,
+      .journey__link,
+      .footer__col a,
+      .footer__utility a,
+      .crumbs a,
+      summary.faq__q
+    ),
+
+  /* The pill's fill, which is a plane crossing the control on --wipe. It is
+     the one animation in this block that is not a translate, and it is the
+     largest: a 44px-tall edge sweeping the whole width of the control. */
+  html .pill::before {
+    transition: none;
+  }
 }
 
 /* An inline link inside running copy cannot displace: moving a word inside a
    paragraph reflows the line under the reader's eye. It presses on ink
    instead, which is the same thing its hover already does and the only
    property a word in a sentence is allowed to change. */
-:is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note)
+:is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note, .consent__body)
   a:not(.pill):not(.ghost):not(.portal):not(.doc__address):not([class*='__link']):not([class*='__more']):active {
   color: var(--ink-accent);
 }
@@ -1322,20 +1834,36 @@ html.nav-open {
   translate: 0 0;
 }
 
-/* THE HOVERS ARE GATED ON A REAL POINTER. Six hover rules on the cover, and
-   none of them was behind a query, so a tapped capability row and a tapped
-   archive portal stayed lit after the finger left: on touch a :hover sticks
-   until something else is tapped, which reads as the row having been
-   selected. */
-@media (hover: none) {
-  .caps__link:hover,
-  .caps__link:hover .caps__desc,
-  .portal:hover .portal__mark svg,
-  .portal:hover .portal__arr,
-  .brief__address:hover,
-  .qa__a a:hover {
-    color: inherit;
-    translate: 0 0;
-    rotate: 0deg;
-  }
-}
+/* THE HOVERS ARE GATED ON A REAL POINTER, AND THEY ARE GATED WHERE THEY ARE
+   WRITTEN RATHER THAN UNDONE HERE.
+
+   What stood at this line was a @media (hover: none) block naming six hover
+   rules from the cover and setting them back to `color: inherit; translate: 0
+   0; rotate: 0deg`. The diagnosis behind it was exactly right: on touch there
+   is no pointer to leave, so a :hover applied by a tap STICKS until something
+   else is tapped, and a capability row or an archive portal left lit reads as
+   a row the reader has selected rather than one they have finished with.
+
+   The repair was the wrong shape twice over. It named six rules where a count
+   of every ungated :hover across the four stylesheets returned twenty nine.
+   And an undo written in one place has to restate the rest value of every
+   rule it undoes, which is a second copy of the design that goes stale the
+   first time the first copy moves; `color: inherit` was already not what four
+   of those six elements compute to at rest.
+
+   THE WHOLE SET IS GATED AT SOURCE NOW. Every rule on this site whose
+   selector carries :hover sits inside @media (hover: hover), so on a
+   touchscreen those rules do not exist and there is nothing left to reverse.
+
+   THE SPLIT IS THE PART WORTH READING. Most of the twenty nine named a hover
+   and a focus in the same selector list, and wrapping them whole would have
+   taken the focus ring off every touch device with a keyboard attached, which
+   is an accessibility regression traded for a cosmetic one. Each was split
+   instead: the :focus-visible half stays in the open where it always was, at
+   the same specificity and in the same source position, and only the :hover
+   half moves behind the query. A media query changes neither specificity nor
+   order, so a pointer device sees exactly the cascade it saw before.
+
+   WHAT ANSWERS A FINGER INSTEAD is the :active block above, which is why the
+   list in it had to be completed rather than merely kept. On a phone :active
+   is the only feedback there is. */

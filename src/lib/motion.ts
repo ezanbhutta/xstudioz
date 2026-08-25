@@ -54,9 +54,62 @@ export const prefersReduced =
    Nav, solid after scroll, hides going down, returns going up
    ------------------------------------------------------------ */
 
+/* ------------------------------------------------------------
+   THE BAR'S BOX, PUBLISHED
+
+   --nav-h is a token and the bar has never been that tall. The token
+   resolves to 63px at a 15px root and the rendered bar is 74, because its
+   height is three 44px touch targets plus two --sp-3 of padding: a
+   consequence of the touch floor and the spacing rhythm rather than a figure
+   the ladder can produce. The full accounting is at the token in tokens.css.
+
+   THREE THINGS READ THE WRONG NUMBER AND ALL THREE ARE FIXED BY WRITING THE
+   RIGHT ONE ONCE. The hide travels --nav-h up and --nav-h through --cut-k
+   across, so it stopped 11px short at 1500 and the leftover strip was blinked
+   out by the visibility change at the end of the same 408ms; hit tests at y =
+   0, 3, 6 and 9 still landed on .nav__row afterwards. The top clearance on
+   the cover and the top padding on all fifteen documents were short by the
+   same amount. The shortfall is fluid, 6px at 390 up to 13.59 at 1024, so
+   there was no constant to add anywhere.
+
+   SHRINKING THE BAR TO MATCH THE TOKEN WOULD HAVE BEEN THE WRONG REPAIR: it
+   compresses three controls that are already sitting exactly on the 44px
+   touch floor. The measurement is the truth and the token is the guess, so
+   the measurement wins, the same way --w is read off the drawn mark rather
+   than typed into a stylesheet.
+
+   THE GUARD IS AGAINST A LOOP, not against churn. --nav-h feeds page
+   clearances, a taller page can add or remove a scrollbar, a scrollbar
+   changes the viewport width and the bar's box is width-dependent. Writing
+   only on a real change breaks that chain at its first link. A zero is never
+   written either: ?static sets the bar to display: none, and a zero would
+   collapse the top clearance on every route that reads it.
+   ------------------------------------------------------------ */
+function publishNavBox(nav: HTMLElement): void {
+  let last = 0;
+  const write = (): void => {
+    const h = nav.getBoundingClientRect().height;
+    if (h <= 0 || Math.abs(h - last) < 0.5) return;
+    last = h;
+    document.documentElement.style.setProperty('--nav-h', `${h}px`);
+  };
+
+  /* ResizeObserver rather than the resize event, for the reason set out in
+     lib/measure.ts: the resize event does not fire for an element whose box
+     changed because an ancestor did, and does not fire at all in an embedded
+     pane resized by its host. */
+  new ResizeObserver(write).observe(nav);
+  write();
+  /* Type metrics set the height of the label inside two of the three
+     controls, so the first pass is provisional until the real face lands. */
+  void document.fonts?.ready.then(write);
+}
+
 export function initNav(): void {
   const nav = document.getElementById('nav');
   if (!nav) return;
+
+  publishNavBox(nav);
 
   let suppressed = false;
   let lastY = window.scrollY;
@@ -149,29 +202,39 @@ export function initNav(): void {
    the site reads it from one of those two places. */
 
 /* ------------------------------------------------------------
-   Reveal failsafe
+   THE REVEAL FAILSAFE IS DELETED, AND THE GUARANTEE IT CARRIED IS KEPT.
 
-   No code path may leave readable text sitting at opacity 0. Arrivals are an
-   IntersectionObserver adding a class, so the failsafe is the same class
-   added unconditionally: after the delay, every [data-enter] on the document
-   is handed its ink whether it was ever seen or not.
+   What was here:
 
-   This used to walk ScrollTrigger.getAll() and carried two guards, one for
-   pinned stages and one for scrubbed scenes, because forcing either to
-   progress 1 would throw the page to the end of a choreography nobody had
-   asked for. Neither exists now, so neither guard does, and the failsafe is
-   the one line it should always have been.
+     export function revealFailsafe(delay = 4000) {
+       if (prefersReduced) return;
+       window.setTimeout(() => document.querySelectorAll('[data-enter]')
+         .forEach((el) => el.classList.add('is-in')), delay);
+     }
+
+   and the rule it enforced is still the rule: no code path may leave readable
+   text at an opacity a reader cannot get out of. What changed is that the
+   rule is now true by construction rather than by callback.
+
+   THE OLD SHAPE NEEDED IT. The from-state was a resting style written onto
+   the element, `[data-enter] { opacity: 0 }`, so anything the observer never
+   crossed sat invisible forever and something had to come and hand it back.
+
+   THE NEW SHAPE MAKES IT HARMFUL. The from-state lives inside a @keyframes in
+   base.css and exists only while that animation runs, so an element nobody
+   ever reveals is not stuck, it is finished. Meanwhile this timer was doing
+   real damage: measured on /privacy/, four of sixteen arrivals were in at
+   2.5s and all sixteen were in at 7s WITH NO SCROLLING, because the timer had
+   released every below-the-fold section while it was off screen. A reader who
+   spent four seconds on the masthead, which is most readers of a document,
+   then scrolled into a page where nothing arrived. The failsafe was silently
+   cancelling the feature it existed to protect, on all sixteen routes.
+
+   Both callers dropped it with this deletion. The three conditions that could
+   stop arrivals running at all, reduce, ?static and a renderer viewport, are
+   caught by prefersReduced in src/lib/arrive.ts, which returns before a class
+   is written, leaving the page complete and still.
    ------------------------------------------------------------ */
-
-export function revealFailsafe(delay = 4000): void {
-  if (prefersReduced) return;
-
-  window.setTimeout(() => {
-    document
-      .querySelectorAll<HTMLElement>('[data-enter]')
-      .forEach((el) => el.classList.add('is-in'));
-  }, delay);
-}
 
 /* ------------------------------------------------------------
    QA helper: /?static&scroll=1200 shifts the page up by a fixed

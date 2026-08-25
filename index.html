@@ -190,6 +190,16 @@
            the plate, where it is invisible, or in front of it, where it
            covers the line. -->
 
+      <!-- THE 1200px MARK THAT STOOD HERE IS DELETED AND NOTHING REPLACES
+           IT ON THE SHEET. It was never reaching the bar it was drawn for:
+           measured through the header's own content-free pixels it returned
+           9.40 in daylight and 8.92 on the void, because the bar's readable
+           region is the whole 1500px strip and the drawing occupied one
+           corner of it. The header carries its own run now, in the header,
+           at every scroll position. A band on this sheet as well would have
+           to cross either the headline or the lede to reach the bar; the
+           arithmetic is written out in cover.css. -->
+
       <div class="container hero__sheet">
 
         <div class="hero__head">
@@ -262,19 +272,15 @@
       <div class="scene__track">
         <div class="scene__stage">
 
-          <div class="container scene__inner">
+          <div class="container scene__inner" data-enter-group>
 
-            <p class="label scene__eyebrow">The Studio</p>
+            <p class="label scene__eyebrow" data-enter>The Studio</p>
 
             <div class="turn" data-enter>
-              <!-- The single-path mark, not the two-path construction one.
-                   Its counter is a real hole in one path, so whichever ground
-                   is underneath reads through the drawing without anything
-                   having to know which ground that currently is. -->
-              <div class="turn__mark" aria-hidden="true">
-                <svg class="turn__mark-svg"><use href="#xmark" /></svg>
-              </div>
-
+              <!-- The 380px mark that stood above this line is deleted. At
+                   that size the drawing is decoration rather than a
+                   signature, which is the reading the owner has ruled out.
+                   The statement is what this section was always saying. -->
               <h2 class="turn__line display">Small on purpose. Serious by default.</h2>
             </div>
 
@@ -326,8 +332,8 @@
              never WHERE it stops. -->
         <div class="caps__index">
           <div class="caps__stage">
-        <ul class="caps__list">
-          <li class="caps__row">
+        <ul class="caps__list" data-enter-group>
+          <li class="caps__row" data-enter>
             <a class="caps__link" href="/logo-design/">
               <span class="caps__num label">01</span>
               <span class="caps__name heading" id="cap-name-01">Logo Design</span>
@@ -335,7 +341,7 @@
               <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
             </a>
           </li>
-          <li class="caps__row">
+          <li class="caps__row" data-enter>
             <a class="caps__link" href="/brand-identity/">
               <span class="caps__num label">02</span>
               <span class="caps__name heading" id="cap-name-02">Brand Identity</span>
@@ -343,7 +349,7 @@
               <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
             </a>
           </li>
-          <li class="caps__row">
+          <li class="caps__row" data-enter>
             <a class="caps__link" href="/brand-guidelines/">
               <span class="caps__num label">03</span>
               <span class="caps__name heading">Brand Guidelines</span>
@@ -351,7 +357,7 @@
               <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
             </a>
           </li>
-          <li class="caps__row">
+          <li class="caps__row" data-enter>
             <a class="caps__link" href="/social-media-kits/">
               <span class="caps__num label">04</span>
               <span class="caps__name heading">Social Media Kits</span>
@@ -359,7 +365,7 @@
               <svg class="caps__arr" aria-hidden="true"><use href="#arr-e" /></svg>
             </a>
           </li>
-          <li class="caps__row">
+          <li class="caps__row" data-enter>
             <a class="caps__link" href="/stationery/">
               <span class="caps__num label">05</span>
               <span class="caps__name heading">Stationery &amp; Collateral</span>
@@ -388,6 +394,17 @@
          over before a reader has arrived in it. A room can be committed to.
          ==================================================================== -->
     <section class="brief section room-chroma" id="brief" aria-label="Start a project">
+
+      <!-- THE RUN AND THE PANE IT IS SEEN THROUGH. The room is dark in
+           daylight and dark on the void, so one material serves both and the
+           band takes the luminance-lifted fill in either. The pane carries no
+           type, which is what lets it run at the quiet alpha and read as
+           glass in both rooms where the header cannot. One edge of the band
+           crosses the pane; both are held clear of the 32px statement above
+           them. The arithmetic is in cover.css. -->
+      <i class="depth depth--loud depth--void brief__depth" aria-hidden="true"></i>
+      <i class="brief__glass" aria-hidden="true"></i>
+
       <div class="container">
         <div class="section__head">
           <p class="label">The Brief</p>
@@ -432,7 +449,7 @@
           <p class="label">The Archive</p>
         </div>
 
-        <div class="work__grid">
+        <div class="work__grid" data-enter-group>
           <h2 class="work__statement display" id="work-statement" data-enter>
             <span class="work__line">This page is the studio.</span>
             <span class="work__line">The proof lives next door.</span>
@@ -467,7 +484,27 @@
           </span>
 
           <span class="portal__plate room-ramp">
-            <span class="portal__mark" aria-hidden="true"><svg><use href="#xmark" /></svg></span>
+            <!-- The run. 660px of the mark stood here and made a half turn on
+                 hover; the drawing is out under the owner's ruling and the
+                 turn is out under clause 5 of the law, which does not allow a
+                 rotation that a pointer can leave parked half way through. -->
+            <span class="depth depth--loud depth--void portal__band" aria-hidden="true"></span>
+            <!-- The pane, and it is the plate the display line is set on
+                 rather than an empty rectangle in the corner. Measured on the
+                 rendered page at 1500 by 900, the display line's box and the
+                 arrow's box are BOTH 100 percent inside it: the span is empty
+                 of children because the type stands ON the material at
+                 z-index 1, which is the only way a 93px line can be set on
+                 glass without putting type inside a blurred box. One edge of
+                 the band crosses it, so the same run is sharp on the ramp and
+                 soft behind the glass. This plate is the strongest backdrop
+                 on the site: measured 44.58 in both rooms.
+
+                 data-signature is the site's one signature moment, and this
+                 pane is its subject: it arrives up the arm once per load and
+                 the run it lands on goes soft under it. The attribute is the
+                 whole of the markup's part in it. -->
+            <span class="portal__glass" data-signature aria-hidden="true"></span>
             <span class="portal__title display">
               <span class="portal__line">Open the</span>
               <span class="portal__line">archive</span>
@@ -490,33 +527,33 @@
          importance by word count, not with it.
          ==================================================================== -->
     <section class="process section room-paper" id="process" aria-label="Process">
-      <div class="container">
+      <div class="container" data-enter-group>
         <div class="section__head">
           <p class="label">The Process</p>
         </div>
 
         <h2 class="process__statement heading-sm" data-enter>Four stages, the same every time.</h2>
 
-        <ol class="process__steps" data-enter>
-          <li class="process__step">
+        <ol class="process__steps">
+          <li class="process__step" data-enter>
             <i class="process__rule" aria-hidden="true"></i>
             <span class="process__num subheading">01</span>
             <h3 class="process__name subheading">Brief</h3>
             <p class="process__body body">Tell us what you’re building. We ask questions until we understand it as well as you do.</p>
           </li>
-          <li class="process__step">
+          <li class="process__step" data-enter>
             <i class="process__rule" aria-hidden="true"></i>
             <span class="process__num subheading">02</span>
             <h3 class="process__name subheading">Directions</h3>
             <p class="process__body body">Distinct concepts, each with a point of view. Every one is presented in context, on the things you actually make.</p>
           </li>
-          <li class="process__step">
+          <li class="process__step" data-enter>
             <i class="process__rule" aria-hidden="true"></i>
             <span class="process__num subheading">03</span>
             <h3 class="process__name subheading">Refinement</h3>
             <p class="process__body body">Focused rounds of revision until the mark sits exactly right. You’ll always know what changed and why.</p>
           </li>
-          <li class="process__step">
+          <li class="process__step" data-enter>
             <i class="process__rule" aria-hidden="true"></i>
             <span class="process__num subheading">04</span>
             <h3 class="process__name subheading">Delivery</h3>
@@ -538,11 +575,11 @@
           <p class="label">Questions</p>
         </div>
 
-        <div class="qa__grid" data-enter>
-          <h2 class="qa__statement heading-sm">Asked before every brief.</h2>
+        <div class="qa__grid" data-enter-group>
+          <h2 class="qa__statement heading-sm" data-enter>Asked before every brief.</h2>
 
           <div class="qa__list">
-            <div class="qa__item">
+            <div class="qa__item" data-enter>
               <h3 class="qa__q subheading">What is the difference between a logo and a brand identity?</h3>
               <p class="qa__a body">
                 A logo is one asset, a single mark. A brand identity is the
@@ -554,7 +591,7 @@
               </p>
             </div>
 
-            <div class="qa__item">
+            <div class="qa__item" data-enter>
               <h3 class="qa__q subheading">What files will I receive?</h3>
               <p class="qa__a body">
                 Vector masters in SVG, EPS and PDF, plus raster exports for the
@@ -566,7 +603,7 @@
               </p>
             </div>
 
-            <div class="qa__item">
+            <div class="qa__item" data-enter>
               <h3 class="qa__q subheading">Do I own the work when it is finished?</h3>
               <p class="qa__a body">
                 Yes. Full ownership of the final work transfers to you in
