@@ -73,7 +73,7 @@
 
 .consent__title {
   color: var(--ink-dim);
-  margin-bottom: 6px;
+  margin-bottom: var(--space-2);
 }
 
 .consent__body {
@@ -171,7 +171,7 @@
   background: var(--ground);
   color: var(--ink);
   font-size: var(--text-body-sm);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   padding: 10px var(--sp-4);
   border-radius: 0 0 var(--radius-ui) var(--radius-ui);
   /* Arrives DOWN the arm, because down the arm is where it is going: out of
@@ -250,7 +250,7 @@
 /* ---------------- Document head ---------------- */
 
 .doc__head {
-  padding-block: 4rem 5rem;
+  padding-block: var(--space-fl-7) var(--space-fl-8);
 }
 
 .doc__eyebrow {
@@ -260,7 +260,7 @@
 
 .doc__title {
   font-size: var(--text-heading);
-  font-weight: 400;
+  font-weight: var(--weight-regular);
   /* Sentence case, so it needs the leading that clears a descender rather
      than the uppercase one. */
   line-height: var(--leading-tight-mixed);
@@ -272,8 +272,23 @@
   font-size: var(--text-subheading);
   line-height: 1.28;
   color: var(--ink);
-  max-width: 34ch;
-  margin-top: 3rem;
+  max-width: 30ch;
+  margin-top: var(--space-7);
+  /* THE WIDOW POLICY REACHED EVERYTHING BUT THIS. base.css declares
+     `text-wrap: pretty` on .body, .body-sm, .prose p, .qa__a p and .faq__a p,
+     and the block above extends it to .prose li. The lede carries none of
+     those classes and does not live inside .prose, so it was the one piece of
+     running copy on a document set with the plain line-breaking algorithm.
+
+     MEASURED, by counting the characters that actually land on each rendered
+     line box across sixteen routes at four widths: eight ledes finished on a
+     single word. "company." on /brand-identity/ at both 1500 and 768,
+     "moment." on /brand-guidelines/ and "company." on /social-media-kits/ at
+     390, and "takes.", "end." and "not." on /process/, /journal/ and
+     /journal/what-a-logo-costs/ at 320. `balance` is the wrong tool here and
+     base.css says why: it evens the rag of a four-line block and leaves the
+     last word exactly where it was. */
+  text-wrap: pretty;
 }
 
 /* Key facts sit as a spec strip under the title, the same
@@ -282,7 +297,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--col-gap);
-  margin-top: 5rem;
+  margin-top: var(--space-fl-8);
   border-top: var(--hairline);
   padding-top: var(--sp-4);
 }
@@ -295,7 +310,7 @@
 
 .doc__facts dt {
   font-size: var(--text-caption);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   line-height: 1.4;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
@@ -305,9 +320,49 @@
 .doc__facts dd {
   font-size: var(--text-body-sm);
   line-height: var(--leading-body);
+  /* Same omission as the lede, and it strands words harder because the column
+     is a third of the strip. Measured across the sixteen routes: "rules" on
+     /logo-design/ and /social-media-kits/, "references" on
+     /brand-guidelines/, "email" on /stationery/ and "specs" and "time" at
+     768, each alone on a second line under a two-line value. A fact is
+     running copy in a narrow column, so it takes the running copy's policy. */
+  text-wrap: pretty;
 }
 
 /* ---------------- Two-column body ---------------- */
+
+/* THE DOCUMENT'S OWN READING MEASURE.
+
+   :root sets --measure to 40ch for the whole site, and on the cover that is
+   right: the hero lede, the capability notes and the answer block are display
+   apparatus read in glances. A document is read in paragraphs and the brief
+   asks it for 60 to 68 characters a line, not 45 to 72.
+
+   40ch DOES NOT REACH THAT BAND. Measured on eleven document routes by
+   dividing each paragraph's content box by the mean advance of its own text
+   in its own computed font, 40ch renders 58.1 to 59.1 characters a line at
+   1500 and less below. Achieved counts, which is characters actually landing
+   on a rendered line box, run 54.8 on average because a ragged right never
+   fills its box. Both readings sit under 60 and the earlier pass's claim that
+   the document body was already inside 60 to 68 does not survive either one.
+
+   42ch, AND THE CEILING IS THE GRID RATHER THAN A PREFERENCE. The reading
+   track at 1500 is four of twelve columns, 451.98px, and one ch of this face
+   at the document's 16px step is 10.608px, so the widest measure that still
+   ends on --anchor-action is 42.61ch. 42ch is 445.5px, six pixels inside it,
+   and puts capacity at 61.6: in the band, on the anchor, with room for the
+   font metrics to move. 43ch would render 63 and overrun the anchor at 1500,
+   which is a trade this file is not entitled to make on its own.
+
+   Below the desktop band nothing changes, because there the viewport binds
+   long before the cap does: at 390 the column is 342px and 42ch is 417.7px.
+   Declared on .doc and .lost rather than at :root so the cover keeps its own
+   figure, and read by both the paragraph cap further down this file and the
+   reading track's floor in .doc__grid, so the two cannot drift apart. */
+.doc,
+.lost {
+  --measure: 42ch;
+}
 
 /* The reading grid.
 
@@ -321,12 +376,54 @@
    The index keeps the page's left edge, so it stays aligned with the
    breadcrumb and title above it. */
 .doc__grid {
+  /* THE DOCUMENT'S SPINE IS THE SITE'S THREE ANCHORS. It was 14rem, a 39.47rem
+     measure cap and a remainder, joined by a 3rem gap: three widths, none of
+     them derived, which placed the index at the content edge, the prose at
+     x=255 and the aside at x=847 against anchors at 48, 405 and 881. Two of
+     those three were near misses. The columns ARE the anchors now, and the
+     measure cap moves onto the prose itself where it belongs.
+
+     AND THE READING COLUMN HAS A FLOOR, BECAUSE FOUR TWELFTHS OF THE PAGE IS
+     NOT A MEASURE EVERYWHERE. The middle track is four of the twelve columns,
+     which is 452px at the 1500 artboard and shrinks with the viewport while
+     the type does not. Capacity in characters a line, measured on eleven
+     non-capability document routes by dividing each paragraph's own content
+     box by the mean advance of its own text in its own computed font:
+
+         960   326px   47.6      1180   345px   50.4
+        1000   341px   49.8      1280   379px   51.8
+        1024   293px   42.8      1360   405px   55.5
+        1060   305px   44.6      1440   424px   58.1
+        1100   319px   46.5      1500   424px   58.1
+
+     Two things are wrong in that table and neither is a trade-off. 1024 and
+     1060 are BELOW 45, which is where a line stops being a measure at the
+     short end. And the column gets NARROWER as the window gets WIDER: going
+     from 1000 to 1024 the reader gains 24px of window and loses 48px of text
+     column, because the container's gutter steps up at 1024 and four twelfths
+     of the remainder loses more than the viewport gains. A layout that
+     punishes a wider window is broken rather than compromised.
+
+     THE FLOOR IS THE MEASURE ITSELF, and the third track pays for it. That
+     track holds 571px of nothing at 1500 and its own comment says it exists
+     so "the slack collects in a third track that reads as an outer margin
+     instead of a hole in the text". This is the case it was collected for.
+     minmax() with a max below its own min resolves to the min, so above about
+     1490 the anchor still sizes the track and nothing moves; below it the
+     reading column keeps the measure and the outer margin gives up the
+     difference. The five .doc--capability routes already worked this way and
+     already read 58.7 at every width, which is where this puts the other
+     eleven. */
   display: grid;
   grid-template-columns:
-    minmax(0, 14rem)
-    minmax(0, 39.4667rem)
+    calc(var(--anchor-copy) - var(--grid-gap))
+    minmax(
+      min(100%, var(--measure)),
+      calc(var(--anchor-action) - var(--anchor-copy) - var(--grid-gap))
+    )
     minmax(0, 1fr);
-  gap: 3rem;
+  column-gap: var(--grid-gap);
+  row-gap: var(--space-fl-7);
   align-items: start;
   border-top: var(--hairline);
   /* 30px, down from 46, so this rule stands the same distance above the first
@@ -369,7 +466,7 @@
   /* A lining numeral has no descender, so the floor does not bind here, but
      the value is stated against the ladder rather than as a loose figure. */
   line-height: var(--leading-solid);
-  font-weight: 400;
+  font-weight: var(--weight-regular);
   /* Cut out of the ground rather than set on it, so the number sits in the
      page. The outline was drawn at --ink-line-strong, 34% of the ink, which
      measured 2.10:1 against paper once the masthead stopped being deep violet.
@@ -430,10 +527,16 @@
      spine that runs its whole length. */
   .doc--capability .doc__head {
     display: grid;
+    /* THE SPINE IS THE COPY EDGE. 14rem plus a 3rem gap put the masthead's
+       content at x=255, which is not an anchor and is 150px off the nearest
+       one, so a capability document opened on an edge that appears nowhere
+       else on the site. The folio column is now the apparatus channel and
+       everything beside it begins on the primary copy edge, which is the
+       same spine the interior body below already runs on. */
     grid-template-columns:
-      minmax(0, 14rem)
+      calc(var(--anchor-copy) - var(--grid-gap))
       minmax(0, 1fr);
-    column-gap: 3rem;
+    column-gap: var(--grid-gap);
     align-items: start;
   }
 
@@ -461,8 +564,9 @@
 
   .doc--capability .doc__grid {
     grid-template-columns:
-      minmax(0, 14rem)
+      calc(var(--anchor-copy) - var(--grid-gap))
       minmax(0, 1fr);
+    column-gap: var(--grid-gap);
   }
 
   .doc--capability .doc__prose {
@@ -486,9 +590,24 @@
     max-width: var(--measure);
   }
 
-  /* And released where it does not. */
+  /* And released where it does not — but released is not the same as
+     unbounded, and it was unbounded.
+
+     MEASURED. At 1500 the .spec-wrap on /brand-guidelines/ ran the full
+     1404px content width, which put its description column at 851px and its
+     longest composed line at 117 CHARACTERS while the paragraph directly
+     above it was set to 55. Across the twelve document routes, ten composed
+     table lines exceeded 68 characters and the worst reached 117.
+
+     44rem is derived rather than picked. Swept at 44 / 46 / 48 / 52rem over
+     every .spec on every document route: 44 gives max 70 and one line over
+     68, 46 gives 72 and four, 48 gives 74 and six, 52 gives 84 and eight.
+     And it costs nothing, because 44rem is 704px against .spec's own 520px
+     min-width: the count of tables that actually scroll is SIX at every cap
+     in the sweep, including no cap at all. The wide tables were already
+     scrolling; this only stops the narrow ones from spreading. */
   .doc--capability .doc__section > .spec-wrap {
-    max-width: none;
+    max-width: min(100%, 44rem);
   }
 }
 
@@ -545,7 +664,7 @@
 .doc__index a::before {
   content: counter(idx, decimal-leading-zero);
   font-size: var(--text-caption);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   line-height: 1.9;
 }
@@ -560,12 +679,23 @@
   }
 }
 
+/* THE READING MEASURE IS ONE TOKEN AND IT IS ON THE PARAGRAPH.
+
+   It was 37rem on the block, and the capability routes then set the same
+   block to `max-width: none` so that a wide grid track could hold a figure.
+   The result, measured by drawing each paragraph's own text into a canvas at
+   its own computed font and dividing its content box by the mean advance:
+   forty two paragraphs across the interior routes rendered between 73 and 81
+   characters a line at 1500. A line stops being a measure somewhere around
+   75.
+
+   The cap moves onto the PARAGRAPH, where it belongs. A block can then be as
+   wide as its content needs — a table, a figure, a specification row — while
+   every line of running prose inside it is still held to --measure, which is
+   48ch and renders about 55 characters in this face. Nothing has to choose
+   between a readable column and a wide block any more. */
 .doc__prose {
-  /* Single-column measure, matched to the grid track above so the reading
-     width does not change when the layout collapses. Set in rem, not ch:
-     the body face's zero is wider than its mean lowercase advance, so 68ch
-     renders well past a comfortable line here. */
-  max-width: 37rem;
+  max-width: none;
 }
 
 /* ---------------- Prose ---------------- */
@@ -576,7 +706,7 @@
 
 .doc__section > h2 {
   font-size: var(--text-heading-sm);
-  font-weight: 400;
+  font-weight: var(--weight-regular);
   line-height: var(--leading-solid);
   text-wrap: balance;
   margin-bottom: var(--sp-5);
@@ -584,7 +714,7 @@
 
 .doc__section h3 {
   font-size: var(--text-body);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   line-height: 1.35;
   margin-top: var(--sp-5);
   margin-bottom: var(--sp-3);
@@ -594,6 +724,12 @@
 .prose li {
   font-size: var(--text-body);
   line-height: var(--leading-body);
+  /* base.css declares the widow policy on `.prose p` and stops there. A list
+     item is running copy in the same column at the same size, and it strands
+     words at the same rate: "different." and "around." were both list items
+     on /brand-identity/, each one word alone on a third line. Extended here
+     rather than in base.css because `li` is a document shape. */
+  text-wrap: pretty;
 }
 
 /* THE MEASURE, ON THE THINGS THAT ARE READ. The reading column is 37rem so
@@ -610,8 +746,12 @@
    grid cells the cap can never bind on. */
 .prose p,
 .prose li,
+.doc__prose p,
+.doc__prose li,
 .faq__a p,
 .qa__a,
+.qa__a p,
+.journal__note,
 .doc__cta-copy .body {
   max-width: var(--measure);
 }
@@ -622,7 +762,7 @@
 }
 
 .prose strong {
-  font-weight: 500;
+  font-weight: var(--weight-medium);
 }
 
 .prose em {
@@ -655,9 +795,13 @@
    them. */
 :is(.prose, .qa__a, .faq__a, .doc__facts, .journal__note) a:not(.pill):not(.ghost):not(.portal):not(.doc__address):not([class*="__link"]):not([class*="__more"]) {
   color: var(--ink);
-  background-image: var(--brand-ramp);
+  /* THE UNDERLINE IS THE ACCENT, and it is the fourth and last thing on the
+     allowed list: a rule that means something. It was the brand ramp, which
+     put a two-colour gradient under every inline link in every document. One
+     flat plum hairline is the same affordance drawn once. */
+  background-image: linear-gradient(var(--ink-accent), var(--ink-accent));
   background-repeat: no-repeat;
-  background-size: 100% 2px;
+  background-size: 100% 1px;
   background-position: left calc(100% - 1px);
   padding-bottom: 1px;
   /* THE HOVER IS INK. It used to thicken the rule from 2px to 6px, which is a
@@ -745,7 +889,7 @@
   left: 0;
   top: 0;
   font-size: var(--text-caption);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   line-height: 2.4;
   color: var(--ink-dim);
@@ -817,6 +961,12 @@
   vertical-align: top;
   font-size: var(--text-body-sm);
   line-height: var(--leading-body);
+  /* A cell is running copy in a narrow column, which is the case that strands
+     a final word hardest. Three of the measured widows on the document routes
+     were table cells: "press.", "apart." and "says.", each alone on its own
+     line under a full one. Same mechanism as the body rule in base.css, and
+     the same guarantee: it moves a break, never a character. */
+  text-wrap: pretty;
 }
 
 /* Scoped to thead rather than to th, so the row header underneath never has
@@ -826,7 +976,7 @@
    declaration rather than a second declaration cancelling the first. */
 .spec thead th {
   font-size: var(--text-caption);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--ink-dim);
@@ -836,7 +986,7 @@
 .spec tbody th {
   font-size: var(--text-body-sm);
   color: var(--ink);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
 }
 
 /* ---------------- Deliverables checklist ---------------- */
@@ -846,20 +996,44 @@
   border-top: var(--hairline);
 }
 
+/* THE ROW WRAPS RATHER THAN CRUSHES.
+
+   It was `grid-template-columns: 1fr auto`, which gives the format tag
+   whatever it asks for and hands the description the remainder however small
+   that is. Measured, the remainder: at 1500, inside the 424px reading column,
+   "Vector masters for print and future editing, including the editable
+   original" was set in 254px beside "SVG · AI · EPS · PDF" and composed at 31
+   characters a line. At 320 the same row had 128px and composed at 17, five
+   lines of ladder against a tag sitting alone at the top right.
+
+   Flex with wrap makes the row answer its own width instead. The description
+   asks for 21rem and may grow; the tag keeps its intrinsic width and is held
+   right by an auto margin, which is what puts it on the right whether it
+   shares the line or takes its own. A short tag still rides alongside; a long
+   one drops below and gives the whole width back to the copy. No breakpoint,
+   so it is the container that decides and not the viewport. */
 .checklist li {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: var(--sp-4);
+  display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
+  gap: var(--sp-2) var(--sp-4);
   padding-block: var(--sp-3);
   border-bottom: var(--hairline);
   font-size: var(--text-body-sm);
 }
 
+.checklist li > span:first-child {
+  flex: 1 1 21rem;
+  min-width: 0;
+  text-wrap: pretty;
+}
+
 .checklist li span:last-child {
+  flex: 0 0 auto;
+  margin-left: auto;
   color: var(--ink-dim);
   font-size: var(--text-caption);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   text-align: right;
@@ -897,6 +1071,18 @@
 }
 
 .faq__q::-webkit-details-marker { display: none; }
+
+/* THE OTHER SPELLING OF THIS CONTROL. Twenty .faq__q are <summary> elements
+   holding a .faq__q-text span, and that span is where the balance lives. The
+   remaining ones are bare <h3 class="faq__q">, text and no span, on /about/,
+   /logo-design/, /brand-identity/, /brand-guidelines/ and
+   /social-media-kits/ — so they were the only questions on the site setting
+   themselves with the plain algorithm. Seven of the site's measured widows
+   were these: "agency?", "it?", "identity?", "be?", "business?", "myself?"
+   and "brandbook?", each stranded alone under a full line. */
+h3.faq__q {
+  text-wrap: balance;
+}
 
 /* Scoped through .faq__q so it outranks `.doc__section h3`, which otherwise
    adds its section-heading margins inside the summary and inflates every
@@ -983,7 +1169,7 @@
 }
 
 .faq__a {
-  max-width: 37rem;
+  max-width: none;
   padding-bottom: var(--sp-5);
   color: var(--ink-dim);
 }
@@ -1058,7 +1244,7 @@
 .qa__grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 4rem;
+  gap: var(--space-fl-7);
   align-items: start;
 }
 
@@ -1137,7 +1323,7 @@
 
 .related__name {
   font-size: var(--text-subheading);
-  font-weight: 400;
+  font-weight: var(--weight-regular);
   line-height: var(--leading-solid);
   transition: translate var(--dur-half) var(--curve);
 }
@@ -1155,7 +1341,14 @@
 .related__desc {
   color: var(--ink-dim);
   align-self: center;
-  max-width: 46ch;
+  /* 42ch, not 46. `ch` is the advance of the digit zero, and in this face at
+     15px that is 9.95px against a real average of 6.3, so 46ch measured 457px
+     and composed SEVENTY-THREE characters a line — five past the document
+     ceiling, on the last block a reader sees. 42ch brings the composed line to
+     67. The unit stays because it tracks the type size; only the count is
+     re-derived against what actually landed. */
+  max-width: 42ch;
+  text-wrap: pretty;
 }
 
 .related__arr {
@@ -1222,7 +1415,7 @@
 
 .entries__name {
   font-size: var(--text-subheading);
-  font-weight: 400;
+  font-weight: var(--weight-regular);
   line-height: var(--leading-solid);
   text-wrap: balance;
   transition: translate var(--dur-half) var(--curve);
@@ -1365,11 +1558,11 @@
 .doc__address-text,
 .doc__cta .pill > span:not(.sr-only) {
   display: inline-block;
-  background-image: var(--brand-ramp);
+  background-image: linear-gradient(var(--ink-accent), var(--ink-accent));
   background-repeat: no-repeat;
-  background-size: 100% 3px;
+  background-size: 100% 2px;
   background-position: left bottom;
-  padding-bottom: 8px;
+  padding-bottom: var(--space-2);
 }
 
 .doc__address-arr,
@@ -1437,12 +1630,12 @@
      below it is counted, so 10px each side is what clears 44 at BOTH ends of
      the ladder. Padding rather than a min-height, which would put the ramp
      rule off the baseline. */
-  padding-block: 10px;
+  padding-block: var(--space-3);
 }
 
 .doc__midact .doc__address-text {
   background-size: 100% 2px;
-  padding-bottom: 5px;
+  padding-bottom: var(--space-1);
 }
 
 /* ---- The close ---- */
@@ -1464,7 +1657,25 @@
   display: flex;
   flex-direction: column;
   gap: var(--sp-5);
-  padding-top: 92px;
+  padding-top: var(--space-fl-9);
+}
+
+/* THE ONE PARAGRAPH ON THIS ROUTE HAD NO MEASURE AT ALL, and it is the widest
+   line on the site by a distance. .lost__grid is a flex column inside the
+   container, the paragraph is a direct child of it, and every other running
+   paragraph on every other route is capped either by .prose or by
+   .doc__section. This one is capped by nothing.
+
+   MEASURED, by counting the characters that land on each rendered line box:
+   ONE line of 140 characters at 1500, and 99 at 768. The ceiling is 72. The
+   next worst reading on the site is 62. It is a short paragraph so it never
+   wrapped at the artboard, which is exactly why nobody saw it.
+
+   .body and not .lost__grid > p, because .lost__code is a p as well and it is
+   a label. The cap is the same token the documents read, so the 404's copy is
+   set to the same measure as the pages it is apologising for. */
+.lost__grid > .body {
+  max-width: var(--measure);
 }
 
 .lost__code {
@@ -1483,11 +1694,19 @@
 /* Two columns of pages on this site, then one column of places you leave
    for. The third is given a third of the row on its own so the outbound
    channels are never mistaken for more sitemap. */
+/* ON THE THREE ANCHORS. It was 1fr / 1fr / 1.4fr, which put the second
+   column at x=470 and the third at x=893 against anchors at 405 and 881. Two
+   almost-alignments, twelve and sixty-five pixels out, which is the worst
+   kind: near enough that nobody can name what is wrong and far enough that
+   the page does not lock up. The three columns are the three anchors now. */
 .footer__index {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr);
-  gap: var(--col-gap);
-  padding-block: var(--sp-6);
+  grid-template-columns:
+    calc(var(--anchor-copy) - var(--grid-gap))
+    calc(var(--anchor-action) - var(--anchor-copy) - var(--grid-gap))
+    minmax(0, 1fr);
+  column-gap: var(--grid-gap);
+  padding-block: var(--space-fl-7);
 }
 
 .footer__col-head {
@@ -1697,8 +1916,12 @@
   /* Two sitemap columns keep the top row; the channels take a full row of
      their own underneath, which is where they read best anyway. */
   .footer__index {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: var(--sp-6);
+    /* Two columns, split on the tablet grid's own copy edge rather than in
+       half, so the index keeps an anchor rather than acquiring a midpoint. */
+    grid-template-columns:
+      calc(var(--anchor-copy) - var(--grid-gap))
+      minmax(0, 1fr);
+    row-gap: var(--space-fl-7);
   }
 
   .footer__col--channels {
@@ -1725,7 +1948,7 @@
      control on a document that the 44px floor was still missing. Padding
      rather than a min-height, so the ramp rule stays on the baseline. */
   .doc__cta .pill {
-    padding-block: 4px;
+    padding-block: var(--space-1);
   }
 
   .related__arr,
@@ -1863,7 +2086,7 @@
 
 .journey__name {
   font-size: var(--text-body);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   line-height: 1.25;
   color: var(--ink);
 }
@@ -1889,25 +2112,29 @@
   outline-offset: -2px;
 }
 
-/* Four across once there is room for four readable columns. Below that it
-   stays a single vertical flow, which is the natural shape on a phone rather
-   than a desktop diagram squeezed sideways. */
+/* THE TWO-UP IS GONE, AND IT IS GONE ON A MEASUREMENT.
+
+   The rule read `@media (min-width: 900px) { grid-template-columns:
+   repeat(2, minmax(0,1fr)) }`. The query asked the VIEWPORT, but .journey
+   does not live in the viewport: it lives in the document's reading track,
+   which the spine derives from the site's copy and action anchors and which
+   is 452px at a 1500px window. Measured at 1500, the two columns resolved to
+   225.98px and 226px, and .journey__note — 15px running copy with a 34ch cap
+   that can never bind there — composed at 19 to 21 CHARACTERS a line, four
+   lines of ladder per stage. A desktop diagram squeezed sideways is exactly
+   what the old comment said it was avoiding, and it was doing it above 900px
+   rather than below.
+
+   One column gives each note the full 452px and about 50 characters. The
+   even-child border and its padding go with it: they existed only to divide
+   two columns, and a left border on stages two and four of a single stack is
+   a line drawn to nothing. Sequence still survives every decoration being
+   turned off, which is this list's own stated test — it is carried by "Stage
+   one" through "Stage four" and by reading order, and now also by four
+   hairline rules that, as of this pass, actually paint. */
 @media (min-width: 900px) {
-  .journey {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .journey__stage:nth-child(even) {
-    border-left: var(--hairline);
-  }
-
-  .journey__stage:nth-child(even) .journey__link {
-    padding-left: var(--sp-5);
-  }
-
   .journey__link {
     padding-block: var(--sp-5);
-    padding-right: var(--sp-5);
   }
 }
 
@@ -2188,7 +2415,7 @@
      the full column on all fifteen. */
   border-top: 1px solid var(--ink-line-strong);
   padding: var(--sp-3) 0 5rem;
-  margin-bottom: 4.8rem;
+  margin-bottom: var(--space-fl-8);
 }
 
 /* THE REGISTER LINE. The eyebrow used to sit at the FLOOR of the band, 384px
@@ -2208,118 +2435,62 @@
 }
 
 /* ============================================================
-   THE MASTHEAD'S RUN, AND WHAT IT REPLACED
+   THE MASTHEAD'S RUN IS DELETED, AND NOTHING REPLACES IT
 
-   690px of the mark was hung here, from one nav height above the band, so
-   that its crown sat behind the fixed bar and its body came out below it. It
-   is deleted under the owner's ruling on the drawing at architectural scale,
-   and the measurement agrees with the ruling rather than resisting it:
-   through the bar's own content-free pixels at the top of a document it read
-   6.15 in daylight and 5.35 on the void, which is barely off the paint floor
-   for the largest object on the page.
+   WHAT WAS HERE. A chromatic run at the arm's angle filling --doc-band, on
+   the masthead of fifteen interior routes, bleeding past both gutters and
+   passing behind the eyebrow, the lede and the breadcrumb. Before that it
+   was 690px of the drawn mark in the same slot. Both were the same mistake
+   at different saturations: an object placed in the masthead's empty band
+   because the band looked empty.
 
-   THE BAND FILLS THE BAND, AND THAT IS THE WHOLE PLACEMENT. --doc-band is
-   two display steps of stated empty paper on fifteen routes; the mark used to
-   be the thing standing in it. The run occupies it exactly: from the rule
-   that is the masthead's ceiling to the plate that is its floor, bleeding
-   past both gutters, so what is on the sheet is a fragment of something
-   larger held between two real edges rather than an object placed in a
-   corner. Its lower edge is occluded by the title's full-bleed plate rather
-   than cut, because the plate paints after this in tree order.
+   THE BAND IS NOT EMPTY, IT IS A PAUSE. --doc-band is two display steps of
+   stated open paper between the rule that is the masthead's ceiling and the
+   title that is its floor. That is the largest deliberate silence on an
+   interior route and it is doing all four of the jobs a large empty field
+   has to do to earn itself: it isolates the title from the navigation, it
+   groups the eyebrow and the breadcrumb as one apparatus above it, it paces
+   the entry into a long document, and it directs the eye down to the one
+   line that names the page. Filling it was the defect.
 
-   IT DOES NOT CROSS THE BAR, AND IT DID IN THE FIRST PASS. Running it up
-   past the header bought law 4's comparison and cost two things for it. It
-   ran out of the masthead's bottom and across the lede at 21px, which is a
-   chromatic wash behind body copy. And the header carries its own run now,
-   so a second one crossing the bar at a different offset put two unrelated
-   diagonals in the same 74px strip. Bounded to the masthead it is one clean
-   object and the bar is another.
-
-   --doc-band IS UNTOUCHED. The masthead's spacing is stated by the type
-   ladder: the band is two display steps, the eyebrow rides its ceiling and
-   the plate is its floor. Nothing here moves any of that.
-
-   THE FILL IS THE CAPPED DEPTH PAIR, NOT THE FULL RAMP, and that is a
-   contrast decision. The band passes behind the eyebrow at 13px, the lede at
-   21px and the breadcrumb on every one of the fifteen routes, with nothing
-   over it. The full ramp's violet end is 3.13:1 against --text. The capped
-   pair is 6.55:1 in daylight and 5.43:1 on the void, both clear of the
-   4.5:1 body floor.
+   WHAT CARRIES THE DEPTH INSTEAD is the same thing that carries it
+   everywhere else on the site now: the hairline above, the title's own
+   optical size against the copy beneath it, and the one structural step this
+   route owns, which is the closing plate in the footer.
    ============================================================ */
-.doc__head::before {
-  content: '';
-  position: absolute;
-  /* The masthead's own box: its ceiling is the rule this element's host
-     draws, its floor is --doc-band, and it bleeds past both gutters. No new
-     figure is introduced; change the type ladder and the band follows. */
-  top: 0;
-  left: calc(var(--gutter) * -1);
-  right: calc(var(--gutter) * -1);
-  height: var(--doc-band);
-  /* Assembled here rather than read from a token for the substitution reason
-     set out in tokens.css: a gradient declared at :root freezes :root's stops
-     into itself, and these two stops are what the theme flips. */
-  background-image: linear-gradient(
-    var(--ramp-angle),
-    var(--depth-a) 0%,
-    var(--depth-b) 100%
-  );
-  --band-near: calc(50% + var(--band-at, 0px));
-  --band-far: calc(50% + var(--band-at, 0px) + var(--band-w));
-  -webkit-mask-image: linear-gradient(
-    var(--band-angle),
-    transparent 0 var(--band-near),
-    #000 var(--band-near) var(--band-far),
-    transparent var(--band-far) 100%
-  );
-  mask-image: linear-gradient(
-    var(--band-angle),
-    transparent 0 var(--band-near),
-    #000 var(--band-near) var(--band-far),
-    transparent var(--band-far) 100%
-  );
-  /* Solved rather than nudged. The leading edge lands in the masthead's
-     empty half and the trailing edge runs off the right gutter, so what is
-     in the band is a fragment entering the page rather than a parallelogram
-     standing in the middle of it. That is the same test the 404's attempt
-     failed: a band with both edges inside the frame and no surface crossing
-     it reads as an artifact, however correct its angle is. */
-  --band-at: 20%;
-  pointer-events: none;
-}
 
 
-/* The display step, the same one the cover's hero is set at, which is the
-   single strongest seam between a document and the poster it came from.
 
-   It is a plate. Stated here as a rule rather than as a class in the markup
-   so it reaches all fifteen documents including the two whose files this
-   session may not touch, which would otherwise have been the only mastheads
-   on the site still opening in ink on paper. */
+/* THE TITLE IS TYPE ON THE SHEET AGAIN, AND THE PLATE UNDER IT IS DELETED.
+
+   .doc__title::before was a full-bleed brand ramp escaping the container by
+   50vw on each side, on fifteen interior routes, behind the one line that
+   names each page. Together with the closing plate in the footer that put
+   two saturated viewport-scale surfaces on every document on the site, and
+   it meant the first thing a reader met on a page they arrived at to READ
+   was the largest coloured object the system could draw.
+
+   What names the page now is the display step itself, at the tracking chosen
+   by rendering, in the room's own ink, standing in open canvas between the
+   masthead's hairline above it and the document's first section below. That
+   is the same object the cover's hero is, which is the seam between a
+   document and the poster it came from and the one place a repeat is worth
+   having.
+
+   THE PADDING IS UNEQUAL for the reason every optical padding on this site
+   is: a font's ascent is deeper than its cap height, so equal padding renders
+   top-heavy by an amount nobody can name and everybody can see. */
 .doc__title {
   position: relative;
-  isolation: isolate;
   font-family: var(--font-display);
   font-size: var(--text-display);
   font-weight: var(--weight-display);
   line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
   text-align: var(--align);
-  color: var(--ramp-ink);
+  color: var(--ink);
   text-wrap: balance;
-  padding-block: 6rem;
-}
-
-.doc__title::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: -50vw;
-  right: -50vw;
-  background-color: var(--brand-violet);
-  background-image: var(--brand-ramp-deep);
-  pointer-events: none;
+  padding-block: var(--space-fl-9) var(--space-fl-10);
 }
 
 /* ---- The lede ----
@@ -2337,7 +2508,7 @@
 .doc__lede {
   font-family: var(--font-sans);
   font-size: var(--text-subheading);
-  font-weight: 400;
+  font-weight: var(--weight-regular);
   line-height: 1.45;
   text-transform: none;
   color: var(--ink);
@@ -2345,8 +2516,8 @@
      step wants a shorter line, and at 54ch this one was rendering 89
      characters on /privacy/, the widest measure on the site after the
      cover's own note. 45ch brings the worst of the sixteen ledes to 74. */
-  max-width: 45ch;
-  margin-top: 3rem;
+  max-width: 32ch;
+  margin-top: var(--space-7);
 }
 
 .doc__facts {
@@ -2484,9 +2655,8 @@
   position: relative;
   background: none;
   color: var(--ink);
-  border-left: 3px solid transparent;
-  border-image: var(--brand-ramp) 1;
-  padding: var(--sp-2) 0 var(--sp-2) var(--sp-5);
+  border-left: 2px solid var(--ink-accent);
+  padding: var(--space-2) 0 var(--space-2) var(--space-5);
   clip-path: none;
 }
 
@@ -2541,9 +2711,27 @@
   content: '';
   position: absolute;
   inset: 0 0 auto;
-  height: calc(var(--cut-rise) + 4px);
-  background-color: var(--brand-violet);
-  background-image: var(--brand-ramp);
+  /* AN EDGE, NOT A FIELD, AND THE EDGE IS ONE PIXEL WIDE.
+
+     It was the brand ramp filling the whole cut: a 120px chromatic wedge
+     across the full width of the sheet. Painting the same wedge in a neutral
+     was the first attempt and it was worse, because a 120px grey wedge is a
+     grey slab, which is the failure this pass was explicitly told not to
+     recreate in greyscale.
+
+     What is drawn now is a 1px rule that follows the cut. The box is still
+     the chamfer's own bounding box, so the geometry is unchanged and still
+     derived from --cut-rise and --cut-k; the FILL is a gradient whose
+     transition axis is the band angle and which is transparent everywhere
+     except for one pixel at the chamfer's own line. The clip then trims it to
+     the chamfer. Same 40.82 degrees, same corner, one pixel of ink. */
+  height: calc(var(--cut-rise) + 1px);
+  background-image: linear-gradient(
+    var(--band-angle),
+    transparent 0 calc(100% - 1px),
+    var(--ink-line-strong) calc(100% - 1px) 100%
+  );
+  border-top: 1px solid var(--ink-line-strong);
   clip-path: polygon(
     var(--cut-run) 0,
     100% 0,
@@ -2561,7 +2749,7 @@
   color: var(--ink);
   margin-top: 0;
   padding-top: 0;
-  padding-bottom: 7rem;
+  padding-bottom: var(--space-fl-9);
   clip-path: none;
 }
 
@@ -2572,10 +2760,11 @@
 .doc__cta h2 {
   position: relative;
   isolation: isolate;
-  color: var(--ramp-ink);
+  color: var(--ink);
   grid-column: 1 / -1;
-  padding-block: 6.4rem;
-  margin-bottom: 4.8rem;
+  padding-block: var(--space-fl-9);
+  margin-bottom: var(--space-fl-8);
+  letter-spacing: var(--tracking-heading);
   font-family: var(--font-display);
   font-size: var(--text-heading);
   font-weight: var(--weight-display);
@@ -2593,8 +2782,17 @@
   bottom: 0;
   left: -50vw;
   right: -50vw;
-  background-color: var(--brand-violet);
-  background-image: var(--brand-ramp-deep);
+  /* LEVEL 2, FULL BLEED. It was a brand ramp. A document now ends on three
+     materials in sequence and one of each: open canvas, this frost band
+     carrying the ask, and the focal plate in the footer carrying the close.
+     Two dark plates stacked would have made neither of them read. */
+  background-color: var(--frost);
+  /* A COLOUR is wanted in a shadow layer, and --hairline is a border
+     shorthand: written as --hairline this list was invalid in full, so the
+     ask band lost its lit top edge along with the shade under it. */
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-edge-lit),
+    inset 0 -1px 0 0 var(--ink-line-strong);
   pointer-events: none;
 }
 

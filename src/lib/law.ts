@@ -11,11 +11,15 @@
                     half turn, at 29 of 52 at a quarter and at 32 of 52
                     mirrored. So 180 degrees is the only rotation the drawing
                     can make and come back identical.
-     the centre     that half turn happens about 49.90% / 50.71% of the box,
-                    which is where the drawing's real centre of rotation was
-                    measured, not where the box's centre is.
-     the stroke     7.178% of the box.
-     the cut        3.589% of the box, exactly half the stroke.
+     the centre     that half turn happens about 50% / 50% of the box. It
+                    used to be 49.90 / 50.71, because the shipped artwork was
+                    not centred in its own file: it was 379.7 x 384.0 inside a
+                    404 box with a 1.34 percent symmetry error. The delivered
+                    drawing is 100 x 100 inside a 100 box with a symmetry
+                    error of 0, so the point it turns about and the middle of
+                    the box are the same point.
+     the ribbon     13.576% of the box.
+     the cut        3.000% of the box, 0.22 of the ribbon.
 
    WHAT CHANGED, AND WHY. The previous law was the same six numbers driving a
    different kind of motion: objects were scrubbed against the scroll wheel
@@ -74,13 +78,17 @@
       does. Every transition and every timed tween is eased with it and with
       nothing else. Nothing is ever eased linearly.
 
-   5. ONE ROTATION, AND IT HAPPENS IN ONE PLACE. 180 degrees about 49.90% /
-      50.71%, on the menu control, on click. The drawing maps onto itself at a
-      half turn and at no other angle: at a quarter turn only 29 of its 52
-      vertices land and it reads as a different figure. So a half turn is the
-      only rotation it can make, it is always time-based, and it always plays
-      through in one go. Both ends of the turn are this mark and nothing in
-      between is, so nothing in between may be held.
+   5. NOTHING ROTATES. There used to be one rotation: the menu control's
+      close glyph turned 180 degrees on click, both ends of the turn being
+      the mark. It is deleted, and it is deleted for the reason the whole
+      pass exists rather than for a measurement: a logo that spins when you
+      touch it is the tell of a site that is performing rather than working.
+      The drawing's half-turn symmetry is still a fact of the drawing and it
+      is still used, statically, by the section seal's alternation in
+      base.css, where the corrected mark now maps onto itself exactly and the
+      alternation is provably invisible. 180 degrees about 50% / 50% remains
+      the ONLY rotation this drawing may ever be given, and at present it is
+      given none.
 
    6. NOTHING IS SCRUBBED. There is no scroll-linked transform, opacity,
       scale, rotation or clip anywhere on this site. The wheel is not a clock.
@@ -91,8 +99,7 @@
    HOW TO CHECK ANY ANIMATION ON THIS SITE, IN ONE LINE. Read its transform:
    if it translates, dy / dx is 0.863786 and the distance is 5.4, 10.8 or
    21.5px, or the thing is clearing the frame and the distance is its own box;
-   if it rotates, it is 180 degrees about 49.90% / 50.71% and it was started
-   by a click. Read its transition: the duration is 0.2041s or
+   it does not rotate at all. Read its transition: the duration is 0.2041s or
    0.4082s and the curve is --curve. Read what started it: a pointer, a focus,
    a click, or a boolean crossing. Anything else is a violation, and the
    correct repair is to delete the effect rather than to exempt it.
@@ -115,9 +122,11 @@ export const CUT_K = 1.157694;
 export const ARM_X = 0.756767;
 export const ARM_Y = 0.653685;
 
-/** The only rotation, and the only origin it may happen about. */
+/** The only rotation the drawing may ever be given, and the only origin it
+    may happen about. Nothing on the site animates it; the section seal uses
+    it as a static orientation. */
 export const HALF_TURN = 180;
-export const TURN_ORIGIN = '49.90% 50.71%';
+export const TURN_ORIGIN = '50% 50%';
 
 /** The two durations, in seconds. The arm's angle in hundredths, and double. */
 export const DUR = 0.2041;

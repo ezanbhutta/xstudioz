@@ -100,7 +100,17 @@
     <h2 class="sr-only" id="nav-menu-title">Menu</h2>
 
     <div class="nav__panel-head">
-      <span class="label nav__panel-eyebrow">XStudioz</span>
+      <!-- THE PANEL CARRIES THE LOCKUP RATHER THAN A BARE WORD. The header
+           behind this overlay is showing the mark alone at this width, so
+           the panel was the one surface on a phone where the studio's name
+           appeared with nothing drawn beside it. The mark here is the same
+           #xmark every other instance on the site uses; there is exactly one
+           version of the drawing in the tree. aria-hidden, because the word
+           it stands beside is already the accessible name of this row. -->
+      <span class="nav__panel-eyebrow">
+        <svg class="nav__panel-mark" aria-hidden="true"><use href="#xmark" /></svg>
+        <span class="label">XStudioz</span>
+      </span>
       <button class="nav__close" type="button">
         <span class="nav__toggle-word">Close</span>
         <span class="nav__toggle-glyph nav__toggle-glyph--x" aria-hidden="true"><i></i><i></i></span>

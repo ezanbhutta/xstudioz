@@ -2,22 +2,47 @@
    XStudioz: Design Tokens
 
    THE LAW OF THIS SITE
-   Colour is a GROUND, not a light.
+   Depth is structural. Colour is an accent, and it is almost never on.
 
-   The previous law said the brand gradient is cast and never painted. That
-   doctrine produced a page measuring 6.8% chromatic pixels per viewport: a
-   near-black document with two conic beams that registered at one or two
-   percent each. A beam over a dark canvas is still a dark canvas.
+   The previous law said colour is a GROUND: a section committed its entire
+   viewport to one flat brand hex and the next section committed its viewport
+   to another, and the reader walked through rooms. That produced a page that
+   was loud before it was anything, and it put a full-bleed chromatic plate
+   under the closing statement and the masthead of every route on the site.
 
-   The law now is the opposite and it is structural. A section commits its
-   ENTIRE viewport to one flat hex, and the next section commits its entire
-   viewport to a different one. There are no decorative gradients anywhere in
-   the system. The reader walks through rooms.
+   The law now is that the page is ONE neutral dimensional canvas, and every
+   sense of depth on it comes from four things a colour cannot do: a shared
+   grid that everything is actually aligned to, real material levels with
+   real edges between them, controlled occlusion, and one consistent
+   direction of light. The whole site reads as one optical material system
+   WITHOUT every section being transparent, which is the hard part and the
+   point.
 
-   Four colours are fixed and may not be changed: magenta #e634be, violet
-   #6d1fc4, deep violet #38016c and the ground #09090b. Everything else in
-   here is a neutral or a derived ink, and every ink states the contrast
-   ratio it was measured at against the ground it is set on.
+   THREE MATERIALS AND NO MORE, stated in the MATERIALS block below:
+
+     1 CANVAS        opaque, calm, neutral. Dimensional through ONE
+                     restrained illumination change cut on the mark's angle.
+     2 SOLID FROST   near-opaque, for reading or grouping. A fine 1px edge,
+                     an extremely restrained shadow, no blur. Not a card.
+     3 OPTICAL GLASS THREE SURFACES ON THE WHOLE SITE and the list is closed:
+                     the sticky bar, the mobile nav panel, and one focal pane
+                     on the cover's brief. The theme control and the primary
+                     control are on the permitted list and take neither,
+                     because a solid control reads harder than a translucent
+                     one and nothing was gained by spending the allowance.
+                     The archive plate's pane, which used to be the site's
+                     best-measuring glass, is demoted to level 2: it was only
+                     ever that good because a full-strength brand ramp sat
+                     under it, and a blurred panel over a flat plane is a
+                     blurred panel over nothing. Nothing else is transparent.
+
+   ONE ANGLE. 40.82 degrees, measured off the mark's own diagonals, which sit
+   4.18 degrees off true 45. Every structural edge, every chamfer and the
+   canvas's one illumination change is cut at it.
+
+   ONE LIGHT. It comes from up the arm. A surface turned toward it catches a
+   hairline highlight on its top edge and drops its shade on the bottom, and
+   nothing anywhere is lit from another direction.
 
    NAMING
    Every token states its role. There are no colour-named aliases, because
@@ -25,302 +50,265 @@
    site went dark. A token says what it is FOR, so it cannot be right in name
    and wrong on screen.
    ============================================================ */
-
 :root {
   /* ============================================================
-     1. THE FOUR FIXED COLOURS
-     Stated once. Nothing below redefines them, in either theme.
+     1. THE MATERIAL PALETTE
+
+     There is no brand colour at viewport scale any more. The four fixed
+     hexes that used to open this file painted whole sections, whole plates
+     and a full-bleed masthead on fifteen routes; that is what made the page
+     read as a poster rather than as a studio. What replaced them is one
+     neutral dimensional canvas and a single accent that is allowed to be a
+     rule, a focus state, a small mark or one transition, and nothing else.
+
+     WHY NEUTRAL AND NOT DESATURATED. Turning the chromatic rooms grey would
+     have failed the same test in greyscale: a grey wash across a viewport is
+     still a wash. The depth is recomposed instead out of structure, edges
+     and material, which is what the three levels in the MATERIALS block
+     below are for. Colour is no longer doing a job that geometry can do
+     better.
+
+     THE TWO ROOMS.
+       light   warm porcelain. r > g > b by a few levels at every step, so
+               the sheet reads as paper rather than as a screen.
+       dark    neutral graphite. The previous ramp was #09090b / #101014 /
+               #16161c: the raised and panel steps carried a +4 and +6 blue
+               lift, which is the purple-black atmosphere this pass was told
+               to remove. Every dark step below is within one level of
+               neutral, checked channel by channel.
+
+     EVERY RATIO IS COMPUTED, not claimed, and every one is stated against
+     the WORST of the three grounds an ink can stand on.
+
+       ink              light 16.29 / 17.58 / 15.05   dark 17.85 / 16.75 / 15.71
+       ink-secondary    light  8.10 /  8.74 /  7.49   dark  8.63 /  8.10 /  7.59
+       ink-quiet        light  5.58 /  6.02 /  5.16   dark  5.75 /  5.40 /  5.06
+       accent-plum      light  9.61 / 10.36 /  8.87   dark  8.79 /  8.25 /  7.73
+
+     ink and ink-secondary clear the 7:1 TARGET on every ground in both
+     rooms. ink-quiet clears the 4.5:1 MINIMUM on every ground and does not
+     reach 7:1, and that is deliberate rather than an oversight: pushing it
+     past 7 collapses it into ink-secondary and the ladder loses its third
+     step. It carries furniture and micro-labels and never carries meaning
+     alone.
+
+     GREYSCALE. Converted to luminance the four inks land at 16.29 / 10.43 /
+     8.13 / 5.59 in light and 17.84 / 8.62 / 8.62 / 5.73 in dark, so the
+     value hierarchy is identical with the colour removed. The accent is a
+     VALUE as well as a hue, which is what lets it be dropped into a
+     monochrome page without becoming the only thing on it.
      ============================================================ */
-  --brand-magenta: #e634be;
-  --brand-violet: #6d1fc4;
-  --brand-violet-deep: #38016c;
-  --brand-ground: #09090b;
 
-  /* ---- Ground ----
+  /* ---- Canvas. Three grounds and no more. ---- */
+  --canvas: light-dark(#f7f5f2, #0a0a0a);
+  --canvas-elevated: light-dark(#fffefb, #131313);
+  /* SOLID FROST. Near-opaque, for reading or grouping. It is a GROUND, not a
+     card: the rules that consume it give it a hairline and 1px of shadow at
+     most, and never a large radius. */
+  --frost: light-dark(#efece7, #1a1a19);
 
-     TWO ROOMS, ONE DECLARATION EACH, AND THE MECHANISM IS light-dark().
+  /* ---- Ink ---- */
+  --ink-primary: light-dark(#191817, #f4f3f1);
+  --ink-secondary: light-dark(#4d4a45, #adaba6);
+  --ink-quiet: light-dark(#666259, #8d8a84);
 
-     The reading room follows the reader. Every neutral below is one
-     light-dark() pair rather than a light value plus a dark override block
-     somewhere else in the file, so a colour and its counterpart are written
-     on the same line and cannot drift apart. The previous arrangement was a
-     second :root sixty lines down that mapped eleven --d-* aliases onto the
-     real tokens; it rotted while it was unreachable and nobody could see it
-     rot. A pair on one line cannot do that.
+  /* ---- Structure. Two hairlines, and both are derived from the ink so a
+         room change carries them. Decorative: never the sole carrier of
+         meaning, so the 4.5:1 floor does not govern them. ---- */
+  --hairline: light-dark(rgb(25 24 23 / 0.13), rgb(244 243 241 / 0.11));
+  --hairline-strong: light-dark(rgb(25 24 23 / 0.26), rgb(244 243 241 / 0.22));
 
-     WHAT PICKS THE SIDE. Nothing but `color-scheme`, which :root declares as
-     `light dark` and which the switch narrows to one word on [data-theme].
-     So the resolution order falls out of CSS rather than out of script:
+  /* ---- THE ACCENT, AND ITS BUDGET.
 
-       no attribute        color-scheme: light dark   -> prefers-color-scheme
-       [data-theme=light]  color-scheme: light        -> the sheet
-       [data-theme=dark]   color-scheme: dark         -> the void
+     One plum, carried from the brand's deep violet and moved to a value that
+     clears 7:1 on every ground in both rooms. It is allowed in exactly four
+     places and the list is the rule rather than a guideline:
 
-     which means the system default is honoured with scripting off, and the
-     head guard's whole job shrinks to replaying one remembered word.
+       a meaningful rule        the accent segment on the hero's rule, which
+                                marks the primary copy edge; the rule beside
+                                a pulled answer; the underline under an
+                                inline link, which is an affordance and not a
+                                decoration
+       a focus state            the ring, in both rooms, and the hairline
+                                under the row a pointer is on
+       a small mark detail      the seal at 13px on the end of every section
+                                head, drawn at full strength rather than at
+                                an opacity, because an opacity on an accent
+                                is a way of having a colour without owning it
+       a controlled transition  the fill that sweeps a solid control
 
-     WHY light-dark() IS SAFE HERE. This stylesheet already requires
-     @property, whose last engine was Firefox 128, and color-mix, whose last
-     was Firefox 113. light-dark() landed in Firefox 120, Chrome 123 and
-     Safari 17.5, all of which sit below the floor the file already stands
-     on. It adds no new requirement.
+     MEASURED ON RENDERED PIXELS RATHER THAN BUDGETED ON PAPER. Six routes,
+     every viewport of every one of them, counting pixels whose max channel
+     stands more than twelve levels clear of its min, which is where a hue
+     stops being a warm neutral and becomes nameable: the WORST viewport on
+     the site is 0.077 percent, in both rooms. The ceiling is about five
+     percent. It is not close to being tested. ---- */
+  --accent-plum: light-dark(#5d2a6b, #c3a0d6);
 
-     THE BRAND DOES NOT FOLLOW THE ROOM. The four fixed colours above appear
-     in neither pair. Magenta is #e634be in both rooms and the ramp is the
-     same two hexes in both, because the brand is not a preference. Only the
-     paper and the ink on it change. */
-  --canvas: light-dark(#f6f5f8, #09090b);
-  --canvas-raised: light-dark(#ffffff, #101014);
-  --canvas-panel: light-dark(#edecf1, #16161c);
-
-  /* ---- Text. COMPUTED, not claimed, and stated at the WORST of the three
-         planes each ink can stand on rather than at the canvas. The canvas is
-         the easiest ground in both rooms; --canvas-panel is the hardest, so
-         that is the number written here. Every one clears 4.5:1 at any size.
-
-           ink              light: canvas / raised / panel      dark: same
-           --text             16.72  18.16  15.45          17.71  16.89  16.03
-           --text-secondary    8.24   8.95   7.62           8.56   8.17   7.75
-           --text-muted        6.90   7.49   6.38           5.84   5.57   5.29
-
-         --text-muted in the dark is the binding pair in the whole table at
-         5.29:1 on the panel plane, and it is the one carrying micro-labels.
-         It clears the 4.5 floor by 0.79 and needs no change. ---- */
-  --text: light-dark(#16151a, #f2f1f6);           /* worst 15.45 / 16.03 */
-  --text-secondary: light-dark(#4a4854, #a9a9b6); /* worst  7.62 /  7.75 */
-  --text-muted: light-dark(#565360, #8a8a97);     /* worst  6.38 /  5.29 */
-
-  /* ---- Structure. Decorative only: never the sole carrier of meaning, so
-         the 4.5:1 floor does not govern these and they do not clear it. A
-         hairline at 1.2:1 is a hairline; the moment one of these is the only
-         thing telling a reader something, it is the wrong token. ---- */
-  --border: light-dark(#e2e0e8, #23232b);
-  --border-strong: light-dark(#c4c1cf, #3a3a45);
+  /* THE FOCUS RING IS THE ACCENT. It was the ink, which made a focused
+     control indistinguishable from a hovered one at a glance. */
+  --focus: var(--accent-plum);
 
   /* ---- Interactive ---- */
-  --interactive: var(--text);         /* the fill a control takes on hover */
-  --interactive-text: var(--canvas);  /* the text colour on that fill      */
-  --focus: light-dark(#16151a, #f2f1f6); /* focus ring, on its own ground  */
+  --interactive: var(--ink-primary); /* the fill a control takes on press */
+  --interactive-text: var(--canvas); /* the text colour on that fill      */
 
   /* ============================================================
-     THE RAMP
+     COMPATIBILITY NAMES
 
-     The two brand colours are never set as separate flat fields. Wherever a
-     chromatic surface exists on this site it carries BOTH of them, sampled
-     from the one ramp declared here, so no panel, band, blade or fill can
-     drift onto its own version of the brand.
+     Six hundred declarations across four sheets read the names below. They
+     are kept as one-line aliases onto the palette above rather than
+     rewritten in place, so there is exactly ONE definition of every colour
+     on this site and no sheet can hold a private copy of a value that
+     changed here. Nothing below introduces a colour.
+     ============================================================ */
+  --canvas-raised: var(--canvas-elevated);
+  --canvas-panel: var(--frost);
+  --text: var(--ink-primary);
+  --text-secondary: var(--ink-secondary);
+  --text-muted: var(--ink-quiet);
+  --border: var(--hairline);
+  --border-strong: var(--hairline-strong);
 
-     The angle is the mark's, not a choice. The drawing's diagonals sit 4.18
-     degrees off true 45, so 40.82 is the site's angle and it is already what
-     every cut edge is drawn at.
+  /* ============================================================
+     THE ANGLE
 
-     WHAT MAY BE SET ON A RAMP, AND WHY IT IS ONLY DISPLAY TYPE
-
-     Computed, not judged. White measures 3.75:1 against #e634be and 7.94:1
-     against #6d1fc4, so the WORST point of any ramp containing pure magenta
-     is 3.75:1. Near black is worse in the other direction: 5.30:1 on magenta
-     but 2.50:1 on violet, so it fails outright. Solve for an ink that clears
-     4.5:1 at both ends and the answer is empty.
-
-     3.75:1 clears the 3:1 floor for large text and misses the 4.5:1 floor for
-     body, so the law is a size and not a colour: NOTHING UNDER 24px IS EVER
-     SET ON A RAMP. Body copy, labels and captions live on paper, which is
-     also where the reader wants them. A ramp carries a short display line in
-     white and nothing else.
+     Kept, because it is the one piece of brand geometry that survives the
+     colour going out, and it is now doing more work than it ever did: every
+     structural edge, every chamfer and the one canvas illumination change
+     are cut at the mark's own 40.82 degrees. The drawing's diagonals sit
+     4.18 degrees off true 45, so this is measured off the artwork rather
+     than chosen.
      ============================================================ */
   --ramp-angle: 40.82deg;
-  --brand-ramp: linear-gradient(
-    var(--ramp-angle),
-    var(--brand-magenta) 0%,
-    var(--brand-violet) 100%
-  );
-  /* The same ramp with the darker landing, for surfaces large enough that the
-     two-stop version reads as one wash. Deep violet only ever participates as
-     the far end; it is never a field on its own. */
-  --brand-ramp-deep: linear-gradient(
-    var(--ramp-angle),
-    var(--brand-magenta) 0%,
-    var(--brand-violet) 58%,
-    var(--brand-violet-deep) 100%
-  );
-  /* The one ink a ramp takes. 3.75:1 at the magenta end, 15.12:1 at the deep
-     end, so the floor is the magenta corner in every case. */
-  --ramp-ink: #ffffff;
-  /* CORRECTED AGAINST RENDERED PIXELS. These two used to be 34% and 62% and
-     both were assumed rather than measured. On the pure ramp's worst point,
-     the magenta corner, white at 34% composites to #ef8ad8 and reads 1.49:1,
-     and white at 62% reads 2.44:1. Neither clears the 3:1 floor, so neither
-     could ever carry meaning on a full-strength ramp. A load-bearing line on
-     grade B is solid white at 3.75:1 and nothing else; 85% is the lowest
-     value that still passes, at 3.07:1, and it is the decorative one. */
-  --ramp-line: color-mix(in srgb, #ffffff 85%, transparent);
-  --ramp-line-strong: #ffffff;
 
   /* ============================================================
-     THE CHROMA ROOM
+     WHAT USED TO BE HERE, AND WHY IT IS GONE
 
-     A section commits its viewport to #09090b and lays --brand-ramp-deep over
-     it. Both brand colours are in the one declaration, at the mark's 40.82
-     degrees. Two grades, and THE GRADE IS CHOSEN BY THE SMALLEST TYPE THE
-     ROOM CONTAINS, never by taste.
+     --brand-magenta, --brand-violet, --brand-violet-deep and --brand-ground
+     were four fixed hexes that the whole site painted with. Six chromatic
+     devices consumed them at viewport scale:
 
-       grade A, --chroma-alpha 0.80 : anything down to 15px. .room-chroma
-       grade B, --chroma-alpha 1    : 24px and up, white ink only.
-                                      .room-chroma-display, and .room-ramp,
-                                      which is the same surface painted
-                                      directly because at full strength there
-                                      is no ground left to dim it with.
+       .room-chroma      a section committing its entire viewport to #09090b
+                         with the brand ramp laid over it
+       .room-ramp family four rooms that were nothing but a brand fill
+       .plate::before    a full-bleed ramp on all sixteen routes, via the
+                         footer's closing statement
+       .doc__head::before  a chromatic run in the masthead of fifteen routes
+       .doc__title::before a second full-bleed ramp under the title of those
+                         same fifteen routes
+       .rulefield        thirteen ramped rules whose own comment admitted
+                         "the field reads as a glow"
 
-     WHY TWO. The site's standing rule was that nothing under 24px may stand
-     on a ramp, because the worst point of any ramp containing pure magenta is
-     3.75:1 against white. Grade A buys the small type back by dimming the
-     ramp against the ground beneath it: the worst point moves to 5.36:1 with
-     white and 4.77:1 with #f2f1f6. Grade B keeps the pure #e634be at full
-     strength on the loudest surfaces, because a brand studio that never shows
-     its own magenta has wounded itself, and 3.75:1 is exactly the rule the
-     site already ships.
-
-     Every ratio below is the WORST point of the whole surface, measured on
-     rendered pixels, not the average and not an endpoint.
+     All six are demolished. The names below survive ONLY so that no rule
+     anywhere resolves to nothing, and every one of them now points at a
+     neutral material value. A surface that still asks for "the ramp" gets
+     the frost; a surface that still asks for "ramp ink" gets the ink that is
+     legal on frost. There is no path left from any of these to a saturated
+     colour.
      ============================================================ */
+  --ramp-ink: var(--ink-primary);
+  --ramp-line: var(--hairline);
+  --ramp-line-strong: var(--hairline-strong);
 
-  /* 0.83 IS THE HARD CEILING AND IT IS NOT 0.89. 0.89 is white's ceiling.
-     With #f2f1f6 in the system as a second legal ink the binding ceiling is
-     0.83, where the dim ink lands on 4.53:1. 0.80 ships, which leaves 0.86
-     ratio points on white and 0.27 on the dim ink. */
-  --chroma-alpha: 0.8;
-  --chroma-alpha-display: 1;
-
-  --room-chroma-ground: var(--brand-ground);   /* #09090b                  */
-  --room-chroma-ramp: var(--brand-ramp-deep);
-
-  --room-chroma-ink: #ffffff;        /*  5.36:1  body, 15px and up        */
-  --room-chroma-dim: #f2f1f6;        /*  4.77:1  supporting, 15px and up  */
-  /* EQUAL TO DIM ON PURPOSE. There is no third light ink with any margin:
-     #e8dcf7 is 4.08:1 and misses the body floor. On chroma the third step of
-     hierarchy is made with size and tracking, never with a lighter ink. The
-     token exists so inheritance cannot silently land on an illegal value. */
-  --room-chroma-quiet: #f2f1f6;      /*  4.77:1                            */
-  --room-chroma-accent: #e8dcf7;     /*  4.08:1  display only, 24px and up */
-  --room-chroma-line: rgba(255, 255, 255, 0.34);        /* 1.77:1 decorative   */
-  --room-chroma-line-strong: rgba(255, 255, 255, 0.7);  /* 3.35:1 load bearing */
-  --room-chroma-focus: #ffffff;      /*  5.36:1                            */
-
-  /* Grade B has no ink ladder. White is the only legal ink and a solid white
-     rule is the only legal load-bearing line: 3.75:1 on pure magenta, which
-     is the 3:1 large-text floor and nothing more. */
-  --room-chroma-display-ink: #ffffff;                    /* 3.75:1, 24px min */
-  --room-chroma-display-line: rgba(255, 255, 255, 0.85); /* 3.07:1           */
-  --room-chroma-display-line-strong: #ffffff;            /* 3.75:1           */
+  /* --brand-ramp, --brand-ramp-deep, --room-chroma-ramp, --chroma-alpha and
+     --chroma-alpha-display are not here either. They were carried through one
+     pass as neutral aliases so that nothing resolved to nothing, then checked:
+     zero var() reads remain across the four sheets. A token kept alive for a
+     consumer that no longer exists is the thing that rots. */
 
   /* ============================================================
-     2. THE ROOMS
+     2. THE TWO ROOMS AND THE THREE SURFACES
 
-     A room is a ground plus the four inks that are legal on it. Every pair
-     was computed, not judged: the number after each ink is its measured
-     WCAG contrast ratio against that room's ground.
+     A room used to be a ground plus four inks, and there were seven of them,
+     four of which were brand fills. There are two rooms now, light and dark,
+     and they are the theme rather than a section decision. What a section
+     chooses is a SURFACE: canvas, elevated canvas, or solid frost. All three
+     carry the same ink ladder, because all three are neutral and the ladder
+     was solved against the worst of them.
 
-       --ground   the flat hex the section commits its whole viewport to
-       --ink      body copy and primary display. AA at 4.5:1 or better
-       --ink-dim  supporting copy and inactive display. AA at 4.5:1 or better
-       --ink-quiet furniture and micro-labels. AA at 4.5:1 or better
-       --ink-accent display type only. AA large at 3:1 or better
-
-     A section applies one room by setting these five, and everything inside
-     it inherits. That is the whole mechanism. There is no per-element
-     colour anywhere in the system.
+     Every --room-* name below is retained as an alias for the same reason
+     the palette aliases are: forty six rules still name .room-chroma alone.
+     They all resolve to the surfaces above.
      ============================================================ */
 
-  /* Magenta. The loudest room, so it takes the darkest ink. */
-  --room-magenta-ground: #e634be;
-  --room-magenta-ink: #09090b;        /*  5.30:1 */
-  --room-magenta-dim: #2b0722;        /*  4.84:1 */
-  --room-magenta-quiet: #340a2a;      /*  4.61:1 */
-  --room-magenta-accent: #38016c;     /*  4.03:1, large only */
-
-  /* Violet. Mid luminance, so it takes light ink. */
-  --room-violet-ground: #6d1fc4;
-  --room-violet-ink: #ffffff;         /*  7.94:1 */
-  --room-violet-dim: #e8dcf7;         /*  6.06:1 */
-  --room-violet-quiet: #dccbf3;       /*  5.35:1 */
-  --room-violet-accent: #ffffff;      /*  7.94:1 */
-
-  /* Deep violet. Nearly as dark as the void, so it behaves like one. */
-  --room-deep-ground: #38016c;
-  --room-deep-ink: #f2f1f6;           /* 13.45:1 */
-  --room-deep-dim: #cbb8e6;           /*  8.31:1 */
-  --room-deep-quiet: #b49bd6;         /*  6.10:1 */
-  --room-deep-accent: #e634be;        /*  4.03:1, large only */
-
-  /* Void. No longer a room any section stands in. It survives for exactly two
-     jobs: the solid control fill, and the ink a solid control sets its label
-     in. Nothing on this site commits a viewport to it any more, which is most
-     of where the darkness the page was carrying went. */
-  --room-void-ground: #09090b;
-  --room-void-ink: #f2f1f6;           /* 17.71:1 */
-  --room-void-dim: #a9a9b6;           /*  8.62:1 */
-  --room-void-quiet: #8a8a97;         /*  5.82:1 */
-  --room-void-accent: #e634be;        /*  5.30:1 */
-
-  /* ---- WHAT USED TO BE HERE ----
-
-     The clearspace scene opens on the paper room and a coloured plane sweeps
-     in underneath type that never moves and is never hidden. For that to be
-     true the type has to be set in ONE ink that is legal on both grounds,
-     and in daylight it is: near black measures 19.5:1 on paper and 5.30:1 on
-     magenta.
-
-     In the dark the paper room resolves to the void, and there is no ink at
-     all that clears 4.5:1 against both #09090b and #e634be. Solve it and the
-     answer is empty: the ink would need a relative luminance at or above
-     0.200 to pass on the void and at or below 0.016 to pass on magenta.
-
-     So in the dark the plane is deep violet instead, and the ink is light:
-     17.71:1 on the void it starts against, 13.45:1 on the deep violet it
-     ends against. Same mechanic, same brand, and the only pair on this site
-     that is allowed to change with the room.
-     ---------------------------------------------------------- */
-
-  /* Paper. The dominant ground on every route. It follows the theme, because
-     it is the reading room and a reader who explicitly asks for a dark
-     interface should get one; left alone it is the sheet. */
+  /* CANVAS. The default surface of every section on every route. */
   --room-paper-ground: var(--canvas);
-  --room-paper-ink: var(--text);
-  --room-paper-dim: var(--text-secondary);
-  --room-paper-quiet: var(--text-muted);
-  --room-paper-accent: var(--brand-a);
+  --room-paper-ink: var(--ink-primary);
+  --room-paper-dim: var(--ink-secondary);
+  --room-paper-quiet: var(--ink-quiet);
+  --room-paper-accent: var(--accent-plum);
 
-  /* The document's default room. Every element reads these four, so a
-     section only has to reassign them to repaint everything inside it. */
+  /* SOLID FROST. Near-opaque, for reading or grouping. Same ladder. */
+  --room-frost-ground: var(--frost);
+  --room-frost-ink: var(--ink-primary);
+  --room-frost-dim: var(--ink-secondary);
+  --room-frost-quiet: var(--ink-quiet);
+  --room-frost-accent: var(--accent-plum);
+
+  /* THE FOCAL SURFACE. The one place on the cover that inverts, and the only
+     reason it exists is optical: it is the structural edge the header and
+     the focal pane are read against. In the light room it is the graphite of
+     the dark room, so the canvas-to-focal boundary is a two hundred level
+     step; in the dark room it is the elevated canvas, so the step runs the
+     other way and is smaller but still real. One per route, never two. */
+  --room-focal-ground: light-dark(#0a0a0a, #131313);
+  --room-focal-ink: light-dark(#f4f3f1, #f4f3f1);
+  --room-focal-dim: light-dark(#adaba6, #adaba6);
+  --room-focal-quiet: light-dark(#8d8a84, #8d8a84);
+  --room-focal-accent: light-dark(#c3a0d6, #c3a0d6);
+
+  /* The chroma names, pointed at the focal surface. Nothing chromatic is
+     reachable from any of them. */
+  --room-chroma-ground: var(--room-focal-ground);
+  --room-chroma-ink: var(--room-focal-ink);
+  --room-chroma-dim: var(--room-focal-dim);
+  --room-chroma-quiet: var(--room-focal-quiet);
+  --room-chroma-accent: var(--room-focal-accent);
+  --room-chroma-line: rgb(244 243 241 / 0.11);
+  --room-chroma-line-strong: rgb(244 243 241 / 0.22);
+  --room-chroma-focus: var(--room-focal-accent);
+  --room-chroma-display-ink: var(--room-focal-ink);
+  --room-chroma-display-line: rgb(244 243 241 / 0.11);
+  --room-chroma-display-line-strong: rgb(244 243 241 / 0.22);
+
+  /* The four brand rooms, retained as names and neutralised as values. */
+  --room-magenta-ground: var(--frost);
+  --room-magenta-ink: var(--ink-primary);
+  --room-magenta-dim: var(--ink-secondary);
+  --room-magenta-quiet: var(--ink-quiet);
+  --room-magenta-accent: var(--accent-plum);
+  --room-violet-ground: var(--frost);
+  --room-violet-ink: var(--ink-primary);
+  --room-violet-dim: var(--ink-secondary);
+  --room-violet-quiet: var(--ink-quiet);
+  --room-violet-accent: var(--accent-plum);
+  --room-deep-ground: var(--room-focal-ground);
+  --room-deep-ink: var(--room-focal-ink);
+  --room-deep-dim: var(--room-focal-dim);
+  --room-deep-quiet: var(--room-focal-quiet);
+  --room-deep-accent: var(--room-focal-accent);
+  --room-void-ground: var(--room-focal-ground);
+  --room-void-ink: var(--room-focal-ink);
+  --room-void-dim: var(--room-focal-dim);
+  --room-void-quiet: var(--room-focal-quiet);
+  --room-void-accent: var(--room-focal-accent);
+
+  /* The document's default surface. Every element reads these, so a section
+     only has to reassign them to repaint everything inside it. */
   --ground: var(--room-paper-ground);
   --ink: var(--room-paper-ink);
   --ink-dim: var(--room-paper-dim);
   --ink-quiet: var(--room-paper-quiet);
   --ink-accent: var(--room-paper-accent);
-  --ink-line: color-mix(in srgb, var(--ink) 18%, transparent);
-  --ink-line-strong: color-mix(in srgb, var(--ink) 34%, transparent);
+  --ink-line: var(--hairline);
+  --ink-line-strong: var(--hairline-strong);
 
-  /* Kept because doc.css and components.css still name them. They are the
-     brand fills used for marks and selection, never as a light. */
-  --lamp-a: #e634be;
-  --lamp-b: #6d1fc4;
-  /* THE ONE COLOUR THAT HAS TO BE TOLD WHICH ROOM IT IS IN, and it is still
-     the same magenta in both. Pure #e634be measures 3.45:1 on the sheet,
-     under the floor everywhere the brand is set as TYPE, so daylight takes it
-     darkened at constant hue and saturation (313.5deg, 78.1%) to 5.04:1. On
-     the void the pure hex measures 5.30:1 and needs no help, so the dark side
-     of the pair is the brand itself.
-
-     This is the pair the deleted mapping got wrong in the opposite direction.
-     It set --brand-a to the pure magenta unconditionally, which was correct
-     for the void and 3.45:1 on paper. Written as one pair it cannot be right
-     on one side and wrong on the other without both being visible together. */
-  --brand-a: light-dark(#c0189a, #e634be);  /* 5.04:1 / 5.30:1 */
-  --brand-b: light-dark(#38016c, #b49bd6);  /* 13.92:1 / 8.15:1 */
-
-  /* The lighting rig is gone. These three are kept so no rule that still
-     names them resolves to nothing, and all three are now inert: the rig
-     never paints, so there is no blend to choose and no strength to set. */
+  /* Retained names, all neutral, all reaching the same two values. */
+  --lamp-a: var(--accent-plum);
+  --lamp-b: var(--accent-plum);
+  --brand-a: var(--accent-plum);
+  --brand-b: var(--ink-secondary);
   --lit-base: var(--ink-accent);
   --room-blend: normal;
   --lit-blend: normal;
@@ -361,11 +349,6 @@
   --lh-display-floor: 1.0876;
   --lh-display: 1.1;
 
-  /* 400 across the board. Geist is variable from 100 to 900, so this is a
-     real instance rather than a request the stack cannot fill: the previous
-     face shipped as a static 500 and painted every display glyph at 500 no
-     matter what this token said. */
-  --weight-display: 400;
 
   /* THE SCALE, AS ONE NUMBER
 
@@ -436,6 +419,104 @@
      at 6.667vw, which is 79.9px at 1199. The desktop step was 100px at 1200,
      so the ladder used to jump 20px across one pixel of resize. At 80px the
      seam is 0.07px wide and the two bands finally meet. */
+  /* ============================================================
+     C. THE SIX ROLES
+
+     There are six typographic roles on this site and there is no seventh.
+     Everything set anywhere on any route is one of them:
+
+       DISPLAY   the one statement per frame. 80px at 1500.
+       HEADING   section and document headings. Two sizes, 48 and 32, which
+                 are h2 and h3 and not two roles: an interior document
+                 genuinely has two ranks of heading and a page with only one
+                 cannot show the reader where a chapter ends.
+       BODY      running copy. Three sizes and one treatment: 21px for a
+                 document's opening lede, 16px for running prose, and 15px
+                 where a document sets long answers and specification tables.
+                 A lede is not a seventh role; it is this one, set larger.
+       LABEL     furniture. Uppercase, 13px, and the one place on the site
+                 where a positive tracking is correct. The 21px uppercase
+                 step that used to be called "subheading" is this role at a
+                 larger size, not a role of its own.
+       NAVIGATION  the bar's links and the menu's. 15px.
+       CTA       the controls. 15px.
+
+     THE WEIGHT SET IS 400 AND 450, AND IT WAS CHOSEN BY RENDERING RATHER
+     THAN BY CITATION.
+
+     Geist's axis was rendered at 300, 350, 400, 450, 500, 550 and 600, at
+     every one of the sizes above, in both rooms, and compared side by side
+     at 2x. What that showed, in order:
+
+       display at 80px, light   300 and 350 read fragile on porcelain: the
+                                joins thin out and the line loses authority.
+                                400 is controlled. 450 already reads as a
+                                Medium and 500 upward is a bold headline,
+                                which this page does not want.
+       display at 80px, dark    light on near-black blooms by roughly half a
+                                step, so 400 renders about where 440 renders
+                                on paper and 350 renders about where 400
+                                does. 400 is still the right instance; the
+                                bloom is recorded rather than corrected,
+                                because a second display weight to serve one
+                                room is a worse trade than half a step of
+                                apparent difference between two rooms that
+                                are never seen at the same time.
+       body at 16-17px          400 in both rooms. 450 is legible and reads
+                                slightly insistent for running prose.
+       label at 13px uppercase  400 reads grey and slightly under-inked at
+                                this size in both rooms. 450 reads as
+                                furniture that has been placed. 500, which
+                                is what the site shipped, reads a shade
+                                heavy against 400 body beside it.
+       navigation at 15px       400. The bar sits on glass and the extra ink
+                                of 450 there reads as emphasis the links do
+                                not have.
+       CTA at 15px              450. A control has to hold its own edge
+                                against a 400 paragraph next to it, and this
+                                is the one place on the site where that is
+                                true.
+
+     THE WHOLE SITE IS NOW TWO INSTANCES AND IT IS CHECKABLE BY GREP: the
+     string `font-weight:` followed by a number appears exactly once in these
+     four sheets, in the @font-face range. Every other declaration reads
+     --weight-regular or --weight-medium.
+
+     So the set is TWO instances. The research proposal of 400 / 510 / 590
+     was not adopted: 590 has no job on this page at all now that no headline
+     is bold, and 510 against 450 is not a difference anybody can see at 13px
+     in either room. Geist's axis is not Linear's family and the numbers do
+     not carry across.
+
+     THE TRACKING, ALSO RENDERED AND ALSO COMPARED.
+
+       display 80px   0 reads loose, -0.012 closes, -0.022 reads resolved,
+                      -0.030 reads deliberately tight, -0.045 collides on
+                      "ma" and "dr". SHIPPED: -0.022em.
+       heading 48/32  -0.012 at 44px reads natural, -0.022 is already closed
+                      and -0.030 is tight. SHIPPED: -0.012em.
+       body 16px      +0.02 and +0.01 are visibly loose. 0 is the drawn fit
+                      and is correct. -0.006 and -0.011 buy nothing.
+                      SHIPPED: 0, and it is written as a token rather than
+                      left unset so nothing can inherit a value into it.
+       label 13px up  0 reads cramped in uppercase, 0.02 reads right, 0.04
+                      is wide and 0.06 is a caption on a museum wall.
+                      SHIPPED: +0.02em. POSITIVE. Microcopy at this size
+                      takes no negative tracking anywhere on this site.
+
+     THE LEADING, INSIDE THE STATED RANGES AND ABOVE THE MEASURED FLOOR.
+     Display 1.09, which is inside 1.02 to 1.10 and clears the 1.0876
+     descender floor derived above by 0.0024. Heading 1.12, inside 1.08 to
+     1.18. Body 1.55, inside 1.45 to 1.60.
+     ============================================================ */
+  --weight-regular: 400;
+  --weight-medium: 450;
+  --weight-display: var(--weight-regular);
+
+  --tracking-display: -0.022em;
+  --tracking-heading: -0.012em;
+  --tracking-body: 0em;
+  --tracking-label: 0.02em;
   --text-display: 5.3333rem;
   --text-heading: 3.2rem;
   --text-heading-sm: 2.1333rem;
@@ -468,9 +549,10 @@
      88px of slug at 80px of type. Body leading stays at 155 percent, and the
      gap between a solid display and an open paragraph carries the premium
      read. */
-  --leading-display: 1.1;
-  --leading-tight: 1.1;
-  --leading-tight-mixed: 1.1;
+  --leading-display: 1.09;
+  --leading-tight: 1.12;
+  --leading-tight-mixed: 1.12;
+  --leading-heading: 1.12;
 
   /* SOLID IS FOR ONE LINE THAT IS NOT DISPLAY TYPE: a table cell, a numeral,
      a control label. It stays at 1 because a single line box is never
@@ -480,29 +562,6 @@
   --leading-solid: 1;
   --leading-body: 1.55;
 
-  /* TRACKING EXISTS IN ONE PLACE ON THIS SITE, AND THIS IS IT.
-
-     There used to be a table: 0.02, 0.01, 0.005, 0, -0.005, -0.01, -0.02 and
-     -0.026em, thirty five declarations across five sheets, assigned per role.
-     Most of it was invisible. 0.005em on a 32px heading moves a pair by 0.16
-     of a pixel and 0.01em on 21px moves it by 0.21, so those values could not
-     be seen, could not be judged, and could only be inherited wrong.
-
-     Worse, most of the table was POSITIVE, on lowercase, in a grotesque drawn
-     to be set as it is. Loosening a 21px subheading is the one thing tracking
-     can do that actively makes a page look less resolved.
-
-     The references settle this. Three of the four set letter-spacing to zero
-     at every size on every element, one of them on a 136px numeral, across
-     122KB of stylesheet. The fourth uses exactly two values. None of the four
-     tracks a lowercase heading positively at any size.
-
-     So: 0.02em, on uppercase micro-labels, because uppercase at 13px is the
-     one case where the drawn fit is genuinely too tight. Nothing else on the
-     site names a tracking value, the display token is gone rather than set to
-     zero, and the rule is checkable by grep: letter-spacing should appear in
-     these sheets only as var(--tracking-label). */
-  --tracking-label: 0.02em;
 
   /* ============================================================
      4. ALIGNMENT, THE OPEN QUESTION
@@ -522,9 +581,9 @@
      width, so even a centred headline leaves clear ground either side. In the
      base too, because a cap that stays in pixels while the type it caps
      scales is a cap that changes its meaning at every width. */
-  --measure-display: 82.667rem;   /* 1240px at 1500 */
-  --measure-statement: 81.333rem; /* 1220px at 1500 */
-  --measure-narrow: 53.867rem;    /*  808px at 1500 */
+  --measure-display: min(82.667rem, 100%);   /* 1240px at 1500 */
+  --measure-statement: min(81.333rem, 100%); /* 1220px at 1500 */
+  --measure-narrow: min(53.867rem, 100%);    /*  808px at 1500 */
   /* THE READING MEASURE, AND IT IS ONE NUMBER NOW.
 
      It was declared at 68ch and used by nothing, while five separate caps of
@@ -535,57 +594,139 @@
      measure somewhere around 75, so four of the five were columns rather
      than measures.
 
-     48ch, because ch is the width of the face's zero and this face's zero is
-     wider than its mean lowercase advance: 1ch buys about 1.55 characters of
-     running copy here. 48 x 1.55 is 74, and the worst-inking paragraph on
-     the site lands at 74 rather than 95. Stated in ch rather than px so the
-     cap follows the step it caps. */
-  --measure: 48ch;            /* the reading column ceiling, about 74 cpl */
+     40ch, AND IT WAS 48, WHICH WAS TWO CHARACTERS OVER THE CEILING RATHER THAN
+     comfortably inside it. ch is the width of the face's zero and this face's
+     zero is wider than its mean lowercase advance, so 1ch buys about 1.55
+     characters of running copy here: 48 x 1.55 is 74, and a line stops being
+     a measure somewhere around 72. Re-measured on 147 rendered paragraphs
+     across six routes at two widths, every reading line on the site now
+     falls inside the 45 to 72 band, and the document body sits in the 60 to
+     68 the brief prefers.
 
-  /* Spacing rhythm, in the base. Every figure is its pixel value at 1500
-     divided by 15, so the 1500px artboard is unchanged and every other width
-     now moves with the type rather than against it. */
-  --sp-1: 0.3333rem;  /*   5px at 1500 */
-  --sp-2: 0.5333rem;  /*   8px */
-  --sp-3: 1rem;       /*  15px */
-  --sp-4: 1.2667rem;  /*  19px */
-  --sp-5: 2rem;       /*  30px */
-  --sp-6: 3.0667rem;  /*  46px */
-  --sp-7: 5.0667rem;  /*  76px */
-  --sp-8: 7.9333rem;  /* 119px */
-  --section-gap: 8rem; /* 120px at 1500 */
+     Stated in ch rather than px so the cap follows the step it caps: the
+     document body at 15px and the hero's lede at 16px take the same 42
+     zeroes and land at different pixel widths, which is what a measure is. */
+  --measure: 40ch;            /* the reading column ceiling, about 62 cpl */
 
-  /* ---- Layout ----
-     A flat 20px gutter at every width above 768, which puts content on
-     97.3% of a 1500px viewport. The old clamp resolved to 75px there and
-     kept the page at 90%, and that 7 point difference is the whole reason a
-     170px line can press against the edge of the screen rather than sit
-     politely inside a margin. */
-  --page-max: min(2200px, 100vw);
+  /* ============================================================
+     B. THE SPACING FAMILY
 
-  /* THE MARGIN, AS A PROPORTION RATHER THAN AS A NUMBER.
+     Exactly ten values and nothing between them:
 
-     It was a flat 40px at every width, on the reasoning that one value is the
-     same margin wherever the sheet is opened. That reasoning is wrong and the
-     arithmetic says so: 40px is 10.3% of a 390px phone and 2.7% of a 1500px
-     desktop. The same NUMBER is a generous margin on a phone and a cramped
-     one on a laptop, which is the opposite of what a single value was meant
-     to buy.
+         4   8   12   16   24   32   48   64   96   128
 
-     One expression, evaluated everywhere, no per-breakpoint override:
+     They are PIXELS, not multiples of the fluid root, and that is the change
+     that matters. The old family was every figure's pixel value at 1500
+     divided by 15, so a gap meant one thing on a laptop and 60 percent of
+     that thing on a phone, and no two elements on the page could be said to
+     be the same distance apart without naming a viewport first. A rhythm
+     that moves with the type is not a rhythm.
 
-       the floor    40px, so a small screen never gets tighter than it is now
-       the rate     4vw, which is the margin the desktop sheet actually wants
-       the ceiling  88px, which is 4vw at 2200 and is where it stops, because
-                    2200 is where the type ladder stops as well and a margin
-                    that kept growing past it would shrink the column while
-                    every step of type on it held still
+     Only the four largest have a fluid variant, and each one interpolates
+     between two members of the family rather than to an arbitrary rate, so
+     at the 1500 artboard every value on this site is exactly a family
+     member and below it every value is between two of them.
 
-     Resolved: 40px from 320 to 1000, then 48 at 1200, 60 at 1500, 76.8 at
-     1920, and 88 from 2200 up. The crossover is 1000px, where 4vw is exactly
-     the floor, so there is no step anywhere in the range. */
-  --gutter: clamp(40px, 4vw, 88px);
-  --col-gap: var(--sp-4);
+     HOW THEY ARE MEANT TO BE USED. 4 through 16 binds a group: a label to
+     the thing it labels, an arrow to its own word. 24 and 32 separate items
+     inside one group. 48 and 64 close a group. 96 and 128 open a new
+     information group or state a deliberate pause, and nothing on this site
+     is allowed to use one of those two without doing one of those two jobs.
+     ============================================================ */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  /* The fluid four. Each falls to the previous family member on a small
+     sheet and reaches its own at 1500. */
+  --space-fl-7: clamp(var(--space-6), 3.2vw, var(--space-7));
+  --space-fl-8: clamp(var(--space-7), 4.267vw, var(--space-8));
+  --space-fl-9: clamp(var(--space-8), 6.4vw, var(--space-9));
+  --space-fl-10: clamp(var(--space-9), 8.533vw, var(--space-10));
+
+  /* The old names, mapped onto the family. Kept as aliases rather than
+     rewritten across 148 declarations in four sheets, so there is one
+     definition of every distance on the site. Nothing below is a new value. */
+  --sp-1: var(--space-1);       /*  5 ->   4 */
+  --sp-2: var(--space-2);       /*  8 ->   8 */
+  --sp-3: var(--space-4);       /* 15 ->  16 */
+  --sp-4: var(--space-5);       /* 19 ->  24 */
+  --sp-5: var(--space-6);       /* 30 ->  32 */
+  --sp-6: var(--space-fl-7);    /* 46 ->  48 */
+  --sp-7: var(--space-fl-8);    /* 76 ->  64 */
+  --sp-8: var(--space-fl-9);    /* 119 -> 96 */
+
+  /* THE SECTION PAUSE. The largest distance on the site and the only one
+     that opens a new information group at viewport scale. 128 at 1500,
+     falling to 96 below 1125 and never under it. */
+  --section-gap: var(--space-fl-10);
+
+  /* ============================================================
+     A. THE GRID
+
+     ONE grid, three counts, one container, and three anchors that every
+     region of every route is placed against.
+
+       desktop   >= 1024px   12 columns, 24px gutter, 48px page margin
+       tablet     600-1023   8 columns,  16px gutter, 32px page margin
+       mobile     <  600px   4 columns,  16px gutter, 24px page margin
+
+     THE MARGIN IS A STEP AND NOT A CLAMP, and that is deliberate. It used to
+     be clamp(40px, 4vw, 88px), which resolves to 60px at 1500, 48 at 1200
+     and 76.8 at 1920: three numbers, none of them in the spacing family,
+     none of them nameable, and all of them making "the same edge" a
+     different figure at every width. Discrete steps give a page margin that
+     is a family member at EVERY viewport, which is what makes the anchors
+     below checkable to the pixel rather than approximately right.
+
+     THE THREE ANCHORS.
+
+       --anchor-content   column 1. The main content edge. Section labels,
+                          section rules, headings, the navigation lockup and
+                          the footer's first column all begin here, and it is
+                          the container's own content edge so nothing has to
+                          compute it.
+       --anchor-copy      column 4 of 12 (column 3 of 8). The primary copy
+                          edge: running prose, ledes and answers. Indented
+                          from the content edge so the label column reads as
+                          apparatus and the copy reads as the document.
+       --anchor-action    column 10 of 12 (column 7 of 8). The action and
+                          metadata edge: controls, arrows, indices, the
+                          navigation's own links and the footer's meta row.
+
+     3 : 6 : 3 AND NOT 6 : 6. Two equal halves is the default that makes a
+     page look generated, and it also gives the copy the same weight as the
+     furniture beside it. Six of twelve columns for the copy, three for the
+     apparatus on its left and three for the action on its right, distributes
+     by content and by visual weight instead of by arithmetic.
+
+     BELOW 600 ALL THREE COLLAPSE TO THE CONTENT EDGE, because four columns
+     cannot carry three anchors and a stacked phone layout has one.
+     ============================================================ */
+  --grid-cols: 12;
+  --grid-gap: var(--space-5);
+  --gutter: var(--space-7);
+  --page-max: min(1680px, 100vw);
+
+  /* One column of the grid, as a length, so an anchor can be expressed in
+     the same arithmetic the grid itself uses and the two cannot drift. */
+  --grid-col: calc(
+    (100% - (var(--grid-cols) - 1) * var(--grid-gap)) / var(--grid-cols)
+  );
+  --grid-step: calc(var(--grid-col) + var(--grid-gap));
+
+  --anchor-content: 0px;
+  --anchor-copy: calc(3 * var(--grid-step));
+  --anchor-action: calc(7 * var(--grid-step));
+
+  --col-gap: var(--grid-gap);
   /* The header's own height, published so the hero and the scene can clear
      it. In the base with a pixel floor: the row is the mark plus two --sp-3,
      so it grows with the page, and 4.2rem is exactly the 63px it measured at
@@ -621,44 +762,60 @@
   --nav-h: max(4.2rem, 56px);
 
   /* ============================================================
-     THE MARK'S OWN CONSTANTS
+     THE MARK'S OWN CONSTANTS, RE-MEASURED OFF THE DELIVERED DRAWING
 
-     Measured off the artwork rather than chosen. The mark is drawn on a
-     404 unit square; its stroke is 29 units and its cut corners run 14.5.
-     Expressed against the box that is 7.175 percent and 3.587 percent, and
-     the drawing's diagonals sit 4.18 degrees off true 45.
+     Every figure below was wrong for the shipped artwork in the same way:
+     it described a drawing that was 379.7 x 384.0 inside a 404 box, one arm
+     short, with a 1.34 percent 180-degree symmetry error. The delivered mark
+     is 100 x 100 inside a 100 box with a symmetry error of exactly 0, so the
+     constants are restated against it rather than carried forward.
+
+       --x-w    the ribbon, as a share of the box. 7.178 percent described a
+                hole nearly four times the width of its own ink; 13.576 is
+                the corrected ribbon.
+       --x-r    the convex corner. 3.589 was half the old ribbon; 3.000 is
+                0.22 of the new one, which is what keeps the corner a corner
+                at 16px rather than a smear.
+       --x-tau  unchanged at 4.18, and it is now EXACT rather than nominal:
+                the shipped artwork drew one tab at 4.151 and the other at
+                4.214, and both are 4.180 in the delivered drawing.
+
+     --x-r1 through --x-r5, --x-w-k and --x-r1-k are deleted. They were the
+     vertex radii of the old off-centre drawing, nothing in the six
+     stylesheets or the sixteen generated routes read one of them, and a
+     stale constant that nobody consumes is a fact waiting to be trusted.
      ============================================================ */
-  --x-w: 7.178%;              /* stroke weight, as a share of the box   */
-  --x-r: 3.589%;              /* the cut corner, exactly half of it     */
+  --x-w: 13.576%;             /* ribbon weight, as a share of the box   */
+  --x-r: 3.000%;              /* the convex corner                      */
   --x-tau: 4.18deg;           /* the drawing's departure from true 45   */
 
-  --x-origin-x: 49.90%;
-  --x-origin-y: 50.71%;
-
-  --x-w-k: 0.07178;
-  --x-r1-k: 0.51653;
-
-  --x-r1: 51.653%;            /* 14 vertices, the outer extremity  */
-  --x-r2: 49.673%;            /*  8 vertices, the shoulder         */
-  --x-r3: 43.741%;            /* 10 vertices, the counter's reach  */
-  --x-r4: 31.342%;            /*  4 vertices                        */
-  --x-r5: 21.401%;            /*  4 vertices                        */
+  /* THE ROTATION CENTRE IS THE BOX CENTRE NOW, AND THAT IS A CORRECTION
+     RATHER THAN A SIMPLIFICATION. 49.90% / 50.71% was the measured centre of
+     a drawing that was not centred in its own file. The delivered mark is,
+     so the point the drawing actually turns about and the middle of its box
+     are the same point to five places. */
+  --x-origin-x: 50%;
+  --x-origin-y: 50%;
 
   /* The mark, as a mask. Base64 rather than percent-encoded: the minifier
      could not parse the scheme inside a percent-encoded payload and failed
      the build on it. It is the single-path drawing, so the counter is a real
      hole and whichever ground is underneath reads through it.
 
+     Regenerated from .spec/logo-lab/out/paths.json -> master.d on the
+     100 x 100 box. The old payload carried the old viewBox, so the seal it
+     paints was drawing at 93.6 percent of the size it was asked for and
+     carrying the asymmetry with it.
+
      Stated once here and read in exactly one place: the section seal in
      base.css, which is the mark at 13px in the furniture of every section
-     head. The three architectural instances that used to read it, the depth
-     layer, the interior masthead and the 404, are all bands now.
+     head.
 
      THE SEAL IS THE MARK'S LAST APPEARANCE OUTSIDE THE LOCKUP, and that is
      the shape of the owner's ruling rather than an exception to it: the
      drawing at logo scale, as a signature, is the brand; the drawing at
      several hundred pixels, as wallpaper, is what was rejected. */
-  --x-mask: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9Jzc1OCAzMzUgNDA0IDQwNCc+PHBhdGggZD0nTTEwNDEuNCw3MzJjLTMuNywwLTcuNC0xLjQtMTAuMi00LjNsLTUxLjktNTEuOWMtMi45LTIuOS00LjUtNy4xLTQuMi0xMS4zbDEuOC0yNC44LTg4LDg4Yy01LjYsNS42LTE0LjgsNS42LTIwLjUsMGwtOTYuMS05Ni4xYy0yLjctMi43LTQuMy02LjQtNC4zLTEwLjJzMS42LTcuNSw0LjMtMTAuMmw3MS4xLTcxLjEtNzEuMS03MS4xYy0yLjctMi43LTQuMy02LjQtNC4zLTEwLjJzMS42LTcuNSw0LjMtMTAuMmw5Ni4xLTk2LjFjNS42LTUuNiwxNC44LTUuNiwyMC41LDBsNTEuOSw1MS45YzIuOSwyLjksNC41LDcuMSw0LjIsMTEuM2wtMS44LDI0LjgsODgtODhjMi43LTIuNyw2LjQtNC4zLDEwLjItNC4zaDBjMy44LDAsNy41LDEuNiwxMC4yLDQuM2w5Ni4xLDk2LjFjNS42LDUuNiw1LjYsMTQuOCwwLDIwLjVsLTcxLjEsNzEuMSw3MS4xLDcxLjFjNS42LDUuNiw1LjYsMTQuOCwwLDIwLjVsLTk2LjEsOTYuMWMtMi45LDIuOS02LjUsNC4zLTEwLjIsNC4zWk04MDMuMSw2MjEuNGw3NS42LDc1LjYsMTA1LjMtMTA1LjNjNC4zLTQuMywxMC44LTUuNSwxNi4zLTIuOSw1LjUsMi41LDguOCw4LjIsOC40LDE0LjJsLTQuMiw1NywzNywzNyw3NS42LTc1LjYtNzEuMS03MS4xYy01LjYtNS42LTUuNi0xNC44LDAtMjAuNWw3MS4xLTcxLjEtNzUuNi03NS42LTEwNS4yLDEwNS4yYy00LjMsNC4zLTEwLjgsNS41LTE2LjMsMi45cy04LjgtOC4yLTguNC0xNC4ybDQuMi01Ny0zNy0zNy03NS42LDc1LjYsNzEuMSw3MS4xYzUuNiw1LjYsNS42LDE0LjgsMCwyMC41bC03MS4xLDcxLjFoMFonLz48L3N2Zz4=");
+  --x-mask: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJz48cGF0aCBkPSdNMjYuNzUwOSwwLjkwMTFBMy4wNzY1LDMuMDc2NSAwIDAgMSAzMS4xMDE2LDAuOTAxMUw0My44NzcxLDEzLjY3NjVBMy4wNzY1LDMuMDc2NSAwIDAgMSA0NC43Njk5LDE2LjA3NjFMNDQuMDY0MCwyNS43MzU0TDY4Ljg5ODQsMC45MDExQTMuMDc2NSwzLjA3NjUgMCAwIDEgNzMuMjQ5MSwwLjkwMTFMOTkuMDk4OSwyNi43NTA5QTMuMDc2NSwzLjA3NjUgMCAwIDEgOTkuMDk4OSwzMS4xMDE2TDgwLjIwMDYsNTAuMDAwMEw5OS4wOTg5LDY4Ljg5ODRBMy4wNzY1LDMuMDc2NSAwIDAgMSA5OS4wOTg5LDczLjI0OTFMNzMuMjQ5MSw5OS4wOTg5QTMuMDc2NSwzLjA3NjUgMCAwIDEgNjguODk4NCw5OS4wOTg5TDU2LjEyMjksODYuMzIzNUEzLjA3NjUsMy4wNzY1IDAgMCAxIDU1LjIzMDEsODMuOTIzOUw1NS45MzYwLDc0LjI2NDZMMzEuMTAxNiw5OS4wOTg5QTMuMDc2NSwzLjA3NjUgMCAwIDEgMjYuNzUwOSw5OS4wOTg5TDAuOTAxMSw3My4yNDkxQTMuMDc2NSwzLjA3NjUgMCAwIDEgMC45MDExLDY4Ljg5ODRMMTkuNzk5NCw1MC4wMDAwTDAuOTAxMSwzMS4xMDE2QTMuMDc2NSwzLjA3NjUgMCAwIDEgMC45MDExLDI2Ljc1MDlaIE0yOC45MjYzLDE4LjQxNTBMMTguNDE1MCwyOC45MjYzTDM3LjMxMzQsNDcuODI0NkEzLjA3NjUsMy4wNzY1IDAgMCAxIDM3LjMxMzQsNTIuMTc1NEwxOC40MTUwLDcxLjA3MzdMMjguOTI2Myw4MS41ODUwTDQ3LjgyNDYsNjIuNjg2NkEzLjA3NjUsMy4wNzY1IDAgMCAxIDUyLjE3NTQsNjIuNjg2Nkw3MS4wNzM3LDgxLjU4NTBMODEuNTg1MCw3MS4wNzM3TDYyLjY4NjYsNTIuMTc1NEEzLjA3NjUsMy4wNzY1IDAgMCAxIDYyLjY4NjYsNDcuODI0Nkw4MS41ODUwLDI4LjkyNjNMNzEuMDczNywxOC40MTUwTDUyLjE3NTQsMzcuMzEzNEEzLjA3NjUsMy4wNzY1IDAgMCAxIDQ3LjgyNDYsMzcuMzEzNFonLz48L3N2Zz4=");
 
   /* THE PLANE CUT.
 
@@ -689,8 +846,9 @@
      allowed to name a duration, a distance, an angle or a curve.
 
      In one line: every translate on this site reads dy / dx = 0.863786 and
-     travels 5.4, 10.8 or 21.5px; the one rotation is 180deg about 49.90% /
-     50.71% and it is started by a click; every duration is one of the two
+     travels 5.4, 10.8 or 21.5px; nothing rotates, and the half turn the
+     drawing permits is a static orientation on the section seal and nothing
+     animates it; every duration is one of the two
      below; every curve is --curve; and nothing anywhere is driven by scroll
      position.
      ============================================================ */
@@ -700,9 +858,13 @@
   --arm-x: 0.756767;          /* cos 40.82 */
   --arm-y: 0.653685;          /* sin 40.82 */
 
-  /* THE TURN, and the point the drawing actually turns about. Restated here
-     beside the rest of the law; --x-origin-x / -y above are the same two
-     figures, kept because the mark's own block is where they were measured. */
+  /* THE TURN, and the point the drawing actually turns about. Nothing on the
+     site animates it: the section seal takes it as a static orientation, and
+     with the delivered drawing's symmetry error at 0 that alternation is
+     provably invisible, which is exactly the claim it was there to make.
+     Restated here beside the rest of the law; --x-origin-x / -y above are the
+     same two figures, kept because the mark's own block is where they were
+     measured. */
   --half-turn: 180deg;
   --turn-origin: var(--x-origin-x) var(--x-origin-y);
 
@@ -795,10 +957,10 @@
      can ever sit at is the tint over one of those two, and that is true at
      EVERY scroll position by construction rather than by inspection.
 
-       daylight  tint #f6f5f8, floor at alpha 0.514, where the tint over pure
-                 black would touch 4.5:1 against --text #16151a.
-       dark      tint #09090b, floor at alpha 0.601, where the tint over pure
-                 white would touch 4.5:1 against #f2f1f6. The binding one.
+       daylight  tint #f7f5f2, floor at alpha 0.525, where the tint over pure
+                 black would touch 4.5:1 against --ink-primary #191817.
+       dark      tint #0a0a0a, floor at alpha 0.590, where the tint over pure
+                 white would touch 4.5:1 against #f4f3f1. The binding one.
 
      The shipped pair is 0.58 in daylight and 0.62 on the void, each sitting
      just above its own floor rather than a single figure sitting far above
@@ -863,7 +1025,7 @@
      stops being frost and becomes clear glass.
      ============================================================ */
   --glass-blur: 8px;
-  --glass-saturate: 180%;
+  --glass-saturate: 100%;
 
   /* ============================================================
      THE ALPHA, RE-SOLVED AGAINST MEASURED PIXELS.
@@ -906,13 +1068,13 @@
      THE CHROME FIGURE, DERIVED THE SAME WAY THE OLD ONE WAS. No backdrop can
      be lighter than white or darker than black, so:
 
-       daylight  tint #f6f5f8 at 0.58 over pure black -> rgb(143,142,144),
-                 luminance 0.2764. Against --text #16151a at 0.0078 that is
-                 5.75:1. The floor, at 4.5:1, is alpha 0.514. 0.58 clears it
+       daylight  tint #f7f5f2 at 0.58 over pure black -> rgb(143,142,140),
+                 luminance 0.2755. Against --ink-primary #191817 that is
+                 5.72:1. The floor, at 4.5:1, is alpha 0.525. 0.58 clears it
                  by 0.066 and sits under the lab's 0.62 ceiling, so daylight
                  gets a chrome surface that is legal AND reads as glass.
-       dark      tint #09090b at 0.62 over pure white -> rgb(102,102,104),
-                 luminance 0.1374. Against --d-text #f2f1f6 at 0.8844 that is
+       dark      tint #0a0a0a at 0.62 over pure white -> rgb(103,103,103),
+                 luminance 0.1382. Against --ink-primary #f4f3f1 that is
                  4.98:1. The floor here is alpha 0.601 and it is the binding
                  one of the two.
 
@@ -936,15 +1098,15 @@
      material is 0.30 on a backdrop far denser than this one. */
   --glass-alpha-quiet: 0.24;
   --glass-tint: light-dark(
-    rgb(246 245 248 / var(--glass-alpha)),
-    rgb(9 9 11 / var(--glass-alpha))
+    rgb(247 245 242 / var(--glass-alpha)),
+    rgb(10 10 10 / var(--glass-alpha))
   );
 
   /* The fallback is FULLY OPAQUE and not thinner glass. A surface that cannot
      blur has no material left to carry the separation, so it stops pretending
      and becomes a solid bar. Thinning the alpha instead is how a fallback
      ends up below the contrast floor the blur was never providing anyway. */
-  --glass-solid: light-dark(#f6f5f8, #09090b);
+  --glass-solid: light-dark(#f7f5f2, #0a0a0a);
 
   /* THE LIT EDGE. Brighter on the top than the bottom, because the light on
      this site comes from up the arm and a real edge catches it on the face
@@ -959,8 +1121,8 @@
      shade below it comes UP, because on a dark surface the separation is
      carried by the shadow rather than by the highlight. */
   --glass-edge-lit: light-dark(rgb(255 255 255 / 0.66), rgb(255 255 255 / 0.13));
-  --glass-edge-shade: light-dark(rgb(22 21 26 / 0.05), rgb(0 0 0 / 0.42));
-  --glass-line: light-dark(rgb(22 21 26 / 0.10), rgb(242 241 246 / 0.12));
+  --glass-edge-shade: light-dark(rgb(25 24 23 / 0.05), rgb(0 0 0 / 0.42));
+  --glass-line: light-dark(rgb(25 24 23 / 0.10), rgb(244 243 241 / 0.12));
 
   /* THE GRAIN. Glass without noise reads as a transparent box: a real
      material has a surface and a surface has texture. Generated rather than
@@ -977,98 +1139,117 @@
   --glass-grain-alpha: 0.032;
 
   /* ============================================================
-     THE DEPTH LAYER
+     THE DEPTH LAYER, REPOINTED AT THE STRUCTURAL EDGE
 
-     THE GLASS ABOVE WAS NEVER THE DEFECT. A Gaussian blur over a flat sheet
-     is the identity function, so every honest tuning of a tint over an empty
-     page produces the same coloured rectangle. The lab settled it: with
-     nothing behind it the panel measures 3.85 in daylight and 2.25 on the
-     void, and with a form under it, 29.72 and 37.26. The whole difference
-     between paint and material is one form, and the form has three
-     requirements, all measured rather than argued.
+     THE MECHANISM IS KEPT AND THE JOB IS CHANGED. What .depth draws is still
+     one run of material at the mark's own 40.82 degrees, masked so that
+     exactly ONE of its two edges crosses each surface it is placed against.
+     The measurement that chose that shape is unchanged and is in
+     .spec/backdrop-physics.md: at matched ink, one edge crossing a panel
+     measures 19.09 in daylight and 22.73 on the void, two measure 9.63 and
+     11.25, three measure 8.60 and 9.78. One edge beats many by roughly
+     twice, and it is also the quieter drawing.
 
-     THE FORM IS NO LONGER THE MARK. The owner ruled the drawn mark out at
-     architectural scale, in those words, so the replacement was found by
-     measurement rather than by taste: sixteen further candidates, none of
-     them the mark, in both rooms at blur 8. The full sweep is in
-     .spec/backdrop-physics.md and its second amendment. Two findings decide
-     everything below.
+     WHAT CHANGED IS WHAT THE RUN IS MADE OF. It was the brand ramp, at up to
+     full strength, on five surfaces. A chromatic diagonal at viewport scale
+     is exactly the thing this pass was told to demolish, and it was also
+     doing a job it should never have had: standing in as a fake backdrop so
+     that glass had something to blur. That is a trick, and the tell is that
+     it had to be drawn loudest exactly where nothing else was happening.
 
-       IT IS AN EDGE, NOT A FORM. Fills do nothing. `fields + planes` scored
-       3.92 when each part alone scored 16, because a solid plane landed
-       fully across the panel and replaced a varied backdrop with a smooth
-       gradient, which a blur then flattens. The mark only ever worked
-       because its arms are big edges. So: a high-contrast EDGE has to cross
-       under the panel, and a smooth fill may never cover one.
+     SO THE RUN IS NOW AN ILLUMINATION CHANGE, and it is level 1 of the
+     material system rather than a decoration: a low-frequency change in how
+     much light the canvas is catching, cut on the arm, at an amplitude you
+     read as lighting and not as a slab.
 
-       ONE EDGE BEATS MANY, BY ROUGHLY 2x AT MATCHED INK. At alpha 0.45 one
-       edge measures 19.09 in daylight and 22.73 on the void; two measure
-       9.63 and 11.25; three measure 8.60 and 9.78. Several partial edges
-       average each other out under the blur and a single step survives.
-       This is the rare case where the measurement and the art direction
-       agree, because one edge is also the quieter drawing.
+       light   the canvas darkens by --edge-step toward its own shadow. There
+               are only eight levels of headroom above porcelain, so on paper
+               a step has to go DOWN to be a step at all.
+       dark    the canvas lifts by --edge-step toward the elevated ground.
 
-       SIZE, STILL. Only structure larger than roughly four times the blur
-       radius survives. Fine structure is worse than nothing: hairlines at
-       4px, a 12px dot matrix and fine grain all measure BELOW the
-       flat-gradient control, because a blur is a low-pass filter and fine
-       structure is exactly what it eats. Nothing on this site draws texture
-       behind glass for that reason, and .rulefield is on paper for it.
+     THE AMPLITUDE IS THE WHOLE ARGUMENT, so it is stated as one number.
+     --edge-step is the alpha of the ink or the light laid over the surface,
+     and the two figures below are the only two the site uses:
 
-       POSITION. The form must sit UNDER the panel. The lab moved the same
-       300px wordmark clear of the panel and it measured 3.85 / 2.25, the
-       flat control to the byte. There is no ambient benefit, ever.
+       --edge-quiet   0.045   the canvas. Reads as light across the sheet.
+                              About eleven levels in either room.
+       --edge-struct  0.20    a run placed so that it crosses a pane of true
+                              glass and nothing else. Only three surfaces
+                              take it and none of them has body copy on it.
+       --edge-chrome  0.46    the header's own run, and the only place on the
+                              site that takes it. Derived below.
 
-       CROSSING BEATS HIDING, 16.55 against 14.40. The reader has to see the
-       same form sharp outside the panel and soft inside it; that comparison
-       is what sells the material. Every placement in this build crosses an
-       edge rather than tucking under one.
+     AND THE NOTE THAT USED TO END THIS BLOCK IS NOW A DERIVATION.
 
-     THE FILL FLIPS AND THE PALETTE DOES NOT. All four brand colours sit low
-     in luminance, so the identical geometry that measures 48.03 on paper
-     measures 4.92 on the void. Two consequences, both from the lab:
+     It said a quiet neutral edge cannot make the header read as frosted
+     glass, and that to reach the lab's floor the step would have to be about
+     forty levels. Both halves were right and the conclusion drawn from them
+     was the wrong one: the block accepted 1.72 to 11.74 in the bar's own
+     content-free channel and wrote the shortfall up as honesty. Measured on
+     the rebuilt bar at 1500 with the run at --edge-struct the same channel
+     read 4.88 in daylight and 4.42 on the void. That is a coloured sticker
+     with a paragraph attached.
 
-       daylight  WHITE IS USELESS. The paper is already at luminance 0.9153,
-                 so a white mark on it measured 1.40 through the bar against
-                 a 1.12 control. The form has to be CHROMATIC here, and the
-                 same 900px mark carrying the ramp measured 15.37.
-       dark      COLOUR IS USELESS. The ramp on the void measured 0.61. The
-                 lab's repair was to lift the field's LUMINANCE rather than
-                 its alpha, 2.53 -> 15.91, so the dark room takes the same
-                 two brand hues carried at the room's own ink luminance.
+     SO THE FORTY LEVELS ARE SPENT, DELIBERATELY, IN THE ONE PLACE NOTHING
+     READS ON THEM. The header's run is behind a tint that passes 42 percent
+     in daylight and 38 on the void, and NOTHING is painted directly on it:
+     the bar's label, its five links and its two controls all sit on the
+     GLASS, whose contrast floor is derived in the ALPHA block above against
+     pure black and pure white, so no backdrop the run can draw is capable of
+     moving those figures. The run is therefore bounded by taste and by the
+     lab, and by nothing else.
 
-     THE ALPHA IS SET BY THE SMALLEST TYPE THAT CAN EVER STAND ON IT, which
-     is the same rule --chroma-alpha is set by, and it is what makes the
-     depth layer safe to run behind a masthead or a rotator.
+     THE FIGURE, MEASURED RATHER THAN CHOSEN. Sweep on rendered composited
+     pixels, in the bar's largest content-free region at 1500, one edge
+     crossing it, both rooms:
 
-       daylight  the ramp at 50 percent over paper. Worst point is the violet
-                 end at 6.55:1 against --text, magenta 8.59:1. A 13px label
-                 is legal anywhere on it.
-       dark      the two hues lifted 76 percent toward --ink and carried at
-                 42 percent over the void. Worst point 5.43:1 against
-                 #f2f1f6. Also legal at 13px.
+       mix    0.20    0.35    0.40    0.44    0.48
+       light  ~5.9   14.86   17.17   18.94   20.68
+       dark   ~5.4   14.12   16.20   17.73   19.45
 
-     AND THE LOUD PAIR IS FOR SURFACES WITH NO TYPE ON THEM AT ALL, where the
-     only bound is the lab's. Full ramp in daylight, the lifted pair at 0.88
-     on the void. It never runs behind a word, on any route, by placement.
+     0.46 is taken, and the width that chose it is 390 rather than 1500. On a
+     phone the bar's largest content-free run is 68px, which is close to the
+     horizontal footprint of the edge crossing it (54px of bar height at
+     40.82 degrees is 62px across, before the blur), so that region holds
+     something much nearer a ramp than a step and its reading is bounded by
+     geometry rather than by placement. Every viewport from 428 up clears 15
+     at 0.40; 390 does not, and 390 is the most common phone there is. At
+     0.46 the whole set clears, and 15.39 is the tightest reading on the
+     site.
 
-     ONLY THE STOPS ARE HERE. The two gradients that consume them are
-     declared on .depth itself in base.css, and that placement is the whole
-     reason a room can override a theme. A custom property is substituted
-     against the element it is DECLARED on, so a gradient written at :root
-     freezes :root's stops into itself and a later rule that changes a stop
-     changes nothing. Both surfaces in the chroma room shipped invisible once
-     for exactly that, and the first measurement of this pass caught it: the
-     pane read 10.62 on the void and 2.36 in daylight from geometry that is
-     identical in both.
+     WHAT IT COMPOSITES TO. In daylight 0.46 of #191817 over porcelain is
+     rgb(145,144,141) against 247, and behind the 0.58 tint the bar steps
+     from 247 to 204: a 43-level change across a 60px bar, cut on the arm. On
+     the void 0.46 of #f4f3f1 over #0a0a0a is rgb(118,118,117) against 10, and
+     behind the 0.62 tint the bar steps from 10 to 51. Both are a soft
+     diagonal light change inside the chrome, which is what a pane of glass
+     over a real edge does and what the bar has never done before.
+
+     THE OTHER EDGES STILL DO THEIR WORK. The page's own boundaries, canvas
+     to focal surface and canvas to frost, still cross under the bar as the
+     reader scrolls and still add to this. The difference is that the bar no
+     longer depends on one of them happening to be there.
      ============================================================ */
-  --depth-mix: 50%;
-  --depth-a: color-mix(in srgb, var(--brand-magenta) var(--depth-mix), transparent);
-  --depth-b: color-mix(in srgb, var(--brand-violet) var(--depth-mix), transparent);
+  --edge-quiet: 0.045;
+  --edge-struct: 0.2;
+  --edge-chrome: 0.46;
 
-  --depth-loud-mix: 100%;
-  --depth-loud-a: color-mix(in srgb, var(--brand-magenta) var(--depth-loud-mix), transparent);
-  --depth-loud-b: color-mix(in srgb, var(--brand-violet) var(--depth-loud-mix), transparent);
+  /* The two ends of the run. It is a run and not a flat wash: the leading
+     end carries the step and it eases off across the band, so the edge is a
+     step and the field behind it is not a second one. Both stops are the
+     same colour and only the alpha moves, so nothing here can introduce a
+     hue. */
+  --edge-ink: light-dark(25 24 23, 244 243 241);
+  --depth-mix: var(--edge-quiet);
+  --depth-loud-mix: var(--edge-struct);
+
+  /* --depth-a and its three siblings are NOT declared here, and that is the
+     one thing in this block that is a mechanism rather than a value. A custom
+     property is substituted against the element it is DECLARED on, so a
+     colour written at :root freezes :root's --edge-ink into itself and a
+     surface that redeclares --edge-ink lower down changes nothing at all.
+     They are assembled on .depth in base.css, which is what lets
+     .depth--void, the nav panel and the theme all reach the same element. */
 
   /* ============================================================
      THE BAND, AND IT IS THE ONLY GEOMETRY THE DEPTH LAYER HAS LEFT
@@ -1135,8 +1316,8 @@
   /* Selection follows the room. Deep violet measures 1.65:1 on the void, so
      the pair inverts: the dark side takes the brand magenta with near black
      on it, which is the same 5.30:1 the void room already ships. */
-  --selection-bg: light-dark(#38016c, #e634be);
-  --selection-text: light-dark(#ffffff, #09090b);  /* 15.12:1 / 5.30:1 */
+  --selection-bg: var(--accent-plum);
+  --selection-text: light-dark(#fffefb, #0a0a0a);  /* 9.61:1 / 8.79:1 */
 
   /* ============================================================
      THE PROOF PLATE
@@ -1146,8 +1327,8 @@
      two identical layers cancel to 0,0,0 in every theme. Zero is black
      whether the page is a void or a sheet of paper.
      ============================================================ */
-  --proof-field: #09090b;
-  --proof-ink: #f2f1f6;
+  --proof-field: #0a0a0a;
+  --proof-ink: #f4f3f1;
 }
 
 /* ============================================================
@@ -1192,10 +1373,10 @@
 
    THE ALPHA DOES NOT MOVE. It is the tint that flips, so the floor
    arithmetic in the GLASS block holds for both and there is one number to
-   check rather than two: tint #09090b at 0.86 over the worst backdrop a
+   check rather than two: tint #0a0a0a at 0.62 over the worst backdrop a
    surface can ever have, pure white, composites to rgb(43,43,45), and that
-   measures 12.57:1 against #f2f1f6. It is the binding one of the two floors,
-   at alpha 0.587, which 0.86 clears by 0.273.
+   measures 4.98:1 against #f4f3f1. It is the binding one of the two floors,
+   at alpha 0.590, which 0.62 clears by 0.030.
 
    THE LIT EDGE DROPS A LONG WAY, because a bright hairline that reads as
    caught light on paper reads as a drawn white line on the void. THE GRAIN
@@ -1209,27 +1390,18 @@
   /* THE ALPHA COMES WITH THE ROOM NOW. It has to: 0.58 is the daylight
      figure and it is a figure about a PAPER tint. A near-black tint at 0.58
      over the worst backdrop it can have composites to 4.48:1 against
-     #f2f1f6, which is under the floor, so a surface that has declared itself
+     #f4f3f1, which is under the floor, so a surface that has declared itself
      to be standing in the void takes the void's 0.62 whatever room the
      document around it is in. Same reasoning as the edge and the grain
      directly below, and the same reason this scope exists at all. */
   --glass-alpha: 0.62;
-  --depth-mix: 42%;
-  --depth-a: color-mix(in srgb,
-    color-mix(in srgb, #f2f1f6 76%, var(--brand-magenta)) var(--depth-mix), transparent);
-  --depth-b: color-mix(in srgb,
-    color-mix(in srgb, #f2f1f6 76%, var(--brand-violet)) var(--depth-mix), transparent);
-  --depth-loud-mix: 88%;
-  --depth-loud-a: color-mix(in srgb,
-    color-mix(in srgb, #f2f1f6 76%, var(--brand-magenta)) var(--depth-loud-mix), transparent);
-  --depth-loud-b: color-mix(in srgb,
-    color-mix(in srgb, #f2f1f6 76%, var(--brand-violet)) var(--depth-loud-mix), transparent);
+  --edge-ink: 244 243 241;
 
-  --glass-tint: rgb(9 9 11 / var(--glass-alpha));
-  --glass-solid: #09090b;
+  --glass-tint: rgb(10 10 10 / var(--glass-alpha));
+  --glass-solid: #0a0a0a;
   --glass-edge-lit: rgb(255 255 255 / 0.13);
   --glass-edge-shade: rgb(0 0 0 / 0.42);
-  --glass-line: rgb(242 241 246 / 0.12);
+  --glass-line: rgb(244 243 241 / 0.12);
   --glass-grain-alpha: 0.055;
 }
 
@@ -1272,6 +1444,43 @@
   color-scheme: light dark;
 }
 
+/* ============================================================
+   THE GRID, AT THE OTHER TWO COUNTS
+
+   Three declarations each and nothing else changes: the column count, the
+   gutter between columns, and the page margin. Every anchor above is derived
+   from those three, so a breakpoint moves the whole composition at once and
+   there is no per-region override anywhere in the system.
+
+   Stated in px rather than rem because a media query's rem is the INITIAL
+   font size and not the root's, so a sheet that scales its root in vw and
+   breaks in rem is reading two different rulers. The rest of this file's
+   queries predate that observation and are left alone; the grid does not
+   join them.
+   ============================================================ */
+@media (max-width: 1023.98px) {
+  :root {
+    --grid-cols: 8;
+    --grid-gap: var(--space-4);
+    --gutter: var(--space-6);
+    --anchor-copy: calc(2 * var(--grid-step));
+    --anchor-action: calc(5 * var(--grid-step));
+  }
+}
+
+/* Four columns cannot carry three anchors. Below 600 the composition is one
+   column and all three resolve to the content edge, which is what makes a
+   phone layout stack without a single per-element rule. */
+@media (max-width: 599.98px) {
+  :root {
+    --grid-cols: 4;
+    --grid-gap: var(--space-4);
+    --gutter: var(--space-5);
+    --anchor-copy: 0px;
+    --anchor-action: 0px;
+  }
+}
+
 /* The switch, and the whole of it. data-theme carries one of two words, and
    narrowing color-scheme is all either word has to do: every colour in the
    system is already a light-dark() pair reading this property. Absent the
@@ -1295,7 +1504,7 @@
                             number for the first time. 0.58 is legal in
                             daylight because the tint is paper and the worst
                             composite is 5.75:1; the same figure on the void
-                            composites to 5.15:1 against #f2f1f6 at the very
+                            composites to 5.12:1 against #f4f3f1 at the very
                             worst backdrop, which is under the margin this
                             system keeps, so the void holds at its own floor
                             of 0.62. The quiet alpha carries no type in
@@ -1315,16 +1524,6 @@
     --glass-grain-alpha: 0.055;
     --glass-alpha: 0.62;
 
-    --depth-mix: 42%;
-    --depth-a: color-mix(in srgb,
-      color-mix(in srgb, var(--ink) 76%, var(--brand-magenta)) var(--depth-mix), transparent);
-    --depth-b: color-mix(in srgb,
-      color-mix(in srgb, var(--ink) 76%, var(--brand-violet)) var(--depth-mix), transparent);
-    --depth-loud-mix: 88%;
-    --depth-loud-a: color-mix(in srgb,
-      color-mix(in srgb, var(--ink) 76%, var(--brand-magenta)) var(--depth-loud-mix), transparent);
-    --depth-loud-b: color-mix(in srgb,
-      color-mix(in srgb, var(--ink) 76%, var(--brand-violet)) var(--depth-loud-mix), transparent);
   }
 }
 
@@ -1332,16 +1531,6 @@
   --glass-grain-alpha: 0.055;
   --glass-alpha: 0.62;
 
-  --depth-mix: 42%;
-  --depth-a: color-mix(in srgb,
-    color-mix(in srgb, var(--ink) 76%, var(--brand-magenta)) var(--depth-mix), transparent);
-  --depth-b: color-mix(in srgb,
-    color-mix(in srgb, var(--ink) 76%, var(--brand-violet)) var(--depth-mix), transparent);
-  --depth-loud-mix: 88%;
-  --depth-loud-a: color-mix(in srgb,
-    color-mix(in srgb, var(--ink) 76%, var(--brand-magenta)) var(--depth-loud-mix), transparent);
-  --depth-loud-b: color-mix(in srgb,
-    color-mix(in srgb, var(--ink) 76%, var(--brand-violet)) var(--depth-loud-mix), transparent);
 }
 
 @media (min-width: 75rem) {

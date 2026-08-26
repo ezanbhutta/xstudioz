@@ -4,7 +4,7 @@
    THIS FILE OBEYS THE LAW OF THE SHORT ANSWER, stated in full at the top of
    src/lib/law.ts. In one line: every displacement lies on the mark's arm so
    dy / dx is 0.863786 and travels 5.4, 10.8 or 21.5px; the one rotation is
-   180 degrees about 49.90% / 50.71% on a click; every duration is 0.2041s or
+   no rotation anywhere; every duration is 0.2041s or
    0.4082s; every curve is the one curve; and NOTHING is driven by the scroll
    wheel.
 

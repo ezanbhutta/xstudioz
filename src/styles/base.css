@@ -93,7 +93,7 @@ body > footer {
 body {
   font-family: var(--font-sans);
   font-size: var(--text-body);
-  font-weight: 400;
+  font-weight: var(--weight-regular);
   line-height: var(--leading-body);
   color: var(--ink);
   background: var(--ground);
@@ -166,36 +166,140 @@ button {
 }
 
 /* ============================================================
-   THE ROOMS
+   E. THE MATERIALS
 
-   There are three now, not five. Paper, and the chroma room in its two
-   grades.
+   THREE LEVELS AND NOTHING ELSE. Every surface on every route is one of
+   them, and which one it is decides its edge, its shadow and whether it is
+   allowed to be transparent.
 
-   The five flat rooms were magenta, violet, deep violet, void and paper, and
-   each committed a whole viewport to one hex. Two of those are gone as
-   grounds outright: nothing on this site stands in the void or in deep violet
-   any more, which is where most of the darkness went. The other two are not
-   allowed to appear apart: a chromatic surface carries BOTH brand colours,
-   sampled from --brand-ramp, or it is not chromatic at all.
+     1  CANVAS        opaque, calm, neutral. It gets its dimension from ONE
+                      restrained illumination change cut on the mark's angle,
+                      and from the hairlines that separate its regions.
+                      No blob, no orb, no gradient room.
+     2  SOLID FROST   near-opaque, for reading or for grouping. A fine 1px
+                      edge, an extremely restrained shadow, and NO backdrop
+                      blur. It is a plane on the canvas, not a card floating
+                      over it, which is why its radius is 0 and its shadow is
+                      one pixel of contact rather than a bloom.
+     3  OPTICAL GLASS the sticky bar, the mobile panel, the theme control,
+                      one primary control, and at most one focal pane. It is
+                      declared in components.css where each of those lives.
 
-   The old class names are kept and all point at the ramp, because fifteen
-   documents this session does not own still name them and a room that is
-   right in the markup and wrong on screen is the failure mode this whole
-   naming scheme exists to prevent.
+   WHAT THE ROOM CLASSES ARE NOW. Seven class names still exist because
+   fifteen documents this session does not own carry them in their markup,
+   and a room that is right in the markup and wrong on screen is exactly the
+   failure this naming scheme exists to prevent. They no longer name colours.
+   They name surfaces:
 
-   WHAT MAY BE SET ON A RAMP, AND WHY THERE ARE NOW TWO ANSWERS. The old rule
-   was one sentence: display type in white, nothing under 24px, because the
-   worst point of any ramp containing pure magenta is 3.75:1 against white,
-   which clears the 3:1 large-text floor and misses the 4.5:1 body floor, and
-   no ink clears 4.5:1 at both ends.
+     .room-paper   .room-void      canvas
+     .room-magenta .room-violet    solid frost
+     .room-ramp                    solid frost
+     .room-chroma  .room-deep      the focal surface
+     .plate                        the focal surface, full bleed
 
-   That rule survives, and it is now GRADE B. Grade A is the room that buys
-   the small type back: the same ramp laid over #09090b at 0.80, so the worst
-   point moves to 5.36:1 with white and 4.77:1 with #f2f1f6 and 15px is legal
-   with margin. The grade is chosen by the smallest type the room contains and
-   by nothing else. Every figure is in the CHROMA ROOM block of tokens.css and
-   every one of them was measured on rendered pixels.
+   THE FOCAL SURFACE, AND WHERE IT IS ALLOWED. Graphite in both rooms, which
+   is why it carries the dark room's ink ladder and the dark room's glass
+   values whatever theme the document around it is in. Its job is optical
+   rather than decorative: it is the highest-contrast boundary the page owns,
+   about two hundred and thirty levels against the canvas in daylight, it
+   scrolls, and it is what the sticky bar's glass samples in order to be glass
+   at all.
+
+   TWICE PER ROUTE AT MOST, NEVER ADJACENT, AND ALWAYS FOR THE SAME TWO JOBS:
+   the ask and the close. The cover takes both, at the brief and at the
+   colophon, roughly four thousand pixels apart. An interior document takes
+   only the close, because its own ask is a level 2 band immediately above it
+   and two dark planes stacked would have made neither of them read.
+
+   A ROUTE'S MATERIALS THEREFORE READ IN SEQUENCE: open canvas, one frost
+   region, one focal plane. Three levels, one of each, in that order, every
+   time.
+
+   THE INK LADDER IS THE SAME ON ALL THREE, because all three are neutral and
+   the ladder was solved against the worst of them. That is the whole reason
+   the seven-room ink table in tokens.css collapsed to four values.
    ============================================================ */
+
+/* ---------- THE TWO LINE TOKENS, AND WHY THEY ARE DECLARED HERE ----------
+
+   MEASURED, NOT ASSUMED. Before this rule existed, `getComputedStyle` on
+   .journey reported border-top-width 0px in both rooms on every document
+   route, and a probe of nineteen hairline-bearing selectors on /process/
+   returned NINETEEN with all four border widths at zero and ZERO with a
+   border of any width. The material doctrine forty lines above this says the
+   canvas takes its dimension "from the hairlines that separate its regions".
+   Not one of them was on the page.
+
+   WHY. --hairline is declared TWICE inside the same :root block in
+   tokens.css. The first, at the head of the file, is a COLOUR, and it is what
+   this pass's rules were written against. The second, a thousand lines later,
+   is the previous system's BORDER SHORTHAND, `1px solid var(--ink-line)`, and
+   being later it is the one that wins. --ink-line was in turn declared as
+   `var(--hairline)`, so the two referred to each other and nothing else: a
+   cycle, which the custom property spec makes invalid at computed-value time
+   for every property in it. Both tokens resolved to the empty string, every
+   `border: var(--hairline)` fell back to its initial `none`, and the failure
+   was silent because an invalid custom property does not warn, does not break
+   the build, and does not change a single character of copy.
+
+   THE FIX IS TO GIVE --ink-line A VALUE OF ITS OWN, so the chain terminates.
+   :root here beats tokens.css's :root on cascade order alone, base.css being
+   imported second, and --hairline downstream of it resolves to a real border
+   shorthand again without tokens.css being touched.
+
+   THE FIGURES ARE THE ONES THE REDESIGN ALREADY CHOSE: 13% and 26% of the
+   ink, which reproduce tokens.css's own light-room hairline pair exactly.
+   They are DERIVED from --ink rather than written as a light-dark() pair, so
+   the focal surface, which carries the dark ladder whatever room it is in,
+   gets hairlines that belong to its own ink instead of the page's. */
+/* ---------- AND THE THIRD RUNG OF THE INK LADDER, FOR THE SAME REASON ----------
+
+   THE SAME BUG, ONE TOKEN LATER, AND IT WAS STILL LIVE. tokens.css declares
+   `--room-paper-quiet: var(--ink-quiet)` and `--ink-quiet:
+   var(--room-paper-quiet)` in one :root block, and `--room-frost-quiet:
+   var(--ink-quiet)` beside them. That is a cycle, so --ink-quiet is invalid
+   at computed-value time and resolves to nothing.
+
+   WHAT THAT DID, measured with getComputedStyle on /about/ at 1500 in both
+   rooms. `color: var(--ink-quiet)` on an invalid token is unset, and colour
+   inherits, so every consumer painted at the PARENT's colour, which is full
+   --ink. .doc__facts dt returned rgb(25,24,23) in daylight and
+   rgb(244,243,241) on the void: byte-identical to the .doc__facts dd values
+   standing beside them. The label and the thing it labels were the same
+   weight of grey. .doc__head .doc__eyebrow, .footer__col-head,
+   .footer__channel-note, .journey__num, .caps__num, .process__num and
+   .portal__index all did the same, and .answer's 2px left rule fell back to
+   currentColor. The quiet rung of a three-rung ladder did not exist anywhere
+   on the site except inside .nav and the two glass surfaces, which declare
+   their own.
+
+   A SCAN OF ALL FIVE SHEETS FOR TWO-NODE CYCLES RETURNS THIS TOKEN AND
+   NOTHING ELSE, and every other var() read in the system resolves.
+
+   THE FIGURE IS BOUNDED BY THE LAB, NOT BY TASTE. Every consumer is a label,
+   a numeral or a caption at 12 to 13px, so it is small text and wants 4.5:1.
+   Measured against all six grounds the value can land on:
+
+                        canvas   frost   elevated
+       light #5f5e5a     5.96    5.51     6.44
+       dark  #93918c     6.29    5.53     5.90
+
+   Both rooms keep their worst ground above 5.5, a fifth clear of the floor,
+   and both sit well under --ink-dim, which reads 8.10 in daylight and 8.63
+   on the void, so the rung is a rung and not a second copy of the one above
+   it. It is close to the one quiet value the site already ships and that
+   already resolves, --room-focal-quiet at 5.75 on graphite, which is the
+   position this ladder was drawn to have.
+
+   Written as a light-dark() pair rather than derived from --ink, because the
+   two rooms have very different headroom: porcelain has eight levels above
+   it and the void has two hundred and forty, so one mix percentage cannot
+   put both rooms on the same rung. */
+:root {
+  --ink-line: color-mix(in srgb, var(--ink) 13%, transparent);
+  --ink-line-strong: color-mix(in srgb, var(--ink) 26%, transparent);
+  --ink-quiet: light-dark(#5f5e5a, #93918c);
+}
 
 .room-paper,
 .room-chroma,
@@ -208,6 +312,7 @@ button {
   color: var(--ink);
 }
 
+/* LEVEL 1. CANVAS. */
 .room-paper,
 .room-void {
   --ground: var(--room-paper-ground);
@@ -217,147 +322,152 @@ button {
   --ink-accent: var(--room-paper-accent);
 }
 
-/* ------------------------------------------------------------
-   GRADE A, THE READING GRADE. --chroma-alpha 0.80, type down to 15px.
+/* LEVEL 2. SOLID FROST.
 
-   The section commits its whole viewport to #09090b and the ramp is laid over
-   it on a pseudo-element. THE OPACITY IS ON ::before AND NOWHERE ELSE: put it
-   on the section and the type fades with the ground, and every ratio in the
-   token block becomes fiction.
+   Near-opaque and it is a real plane: a 1px edge that catches the light on
+   its top face and lets it go on the bottom, and one pixel of contact shadow
+   underneath. That is all the elevation it gets. It is deliberately NOT a
+   rounded card: radius 0, no bloom, no second border, and it always runs to
+   at least one real edge of its container so it reads as a region of the
+   sheet rather than as a tile placed on it. */
+.room-ramp,
+.room-magenta,
+.room-violet {
+  --ground: var(--room-frost-ground);
+  --ink: var(--room-frost-ink);
+  --ink-dim: var(--room-frost-dim);
+  --ink-quiet: var(--room-frost-quiet);
+  --ink-accent: var(--room-frost-accent);
+  background-color: var(--ground);
+  color: var(--ink);
+  /* --ink-line, NOT --hairline. --hairline resolves to a border SHORTHAND,
+     so `1px solid var(--hairline)` expanded to `1px solid 1px solid <colour>`
+     and threw the whole declaration away: this band had no edge and, because
+     one invalid layer voids the list, no lit edge and no contact shadow
+     either. Level 2 is "a 1px edge that catches the light on its top face and
+     lets it go on the bottom" — it needs all three layers to be that. */
+  border-block: 1px solid var(--ink-line-strong);
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-edge-lit),
+    0 1px 0 0 var(--ink-line);
+}
 
-   The composited hexes are not baked in as literal stops either, tidier
-   though that would be. --brand-ramp-deep stays the declaration, dimmed by
-   the ground beneath it, so both fixed brand colours are still literally in
-   the source and a change to the ramp propagates.
+/* The one utility spelling of level 2, for surfaces that are frost by
+   composition rather than by an inherited room name. */
+.frost {
+  --ground: var(--room-frost-ground);
+  --ink: var(--room-frost-ink);
+  --ink-dim: var(--room-frost-dim);
+  --ink-quiet: var(--room-frost-quiet);
+  --ink-accent: var(--room-frost-accent);
+  background-color: var(--ground);
+  color: var(--ink);
+  border: 1px solid var(--ink-line-strong);
+  box-shadow: inset 0 1px 0 0 var(--glass-edge-lit);
+}
 
-   TWO LEGAL INKS, AND THE THIRD STEP IS SIZE. --ink and --ink-dim are white
-   and #f2f1f6. --ink-quiet is the same #f2f1f6 on purpose, because there is
-   no third light ink with margin, and the token exists so inheritance cannot
-   land somewhere illegal.
-   ------------------------------------------------------------ */
-.room-chroma {
+/* THE FOCAL SURFACE. The page's one high-contrast boundary. */
+.room-chroma,
+.room-deep {
   position: relative;
   isolation: isolate;
 
-  --ground: var(--room-chroma-ground);
-  --ink: var(--room-chroma-ink);
-  --ink-dim: var(--room-chroma-dim);
-  --ink-quiet: var(--room-chroma-quiet);
-  --ink-accent: var(--room-chroma-accent);
+  --ground: var(--room-focal-ground);
+  --ink: var(--room-focal-ink);
+  --ink-dim: var(--room-focal-dim);
+  --ink-quiet: var(--room-focal-quiet);
+  --ink-accent: var(--room-focal-accent);
   --ink-line: var(--room-chroma-line);
   --ink-line-strong: var(--room-chroma-line-strong);
-  --focus: var(--room-chroma-focus);
-  --interactive: #ffffff;
-  --interactive-text: var(--room-chroma-ground);
-  --selection-bg: #ffffff;
-  --selection-text: var(--room-chroma-ground);
+  --focus: var(--room-focal-accent);
+  --interactive: var(--room-focal-ink);
+  --interactive-text: var(--room-focal-ground);
+  --selection-bg: var(--room-focal-accent);
+  --selection-text: var(--room-focal-ground);
+  /* The dark room's glass values, because this surface is graphite in BOTH
+     themes and a pane standing on it needs the dark material either way. */
+  --glass-alpha: 0.62;
+  --glass-tint: rgb(10 10 10 / var(--glass-alpha));
+  --glass-solid: #0a0a0a;
+  --glass-edge-lit: rgb(255 255 255 / 0.13);
+  --glass-edge-shade: rgb(0 0 0 / 0.42);
+  --glass-line: rgb(244 243 241 / 0.12);
+  --glass-grain-alpha: 0.055;
+  --edge-ink: 244 243 241;
+  background: var(--ground);
+  color: var(--ink);
 }
 
-.room-chroma::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background-image: var(--room-chroma-ramp);
-  opacity: var(--chroma-alpha);
-  pointer-events: none;
-}
-
-/* Exactly one element child per chroma section, so this has one target. */
+/* WHAT USED TO BE HERE. .room-chroma::before laid --brand-ramp-deep over the
+   whole section at 0.80 and .room-chroma-display raised it to 1. Both are
+   demolished. The surface is one flat neutral ground now, and everything the
+   ramp was carrying is carried by the STEP between this surface and the
+   canvas above and below it, which is a boundary of about two hundred and
+   thirty levels in the light room and thirteen in the dark. That step is the
+   thing the header's glass reads, and a gradient was never going to be it:
+   a Gaussian blur of a smooth ramp returns the ramp. */
 .room-chroma > * {
   position: relative;
   z-index: 1;
 }
 
-.room-chroma ::selection {
-  background: #ffffff;
-  color: var(--room-chroma-ground);
+.room-chroma ::selection,
+.room-deep ::selection {
+  background: var(--room-focal-accent);
+  color: var(--room-focal-ground);
 }
 
-/* GRADE B, THE DISPLAY GRADE. --chroma-alpha 1, 24px minimum, white only.
-
-   Same room and same ramp with nothing dimming it, so this is the true
-   #e634be at full strength and the ink ladder collapses to one entry. It is
-   also exactly what .room-ramp below already paints, and the two spellings
-   are kept because a section is a room and a plate is a plate: the plate
-   paints the ramp directly, since at full strength there is no ground left
-   underneath for a ::before to dim it against. */
+/* Kept as a name because six routes still carry it. It no longer raises the
+   ramp to full strength, because there is no ramp: it is the focal surface
+   at the same value, and the only thing it still says is that the type on it
+   is large. */
 .room-chroma-display {
-  --chroma-alpha: var(--chroma-alpha-display);
-  --ink: var(--room-chroma-display-ink);
-  --ink-dim: var(--room-chroma-display-ink);
-  --ink-quiet: var(--room-chroma-display-ink);
-  --ink-accent: var(--room-chroma-display-ink);
   --ink-line: var(--room-chroma-display-line);
   --ink-line-strong: var(--room-chroma-display-line-strong);
-}
-
-/* One chromatic surface, stated once. Every consumer samples this rather than
-   declaring its own, so a band, a blade and a plate cannot drift onto three
-   versions of the brand. The background-color under the image is the violet
-   stop, so a surface whose gradient fails to paint still lands on a brand
-   colour with legal ink rather than on nothing. This is grade B by direct
-   paint: 3.75:1 against white at the magenta corner, 24px minimum. */
-.room-ramp,
-.room-magenta,
-.room-violet,
-.room-deep {
-  --ground: var(--brand-violet);
-  --ink: var(--ramp-ink);
-  --ink-dim: var(--ramp-ink);
-  --ink-quiet: var(--ramp-ink);
-  --ink-accent: var(--ramp-ink);
-  --ink-line: var(--ramp-line);
-  --ink-line-strong: var(--ramp-line-strong);
-  background-color: var(--brand-violet);
-  background-image: var(--brand-ramp-deep);
-  color: var(--ramp-ink);
 }
 
 /* ============================================================
    THE PLATE
 
-   The device that carries colour on this site, and the reason the page can be
-   a light document and still be loud.
+   IT WAS A FULL-BLEED BRAND RAMP AND IT IS THE FOCAL SURFACE NOW.
 
-   A plate is a full-bleed ramp behind ONE display line. It escapes the
-   container to both edges of the viewport, it is the only chromatic surface
-   in a section, and the single rule about what may sit on it is the one
-   stated in tokens.css: nothing under 24px, ever. So a plate carries a
-   statement and the sheet either side of it carries everything a reader
-   actually reads.
+   The plate reached both edges of the viewport behind one display line, on
+   all sixteen routes, carrying both brand colours at full strength. It was
+   the single largest chromatic object on the site and it is the one the
+   footer put under the last sentence of every page.
 
-   That split is what makes the arithmetic work in both directions. The site
-   measures a little over half its pixels as paper, which is what was asked
-   for, while every statement on every route arrives on the brand rather than
-   in ink. Colour is punctuation, and the punctuation is always the ramp with
-   both colours on it.
+   WHAT IT IS FOR NOW IS OPTICAL RATHER THAN LOUD. A plate is still a
+   full-bleed surface behind one display line, and it still escapes its
+   container to both edges of the viewport, but the surface is the focal
+   graphite and the line is set in the ink that is legal on it. What that
+   buys is the thing the ramp could never buy: two real horizontal edges
+   running the width of the screen, at a two hundred level step, which the
+   sticky bar's glass samples as it passes. The loudest object on the page
+   became the one that makes the material read.
 
-   The BLEED is the pseudo-element's, not the box's: left and right at -50vw,
+   THE BLEED is the pseudo-element's, not the box's: left and right at -50vw,
    because a plate has to escape a container whose width it cannot know. html
    and body carry overflow-x: clip, so the overshoot never produces a
    horizontal scrollbar at any width.
 
-   The box itself keeps the container's gutter and takes no horizontal padding
-   of its own, so a plated line starts exactly where every other line on the
-   page starts. The first build pushed the box out with a negative margin and
-   put the padding back inside it, which inset the type by two gutters instead
-   of one: at 375 that left a 44px headline 215px to fit into and the first
-   line ran off the screen. */
-
-/* THE PADDING IS UNEQUAL, and equal padding was the purest formula tell on
-   the site. It was 5.2rem top and bottom on all six plates, and every one of
-   them rendered top heavy, by a different amount at each size, because a
-   font's ascent is deeper than its cap height: the ink starts lower in the
-   box than the box's own top edge suggests. Nobody can name the offset and
-   everybody sees the band sitting low in its own colour. 4.2rem over 5.6rem
-   is 63px over 84px at 1500, which puts the cap line and the baseline the
-   same distance from their own edges. */
+   THE PADDING IS UNEQUAL, and equal padding was the purest formula tell on
+   the site. A font's ascent is deeper than its cap height, so the ink starts
+   lower in the box than the box's own top edge suggests. 48 over 64 is two
+   family members rather than one repeated, and it puts the cap line and the
+   baseline the same distance from their own edges.
+   ============================================================ */
 .plate {
   position: relative;
   isolation: isolate;
-  color: var(--ramp-ink);
-  padding-block: 4.2rem 5.6rem;
+  padding-block: var(--space-7) var(--space-8);
+
+  --ink: var(--room-focal-ink);
+  --ink-dim: var(--room-focal-dim);
+  --ink-quiet: var(--room-focal-quiet);
+  --ink-accent: var(--room-focal-accent);
+  --ink-line: var(--room-chroma-line);
+  --ink-line-strong: var(--room-chroma-line-strong);
+  color: var(--ink);
 }
 
 .plate::before {
@@ -368,61 +478,98 @@ button {
   bottom: 0;
   left: -50vw;
   right: -50vw;
-  background-color: var(--brand-violet);
-  background-image: var(--brand-ramp-deep);
+  background-color: var(--room-focal-ground);
+  /* The light on this site comes from up the arm, so the plate catches a
+     hairline on its top edge and drops it on the bottom. Two inset lines,
+     not a border: the edge is inside the material the way a bevel is. */
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.09),
+    inset 0 -1px 0 0 rgb(0 0 0 / 0.5);
   pointer-events: none;
 }
 
-/* The plate publishes the ramp's inks as well as its ground, so anything
-   legal that does sit on one takes them without asking. */
-.plate {
-  --ink: var(--ramp-ink);
-  --ink-dim: var(--ramp-ink);
-  --ink-quiet: var(--ramp-ink);
-  --ink-accent: var(--ramp-ink);
-  --ink-line: var(--ramp-line);
-  --ink-line-strong: var(--ramp-line-strong);
+/* ---------- THE SIX ROLES, AS RULES ----------
+
+   The argument for every figure below is written out in the SIX ROLES block
+   of tokens.css, where each one was chosen by rendering Geist's own axis at
+   the size in question, in both rooms, at 2x, and comparing. Nothing here is
+   cited from another type system.
+
+   font-kerning and font-optical-sizing are set once, on the two families,
+   rather than per role. Geist ships an optical size axis; `auto` is what lets
+   the browser use it, and without it a 13px label and an 80px display are
+   drawn from the same outline. */
+
+.label,
+.body,
+.body-sm,
+.display,
+.heading,
+.heading-sm,
+.subheading {
+  font-kerning: normal;
+  font-optical-sizing: auto;
 }
 
-/* ---------- Primitive type styles ---------- */
+/* LABEL. Uppercase, 13px, 450, and POSITIVE tracking.
 
-/* 14px Manrope 500 with positive tracking. Every consumer labels something:
-   section eyebrows, index heads, table headers, tags, numerals. Tracking is
-   positive here and negative at display size, which is optical rather than
-   uniform. */
+   The positive value is the point rather than an exception to a rule about
+   negative tracking. Uppercase at 13px is the one setting on this site where
+   the drawn fit is genuinely too tight, and microcopy at this size takes no
+   automatic negative tracking anywhere, ever. */
 .label {
   font-family: var(--font-sans);
   font-size: var(--text-caption);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   line-height: 1.3;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
+/* BODY. Neutral tracking, stated rather than left unset so nothing can
+   inherit a value into running copy.
+
+   WIDOWS ARE REMOVED THROUGH LAYOUT AND NEVER THROUGH COPY. `text-wrap:
+   pretty` spends the browser's line-breaking budget on the LAST line of a
+   paragraph rather than on evening out all of them, which is exactly what a
+   widow is: one word, or one preposition, alone on a final line. It is the
+   only mechanism on this site that touches where a line breaks, it changes no
+   character of any sentence, and it degrades to the normal algorithm on an
+   engine that does not have it. `balance` is the display and heading answer
+   and is set on those roles above; the two are not interchangeable, because
+   balance on a six-line paragraph evens the rag and leaves the widow. */
+.body,
+.body-sm,
+.prose p,
+.qa__a p,
+.faq__a p {
+  text-wrap: pretty;
+}
+
 .body {
   font-family: var(--font-sans);
   font-size: var(--text-body);
-  font-weight: 400;
+  font-weight: var(--weight-regular);
   line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
 }
 
 .body-sm {
   font-family: var(--font-sans);
   font-size: var(--text-body-sm);
-  font-weight: 400;
+  font-weight: var(--weight-regular);
   line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
 }
 
-/* The four display steps. One family, one weight, four sizes, and the gap
-   between any two of them is large enough that nothing has to be bolded for
-   the rank to read. */
+/* DISPLAY and HEADING. One family, one weight, and the tracking is the only
+   thing that separates the two roles besides size. */
 .display,
 .heading,
 .heading-sm,
 .subheading {
   font-family: var(--font-display);
   font-weight: var(--weight-display);
-  font-kerning: normal;
   font-variant-ligatures: common-ligatures contextual;
   text-align: var(--align);
   text-wrap: balance;
@@ -431,25 +578,47 @@ button {
 .display {
   font-size: var(--text-display);
   line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+}
+
+.heading,
+.heading-sm {
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-heading);
 }
 
 .heading {
   font-size: var(--text-heading);
-  line-height: var(--leading-tight);
 }
 
 .heading-sm {
   font-size: var(--text-heading-sm);
-  line-height: var(--leading-tight);
 }
 
+/* The LABEL role at a larger size, which is what this always was. It is set
+   here in the label's own weight and tracking rather than the display's, so
+   a 21px uppercase line is the same object as a 13px one. */
 .subheading {
+  font-family: var(--font-sans);
   font-size: var(--text-subheading);
+  font-weight: var(--weight-medium);
   line-height: 1.2;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
-/* ---------- Layout primitives ---------- */
+/* ---------- A. LAYOUT PRIMITIVES, AND THE THREE ANCHORS ----------
+
+   .container is the ONE width authority on the site. Navigation, every
+   homepage section, every interior document and the footer all sit inside
+   one, so the main content edge is the same figure on every route at every
+   viewport without any of them computing it. That is anchor 1 and it costs
+   nothing to hold.
+
+   The other two are published as lengths rather than as grid line names,
+   because the regions that need them are not all grids: some are flex rows,
+   two are single columns with an indent, and one is a fixed bar. A length
+   works in all four and resolves to the same pixel in each. */
 
 .container {
   width: 100%;
@@ -458,21 +627,83 @@ button {
   padding-inline: var(--gutter);
 }
 
+/* The grid, for the regions that want it explicitly. Everything else lands
+   on the same edges through the anchors below. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+  gap: var(--grid-gap);
+}
+
+/* The three anchors, as utilities. `at-copy` starts a block on the primary
+   copy edge; `at-action` starts one on the action and metadata edge. Both
+   collapse to the content edge below 600 because the tokens do. */
+.at-copy {
+  margin-inline-start: var(--anchor-copy);
+}
+.at-action {
+  margin-inline-start: var(--anchor-action);
+}
+
+/* ---------- B. SECTION RHYTHM ----------
+
+   The section pause is the largest distance in the family and the only one
+   that opens a new information group at viewport scale. Nothing else on the
+   site is allowed to use it. */
 .section {
   padding-block: var(--section-gap);
 }
 
+/* THE SECTION HEAD IS THE ANCHOR MADE VISIBLE.
+
+   It was a flex row with the label, a rule and the seal in it, and its
+   bottom margin was 3.4rem, which is 51px at 1500 and in no family. It is a
+   three-part row now placed on the three anchors: the label at the content
+   edge, the rule beginning at the copy edge and running to the action edge,
+   and the seal on the action edge. So the first thing a reader meets in
+   every section is the page's own grid, drawn.
+
+   The rule between them is one of the four places the accent is allowed. */
 .section__head {
-  display: flex;
+  display: grid;
+  grid-template-columns:
+    calc(var(--anchor-copy) - var(--grid-gap))
+    calc(var(--anchor-action) - var(--anchor-copy) - var(--grid-gap))
+    minmax(0, 1fr);
   align-items: center;
-  gap: var(--sp-4);
-  margin-bottom: 3.4rem;
+  column-gap: var(--grid-gap);
+  margin-bottom: var(--space-fl-8);
+}
+
+/* THE RULE IS THE SECOND COLUMN, so it begins on the primary copy edge and
+   ends on the action edge, which means the first object in every section is
+   the page's own grid drawn at one pixel. It is a pseudo-element because the
+   markup carries only the label and this pass changes no markup. */
+.section__head::before {
+  content: '';
+  grid-column: 2;
+  height: 1px;
+  background: var(--ink-line-strong);
 }
 
 .section__head .label {
+  /* EXPLICIT, because auto-placement puts it wherever the two pseudo-elements
+     have not already claimed. Both of those carry a definite column, so the
+     label was landing in the third one, 833px right of the edge it names. */
+  grid-column: 1;
   color: var(--ink);
   margin-bottom: 0;
-  flex: none;
+}
+
+/* Below 600 the anchors collapse, so the head becomes a label and a rule
+   with the seal on the end and no indent to hold. */
+@media (max-width: 599.98px) {
+  .section__head {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+  .section__head::before {
+    grid-column: 2;
+  }
 }
 
 /* Hairline rule */
@@ -492,12 +723,18 @@ button {
    This is the cheapest possible use of the one thing this brand has that the
    reference has no equivalent for. The mark maps onto itself 22 vertices out
    of 22 at a half turn, 29 of 52 at a quarter and 32 of 52 mirrored, so a
-   half turn is the ONLY rotation it can make and come back identical. Turned
-   about 49.90% / 50.71% of its box rather than the box centre, which is
-   where its real centre of rotation was measured to be, the alternation is
-   invisible: the seal looks the same in both states and IS the same in both
-   states. That is the claim, made by the furniture rather than stated in a
-   caption.
+   half turn is the ONLY rotation it can make and come back identical.
+
+   AND IT IS NOW EXACTLY INVISIBLE RATHER THAN NEARLY SO. The shipped artwork
+   carried a 180-degree symmetry error of up to 5.13 units on a 404 box, so
+   the alternation moved the drawing by about 1.3 percent and the claim was
+   very slightly false. The delivered mark's symmetry error is 0 and its
+   rotation centre is the box centre, so the seal looks the same in both
+   states and IS the same in both states. That is the claim, made by the
+   furniture rather than stated in a caption.
+
+   IT IS A STATIC ORIENTATION AND NOT AN ANIMATION. Nothing on this site
+   turns under a pointer or a click any more.
 
    Delivered as a mask rather than as markup, so it reaches all sixteen
    documents without a single element being added to any of them, and takes
@@ -505,12 +742,36 @@ button {
    ============================================================ */
 .section__head::after {
   content: '';
-  flex: none;
-  width: 0.8667rem;
-  height: 0.8667rem;
-  background: currentColor;
-  color: var(--ink);
-  opacity: 0.42;
+  grid-column: 3;
+  justify-self: end;
+
+  /* THE BOX IS RE-TUNED FOR THE DELIVERED PAYLOAD, AND THE RE-TUNE IS THE
+     REASON THE SEAL DID NOT SILENTLY GROW.
+
+     --x-mask used to be the old artwork on the old 404 viewBox, and that
+     artwork painted 93.99 percent of its box across and 95.05 percent down.
+     So a declared 0.8667rem box, 13px at the 15px root, was putting 12.22 x
+     12.36px of ink on the page: the seal has never been the size this rule
+     said it was. The delivered drawing paints its box exactly, so the SAME
+     declaration would now paint 13.00 x 13.00 -- 6.4 percent wider and 5.2
+     percent taller at an unchanged CSS size, on every section head of every
+     route, which is the growth DELIVERY.md warns about arriving unasked.
+
+     0.9505 is the old painted HEIGHT as a share of the old box, and height
+     is the figure a mark set beside a row of type is read at. 0.8667rem
+     through it is 0.8238rem, which paints 12.36 x 12.36: the seal's height
+     is to the pixel what it has always been, and the 0.14px it gains across
+     is the short arm being repaired rather than the drawing being enlarged. */
+  width: calc(0.8667rem * 0.9505);
+  height: calc(0.8667rem * 0.9505);
+  /* THE SEAL IS ONE OF THE FOUR PLACES THE ACCENT IS ALLOWED, and it is the
+     'small mark detail' entry on that list: the drawing at 13px, as a
+     signature, on the end of every section head. It measures 8.87:1 at worst
+     against the frost in daylight and 7.73:1 on the focal surface, so it is
+     legible as well as small, and it is drawn at full strength rather than
+     at an opacity, because an opacity on an accent is a way of having a
+     colour without owning it. */
+  background: var(--ink-accent);
   /* One payload, stated in tokens.css, because this is now the only place on
      the site that paints the drawing from a mask. It used to be written out
      here in full alongside an identical copy in the token, which is two
@@ -526,15 +787,6 @@ button {
   transform-origin: var(--turn-origin);
 }
 
-/* THE SEAL TAKES THE ROOM'S OWN BOUNDARY VALUE ON CHROMA. 0.42 of white
-   composites to #bd80c6 against the worst point of a grade A ground and
-   measures 2.97:1, which is under even the decorative reading and rendered
-   the seal as a smudge. 0.70 is the room's load-bearing line value and
-   measures 3.35:1, so the furniture is set at the same strength as every
-   other boundary in the room rather than at the paper figure carried in. */
-.room-chroma .section__head::after {
-  opacity: 0.7;
-}
 
 /* The law's second clause, in the furniture: the only rotation on this site
    is a half turn about the point the drawing actually turns on. */
@@ -717,63 +969,65 @@ html.no-motion [data-enter].is-in {
 }
 
 /* ============================================================
-   THE DEPTH LAYER
+   THE CANVAS EDGE
 
-   One class, five placements, and it is the only thing on this site that
-   exists so that something else can be seen THROUGH it.
+   ONE CLASS, AND IT IS LEVEL 1 OF THE MATERIAL SYSTEM RATHER THAN A
+   BACKDROP TRICK.
 
-   IT USED TO BE THE MARK, DRAWN AT ARCHITECTURAL SCALE. That is out, by the
-   owner's ruling, and the replacement was measured rather than chosen: a
-   single run of colour at the arm's own 40.82 degrees, wide enough to
-   survive the blur, placed so that exactly ONE of its two edges passes under
-   each panel. The whole argument, and the sixteen candidates it beat, is in
-   the DEPTH LAYER block of tokens.css and in .spec/backdrop-physics.md.
+   IT USED TO BE A BRAND RAMP. A single run of both brand colours at the
+   arm's 40.82 degrees, on five surfaces, at up to full strength, whose
+   stated job was to give the glass something to blur. That is a trick, and
+   the tell was that it had to be drawn loudest exactly where nothing else on
+   the page was happening.
 
-   WHY ONE EDGE AND NOT A FIELD OF THEM. Measured at matched ink, one edge
-   crossing the panel returns 19.09 in daylight and 22.73 on the void; two
-   return 9.63 and 11.25; three return 8.60 and 9.78. Partial edges average
-   each other out under a blur and a single step survives it. More structure
-   is not richer here, it is quieter AND weaker, which is the only reason a
-   stripe field was never on the table.
+   WHAT IT DRAWS NOW is the canvas catching light: a low-frequency
+   illumination change, cut on the mark's own angle, neutral, at an amplitude
+   you read as lighting rather than as a slab. In the light room it is the
+   ink at --edge-quiet, because porcelain has eight levels of headroom above
+   it and two hundred and forty below, so on paper a step has to go down to
+   be a step at all. In the dark room it is the light, at the same alpha, and
+   the direction reverses.
 
-   THE FORM IS A MASK AND THE FILL IS A GRADIENT, WHICH IS WHY BOTH ROOMS
-   WORK FROM ONE ELEMENT. The mask carries the geometry, so the band's angle
-   and width are stated once. The background carries the colour, so the room
-   and the theme decide whether the band is chromatic on paper or luminous on
-   the void, which is the finding law 6 is about. Neither knows about the
-   other.
-
-   THE MASK IS ON THE ELEMENT AND THE ALPHA IS NOT. mask-image makes this a
-   Backdrop Root, which is harmless because nothing with a backdrop-filter is
-   ever a DESCENDANT of a depth band. Element opacity would be a second root
-   for no benefit. The alpha lives in the gradient stops instead, where it
-   can be read off the token and checked against the contrast floor.
+   THE GEOMETRY IS UNCHANGED AND THE MEASUREMENT THAT CHOSE IT STANDS. One
+   run, masked so exactly ONE of its two edges crosses each surface. At
+   matched ink one edge measures 19.09 in daylight and 22.73 on the void
+   against two at 9.63 and 11.25 and three at 8.60 and 9.78: partial edges
+   average each other out under a blur and a single step survives it. One
+   edge is also the quieter drawing, which is the rare case where the
+   measurement and the art direction agree.
 
    IT IS NEVER A WATERMARK, which is a placement rule rather than a colour
-   one. Every one of these runs off all four edges of its container, has
-   content standing on top of it, and is cut by the surface it passes under.
+   one. Every instance runs off all four edges of its container, has content
+   standing on top of it, and is cut by the surface it passes under.
    ============================================================ */
 .depth {
   position: absolute;
   /* THE BOX IS THE CONTAINER, NOT THE DRAWING. A mask's gradient line is
-     measured across the element's own box, so the band can only be placed
-     against a panel if the two share a coordinate space. Every instance
-     below therefore fills its positioned ancestor and moves the BAND inside
-     it with --band-at, rather than moving a small box around. */
+     measured across the element's own box, so the run can only be placed
+     against a surface if the two share a coordinate space. Every instance
+     fills its positioned ancestor and moves the RUN inside it with
+     --band-at, rather than moving a small box around. */
   inset: 0;
-  /* Under everything in its container. The containers it is used in all
-     establish their own stacking context or clip, so this never has to
-     out-rank anything outside the section it belongs to. */
   z-index: 0;
 
-  /* THE GRADIENT IS ASSEMBLED HERE RATHER THAN AT :root, and that is the one
-     line in this block that had to be moved rather than written. A custom
-     property is substituted against the element it is DECLARED on: a
-     gradient written at :root carries :root's stops permanently, and a room
-     or a modifier that redeclares a stop lower down changes nothing at all.
-     Assembling it on the consuming element is what makes .depth--void and
-     the theme blocks both work, and it is the difference between the chroma
-     room's pane measuring 10.62 and measuring 2.36 from one geometry. */
+  /* ASSEMBLED HERE RATHER THAN AT :root, and that is the one line in this
+     block that had to be moved rather than written. A custom property is
+     substituted against the element it is DECLARED on: a gradient written at
+     :root carries :root's stops permanently, and a surface that redeclares a
+     stop lower down changes nothing at all. Assembling it on the consuming
+     element is what lets .depth--void and the theme both work. */
+  /* ONE EDGE, AND THE SECOND STOP IS WHAT MAKES IT ONE. The run's mask cuts
+     two hard edges into whatever is inside it, so a flat fill gives a step at
+     the leading edge and an equal one at the trailing edge. The gradient runs
+     ALONG the band rather than across it, so taking the far stop to zero
+     fades the run out before its own trailing cut reaches it and what is left
+     is a single high-contrast step with a soft field behind it. Measured at
+     matched ink, one edge returns 19.09 in daylight against 9.63 for two. */
+  --depth-a: rgb(var(--edge-ink) / var(--depth-mix));
+  --depth-b: rgb(var(--edge-ink) / 0);
+  --depth-loud-a: rgb(var(--edge-ink) / var(--depth-loud-mix));
+  --depth-loud-b: rgb(var(--edge-ink) / 0);
+
   --depth-ramp: linear-gradient(var(--ramp-angle), var(--depth-a) 0%, var(--depth-b) 100%);
   --depth-loud-ramp: linear-gradient(
     var(--ramp-angle),
@@ -784,23 +1038,19 @@ html.no-motion [data-enter].is-in {
   background-image: var(--depth-ramp);
 
   /* THE TWO EDGES, STATED ONCE. --band-at is the offset of the LEADING edge
-     from the box's centre, measured along the band's own perpendicular, so a
-     placement is one number per surface and that number is the answer to one
-     question: where does the panel sit. Positive is down the sheet and to
-     the right, which is the direction the gradient line runs.
+     from the box's centre, measured along the run's own perpendicular, so a
+     placement is one number per surface and that number answers one
+     question: where does the surface sit.
 
-     THE OFFSET IS A PERCENTAGE AND THE WIDTH IS NOT, and the split is the
-     whole reason the band survives a phone. A percentage is read against the
-     gradient line, which is the box's own diagonal extent, so a placement
-     expressed that way holds its position in the composition at every
-     viewport. The WIDTH is measured against the BLUR, which is 8 real pixels
-     and does not scale with anything, so it is stated in vw with a floor. A
-     band placed in px drifts off frame as the box narrows; a band sized in
-     percent thins below the radius it has to beat.
+     THE OFFSET IS A PERCENTAGE AND THE WIDTH IS NOT. A percentage is read
+     against the gradient line, which is the box's diagonal extent, so a
+     placement expressed that way holds its position in the composition at
+     every viewport. The WIDTH is measured against the BLUR, which is 8 real
+     pixels and does not scale with anything.
 
-     Both stops of each edge are written at the same position, so each is a
-     step and not a ramp. A soft edge is a smooth fill, and a smooth fill is
-     the thing that measured 3.92. */
+     Both stops of the leading edge are written at the same position, so it
+     is a step and not a ramp. A soft edge is a smooth fill, and a smooth
+     fill measured 3.92 where its own parts measured 16. */
   --band-near: calc(50% + var(--band-at, 0%));
   --band-far: calc(50% + var(--band-at, 0%) + var(--band-w));
   --band: linear-gradient(
@@ -814,49 +1064,20 @@ html.no-motion [data-enter].is-in {
   pointer-events: none;
 }
 
-/* For the surfaces that carry no type at all, on any route, at any width,
-   and for the one that carries type only THROUGH glass. Nothing reads
-   directly on these, so the fill is not bounded by a contrast floor and goes
-   where the lab says instead.
-
-   The header's band is in the second category and it is worth stating why it
-   is legal. The bar's alpha floor is derived against pure black and pure
-   white, so no backdrop can make the bar's own links worse than the two
-   figures the GLASS block already clears. A full-strength band under the
-   tint sits strictly between those bounds. The cap exists for a band that
-   passes behind type with nothing over it, which is the cover's and the
-   masthead's case and not the bar's. */
+/* THE STRUCTURAL AMPLITUDE. For the three surfaces that carry no type at
+   all and are placed so the run crosses a pane of true glass. Nothing reads
+   directly on these, so the amplitude is not bounded by a contrast floor. */
 .depth--loud {
   background-image: var(--depth-loud-ramp);
 }
 
-/* THE ROOM WINS OVER THE THEME, and this is the same opt-in shape
-   .glass--dark already uses for the same reason. Two rooms on this site are
-   near-black in DAYLIGHT as well as on the void: the chroma section and the
-   ramp plate. A band inside one of them may not take the document's fill,
-   because in daylight that fill is chromatic and chromatic on near-black is
-   what the lab measured at 4.92 against the same geometry's 48.03. It takes
-   the luminance-lifted pair in both themes instead. */
+/* THE SURFACE WINS OVER THE THEME, and this is the same opt-in shape
+   .glass--dark uses for the same reason. The focal surface is graphite in
+   BOTH rooms, so a run inside one may not take the document's fill: in the
+   light room that fill is dark ink, and dark ink on graphite is nothing at
+   all. It takes the light in both. */
 .depth--void {
-  --depth-a: color-mix(in srgb,
-    color-mix(in srgb, #f2f1f6 76%, var(--brand-magenta)) 42%, transparent);
-  --depth-b: color-mix(in srgb,
-    color-mix(in srgb, #f2f1f6 76%, var(--brand-violet)) 42%, transparent);
-  /* 0.42, WHICH IS THE LAB'S OWN FIGURE FOR THIS BAND. The pair used to be
-     drawn at full opacity, which is what the mark wanted: a drawing reads as
-     a drawing and a solid one reads best. A band is not a drawing. At full
-     opacity it covers the ramp it is standing on, so the room loses its own
-     colour under a pale slab and the panel over it stops sampling a ramp at
-     all; measured, it also puts the two surfaces at 45 and 47, which is
-     nearly twice what any of them needs. At 0.42 the ramp reads straight
-     through the band, the step at its edge is still a step, and the sweep
-     that chose the figure is in the second amendment of
-     .spec/backdrop-physics.md: one edge at 0.45 measured 19.09 in daylight
-     and 22.73 on the void against a paint floor near 3. */
-  --depth-loud-a: color-mix(in srgb,
-    color-mix(in srgb, #f2f1f6 76%, var(--brand-magenta)) 42%, transparent);
-  --depth-loud-b: color-mix(in srgb,
-    color-mix(in srgb, #f2f1f6 76%, var(--brand-violet)) 42%, transparent);
+  --edge-ink: 244 243 241;
 }
 
 /* A blurred surface is priced by area and this is the form under all five of
@@ -896,22 +1117,30 @@ body > footer {
     color: #000 !important;
   }
 
-  /* The chroma room's ramp lives on a pseudo-element, so it has to be taken
-     off separately or the whole band prints as a solid sheet of magenta. */
-  .room-chroma::before {
+  /* Full-bleed surfaces print as a sheet of toner and say nothing on paper.
+     Every plate, every frost band and the focal surface's own ground come off,
+     including the ones that live on a pseudo-element. */
+  .plate::before,
+  .doc__cta h2::before,
+  .portal__plate,
+  .portal__glass {
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  /* THE MATERIAL COMES OFF, ALL THREE LEVELS OF IT. The whole system is one
+     step seen through, under or beside a surface, and a printer has none of
+     them: the backdrop-filter is dropped, so a pane prints as a grey box, and
+     a full-bleed run prints as most of a cartridge. */
+  .depth,
+  .brief__glass,
+  .rulefield::after {
     display: none !important;
   }
 
-  /* THE DEPTH LAYER AND EVERY PANE OVER IT COME OFF. The whole mechanism is
-     one form seen through a blurred surface, and a printer has neither: the
-     backdrop-filter is dropped, so a pane prints as a grey box, and a
-     full-bleed band prints as most of a cartridge. The masthead's band is a
-     pseudo-element for the same reason the ramp above is. */
-  .depth,
-  .brief__glass,
-  .portal__glass,
-  .doc__head::before {
-    display: none !important;
+  /* The one hairline that is still doing a job on paper. */
+  .rulefield {
+    background: #999 !important;
   }
 
   .lit {

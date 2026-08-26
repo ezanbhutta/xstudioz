@@ -30,6 +30,70 @@
   min-height: 100svh;
   display: flex;
   overflow: hidden;
+  isolation: isolate;
+}
+
+/* ============================================================
+   THE CANVAS EDGE, AND THE ONE THING ON THIS SITE THAT MOVES BY ITSELF
+
+   LEVEL 1 OF THE MATERIAL SYSTEM, DRAWN. The content layer has to be
+   dimensional without being glass, and this is what gives the opening frame
+   its dimension: one low-frequency change in how much light the sheet is
+   catching, cut on the mark's own 40.82 degrees, at --edge-quiet, which is
+   about eleven levels in either room. It is not a blob, an orb or a gradient
+   room; it is a single step with a soft field behind it, and it runs off all
+   four edges of the frame so it is a fragment of something larger rather than
+   an object placed on the page.
+
+   AND IT BREATHES. This is the ONE ambient motion on the site and there is no
+   second: everything else, on every route, answers a pointer, a focus, a
+   press or a first arrival and then returns to stillness.
+
+   THE FIGURES ARE CHOSEN TO BE UNDER THE THRESHOLD OF NOTICE. 24 seconds for
+   half a cycle, which is roughly eighty times the site's OPEN duration, so no
+   reader who is looking at the page can catch it moving; a travel of one --d0,
+   5.4px, resolved onto the arm exactly the way every other displacement in
+   the system is, so even the ambient drift obeys the law of the short answer;
+   and ease-in-out with `alternate`, so it never restarts and there is no
+   moment at which it snaps back.
+
+   IT IS A `translate` AND NOTHING ELSE. The compositor owns that property, so
+   the breath costs no layout, no paint and no repaint of the mask. The run is
+   drawn 20 percent oversize on every side precisely so a translate can never
+   pull one of its own edges into the frame.
+   ============================================================ */
+.hero__edge {
+  position: absolute;
+  inset: -20%;
+  z-index: -1;
+  /* Solved rather than nudged: the leading edge enters the frame's upper left
+     and leaves through the lower right, so what stands in the hero is one
+     step crossing it, not a band parked inside it. */
+  --band-at: -18%;
+  --band-w: clamp(220px, 30vw, 620px);
+  animation: hero-breathe 24s var(--curve) infinite alternate;
+}
+
+@keyframes hero-breathe {
+  from {
+    translate: calc(var(--d0x) * -1) calc(var(--d0y) * -1);
+  }
+  to {
+    translate: var(--d0x) var(--d0y);
+  }
+}
+
+/* Both switches, and they are the two the arrivals already use. Under either
+   the breath simply stops; the edge is a resting style with or without it, so
+   nothing is ever left mid-gesture and nothing disappears. */
+@media (prefers-reduced-motion: reduce) {
+  .hero__edge {
+    animation: none;
+  }
+}
+
+html.no-motion .hero__edge {
+  animation: none;
 }
 
 /* ============================================================
@@ -253,16 +317,57 @@
   color: var(--ink);
 }
 
+/* ============================================================
+   THE FOOT STACKS WHERE IT STOPS FITTING, AND THAT WIDTH IS MEASURED
+
+   The head above already stacks at 700 for exactly this reason. The foot was
+   left on one row all the way down and it over-committed badly at the narrow
+   end: at 390 the note took 249.94 of a 342 row and set two lines against a
+   one-line cue; at 320 it took 179.94 of 272 and set THREE, so the frame
+   closed on a single word at the left and a ragged three-line block at the
+   right, baseline-aligned to the first of those lines, which put the cue at
+   the top of a block three times its height.
+
+   It was also what broke the chevron. Two items over-committing a flex row is
+   what pushed the shrink onto .hero__scroll, and the only child of that row
+   able to give was the glyph.
+
+   600 rather than the head's 700, and it is the measured point rather than a
+   round number: the two labels want 71.06 and 342.14 at their natural widths,
+   which with one --sp-5 between them needs 445.2 of row, and the row is the
+   container, so the viewport has to carry two gutters on top. On the 8 column
+   band that is 445.2 + 64 = 509.2, and the label steps down again below 600,
+   so 600 is the first breakpoint at or above the fit. Below it both labels
+   read from the content edge, one under the other, and the note gets the full
+   column: 342 instead of 249.94 at 390, which is one line instead of two. */
+@media (max-width: 599.98px) {
+  .hero__foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-2);
+  }
+}
+
 .hero__scroll {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
 }
 
-/* Static. A cue that bobs has no neighbour to bob against. */
+/* Static. A cue that bobs has no neighbour to bob against.
+
+   flex: none, AND IT IS LOAD-BEARING RATHER THAN TIDY. This glyph is a flex
+   item inside .hero__scroll, which is itself a flex item inside .hero__foot.
+   An inline <svg> with no width attribute and no viewBox has a min-content
+   size of ZERO, so when the foot row over-commits it is the only child in the
+   row that can absorb the shrinkage, and it absorbs all of it. Measured on
+   the built site before this line: 0.00 x 11 at both 320 and 390, 11 x 11 at
+   500 and above. The one scroll affordance on the site was rendering as the
+   word "Scroll" with nothing after it on every phone. */
 .hero__chev {
   width: 11px;
   height: 11px;
+  flex: none;
   stroke: currentColor;
 }
 
@@ -290,61 +395,44 @@
    ============================================================ */
 
 /* ============================================================
-   THE RULE FIELD
+   THE HERO RULE, AND WHAT IT REPLACED
 
-   THE CHEAPEST CHROMA ON THE SITE, and the thing that let the largest box on
-   it be deleted. What stood behind this headline was a full-bleed plate
-   measuring 1500 x 480 in a 900px frame: more than half the opening screen
-   committed to one saturated field, with the type reversed out of it in
-   white. That is the single heaviest object a page can carry, and it is why
-   the frame read as bold before it read as anything.
+   WHAT WAS HERE. .rulefield: thirteen 1px rules at a 9px pitch, each one
+   carrying the brand ramp across its whole length, the set of them ramped
+   symmetrically on opacity so that, in its own comment's words, "the field
+   reads as a glow". A glow drawn out of thirteen hairlines is still a glow,
+   and it was the first chromatic thing a reader met on the site.
 
-   WHAT REPLACED IT IS 109 PIXELS TALL. Thirteen 1px rules at a 9px pitch,
-   which is 12 x 9 + 1. Each rule carries the brand ramp across its whole
-   length rather than a flat hex, so both brand colours are on every one of
-   them and neither ever appears alone. The set is ramped on opacity from
-   0.14 at both edges to 1 in the middle, symmetrically, so the field reads as
-   a glow. There is no blur, no blend mode, no shadow and no second gradient
-   anywhere in it: it is one ramp and two masks.
+   WHAT IS HERE NOW is one hairline, and it is the site's grid made visible
+   at the top of the frame: it runs the content column at the strong hairline
+   value, and a single short segment of the accent sits exactly on the
+   primary copy edge, which is where the lede beneath it begins.
 
-   HOW THE RAMP IS APPLIED WITHOUT THIRTEEN ELEMENTS. Two mask layers,
-   intersected. The first is a repeating 1px-on / 8px-off comb, which cuts the
-   ramp into rules. The second is the vertical opacity envelope. Intersecting
-   them multiplies the two, so each 1px rule takes exactly the envelope's
-   value at its own y and the whole field is one element with no children.
+   So the opening object on the site is a rule telling the truth about the
+   composition underneath it. It is one of the four places the accent is
+   allowed to appear, it is the "meaningful rule" entry on that list, and it
+   inks 64 by 1 pixels.
 
-   IT STOPS AT THE GUTTER. Every other chromatic surface on this page bleeds
-   to the screen edge; this one is measured against the headline underneath
-   it, which is what makes it read as a drawn element rather than as another
-   band. ============================================================ */
+   The element keeps its class name because index.html carries it and this
+   pass changes no markup. It is one pixel tall instead of 109.
+   ============================================================ */
 .rulefield {
   display: block;
-  /* 12 gaps of 9px plus the last rule. Stated as the arithmetic rather than
-     as 109px so the two figures cannot drift apart. */
-  --rf-pitch: 9px;
-  --rf-count: 13;
-  height: calc((var(--rf-count) - 1) * var(--rf-pitch) + 1px);
+  position: relative;
+  height: 1px;
   width: 100%;
-  background-image: var(--brand-ramp);
-  -webkit-mask-image:
-    repeating-linear-gradient(to bottom, #000 0 1px, transparent 1px var(--rf-pitch)),
-    linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.14),
-      #000 50%,
-      rgba(0, 0, 0, 0.14)
-    );
-  mask-image:
-    repeating-linear-gradient(to bottom, #000 0 1px, transparent 1px var(--rf-pitch)),
-    linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.14),
-      #000 50%,
-      rgba(0, 0, 0, 0.14)
-    );
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
+  background: var(--ink-line-strong);
   pointer-events: none;
+}
+
+.rulefield::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: var(--anchor-copy);
+  width: var(--space-8);
+  height: 1px;
+  background: var(--ink-accent);
 }
 
 /* The rows are closer than they were, and deliberately. The full-bleed ramp
@@ -381,13 +469,39 @@
    The rule is the hairline the hero foot already uses, so the frame is ruled
    twice at the same weight rather than once at two. */
 .hero__cluster {
+  /* THE LEDE STANDS ON THE PRIMARY COPY EDGE AND THE CONTROLS ON THE ACTION
+     EDGE, which is the same pair of anchors the rule above the headline
+     already marks: the accent segment on .rulefield sits at the copy edge and
+     this paragraph starts under it. Three columns, not two, because the first
+     one is the apparatus channel and holding it empty here is what makes the
+     indent read as a decision rather than as a margin. */
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns:
+    calc(var(--anchor-copy) - var(--grid-gap))
+    calc(var(--anchor-action) - var(--anchor-copy) - var(--grid-gap))
+    minmax(0, 1fr);
   align-items: end;
-  column-gap: 5rem;
-  row-gap: var(--sp-5);
-  border-top: 1px solid var(--ink-line);
-  padding-top: var(--sp-5);
+  column-gap: var(--grid-gap);
+  row-gap: var(--space-6);
+  padding-top: var(--space-6);
+}
+
+.hero__lede {
+  grid-column: 2;
+}
+
+.hero__act {
+  grid-column: 3;
+}
+
+@media (max-width: 599.98px) {
+  .hero__cluster {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hero__lede,
+  .hero__act {
+    grid-column: 1;
+  }
 }
 
 /* The one piece of running copy in the frame, set at the site's reading
@@ -403,12 +517,31 @@
   text-wrap: pretty;
 }
 
+/* THE CONTROLS OPEN ON THE ACTION EDGE, THEY DO NOT CLOSE ON THE MARGIN.
+
+   MEASURED, BEFORE. The cell this row occupies begins on --anchor-action and
+   the row was right-aligned inside it, so at 1500 the box started at 880.98
+   and the first painted pixel of the CTA was at 1142.83: the site's third
+   declared anchor ran through 262px of nothing and the controls stood on the
+   container's right margin, which is a fourth edge no other object in the
+   composition uses. The gap between the lede's last character at 829.31 and
+   the CTA's leading edge was 313px of void in the middle of the frame, and
+   at 8px of blur the lower hero read as a grey smudge at 27 percent, a hole,
+   and a black bar at 76 percent, with nothing relating the three.
+
+   AFTER, the same measurement: lede 405.00, controls 881.00, against anchors
+   405.00 and 881.00. Three left edges in the opening frame, at 48, 405 and
+   881, and they are --anchor-content, --anchor-copy and --anchor-action in
+   that order. The accent segment on .rulefield already marks the second of
+   them; the row underneath now marks the third with real ink instead of an
+   invisible box edge. The void that is left is the outer margin, which is a
+   thing the page has everywhere, rather than a hole between two objects. */
 .hero__act {
   display: flex;
   align-items: center;
   gap: var(--sp-4);
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 /* ============================================================
@@ -455,13 +588,22 @@
 }
 
 @media (max-width: 900px) {
+  /* THE TABLET SHEET STACKS, so the lede and the controls both return to the
+     content edge. Stated as three collapsed cells rather than one column so
+     the children keep the explicit placement they carry above. */
   .hero__cluster {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .hero__lede,
   .hero__act {
-    justify-content: flex-start;
+    grid-column: 1;
   }
+
+  /* The row's own justify-content used to be restated here, because the
+     desktop rule set flex-end and the stacked sheet had to undo it. The
+     desktop rule opens on the action edge now, so both bands want the same
+     value and the override was saying nothing. */
 
   .hero__lede {
     max-width: none;
@@ -517,7 +659,7 @@
   width: 100%;
   display: grid;
   align-content: start;
-  gap: 4rem;
+  gap: var(--space-fl-7);
 }
 
 /* The label is furniture and it sits in the flow. It used to be absolutely
@@ -597,7 +739,7 @@
    ============================================================ */
 
 .caps__intro {
-  margin-bottom: 5rem;
+  margin-bottom: var(--space-fl-8);
 }
 
 /* ============================================================
@@ -725,20 +867,12 @@
    hairline answering an intent instead of a wheel. Nothing moves: the rule
    changes colour, over the answer duration, on the one curve. */
 .caps__row:focus-within {
-  border-bottom-color: transparent;
-  background-image: var(--brand-ramp);
-  background-repeat: no-repeat;
-  background-size: 100% 1px;
-  background-position: left bottom;
+  border-bottom-color: var(--ink-accent);
 }
 
 @media (hover: hover) {
   .caps__row:hover {
-    border-bottom-color: transparent;
-    background-image: var(--brand-ramp);
-    background-repeat: no-repeat;
-    background-size: 100% 1px;
-    background-position: left bottom;
+    border-bottom-color: var(--ink-accent);
   }
 }
 
@@ -755,11 +889,29 @@
    can afford to: the longest of the five names inks 268px against the 4ch
    numeral column and has nothing else in it. */
 .caps__link {
+  /* ON THE GRID, AND ON THE ACTION EDGE.
+
+     It was 4ch, a fraction, a 34rem cap and a 40px cell: four widths, none
+     of them derived from anything, and the description happened to land at
+     x=878 when the action edge is at 881. Three of those pixels were an
+     accident. The row is placed now: the numeral in the first grid column,
+     the name across the apparatus and copy channels, and the description
+     beginning exactly on the action edge with the arrow closing the row at
+     the content's right edge.
+
+     The description is in the action and metadata region rather than in the
+     copy one because that is what it is: five parallel captions read as an
+     index, not as prose. The copy edge is where a paragraph a reader is
+     meant to sit down with begins, and there is no such paragraph in here. */
   display: grid;
-  grid-template-columns: 4ch minmax(0, 1fr) minmax(0, 34rem) 40px;
+  grid-template-columns:
+    calc(var(--grid-step) - var(--grid-gap))
+    calc(var(--anchor-action) - var(--grid-step) - var(--grid-gap))
+    minmax(0, 1fr)
+    auto;
   align-items: center;
-  gap: var(--sp-4);
-  padding-block: var(--sp-4);
+  column-gap: var(--grid-gap);
+  padding-block: var(--space-5);
   color: var(--ink-dim);
   transition: color var(--dur-half) var(--curve);
 }
@@ -813,6 +965,7 @@
    mechanism the chroma room uses for its own third step and is the only one
    that survives an opacity swap. */
 .caps__desc {
+  max-width: var(--measure);
   color: var(--ink);
   transition: color var(--dur-half) var(--curve);
 }
@@ -850,13 +1003,20 @@
    back in the numeral's column, and a 58px service name wrapped to three
    lines with its own caption printed over it. The two bands now abut. */
 @media (max-width: 63.9375rem) {
+  /* BELOW THE DESKTOP BAND THE ROW IS TWO CHANNELS AND THE DESCRIPTION DROPS
+     UNDER THE NAME, so the numeral keeps the first grid column and everything
+     it labels stands on one edge below the fold instead of on a 4ch guess. */
   .caps__link {
-    grid-template-columns: 4ch minmax(0, 1fr) 30px;
+    grid-template-columns:
+      calc(var(--grid-step) - var(--grid-gap))
+      minmax(0, 1fr)
+      auto;
     align-items: start;
   }
 
   .caps__desc {
-    grid-column: 2;
+    grid-column: 1 / -1;
+    margin-top: var(--space-3);
   }
 
   .caps__arr {
@@ -907,10 +1067,18 @@
    layout it was forcing is lifted with it: the ask sits beside its statement
    the way it was always meant to, and the room is filled by its own content
    rather than by 700px of empty colour. */
+/* NOT 50/50. Two equal halves put the studio's own sentence and the reader's
+   instructions at identical weight, which is the arrangement that makes a
+   page look generated. The statement takes the apparatus and copy channels
+   and the instructions and the address take the action and metadata region,
+   which is 7 columns against 5 and is the same split the capability index
+   above it uses. */
 .brief__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 4rem var(--sp-7);
+  grid-template-columns:
+    calc(var(--anchor-action) - var(--grid-gap))
+    minmax(0, 1fr);
+  gap: var(--space-7) var(--grid-gap);
   align-items: start;
 }
 
@@ -926,7 +1094,7 @@
    room for the padding inside the gradient band. */
 @media (max-width: 760px) {
   .brief__address {
-    padding-block: 4px;
+    padding-block: var(--space-1);
   }
 }
 
@@ -1008,11 +1176,11 @@
    it. 8px of offset, which is where the rule clears the q's tail. */
 .brief__address-text {
   display: inline-block;
-  background-image: var(--brand-ramp);
+  background-image: linear-gradient(var(--ink-accent), var(--ink-accent));
   background-repeat: no-repeat;
-  background-size: 100% 3px;
+  background-size: 100% 2px;
   background-position: left bottom;
-  padding-bottom: 8px;
+  padding-bottom: var(--space-2);
 }
 
 /* IN THE CHROMA ROOM THE RULE COMES OFF THE RAMP, and it has to. The rule is
@@ -1064,7 +1232,7 @@
 .work__box {
   display: flex;
   flex-direction: column;
-  gap: 5rem;
+  gap: var(--space-fl-8);
 }
 
 /* One column, because the statement is on a plate that bleeds to both edges
@@ -1073,7 +1241,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: start;
-  gap: 2.9333rem;
+  gap: var(--space-fl-7);
 }
 
 /* Ink on the sheet, for the same reason the headline is. The full-bleed ramp
@@ -1177,7 +1345,11 @@
   overflow: hidden;
   min-height: 33.3333rem;
   margin-inline: calc(var(--gutter) * -1);
-  padding: 5rem var(--gutter);
+  /* Named, because the shelf under the display line is derived from it and
+     the two drifting apart is what made the shelf read as a box parked on the
+     plate rather than as the plate's own floor. See .portal__glass. */
+  --plate-pad: 5rem;
+  padding: var(--plate-pad) var(--gutter);
   clip-path: polygon(
     0 0,
     100% 0,
@@ -1220,81 +1392,134 @@
    ============================================================ */
 .portal__band {
   --band-at: -14%;
+  /* THE QUIET AMPLITUDE, because there is no glass on this plate any more.
+     A structural run exists to be seen THROUGH something; with the pane
+     demoted to level 2 the only thing left for this one to do is the level 1
+     job, which is one low-frequency change in how much light the plane is
+     catching. At --edge-struct it was a grey diagonal slab across the largest
+     object on the route, which is the exact failure this pass was told not to
+     recreate in greyscale. */
+  --depth-loud-mix: var(--edge-quiet);
 }
 
 /* ============================================================
-   THE PANE ON THE PLATE
+   THE PANE ON THE PLATE IS NOT GLASS ANY MORE
 
-   The one surface on this site that clears the lab's glass floor in BOTH
-   rooms without an argument, because it is the only one where everything the
-   physics asks for was already present and only the panel was missing: a
-   full-strength ramp, an edge large enough to survive the blur, and a
-   container that keeps them together.
+   IT WAS the site's best-measuring backdrop-filter surface, and it was only
+   ever that good because everything under it was a full-strength brand ramp
+   with a run crossing it. Both are gone, so the reason the pane existed is
+   gone with them: a blurred panel over a flat near-opaque plane is a blurred
+   panel over nothing, which is the exact "coloured sticker" this project has
+   now measured three times.
 
-   IT USED TO CARRY NOTHING AND IT USED TO BE IN THE WRONG PLACE. It was a
-   690 by 240 rectangle floating in the top right of the plate with no type,
-   no edge and nothing behind it but the mark it crossed. Measured, it read
-   40.84 in both rooms, which is the best number on the site; looked at, it
-   read as a rendering artifact, because a frosted rectangle standing on its
-   own in the corner of a gradient is a thing a reader has to invent a reason
-   for. With the mark gone the reason it was written to have was gone too.
+   TRUE GLASS IS RATIONED AND THIS SURFACE IS NOT ON THE LIST. The list is
+   the sticky bar, the mobile panel, the theme control and ONE focal pane,
+   and the focal pane on this route is the one on the brief, where a real
+   two-hundred-level structural edge actually passes beneath it.
 
-   IT IS THE PLATE THE DISPLAY LINE IS SET ON NOW. Same element, same alpha,
-   same grain, moved to the bottom left and sized off the line it stands
-   under, so "Open the archive" and its arrow are set on a material rather
-   than straight onto the ramp. That is a job, it is the only job available
-   here, and it uses copy that was already on the plate: no sentence is
-   written, moved or reworded to pay for it.
+   WHAT IS LEFT IS A SHELF. The same element, the same box, the same job of
+   giving the display line and its arrow a material to stand on, drawn as
+   level 2 instead of level 3: a plane one value off the frost around it,
+   with the lit edge on its top face and the shade on its bottom. It costs no
+   composite and it reads as a real ledge rather than as a window onto a flat
+   field.
+   ============================================================ */
+/* ============================================================
+   AND IT STANDS ON THE FLOOR, MEASURED RATHER THAN NUDGED
 
-   IT IS STILL NOT GLASS BEHIND BODY COPY. The rule is about reading copy, and
-   the only thing on this surface is the display step at 93px plus a 51px
-   arrow. White on the pane's own composite over the ramp's worst corner is
-   5.80:1 with the band clear of it and 3.68:1 with the band under it, both
-   over the 3:1 large-text floor. Nothing under 24px comes near it: the four
-   service names and the domain stay on paper above the plate, where they
-   were.
+   THE SHELF WAS FLOATING AND ALL THREE OF ITS FIGURES WERE ARBITRARY.
+   `bottom: var(--space-7)`, `block-size: 17.3333rem`, `inline-size:
+   min(43rem, 46vw)`. Not one of them was derived from anything on the page,
+   and measured on the built site each one failed in its own way.
 
-   THE CLIP-PATH ON THE HOST IS A BACKDROP ROOT AND IT IS NOT A PROBLEM, which
-   was measured rather than assumed after the earlier pass asserted the
-   opposite and shipped no glass because of it. A root limits the backdrop to
-   what is painted INSIDE it, below the panel. The ramp is inside. The band is
-   inside. Both survive.
+     THE RIGHT EDGE WAS ON NOTHING, AT EVERY WIDTH, AND AT THE WORST WIDTH IT
+     WAS ALMOST ON SOMETHING. Column edges at 1500 fall at 48, 166.98, 285.97,
+     404.95, 523.94, 642.92 and so on; the shelf closed at 645.00, which is
+     2.08px past one. 1280 gave 588.80 against 551.28, 768 gave 353.27 against
+     392, 390 gave 335.39 against 292.50. A viewport percentage cannot land on
+     a column, and the one time it came close it came close enough to read as
+     a failed attempt rather than as a free edge.
+
+     THE BOTTOM EDGE STOPPED 48px SHORT OF THE PLATE'S OWN FLOOR. Two
+     horizontal edges, parallel, 48px apart, with nothing between them: the
+     object neither sat on the ground nor cleared it, which is the whole of
+     why it read as floating.
+
+     THE TOP EDGE HAD NO RELATION TO THE TYPE IT CARRIED. A fixed block-size
+     against a two-line display block gave 58.61 of clear above the line and
+     27.00 below at 1500, and at 390 the phone override closed that to 2.54 —
+     the display line's box within three pixels of tangency with the shelf it
+     was supposed to be standing on.
+
+   WHAT IT IS NOW. A ledge, not a rectangle: it runs the full width of the
+   plate and shares the plate's bottom edge, so it has ONE free edge instead
+   of three, and that edge is a stated clearance above the display block
+   rather than a rem constant. The lit hairline on its top face is therefore a
+   line crossing the whole frame, which is the one shape .spec/backdrop-physics
+   measured as reading (19.09/22.73 for one edge against 8.60/9.78 for three),
+   and the plate's diagonal run still crosses it so the depth is unchanged.
+
+   THE HEIGHT IS DERIVED, NOT CHOSEN. The plate's own bottom padding, plus the
+   two lines the display block always sets (the markup is two <span
+   class="portal__line"> blocks, so it is two at every width down to 320,
+   verified), plus one --space-7 of clearance above them. Every term scales
+   with the root, so the clearance holds at 1500, 768 and 320 instead of
+   collapsing at the narrow end.
+
+   NO 100% ANYWHERE IN THE WIDTH. --anchor-copy and --grid-step both contain a
+   percentage that resolves against the CONTAINING BLOCK, and this element is
+   out of flow inside the full-bleed plate, so a grid token used here would
+   resolve against 1500 rather than against the container's 1404 and report a
+   column that is not on the page. That is the same substitution trap that
+   froze --nav-mark two passes ago. The ledge takes the plate's whole width
+   instead, which needs no grid arithmetic to be correct.
    ============================================================ */
 .portal__glass {
   position: absolute;
   z-index: 0;
-  /* Off the frame's left edge and standing on the plate's own bottom
-     padding, so it is a fragment the line sits on rather than a box drawn
-     around the line. The 5rem is the plate's padding restated: the pane's
-     floor is where the plate's content floor is. */
+  /* Off the frame at the left, standing on the plate's floor at the bottom.
+     The bottom resolves against the plate's PADDING box, and the plate keeps a
+     1px bottom rule, so the ledge lands on the inside face of that rule rather
+     than under it: the two share a line instead of nearly sharing one. */
   left: 0;
-  bottom: 3.4rem;
-  inline-size: min(43rem, 46vw);
-  block-size: 17.3333rem;
+  bottom: 0;
 
-  /* Declared as a pair on this element for the substitution reason set out
-     on .brief__glass: a tint written on :root already carries :root's alpha. */
-  --glass-alpha: var(--glass-alpha-quiet);
-  --glass-tint: rgb(9 9 11 / var(--glass-alpha));
-  --glass-grain-alpha: 0.055;
+  /* THE PLATE'S GRID, RESTATED LOCALLY, AND THIS IS THE WHOLE REASON THE
+     TOKENS ARE NOT USED DIRECTLY. --grid-col and --anchor-copy both carry a
+     100%, and a percentage resolves against the CONTAINING BLOCK OF THE
+     ELEMENT THAT USES IT. This element is out of flow inside the full-bleed
+     plate, so those tokens would resolve against 1500 and hand back a column
+     of 103.00 where the container's is 94.98 — a grid that is not on the
+     page. Subtracting the plate's own two gutters first gives 95.00 against
+     the container's 94.98, which is the same column to a hundredth. */
+  --ledge-col: calc(
+    (100% - 2 * var(--gutter) - (var(--grid-cols) - 1) * var(--grid-gap)) /
+      var(--grid-cols)
+  );
+  --ledge-step: calc(var(--ledge-col) + var(--grid-gap));
 
-  background-color: var(--glass-tint);
-  -webkit-backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
-  backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
+  /* TWO COLUMNS PAST THE COPY ANCHOR, CLOSING ONE GUTTER SHORT, which is the
+     rule every horizontal object on this site already ends on: the section
+     head's own rule closes at 857.00 against an anchor at 881.00, and the four
+     process rules close at 381, 738, 1095 and 1452. The step count tracks
+     --anchor-copy's, which is 3 on the twelve column band and 2 on the eight,
+     so the ledge holds the same relationship to the copy edge in both. */
+  --ledge-steps: 5;
+  inline-size: calc(
+    var(--gutter) + var(--ledge-steps) * var(--ledge-step) - var(--grid-gap)
+  );
+  block-size: calc(
+    var(--plate-pad) + 2 * var(--text-display) * var(--leading-display) +
+      var(--space-7)
+  );
+  background-color: var(--canvas);
   box-shadow:
-    inset 0 1px 0 0 rgb(255 255 255 / 0.22),
-    inset 0 -1px 0 0 rgb(0 0 0 / 0.34);
+    inset 0 1px 0 0 var(--glass-edge-lit),
+    inset 0 -1px 0 0 var(--glass-edge-shade),
+    inset 0 0 0 1px var(--hairline);
   pointer-events: none;
 }
 
-.portal__glass::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: var(--glass-grain);
-  opacity: var(--glass-grain-alpha);
-  pointer-events: none;
-}
 
 /* ============================================================
    THE SIGNATURE
@@ -1352,17 +1577,31 @@ html.no-motion .portal__glass.is-signed {
   animation: none;
 }
 
-/* Below the desktop band the plate is 300px tall and the display line takes
-   most of it, so the pane is the plate's whole lower half rather than a
-   fragment of it. It still stands under the line and it still bleeds off the
-   left edge; only its two figures move. */
-@media (max-width: 700px) {
+/* The two width bands, and they are the grid's own two, restated here for the
+   step count only. Everything else about the ledge holds across all three. */
+@media (max-width: 1023.98px) {
   .portal__glass {
-    bottom: 2rem;
-    inline-size: 86vw;
-    block-size: 12rem;
+    --ledge-steps: 4;
   }
 }
+
+/* Four columns cannot carry three anchors, so --anchor-copy is 0 below 600
+   and there is no copy edge for the ledge to sit two columns past. It runs to
+   the content edge instead, which is the line the index rule above it and
+   every section on the route already close on. */
+@media (max-width: 599.98px) {
+  .portal__glass {
+    inline-size: calc(100% - var(--gutter));
+  }
+}
+
+/* The phone override on the ledge's two VERTICAL figures is deleted rather
+   than retuned. It existed to hold three hand-set numbers against a 300px
+   plate and it is what closed the clearance above the display line to 2.54px
+   there. Every term of the block-size scales with the root, so the same
+   declaration gives 171.48 of ledge on a 300px plate at 390 with the full
+   --space-7 above the line, and 297.39 on a 500px plate at 1500 with the same
+   clearance. There is nothing left for a breakpoint to correct. */
 
 /* White, at the display step, which is the only thing that may be set on a
    ramp: 3.75:1 at the magenta corner, over the 3:1 floor for large text, and
@@ -1450,10 +1689,18 @@ html.no-motion .portal__glass.is-signed {
   margin: 0 0 var(--sp-6);
 }
 
+/* FOUR EQUAL TRACKS ON THE SITE'S OWN GUTTER, not four equal fractions with a
+   gutter of their own. `gap: var(--sp-5)` was 32px against a grid gutter of
+   24, so the four rules landed at 48, 765, 1125 and 1452 where columns 1, 4, 7
+   and 10 of the page grid are at 48, 405, 762 and 1119. Three near-misses of
+   three to six pixels, which is the worst kind: close enough that nobody can
+   name the fault and far enough that the page never locks up. Each step is
+   three columns of twelve now, so the four rules ARE grid lines. */
 .process__steps {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--sp-5);
+  column-gap: var(--grid-gap);
+  row-gap: var(--space-6);
 }
 
 .process__step {
@@ -1506,7 +1753,7 @@ html.no-motion .portal__glass.is-signed {
 .qa__grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 4rem;
+  gap: var(--space-fl-7);
   align-items: start;
 }
 
@@ -1545,9 +1792,9 @@ html.no-motion .portal__glass.is-signed {
 .qa__a a {
   color: var(--ink);
   text-decoration: none;
-  background-image: var(--brand-ramp);
+  background-image: linear-gradient(var(--ink-accent), var(--ink-accent));
   background-repeat: no-repeat;
-  background-size: 100% 2px;
+  background-size: 100% 1px;
   background-position: left calc(100% - 1px);
   padding-bottom: 1px;
   /* Ink, not a thickening. Same reasoning as the interior documents': a
@@ -1645,7 +1892,7 @@ html.no-motion .portal__glass.is-signed {
    ============================================================ */
 
 .caps {
-  padding-bottom: 2.6667rem;
+  padding-bottom: var(--space-6);
 }
 
 /* THE 320px SEAM SURVIVES, SPLIT DIFFERENTLY, because the section is a room
@@ -1657,8 +1904,12 @@ html.no-motion .portal__glass.is-signed {
    the paper side, where air belongs. Read down the page the five seams are
    still 100, 320, 180, 136, 120. */
 .brief {
-  padding-top: 4rem;
-  padding-bottom: 6.4rem;
+  /* Both were arbitrary. 64 opens the focal surface and 96 closes it, and
+     the asymmetry is the one this site uses everywhere: a surface gives its
+     content more room to land in than to arrive on. */
+  --brief-pad-top: var(--space-8);
+  padding-top: var(--brief-pad-top);
+  padding-bottom: var(--space-fl-9);
   /* The band is drawn to the whole room and runs off all four of its edges.
      Without this it would leak into the two paper sections either side of
      the room, which is the one thing a room may not do.
@@ -1704,16 +1955,47 @@ html.no-motion .portal__glass.is-signed {
    panel", and this is the answer to it in one figure. Negative is up the
    sheet and to the left. */
 .brief__depth {
-  --band-at: -21%;
+  /* ONE EDGE UNDER ONE PANE. Solved against the pane's new position rather
+     than nudged: the run's leading edge enters the section's upper left and
+     crosses the pane, so the same step is sharp on the surface and soft
+     behind the glass. That comparison is the entire mechanism, and a run
+     whose edges both miss the pane measures the flat control to the byte. */
+  --band-at: -34%;
 }
 
 .brief__glass {
   position: absolute;
   z-index: 0;
+  /* IT STANDS UNDER THE STATEMENT NOW, which is the whole of the change.
+
+     It used to be a rectangle in the section's bottom-left corner with
+     nothing on it, and a frosted panel standing on its own in the corner of
+     a surface is a thing a reader has to invent a reason for. It is placed
+     against the one line this section exists to make instead: the statement
+     sits on it, the structural run passes beneath one of its edges, and the
+     reader gets the comparison the material needs, which is the same run
+     sharp outside the pane and soft inside it.
+
+     THE TOP IS DERIVED, NOT MEASURED OFF A SCREENSHOT. The section opens on
+     --section-gap, the head is one label line plus its own margin, and the
+     pane starts one small step above the statement's cap. Change the type
+     ladder or the rhythm and this follows both. */
   left: var(--gutter);
-  bottom: 1.6rem;
-  inline-size: min(40rem, 44vw);
-  block-size: 10.6667rem;
+  /* DERIVED FROM THE SECTION'S OWN RHYTHM. The surface opens on its top
+     padding, the head is one section-head row, its margin is the group
+     close, and the pane starts one small step above the statement's cap and
+     ends one below its baseline. Nothing here is measured off a screenshot:
+     move the type ladder or the spacing and the pane follows both. */
+  --brief-head-h: calc(var(--text-caption) * 1.3 + var(--space-3));
+  top: calc(
+    var(--brief-pad-top) + var(--brief-head-h) + var(--space-fl-8) -
+      var(--space-5)
+  );
+  inline-size: calc(var(--anchor-action) - var(--grid-gap));
+  max-inline-size: calc(100% - var(--gutter) * 2);
+  block-size: calc(
+    var(--text-heading-sm) * var(--leading-heading) + var(--space-5) * 2
+  );
 
   /* BOTH OF THESE ARE DECLARED HERE AND THAT IS NOT REDUNDANT. A custom
      property's value is substituted against the element it is DECLARED on,
@@ -1722,7 +2004,7 @@ html.no-motion .portal__glass.is-signed {
      This project has produced a 0x0 control twice by assuming otherwise. The
      tint is restated on the same element as the alpha it reads. */
   --glass-alpha: var(--glass-alpha-quiet);
-  --glass-tint: rgb(9 9 11 / var(--glass-alpha));
+  --glass-tint: rgb(10 10 10 / var(--glass-alpha));
 
   background-color: var(--glass-tint);
   -webkit-backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
@@ -1739,6 +2021,53 @@ html.no-motion .portal__glass.is-signed {
     inset 0 1px 0 0 rgb(255 255 255 / 0.13),
     inset 0 -1px 0 0 rgb(0 0 0 / 0.42);
   pointer-events: none;
+}
+
+/* ============================================================
+   THE FOCAL PANE'S FALLBACKS, AND THEY WERE MISSING
+
+   The header and the mobile panel have carried these four since the glass was
+   first built; the third true-glass surface on the site did not, so on a
+   renderer with no backdrop-filter it painted a 24 percent black rectangle
+   over the statement and on `prefers-contrast: more` it stayed translucent
+   for exactly the reader who had asked it not to be.
+
+   All four cases land on the same answer: the pane stops being glass and
+   becomes the elevated plane it was always standing in for. The statement
+   above it is unaffected either way, because it is set in the focal surface's
+   own ink and never in a colour that depends on the pane.
+   ============================================================ */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .brief__glass {
+    background-color: #131313;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .brief__glass {
+    background-color: #131313;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /* Surface texture on a material. With no material it is dirt on a solid
+     plane, and a reader who asked for more contrast asked for less of it. */
+  .brief__glass::after {
+    display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .brief__glass {
+    background-color: Canvas;
+    border: 1px solid CanvasText;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .brief__glass::after {
+    display: none;
+  }
 }
 
 /* The grain. A material has a surface and a surface has texture; without it
@@ -1824,7 +2153,7 @@ html.no-motion .portal__glass.is-signed {
      the void half of --glass-solid, restated for a room that has only one. */
   .brief__copy {
     position: relative;
-    background-color: #09090b;
+    background-color: var(--room-focal-ground);
     margin-inline: calc(var(--gutter) * -1);
     padding: var(--sp-5) var(--gutter);
     max-width: calc(var(--measure) + var(--gutter) * 2);
@@ -1834,27 +2163,40 @@ html.no-motion .portal__glass.is-signed {
   }
 }
 
+/* EVERY ONE OF THESE WAS AN ARBITRARY FIGURE AND TWO OF THEM WERE DEFECTS.
+
+   14.9333rem is 224px, on top of a section pause, which put roughly 350px of
+   unexplained paper between the brief's closing address and the word "THE
+   ARCHIVE", and another 200 between that label and the statement under it. A
+   large empty field has to isolate, group, pace or direct; that one was doing
+   none of the four, which is the definition this pass is working to.
+
+   All four are family members now and each states its job. The archive keeps
+   the largest opening on the site because it is the one place a reader is
+   meant to feel the page change hands, and 96 is enough to do it. */
 .work {
-  padding-top: 14.9333rem;
-  padding-bottom: 6.4rem;
+  padding-top: var(--space-fl-9);
+  padding-bottom: var(--space-fl-8);
 }
 
 .process {
-  padding-top: 5.6rem;
-  padding-bottom: 4.2667rem;
+  padding-top: var(--space-fl-8);
+  padding-bottom: var(--space-fl-7);
 }
 
 .qa {
-  padding-top: 4.8rem;
+  padding-top: var(--space-fl-7);
 }
 
-/* The ask needs room under it and the section no longer supplies 120px of it.
-   The address is the last object in the section and it sits on nothing, so it
-   takes its clearance from the block rather than from the band. */
+/* ROW GAP ONLY. It was `gap`, which is shorthand for both axes, so this rule
+   silently overwrote the column gap the anchors are measured against and put
+   the second column 24px right of the action edge. The address is the last
+   object in the section and sits on nothing, so it takes its clearance from
+   the block rather than from the surface. */
 .brief__grid {
-  gap: 3.6rem;
+  row-gap: var(--space-7);
 }
 
 .brief__copy {
-  gap: 3.2rem;
+  gap: var(--space-fl-7);
 }

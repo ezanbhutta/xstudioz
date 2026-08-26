@@ -46,14 +46,24 @@
 
    WHY IT IS HERE RATHER THAN IN tokens.css. The number is not a token. It is
    a consequence of two rules that both live in this file, the 44px floor
-   .nav__theme and .nav__toggle take and the --sp-3 padding on .nav__row, so
+   .nav__theme and .nav__toggle take and the --sp-2 padding on .nav__row, so
    it belongs where a reader can see what it is made of. components.css is
    imported after tokens.css by both entry points, so this is the later
    declaration at equal specificity and it wins by source order rather than
    by weight.
    ============================================================ */
 :root {
-  --nav-h: calc(44px + var(--sp-3) * 2);
+  /* THE BAR IS COMPACT NOW, AND THE COMPACTION IS ONE RUNG OF THE SPACING
+     FAMILY RATHER THAN A NEW NUMBER. The row is still exactly one 44px touch
+     target, and the padding either side of it drops from --sp-3 to --sp-2, so
+     the bar goes from 76px to 60px at every width the site has and the touch
+     floor is untouched. 60 is 21 percent less chrome standing over the first
+     line of every document, and it is the figure the reference set all sit
+     on. Everything the block below says about the fallback still holds: it is
+     the bar's construction rather than a rung, motion.ts's ResizeObserver
+     confirms it instead of correcting it, and there is nothing left to
+     shift. */
+  --nav-h: calc(44px + var(--sp-2) * 2);
 }
 
 /* ---------------- Nav ----------------
@@ -72,10 +82,42 @@
 
 .nav {
   --nav-run: calc(var(--nav-h) * var(--cut-k));
-  /* The drawing's size in the bar. Named because the brand's touch target is
-     derived from it below the desktop band, where the mark is the whole
-     lockup and a target measured off the grid column is the wrong box. */
-  --nav-mark: 26px;
+
+  /* ============================================================
+     THE DRAWING'S SIZE IN THE BAR, RE-TUNED AGAINST THE DELIVERED MARK
+
+     IT IS AN em NOW AND NOT A PIXEL, AND THAT IS THE WHOLE REPAIR. The old
+     figure was 26px flat, which had two faults. The drawing it sized was
+     379.7 x 384.0 painted inside a 404 viewBox, so 26px of CSS box held
+     24.43px of ink across and 24.71px down and 6 percent of the box was
+     slack. And a lockup whose mark is a fixed pixel and whose wordmark is a
+     token cannot scale as one object: at any type step but the one it was
+     solved at, the two drift.
+
+     The delivered artwork paints its box exactly, 0,0,100,100, so the SAME
+     26px would now paint 26 x 26: 6.4 percent wider and 5.2 percent taller
+     ink at an unchanged CSS size. That is the growth DELIVERY.md warns about,
+     and it is why this could not be left alone.
+
+     THE FIGURE IS THE LOCKUP'S, MEASURED OFF CAP HEIGHT. Geist's cap height
+     is 0.71em. The mark stands 1.32 cap = 0.9372em, the gap to the wordmark
+     is 0.38 cap = 0.2698em, and the mark's centre sits 0.030 cap below the
+     centre of the cap band, which resolves to a translate of 0.1349em. Both
+     figures are em against the LOCKUP's own font-size, so the mark and the
+     word are one object at every step of the ladder.
+
+     WHAT THAT COSTS AND WHAT IT BUYS. At the header's 15px the mark box is
+     14.06px against the old 26, and its ribbon is 1.91px against the old
+     drawing's 1.78: near-identical ink in 46 percent less footprint. The
+     mark stops towering over its own name.
+
+     BELOW THE DESKTOP BAND THE WORDMARK STANDS DOWN AND THE MARK IS THE
+     WHOLE LOGO, so the lockup's em is raised there rather than the mark's
+     box being special-cased: 26px of em paints 24.4px of drawing, which is
+     exactly the ink the shipped 26px box was painting. See the phone band
+     further down.
+     ============================================================ */
+  --lockup-f: var(--text-body-sm);
   position: fixed;
   top: 0;
   left: 0;
@@ -196,11 +238,130 @@
 }
 
 .nav__band .depth {
-  /* Between the lockup and the links at the desktop width, and the whole of
-     the bar's open half below it, where the links stand down. Solved on the
-     rendered bar rather than nudged: the offset that puts the run's leading
-     edge at 12 percent of the bar's width. */
-  --band-at: -29%;
+  /* ============================================================
+     WHERE THE EDGE CROSSES, AND IT IS SOLVED ON THE REBUILT ROW
+
+     -29% was solved against the old row, whose links were centred and whose
+     largest content-free run was the 372px gap between the lockup and the
+     first label. The row is placed on the page's three anchors now and the
+     largest run moved: at 1500 it is the 392px between the last label's
+     trailing edge on --anchor-action and the light switch. 20% puts the edge
+     through the middle of that run rather than through one end of it, which
+     is what makes the region half lit and half shaded instead of mostly one
+     or the other. Swept in 4 percent steps; 20 is the crest in both rooms.
+
+     AND THERE ARE TWO OFFSETS, BECAUSE THERE ARE TWO ROWS. --band-at is read
+     against the mask's own gradient line, which is the bar's diagonal
+     extent, so one figure holds its place in the composition as the viewport
+     changes WIDTH. It cannot hold its place across a change of LAYOUT, and
+     1025 is exactly that: the links stand down, the wordmark stands down,
+     the three anchored tracks become two, and the bar's largest open run
+     jumps from the right of the row to the 42px mark immediately after the
+     lockup. Measured at --edge-chrome, daylight:
+
+               320    375    390    428    600    768   1024   1280   1500
+       +20%   18.9    0.5    0.5    0.5    0.5    0.7    5.7   ...    19.4
+       -16%   18.9   14.2   14.7   15.6   16.6   17.0   17.1    8.0    5.9
+
+     So the offset changes at the breakpoint the layout changes at, and
+     nowhere else. Both figures are the crest of their own band.
+     ============================================================ */
+  --band-at: 20%;
+
+  /* THE AMPLITUDE, AND THE HEADER IS THE ONE PLACE ON THE SITE WHERE A RUN
+     IS NEVER SEEN DIRECTLY. Everything painted in here is behind an 8px blur
+     and a 58 percent tint in daylight, 62 on the void, so the bar passes 42
+     and 38 percent of it. Nothing reads on this band: the bar's label, its
+     five links and its two controls all stand on the GLASS, whose floor is
+     derived against pure black and pure white, so no backdrop drawn in here
+     can move a single contrast figure.
+
+     THAT IS WHY IT IS --edge-chrome AND NOT --edge-struct. --edge-struct is
+     0.20 and it was measuring 4.88 in daylight and 4.42 on the void inside
+     the bar's own content-free channel: a tinted sticker with a paragraph
+     attached to explain why it could not be better. It can be better, in the
+     one place where the only thing bounding the amplitude is taste. The
+     derivation and the composited figures are in the DEPTH block of
+     tokens.css. */
+  --depth-mix: var(--edge-chrome);
+
+  /* ============================================================
+     ONE EDGE, AND IN THE HEADER THAT HAS TO BE SPELLED DIFFERENTLY
+
+     THE SHARED MECHANISM DRAWS A STRIPE. .depth masks a band of --band-w
+     with a hard cut at each end and fades the fill along the band so the far
+     cut arrives at nothing. In a 900px-tall room that works: the run's far
+     end has left the frame before its own trailing cut matters.
+
+     IN A 60px BAR IT DRAWS A WEDGE. The band's two cuts are 367px of
+     horizontal footprint apart, both of them land inside a 1500px row, and
+     the fill has only lost a fifth of its amplitude over that distance, so
+     what the reader gets is a grey lozenge parked in the middle of the
+     chrome. It measured well and looked like a smudge, which is the exact
+     failure this whole pass exists to stop repeating.
+
+     SO THE BAR TAKES A STEP RATHER THAN A STRIPE. One stop, hard, at
+     --band-near, and the fill runs to the end of the box behind it. What
+     crosses the bar is a single boundary at the mark's own 40.82 degrees
+     with clean material on one side and shaded material on the other, which
+     is what a real edge under a real pane looks like and is exactly the
+     shape .spec/backdrop-physics.md measured at 19.09 in daylight and 22.73
+     on the void against 8.60 and 9.78 for three.
+
+     THE FILL IS FLAT FOR THE SAME REASON. The shared ramp fades ALONG the
+     arm, and in a box that is 1574 by 60 the arm is almost the horizontal,
+     so the step had lost a fifth of itself by the middle of the row and more
+     than half by the right gutter: the edge was strong where the lockup is
+     and gone where the controls are. Held flat, the one boundary is the same
+     boundary at every point it crosses.
+     ============================================================ */
+  background-image: linear-gradient(
+    var(--ramp-angle),
+    var(--depth-a) 0%,
+    var(--depth-a) 100%
+  );
+
+  --band-step: linear-gradient(
+    var(--band-angle),
+    transparent 0 var(--band-near),
+    #000 var(--band-near) 100%
+  );
+  -webkit-mask-image: var(--band-step);
+  mask-image: var(--band-step);
+}
+
+/* ============================================================
+   THE PHONE BAND'S OWN OFFSET, AND ITS OWN SIDE
+
+   THE OFFSET, because below 1025 the row is two tracks rather than three and
+   its open pixels are somewhere else: the 42px immediately after the lockup
+   rather than the run before the light switch.
+
+   AND THE SIDE, because the two are not independent. On the desktop row the
+   edge crosses at 20 percent measured from the far corner, so the material
+   it leaves behind covers the last quarter of the bar and the rest is clean.
+   Reflected onto a 390px row the same construction covers the first eight
+   percent and leaves the OTHER ninety-two changed, which is not an edge
+   crossing a pane, it is a bar that has been repainted with a notch cut out
+   of one corner. Measured on a phone in the dark room it read as a light
+   grey band with the call to action sitting on it as a hole.
+
+   So the phone band takes the complementary stop. The same single boundary
+   at the same angle in the same place, and the material is on the small side
+   of it. The reading is unchanged, because a standard deviation across a
+   region containing one edge does not care which side of that edge carries
+   the step: 16.24 in daylight and 15.39 on the void at 390, measured both
+   ways, and that pair is the tightest on the site.
+   ============================================================ */
+@media (max-width: 1024px) {
+  .nav__band .depth {
+    --band-at: -16%;
+    --band-step: linear-gradient(
+      var(--band-angle),
+      #000 0 var(--band-near),
+      transparent var(--band-near) 100%
+    );
+  }
 }
 
 /* The grain, over the material and under the content. */
@@ -254,13 +415,70 @@
    deliberately not var(--nav-h), so the two agree by construction rather
    than by circulation.
    ============================================================ */
+/* ============================================================
+   THE ROW IS THE PAGE'S OWN GRID, DRAWN
+
+   IT USED TO BE `1fr auto 1fr`, which centres the links between two equal
+   halves and puts every edge in the bar somewhere the rest of the site has
+   never heard of. Measured at 1500 the links began at 524.3 and the action
+   cluster at 1242.8; the page's own anchors are at 405 and 881. So the one
+   element standing over every route on the site was the one element not
+   placed on the grid the site is built from.
+
+   THREE TRACKS AND EACH ONE IS AN ANCHOR. tokens.css publishes the three as
+   lengths precisely so a region that is not a grid can land on them, and the
+   header is the region that most needed to.
+
+     column 1   calc(var(--anchor-copy) - var(--grid-gap))
+                The lockup, at --anchor-content, which is the container's own
+                content edge and costs nothing to hold. The track ends one
+                grid gutter short of the copy edge, so column 2 BEGINS
+                exactly on --anchor-copy.
+     column 2   minmax(0, 1fr)
+                The links, closed to the end of the track, so their trailing
+                edge lands one grid gutter short of --anchor-action.
+     column 3   calc(100% - var(--anchor-action))
+                The action span. It BEGINS exactly on --anchor-action, which
+                is the edge tokens.css names for controls and for the
+                navigation's own links, and it ends on the container's right
+                content edge, which is --anchor-content mirrored.
+
+   THE PERCENTAGES RESOLVE HERE AND NOWHERE ELSE. --grid-col is written
+   against 100%, and a percentage in grid-template-columns is read against
+   this element's own content box. .nav__row is also the .container, so that
+   box is the page width less two gutters: the same number every section on
+   every route lays itself out against. The anchors are therefore the same
+   pixel in the bar as in the document under it, by construction rather than
+   by arithmetic done twice.
+
+   THE GAP BETWEEN LINKS IS THE GRID'S OWN GUTTER. --sp-4 is 24px, which is
+   --grid-gap on the desktop band, so the rhythm between two navigation
+   labels is the rhythm between two columns of the page. At 1025, the narrow
+   end of the band, the links measure 419.3 and close 33px clear of the
+   lockup; at 1500 they measure the same and stand 278px clear.
+
+   BELOW 1025 THE ANCHORS CANNOT CARRY THIS. Four columns do not hold three
+   anchors, and tokens.css collapses all three to the content edge under
+   600px, which would make column 1 a negative length. The band below the
+   desktop breakpoint keeps the two-track row it already had.
+   ============================================================ */
 .nav__row {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: var(--sp-4);
-  padding-block: var(--sp-3);
-  min-height: calc(44px + var(--sp-3) * 2);
+  padding-block: var(--sp-2);
+  min-height: calc(44px + var(--sp-2) * 2);
+}
+
+@media (min-width: 1025px) {
+  .nav__row {
+    grid-template-columns:
+      calc(var(--anchor-copy) - var(--grid-gap))
+      minmax(0, 1fr)
+      calc(100% - var(--anchor-action));
+    column-gap: var(--grid-gap);
+  }
 }
 
 /* The end of the row. One grid cell holding the switch, the call to action
@@ -302,16 +520,147 @@
   transform: translateY(-50%);
 }
 
+/* THE HEADER'S OWN "FAQ", WHICH THE BLOCK ABOVE MISSED ON THE OTHER AXIS.
+
+   "Vertical only, so neighbours never overlap" is the right instinct and the
+   wrong conclusion, and the footer block further down already disproves it:
+   the same three-letter label, the same 28.2px, answered there with max().
+   Measured on the built site by hit testing rather than by geometry, which is
+   the only way to read a target that lives on a pseudo-element:
+
+     1500   Journal 52 x 44   FAQ 30 x 44   short by 14 across
+     1025   Journal 52 x 44   FAQ 30 x 44   short by 14 across
+
+   Height was never the problem. 1025 to 1180 is iPad, where this row is the
+   one on screen and a thumb is the pointer, so a 30px target is a real miss
+   and not a theoretical one.
+
+   NEITHER EXPANSION CAN REACH A NEIGHBOUR, and this is measured rather than
+   assumed. .nav__links sets gap: var(--sp-4), which resolves to 24px across
+   the whole desktop band: Journal's box closes at 804.8 and FAQ's opens at
+   828.8 at 1500, and 527.7 / 551.7 at 1025. max() opens FAQ 7.9px each side,
+   leaving 16.1px of clear air at both ends of the band. Every other label in
+   the row is already over the floor, so max() returns 100% for all of them
+   and they do not move at all.
+
+   THIS RULE IS SCOPED TO .nav__link AND MUST STAY THAT WAY. The shared
+   declaration above is also worn by .nav__brand, whose ::after is overridden
+   inside the sub-1025 block with left: calc(...) / right: auto against the
+   BOX EDGE. Folding a left: 50% centring model into the shared rule would
+   compose with that calc and drag the mark's 44px square 22px off the mark.
+
+   transform, not translate: translate carries the law's displacement, which
+   the :active rule at the foot of this file puts on these same controls. */
+.nav__link::after {
+  left: 50%;
+  right: auto;
+  width: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+
+/* ============================================================
+   THE SAME TECHNIQUE, FOR THE TWO CONTROLS THAT WERE MEASURED SHORT
+
+   The header was taken to the touch floor and the rest of the site was
+   checked for HEIGHT only, so two discrete controls have been standing under
+   it at every phone width. Measured at 320, 375, 390 and 428 on /, /about/
+   and /faq/, with the menu open and closed:
+
+     .crumbs a       60.4 x 23.3   short by 20.7 down
+     .footer__col a  28.2 x 44     short by 15.8 across, on "FAQ"
+
+   The footer link is the more surprising of the two, because it already
+   declares min-height: 44px and its own comment explains why. That rule
+   answers the axis the list stacks on and says nothing about the other one,
+   so every short label in the index — FAQ at 28.2, Journal at 51.7 — is a
+   full-height target that a thumb can still miss sideways. The breadcrumb had
+   no floor on either axis: it is one line of 15px type at its natural height.
+
+   THE FIX IS THE HIT AREA ALREADY IN USE ABOVE, ON THE AXIS EACH ONE IS
+   SHORT ON, and on that axis only. Growing the boxes themselves is not
+   available: the crumb is an inline-block on a wrapping row, and widening the
+   footer link would drag its arriving hairline out with it, because that rule
+   is drawn left: 0 / right: 0 against this same box.
+
+   NEITHER EXPANSION CAN REACH A NEIGHBOUR. The crumb opens 10.35px above and
+   below into the padding that already separates the row from the masthead,
+   and it is the only link in the trail — the current page is not one. The
+   footer link opens 7.9px each side inside a 342px column whose links stack
+   vertically, so there is nothing beside it to collide with.
+
+   transform, not translate, because translate carries the law's displacement
+   and nothing else. That is the rule the three declarations above already
+   follow and the reason the skip link is centred by a margin.
+
+   THE `html` PREFIX IS THE CASCADE FIX THIS FILE ALREADY DOCUMENTS FURTHER
+   DOWN. Both selectors are owned by doc.css, which is imported after this
+   file, so a bare class here would lose on source order at equal specificity
+   and the block would read correctly and render nothing. position: relative
+   is restated for the same reason rather than borrowed from there.
+   ============================================================ */
+html .crumbs a,
+html .footer__col a {
+  position: relative;
+}
+
+/* Down only. The trail is a horizontal row, so the vertical axis is the one
+   with room in it. */
+html .crumbs a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 44px;
+  transform: translateY(-50%);
+}
+
+/* Across only, and only when the label is actually narrower than the floor:
+   max() leaves every link wide enough to pass at exactly the width it has,
+   so the long labels are untouched and nothing in the column moves. */
+html .footer__col a::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: max(100%, 44px);
+  transform: translateX(-50%);
+}
+
+/* THE LOCKUP, AS DELIVERED. Baseline-aligned rather than centre-aligned,
+   because the mark is set against the wordmark's CAP BAND and not against
+   its box: it stands 1.32 cap, so it overhangs the cap line by 0.13 cap and
+   drops 0.19 cap below the baseline, and the translate below is what puts it
+   there. The font-size is declared HERE and not inherited, because every
+   figure in the lockup is an em of it. */
+/* --nav-mark IS DECLARED HERE AND NOT ON .nav, AND THAT IS THE SAME TRAP THE
+   light switch fell into two rebuilds ago, in the opposite direction. A
+   custom property's own var() references are substituted against the element
+   the property is DECLARED on, not the element that uses it. Written at .nav
+   it would freeze .nav's --lockup-f, which is 15px, and the phone band's
+   raise to 26px would change nothing at all: measured, the mark stayed 14.05
+   at 390 while every figure in the block above said 24.37. Declared beside
+   the --lockup-f it reads, it follows it. */
 .nav__brand {
   display: inline-flex;
-  align-items: center;
-  gap: 10px;
+  align-items: baseline;
+  gap: calc(var(--lockup-f) * 0.2698);
+  font-size: var(--lockup-f);
+  --nav-mark: calc(var(--lockup-f) * 0.9372);
+  justify-self: start;
 }
 
 .nav__mark {
   width: var(--nav-mark);
   height: var(--nav-mark);
+  flex: none;
   fill: var(--ink);
+  /* (1.32 - 1) / 2 * 0.71 + 0.030 * 0.71 = 0.1349em. The mark is centred on
+     the cap band and then dropped 0.030 cap, because "XStudioz" is one cap
+     and eight lowercase and its ink centroid hangs low: full centroid
+     alignment reads low, half of it settles. */
+  translate: 0 calc(var(--lockup-f) * 0.1349);
   transition: fill var(--dur-half) var(--curve);
 }
 
@@ -329,21 +678,33 @@
   fill: var(--ink-accent);
 }
 
+/* The wordmark takes the lockup's own em rather than naming a size, so the
+   two halves cannot drift. Weight 500 and tracking 0: the column profile of
+   "XStudioz" at 200px gives X|S a clearance of 25 in 1/1000 em against a
+   median of 95, so the leading pair is the tightest in the word and any
+   negative tracking closes it first. At 15px that clearance is already
+   0.375px. That is the measured reason the wordmark carries no negative
+   tracking at UI sizes. */
 .nav__name {
-  font-size: var(--text-body-sm);
-  font-weight: 500;
+  font-size: 1em;
+  font-weight: var(--weight-medium);
+  letter-spacing: 0;
 }
 
+/* Closed to the end of the track, so the trailing edge of the last label
+   lands one grid gutter short of --anchor-action and the action span begins
+   on it. */
 .nav__links {
   display: flex;
-  gap: var(--sp-5);
-  justify-content: center;
+  gap: var(--sp-4);
+  justify-content: flex-end;
   white-space: nowrap;
+  min-width: 0;
 }
 
 .nav__link {
   font-size: var(--text-body-sm);
-  font-weight: 400;
+  font-weight: var(--weight-regular);
   white-space: nowrap;
   padding-block: 2px;
 }
@@ -420,17 +781,19 @@
    parking a 0 x 0 stop in it. That is the exact fault the previous switch
    shipped with, and it is repaired by mechanism rather than by care.
 
-   THE GLYPH IS A DISC CUT ON THE MARK'S OWN ARM. One straight boundary at
-   40.82 degrees across a circle, which is the only angle any edge on this
-   site is allowed to take. Three states, and each is legible without a label:
+   THE GLYPH IS THE BAR'S OWN CORNER CUT ON THE MARK'S OWN ARM. One straight
+   boundary at 40.82 degrees across a face whose corner is the ratio the call
+   to action beside it uses, which is the only angle and the only corner any
+   edge in this bar is allowed to take. Three states, and each is legible
+   without a label:
 
-     system   half paper, half void. The disc is showing that it is not
+     system   half paper, half void. The face is showing that it is not
               deciding: both rooms are present in it.
-     light    the whole disc is paper.
-     dark     the whole disc is void.
+     light    the whole face is paper.
+     dark     the whole face is void.
 
-   THE TWO HALVES ARE FIXED HEXES, NOT ROOM TOKENS. #f6f5f8 and #09090b, in
-   both themes. The disc is a diagram OF the two rooms, so it has to mean the
+   THE TWO HALVES ARE FIXED HEXES, NOT ROOM TOKENS. #f7f5f2 and #0a0a0a, in
+   both themes. The face is a diagram OF the two rooms, so it has to mean the
    same thing while standing in either one; painting it from --ink and
    --ground would make the light state invisible in the light room and the
    dark state invisible in the dark room, which is precisely when a reader
@@ -451,13 +814,13 @@
 @property --theme-lit {
   syntax: '<color>';
   inherits: true;
-  initial-value: #f6f5f8;
+  initial-value: #f7f5f2;
 }
 
 @property --theme-shade {
   syntax: '<color>';
   inherits: true;
-  initial-value: #09090b;
+  initial-value: #0a0a0a;
 }
 
 .nav__theme {
@@ -472,8 +835,15 @@
      and it is caught here by giving the control the number rather than
      borrowing one from an ancestor it does not always have. 26px is still the
      mark's size in the bar; it is now stated where the control can always
-     read it. */
-  --theme-disc: 26px;
+     read it.
+
+     IT IS 22px AND IT IS NO LONGER A DISC. See the block on .nav__theme-face
+     below: the control took the bar's own corner and the bar's own angle, so
+     what this names is the FACE, not a circle. 22 rather than 26 because the
+     bar is 60px now and a 26px face inside a 44px target in a 60px bar is a
+     control that outweighs the lockup beside it: measured, the face was
+     1.85x the drawing in the lockup and is now 1.56x. */
+  --theme-disc: 22px;
 
   /* Drawn only once the script that operates it has claimed it. */
   display: none;
@@ -496,11 +866,30 @@
   width: var(--theme-disc);
   height: var(--theme-disc);
   flex: none;
-  border-radius: 50%;
+
+  /* ============================================================
+     THE FACE BELONGS TO THE BAR NOW, AND IT USED TO BE THE ONE CIRCLE IN IT
+
+     The control was a 26px disc. Everything else in this row is rectilinear
+     and every corner on this site is --radius-ui, so the light switch was
+     drawn in a vocabulary of exactly one element, which is the definition of
+     a control sitting in its own visual language. Nothing about what it says
+     changes: it is still one straight boundary at the arm's 40.82 degrees
+     across a single face, still three states, still legible without a label.
+     What changes is the outline it says it in.
+
+     THE CORNER IS THE BAR'S OWN RATIO AND NOT THE BAR'S OWN LENGTH. The call
+     to action beside it is 44px tall with a --radius-ui corner, which is
+     10.72 / 44 = 0.244 of its height. Copying the length onto a 22px face
+     would give 0.487, which is not the same corner, it is a squircle. The
+     ratio is copied instead, so the two controls are cut from one drawing at
+     two sizes.
+     ============================================================ */
+  border-radius: calc(var(--radius-ui) * 22 / 44);
 
   /* THE RING, AND IT IS LOAD BEARING IN TWO OF THE SIX COMBINATIONS. In the
      light state on a light page, and in the dark state on a dark page, the
-     disc is one flat hex matching its surroundings and this hairline is the
+     face is one flat hex matching its surroundings and this hairline is the
      only thing that makes it a control at all. So it carries the 3:1 non-text
      floor by itself, and the figures are the COMPOSITED ones rather than the
      token's: inside .nav, --ink-quiet is --ink at 62 percent, not the
@@ -510,7 +899,7 @@
        header, dark    #f2f1f6 at 62% over void   -> rgb(153,153,157)  7.01:1
        menu panel      --room-void-quiet #8a8a97 opaque on void        5.84:1
 
-     In the other four combinations the disc carries a hard edge between its
+     In the other four combinations the face carries a hard edge between its
      own two halves, which measures 18.32:1 and needs no help. */
   box-shadow: inset 0 0 0 1px var(--ink-quiet);
 
@@ -528,11 +917,11 @@
 /* THE THREE STATES. system is the initial value of both properties and needs
    no rule; the two explicit choices collapse the disc onto one hex. */
 .nav__theme[data-theme-state='light'] .nav__theme-face {
-  --theme-shade: #f6f5f8;
+  --theme-shade: #f7f5f2;
 }
 
 .nav__theme[data-theme-state='dark'] .nav__theme-face {
-  --theme-lit: #09090b;
+  --theme-lit: #0a0a0a;
 }
 
 /* WHICH COPY IS ON SCREEN. Exactly one, at every width, and the selectors say
@@ -601,7 +990,7 @@
 .nav__toggle {
   display: none;              /* desktop shows the links instead */
   align-items: center;
-  gap: 10px;
+  gap: var(--space-3);
   /* a 44px target, with the padding doing the work rather than a fixed box
      so the label stays on the type baseline */
   min-height: 44px;
@@ -610,7 +999,7 @@
   margin-right: calc(var(--sp-2) * -1);
   border-radius: var(--radius-ui);
   font-size: var(--text-body-sm);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   color: var(--ink);
 }
 
@@ -726,16 +1115,14 @@
 .nav__depth {
   --band-at: -14%;
 
-  /* THE BRIGHTEST FILL ON THE SITE, and the panel's own tint is what makes it
-     legal. This surface's tint is the void at 0.62 in both themes, which
-     passes 38 percent of whatever is behind it, so a near-white form under it
-     composites to luminance 0.1026 and the panel's #f2f1f6 links measure
-     6.12:1 on it. Swept on rendered pixels: the 76 percent lift the chroma
-     room uses tops out at 4.1 here, and the lift has to go to 88 before the
-     surface leaves the paint floor at all. The hue chain survives the lift;
-     only the luminance moves, which is what law 6 asks for. */
-  --depth-loud-a: color-mix(in srgb, #ffffff 88%, var(--brand-magenta));
-  --depth-loud-b: color-mix(in srgb, #ffffff 88%, var(--brand-violet));
+  /* THE BRIGHTEST STEP ON THE SITE, and the panel's own tint is what makes it
+     legal. This surface's tint is graphite at 0.62 in both themes, which
+     passes 38 percent of whatever is behind it, so the run has to be near
+     white to survive at all. It carries no hue: the panel is a modal sheet
+     over a dimmed page and the only thing under it that can read through the
+     blur is a luminance step. */
+  --depth-loud-mix: 0.9;
+  --edge-ink: 255 255 255;
 }
 
 /* THE PANEL IS THE SECOND AND LAST GLASS SURFACE ON THE SITE.
@@ -749,7 +1136,7 @@
    Its tint is the VOID rather than the theme's canvas, in both themes,
    because the overlay is its own room and opening it from a paper page and
    from a dark page has always arrived at the same place. So the contrast is
-   the fixed pair and not a computed one: #f2f1f6 on #09090b at 0.86 over the
+   the fixed pair and not a computed one: #f4f3f1 on #0a0a0a at 0.62 over the
    worst possible backdrop, pure white, composites to rgb(43,43,45) and
    measures 12.57:1. That is the dark-theme figure from the GLASS block, and
    it holds here in daylight too because this surface does not follow the
@@ -840,7 +1227,7 @@
      the panel from the page, and 0.94 does that with the page still faintly
      present, which is what tells a reader the overlay is over something. */
   .nav__dialog::backdrop {
-    background: rgb(9 9 11 / 0.94);
+    background: rgb(10 10 10 / 0.94);
   }
 }
 
@@ -867,7 +1254,7 @@
   }
 
   .nav__dialog::backdrop {
-    background: rgb(9 9 11 / 0.94);
+    background: rgb(10 10 10 / 0.94);
   }
 }
 
@@ -901,19 +1288,42 @@
   min-height: 44px;
 }
 
-.nav__panel-eyebrow { color: var(--ink-quiet); }
+/* The panel's lockup. Same construction as the header's, at the panel's own
+   em: the mark is 0.9372 of it, the gap 0.2698, and the mark sits 0.1349
+   below the cap band's centre. It reads --ink-quiet like the label beside
+   it, because this row is apparatus rather than the menu. */
+.nav__panel-eyebrow {
+  --lockup-f: var(--text-body-sm);
+  display: inline-flex;
+  align-items: baseline;
+  gap: calc(var(--lockup-f) * 0.2698);
+  font-size: var(--lockup-f);
+  color: var(--ink-quiet);
+}
+
+.nav__panel-eyebrow .label {
+  margin: 0;
+}
+
+.nav__panel-mark {
+  width: calc(var(--lockup-f) * 0.9372);
+  height: calc(var(--lockup-f) * 0.9372);
+  flex: none;
+  fill: currentColor;
+  translate: 0 calc(var(--lockup-f) * 0.1349);
+}
 
 .nav__close {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-3);
   min-height: 44px;
   min-width: 44px;
   padding: 10px var(--sp-2);
   margin-right: calc(var(--sp-2) * -1);
   border-radius: var(--radius-ui);
   font-size: var(--text-body-sm);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   color: var(--ink);
 }
 
@@ -925,7 +1335,7 @@
 
 .nav__menu-link {
   display: block;
-  padding-block: 0.96rem;
+  padding-block: var(--space-3);
   border-top: var(--hairline);
   font-size: 2.9333rem;
   line-height: 1.15;
@@ -962,7 +1372,7 @@
 .nav__panel-mail {
   display: inline-block;
   min-height: 44px;
-  padding-block: 11px;
+  padding-block: var(--space-3);
   font-size: var(--text-body);
   color: var(--ink-dim);
   border-bottom: 1px solid var(--ink-line-strong);
@@ -1002,10 +1412,6 @@ html.nav-open {
 
   .nav__row .nav__toggle {
     display: inline-flex;
-  }
-
-  .nav__row {
-    grid-template-columns: 1fr auto;
   }
 }
 
@@ -1054,9 +1460,19 @@ html.nav-open {
     white-space: nowrap;
   }
 
-  /* Nothing left to space away from. */
+  /* Nothing left to space away from, and the lockup's em is raised so the
+     mark is a logo rather than the 14px partner of a word that is no longer
+     drawn. 26px of em paints 24.37px of the delivered drawing, which is
+     within 0.06px of the 24.43px the shipped 26px box was painting: the
+     phone logo's ink is unchanged by this pass, which is the point. */
   .nav__brand {
+    --lockup-f: 26px;
     gap: 0;
+  }
+
+  /* Baseline alignment has nothing to align to once the word is gone. */
+  .nav__mark {
+    translate: 0 0;
   }
 
   /* The label may not wrap. At 320 the row is 240px between gutters, and a
@@ -1078,9 +1494,11 @@ html.nav-open {
      of header that navigates home at 1024, and only 31.1px at 320, which is
      under the floor in the other direction. Both are the same mistake, which
      is measuring the target off the layout instead of off the drawing. A
-     44px square centred on the mark is 9px of overhang each side at every
-     width in this band, and at 320 its right edge lands 2.7px clear of the
-     call to action rather than under it. */
+     44px square centred on the mark is 9.8px of overhang each side at every
+     width in this band, and at 320 its right edge lands clear of the call to
+     action rather than under it. --nav-mark is an em of the lockup's own
+     font-size, which the rule above raises to 26px here, so the centring
+     arithmetic reads the drawing that is actually on screen. */
   .nav__brand::after {
     left: calc((var(--nav-mark) - 44px) / 2);
     right: auto;
@@ -1142,42 +1560,30 @@ html.nav-open {
 }
 
 /* ============================================================
-   THE ONE ROTATION ON THE SITE
+   THE ONE ROTATION ON THE SITE IS DELETED
 
-   Clause 5 of the law: 180 degrees about 49.90% / 50.71%, started by a click,
-   in one place. This is the place.
+   What stood here turned the close control's glyph 180 degrees on click. The
+   glyph is the studio's mark drawn as two crossed hairlines, and the
+   argument for the turn was a real one: the drawing maps onto itself at a
+   half turn and at no other angle, so both ends of the animation were the
+   mark and nothing in between was.
 
-   The close control's glyph is the studio's mark drawn as two crossed
-   hairlines, and the mark maps onto itself at a half turn: 22 of its 22
-   counter vertices land, against 29 of 52 at a quarter. So a half turn is the
-   only rotation this drawing can make and arrive as itself, which is why both
-   ends of this animation are the mark and nothing in between is.
+   IT IS STILL DELETED. A logo that spins when a reader touches it is the
+   tell of a site performing rather than working, and the correct repair for
+   an effect that cannot be justified without a paragraph is to remove the
+   effect, not to write the paragraph. The glyph still crosses into the mark
+   when the menu opens; it does so by being drawn that way rather than by
+   being spun into it.
 
-   It is TIMED, not scrubbed, and it plays through in one go. There is no
-   input that can hold it at 90 degrees, where the figure reads as a different
-   one. It takes the long rung, 0.4082s, because opening is the one thing on
-   this site a reader waits for rather than touches.
+   The drawing's half-turn symmetry has not stopped being true and it has not
+   stopped being used: the section seal in base.css alternates its
+   orientation section by section, statically, and with the delivered mark's
+   symmetry error at exactly 0 that alternation is now provably invisible,
+   which is the whole claim it was there to make. --turn-origin stays for it,
+   and it is 50% 50% now that the drawing is centred in its own box.
 
-   The origin is the drawing's measured centre of rotation and not the box
-   centre. Those are 0.1% and 0.71% apart, which is under a pixel at this
-   size, and it is stated correctly anyway: the claim this site makes is that
-   the box centre is the wrong point, and a control that turns about it would
-   be the one place the claim is not kept. */
-.nav__dialog[open] .nav__toggle-glyph--x {
-  transform-origin: var(--turn-origin);
-  animation: mark-half-turn var(--dur) var(--curve) both;
-}
-
-@keyframes mark-half-turn {
-  from { rotate: 0deg; }
-  to   { rotate: var(--half-turn); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .nav__dialog[open] .nav__toggle-glyph--x {
-    animation: none;
-  }
-}
+   Nothing on this site rotates under a pointer, a focus or a click.
+   ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
   .nav__menu-link span {
@@ -1202,12 +1608,12 @@ html.nav-open {
      were landing at 39px. The header's own is exempted below, because it is
      sized to sit inside a 63px bar. */
   min-height: 44px;
-  gap: 10px;
+  gap: var(--space-3);
   padding: 11px var(--sp-4);
   border: 1px solid var(--ink-line-strong);
   border-radius: var(--radius-ui);
   font-size: var(--text-body-sm);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   line-height: 1;
   overflow: hidden;
   isolation: isolate;
@@ -1283,21 +1689,109 @@ html.nav-open {
   }
 }
 
-/* THE HEADER CTA TAKES THE REAL 44px BOX, NOT A HIT AREA.
+/* ============================================================
+   THE HEADER CTA IS COMPACT SOLID FROST, AND THE DECORATIVE WIPE IS GONE
 
-   It used to carry `min-height: 0` and lean on the shared `.nav__cta::after`
-   target instead, on the grounds that a 44px box would push the bar from 63
-   to 74. The bar is 74 now, by construction: --nav-h is 44px plus a --sp-3
-   either side, so the row's content band is exactly 44px at every width and
-   a full-height pill fits it without changing the bar at all.
+   WHAT WAS THERE. An outline pill whose hover swept a full-height plane of
+   ink across the control on the registered --wipe number, taking the label
+   to --ground as it went. Forty-four pixels of edge crossing the width of
+   the only control in the fixed bar, on every pointer that passed over it.
+   That is a decoration playing on the one element that stands over all
+   sixteen routes, and it is the single loudest thing the chrome did.
 
-   The hit area was never working here anyway. `.pill` carries
-   `overflow: hidden` for the --wipe clip, which cropped the 44px ::after to
-   the pill's own 33px box, so the control that opens the studio's only
-   conversion path had a 34px target on a phone. A real box cannot be
-   clipped by its own overflow. */
+   WHAT IS THERE NOW. Level 2 of the material system, at control scale: a
+   solid frost ground, one hairline, the lit edge on top and its shade below,
+   and the same --radius-ui corner every control on the site is cut with. It
+   is the only filled object in the bar, which is what makes it read as the
+   ask without any of it moving.
+
+   THE WIPE IS SWITCHED OFF HERE AND ITS MECHANISM IS LEFT STANDING. `.pill`
+   is four controls on this site and only one of them is in the chrome; the
+   consent bar, the cover's solid ask and the document close still use the
+   fill and are still content rather than furniture. So `content: none` on
+   this one instance kills the plane, and `overflow: visible` returns what
+   the clip was for.
+
+   AND THE overflow CHECK, WHICH IS WHY THAT SECOND LINE IS HERE RATHER THAN
+   OMITTED. `.pill` carries `overflow: hidden` for exactly one reason, the
+   --wipe clip, and the shared 44px `.nav__cta::after` hit area was collateral
+   damage of it: the target was cropped to the pill's own box. That was
+   already repaired by giving this control a real 44px box, which its own
+   overflow cannot clip, so nothing here depends on the crop and nothing else
+   inside this control is positioned outside its box. The clip is released.
+
+   THE ANSWER IS A VALUE CHANGE AND THE PRESS IS ONE PIXEL. The ground lifts
+   one step to --canvas-elevated and the hairline strengthens; nothing sweeps
+   and nothing fills. See THE BAR'S OWN PRESS below for the pixel.
+   ============================================================ */
 .nav__cta {
   padding: 8px var(--sp-3);
+  overflow: visible;
+  border-color: var(--hairline-strong);
+  background-color: var(--frost);
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-edge-lit),
+    inset 0 -1px 0 0 var(--glass-edge-shade);
+  transition:
+    background-color var(--dur-half) var(--curve),
+    border-color var(--dur-half) var(--curve),
+    translate var(--dur-half) var(--curve);
+}
+
+.nav__cta::before {
+  content: none;
+}
+
+/* The label stays ink in every state, because there is no fill arriving
+   under it to run from. Both of these beat the shared .pill rules by
+   specificity rather than by source order. */
+.nav__cta:focus-visible {
+  color: var(--ink);
+  background-color: var(--canvas-elevated);
+  border-color: var(--ink-line-strong);
+}
+
+@media (hover: hover) {
+  .nav__cta:hover {
+    color: var(--ink);
+    background-color: var(--canvas-elevated);
+    border-color: var(--ink-line-strong);
+  }
+}
+
+/* ============================================================
+   THE BAR'S OWN PRESS, AND IT IS ONE PIXEL RATHER THAN ONE RUNG
+
+   Every control in the document presses --d0, which is 5.4px resolved onto
+   the arm. That rung is correct for content: a card, a portal, a row of
+   type in a 900px column can give way by five pixels and read as a surface
+   under a finger.
+
+   IT IS WRONG FOR CHROME, AND THE ratio IS THE ARGUMENT. The bar is 60px
+   tall. 5.4px is nine percent of it, and a control moving nine percent of
+   the height of the fixed object it is mounted in does not read as a control
+   giving way, it reads as the bar itself slipping. So the header's five
+   controls take the same DIRECTION and a different distance: one pixel,
+   resolved onto the arm through --arm-x and --arm-y exactly the way every
+   rung is, so the press is still on the mark's own diagonal and is still the
+   only direction anything on this site moves in.
+
+   THE SELECTORS ARE SCOPED TO .nav AND BEAT THE SHARED LIST BY SPECIFICITY,
+   so the document's rung is untouched and there is no second copy of the
+   grammar to keep in step.
+   ============================================================ */
+.nav :is(.nav__brand, .nav__link, .nav__cta, .nav__theme, .nav__toggle):active {
+  translate: calc(var(--arm-x) * 1px) calc(var(--arm-y) * 1px);
+}
+
+.nav :is(.nav__theme, .nav__toggle) {
+  transition: translate var(--dur-half) var(--curve);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav :is(.nav__brand, .nav__link, .nav__cta, .nav__theme, .nav__toggle) {
+    transition: none;
+  }
 }
 
 /* The solid variant. Every other .pill on the site is an outline that fills
@@ -1314,7 +1808,7 @@ html.nav-open {
   /* The last action on the page clears the 44px target on a touch screen at
      every width, not only where the layout has already gone to one column. */
   min-height: 44px;
-  padding-block: 13px;
+  padding-block: var(--space-3);
 }
 
 .pill--solid::before {
@@ -1346,12 +1840,12 @@ html.nav-open {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   /* Same floor. Every .ghost on the site is a standalone link on its own
      line, never one set inside a sentence, so this cannot bloat body copy. */
   min-height: 44px;
   font-size: var(--text-body-sm);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   padding-block: var(--sp-1);
 }
 
@@ -1469,7 +1963,7 @@ html.nav-open {
   background: var(--ground);
   color: var(--ink);
   border-top: 1px solid var(--ink-line-strong);
-  padding-block: 7rem var(--sp-6);
+  padding-block: var(--space-fl-9) var(--space-fl-7);
 }
 
 .footer ::selection {
@@ -1480,7 +1974,7 @@ html.nav-open {
 .footer__grid {
   display: flex;
   flex-direction: column;
-  gap: 3.6rem;
+  gap: var(--space-fl-7);
 }
 
 .footer__chapter {
@@ -1562,11 +2056,24 @@ html.nav-open {
   text-indent: -6px;
 }
 
+/* THE REPEAT ASK STANDS ON THE CONTENT EDGE AND ITS NOTE ON THE COPY EDGE,
+   which is the same pair the hero's controls and every section head use. It
+   was a flex row with a 32px gap, so the note landed wherever the control's
+   own width happened to leave it. */
 .footer__ctas {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-5);
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns:
+    calc(var(--anchor-copy) - var(--grid-gap))
+    minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: var(--grid-gap);
+  row-gap: var(--space-5);
+}
+
+@media (max-width: 599.98px) {
+  .footer__ctas {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .footer__ctas-note {
@@ -1583,11 +2090,26 @@ html.nav-open {
   background: var(--ink-line);
 }
 
+/* THE CLOSING ROW IS THE THREE ANCHORS ONE LAST TIME. It was a flex row, so
+   the second item landed wherever the first one's width left it, 147px right
+   of the copy edge on a 1500px sheet and somewhere else on every other width.
+   Three cells: the copyright on the content edge, the credit on the copy
+   edge, and the sign-off closing on the content's right edge. */
 .footer__meta {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns:
+    calc(var(--anchor-copy) - var(--grid-gap))
+    calc(var(--anchor-action) - var(--anchor-copy) - var(--grid-gap))
+    minmax(0, 1fr);
   align-items: center;
-  gap: var(--sp-3) var(--sp-5);
+  column-gap: var(--grid-gap);
+  row-gap: var(--space-4);
+}
+
+@media (max-width: 599.98px) {
+  .footer__meta {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .footer__meta .label {
@@ -1611,7 +2133,7 @@ html.nav-open {
 
 .footer__utility a {
   font-size: var(--text-caption);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--ink-quiet);
