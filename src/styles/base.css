@@ -65,6 +65,42 @@ html {
      layer, which is what makes a five viewport scrub feel precise rather
      than like it is swimming to catch up. */
   scroll-behavior: smooth;
+
+  /* ============================================================
+     THE STICKY OFFSET, AND IT WAS MISSING ENTIRELY
+
+     THE BAR IS position: fixed AND THE SCROLLPORT DID NOT KNOW. Measured on
+     the built site at 768, 820 and 1024: scroll-padding-top computed to
+     `auto` on every one of the sixteen routes, and there is no
+     scroll-margin-top on a single scroll target anywhere in the six
+     stylesheets. So every way of reaching an anchor put the target's first
+     line underneath the header:
+
+       the skip link      "Skip to content" jumps to #top, which is <main>,
+                          and landed --nav-h under the bar. The one control
+                          on the site whose entire job is to get a keyboard
+                          reader past the chrome was depositing them behind
+                          it.
+       the section links  /#capabilities from the header, which motion.ts
+                          intercepts on the cover and finishes with a bare
+                          target.scrollIntoView(). scrollIntoView aligns the
+                          target's border box to the scrollport's edge, and
+                          the scrollport's edge is the top of the viewport,
+                          not the bottom of the bar.
+       a pasted URL       arriving at /#questions, and the back and forward
+                          buttons restoring one, which is the browser's own
+                          fragment scroll and never touched script at all.
+
+     ONE DECLARATION FIXES ALL THREE, because scroll-padding is read by the
+     scroll-into-view algorithm itself rather than by any of the three call
+     sites. It is written against --nav-h, which is the same measured
+     property the bar publishes and the masthead clears, so the offset
+     follows the bar at every width and through motion.ts's ResizeObserver
+     without a second figure to keep in step. --sp-4 on top of it is the
+     landing gap: a heading that lands exactly on the bar's lower edge reads
+     as clipped by it.
+     ============================================================ */
+  scroll-padding-top: calc(var(--nav-h) + var(--sp-4));
 }
 
 html,
@@ -195,7 +231,6 @@ button {
      .room-magenta .room-violet    solid frost
      .room-ramp                    solid frost
      .room-chroma  .room-deep      the focal surface
-     .plate                        the focal surface, full bleed
 
    THE FOCAL SURFACE, AND WHERE IT IS ALLOWED. Graphite in both rooms, which
    is why it carries the dark room's ink ladder and the dark room's glass
@@ -205,15 +240,17 @@ button {
    scrolls, and it is what the sticky bar's glass samples in order to be glass
    at all.
 
-   TWICE PER ROUTE AT MOST, NEVER ADJACENT, AND ALWAYS FOR THE SAME TWO JOBS:
-   the ask and the close. The cover takes both, at the brief and at the
-   colophon, roughly four thousand pixels apart. An interior document takes
-   only the close, because its own ask is a level 2 band immediately above it
-   and two dark planes stacked would have made neither of them read.
+   ONCE PER ROUTE, AND IT IS THE ASK. The cover used to take it twice, at the
+   brief and again at the colophon, and the second one was a full-bleed plate
+   under the closing display line of all sixteen routes. That plate is
+   deleted -- the reasoning is at THE PLATE IS DELETED below -- so the rule
+   is one focal surface per route and the route keeps it for the one job a
+   two-hundred-level step is worth spending on: the place a reader is asked
+   to act.
 
-   A ROUTE'S MATERIALS THEREFORE READ IN SEQUENCE: open canvas, one frost
-   region, one focal plane. Three levels, one of each, in that order, every
-   time.
+   A ROUTE'S MATERIALS THEREFORE READ IN SEQUENCE: open canvas, frost where
+   something has to be grouped, one focal plane at the ask, and canvas again
+   to the end of the document.
 
    THE INK LADDER IS THE SAME ON ALL THREE, because all three are neutral and
    the ladder was solved against the worst of them. That is the whole reason
@@ -427,66 +464,31 @@ button {
 }
 
 /* ============================================================
-   THE PLATE
+   THE PLATE IS DELETED, AND IT IS THE SECOND FOCAL SURFACE THAT WENT.
 
-   IT WAS A FULL-BLEED BRAND RAMP AND IT IS THE FOCAL SURFACE NOW.
+   WHAT IT WAS. `.plate` and `.plate::before`: the focal graphite, escaping
+   its container to both edges of the viewport at -50vw, behind the closing
+   display line of all sixteen routes. Two hundred and thirty levels against
+   the canvas, one whole inverted band at the end of every page.
 
-   The plate reached both edges of the viewport behind one display line, on
-   all sixteen routes, carrying both brand colours at full strength. It was
-   the single largest chromatic object on the site and it is the one the
-   footer put under the last sentence of every page.
+   WHY IT IS GONE, AND THERE ARE TWO REASONS.
 
-   WHAT IT IS FOR NOW IS OPTICAL RATHER THAN LOUD. A plate is still a
-   full-bleed surface behind one display line, and it still escapes its
-   container to both edges of the viewport, but the surface is the focal
-   graphite and the line is set in the ink that is legal on it. What that
-   buys is the thing the ramp could never buy: two real horizontal edges
-   running the width of the screen, at a two hundred level step, which the
-   sticky bar's glass samples as it passes. The loudest object on the page
-   became the one that makes the material read.
+   THE SYSTEM'S OWN RULE IS ONE FOCAL SURFACE PER ROUTE. The block above this
+   one said so and the cover broke it: the ask is a focal room and the
+   colophon was a focal plate, so the route carried two. The rule is now
+   kept rather than restated.
 
-   THE BLEED is the pseudo-element's, not the box's: left and right at -50vw,
-   because a plate has to escape a container whose width it cannot know. html
-   and body carry overflow-x: clip, so the overshoot never produces a
-   horizontal scrollbar at any width.
+   AND IT OUTRANKED THE HERO. The closing line was set at the display step,
+   80px at 1500, on an inverted full-bleed ground -- larger in effect than
+   the H1 it was closing under, which is the wrong way round on a page whose
+   first object is the studio's own headline. The colophon closes at the
+   heading step on the sheet now. See .footer__title in components.css.
 
-   THE PADDING IS UNEQUAL, and equal padding was the purest formula tell on
-   the site. A font's ascent is deeper than its cap height, so the ink starts
-   lower in the box than the box's own top edge suggests. 48 over 64 is two
-   family members rather than one repeated, and it puts the cap line and the
-   baseline the same distance from their own edges.
+   The only element on the site that carried the class was the footer's
+   closing sentence, so this deletes one selector pair and nothing else. The
+   print block that switched the plate's ground off goes with it: there is no
+   ground left to switch off.
    ============================================================ */
-.plate {
-  position: relative;
-  isolation: isolate;
-  padding-block: var(--space-7) var(--space-8);
-
-  --ink: var(--room-focal-ink);
-  --ink-dim: var(--room-focal-dim);
-  --ink-quiet: var(--room-focal-quiet);
-  --ink-accent: var(--room-focal-accent);
-  --ink-line: var(--room-chroma-line);
-  --ink-line-strong: var(--room-chroma-line-strong);
-  color: var(--ink);
-}
-
-.plate::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: -50vw;
-  right: -50vw;
-  background-color: var(--room-focal-ground);
-  /* The light on this site comes from up the arm, so the plate catches a
-     hairline on its top edge and drops it on the bottom. Two inset lines,
-     not a border: the edge is inside the material the way a bevel is. */
-  box-shadow:
-    inset 0 1px 0 0 rgb(255 255 255 / 0.09),
-    inset 0 -1px 0 0 rgb(0 0 0 / 0.5);
-  pointer-events: none;
-}
 
 /* ---------- THE SIX ROLES, AS RULES ----------
 
@@ -524,6 +526,29 @@ button {
   line-height: 1.3;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
+
+  /* A LABEL THAT WRAPS MUST NOT LEAVE ONE WORD ALONE, and two of them did.
+
+     Measured on the built site with per-character client rects:
+       390 and 375   .hero__foot-note broke 302.44 / 36.25 -- "THEM" by
+                     itself on the second line of a 342px row
+       320           .hero__eyebrow broke 266.81 / 52.94 -- "AGENCY" by
+                     itself, and the foot note broke 263.27 / 75.42
+     A one-word line is the worst possible rag at any size and it is worse in
+     uppercase, where the reader has no descenders or ascenders to hold the
+     word's shape and reads it as a stray.
+
+     `balance` and not `pretty`, and the choice is measured rather than
+     inherited from the body rule. A label is one short line: pretty spends
+     its budget on the LAST line of a paragraph, which is the right answer
+     for five lines of running copy and does nothing useful for two. Balance
+     evens the pair, which is what a two-line caption wants. After:
+       390 / 375     182.02 / 156.67
+       320           eyebrow 164.64 / 155.11, foot note 182.02 / 156.67
+     Every single-line label on all sixteen routes is unchanged to the
+     hundredth, because balance on one line is a no-op. No copy moved and no
+     <br> was added. */
+  text-wrap: balance;
 }
 
 /* BODY. Neutral tracking, stated rather than left unset so nothing can
@@ -542,6 +567,21 @@ button {
 .body-sm,
 .prose p,
 .qa__a p,
+/* .footer__ctas-note IS RUNNING COPY THAT NEVER GOT THE ROLE. It is a bare
+   <p> in partials/footer.html with no .body class, so it inherited the body
+   SIZE from <body> and none of the body's typographic answers, and it
+   widowed on every one of the sixteen routes from 1216px up: measured with
+   per-character client rects, "Every brief is read by the person who would
+   do the" at 369.14 and "work." alone at 39.63 of a 390px measure. One word,
+   in the last paragraph a reader meets on the site.
+
+   Named here rather than given the class in the partial, because this pass
+   changes no markup, and this list is already where the site states which
+   paragraphs are running copy. After: 341.05 / 67.72 -- two words, 17.4% of
+   the measure, which is where the site's own accepted last lines sit. Below
+   1216 the note wraps 220.05 / 163.17 with or without it, so the rule is a
+   no-op on every phone and tablet width. */
+.footer__ctas-note,
 .faq__a p {
   text-wrap: pretty;
 }
@@ -670,6 +710,40 @@ button {
     calc(var(--anchor-copy) - var(--grid-gap))
     calc(var(--anchor-action) - var(--anchor-copy) - var(--grid-gap))
     minmax(0, 1fr);
+  /* ONE ROW, STATED, BECAUSE AUTO-PLACEMENT WAS SILENTLY MAKING TWO.
+
+     The three parts are the label in column 1, the rule in column 2 and the
+     seal in column 3, and every one of them declares a definite COLUMN and
+     no row. Sparse auto-placement runs in DOM order, and ::before is the
+     first child: the rule was placed at row 1 column 2, which left the
+     placement cursor at column 2. The label then asked for column 1, which
+     is BEHIND the cursor, so the algorithm did the one thing it is specified
+     to do and started a new row for it.
+
+     MEASURED ON THE BUILT SITE, at 1500, 1024, 768 and 390:
+       grid-template-rows resolved to `1px 16.8906px`
+       .section__head height 17.891 against a 16.891 label
+       label box top 1px below the head's own top, flush to its bottom
+       the rule's centre 8.945px above the label's box centre
+     and read off the rendered pixels at 1500, the capabilities head: the
+     rule paints one row at y=1953 while the label's cap height runs 1956 to
+     1965, so the rule sat 7.75px above the type it was supposed to run
+     through. Five heads on the cover, every head on all sixteen routes,
+     every viewport. `align-items: center` was doing its job perfectly on a
+     row that held nothing but a hairline.
+
+     One declared row fixes it for all three parts at once. The rule is a
+     1px item centred in a 16.89px row now, so it runs through the label's
+     middle, which is what a three-part row means and what the paragraph
+     above this one has always claimed. The head loses the phantom 1px row,
+     so the cover closes 5px shorter.
+
+     The row is declared here AND named on each of the three parts below.
+     Declaring it here alone would not have been enough: an item with no row
+     of its own still runs the placement cursor and still opens an implicit
+     row when its column is behind that cursor. The explicit `grid-row: 1`
+     on all three is what actually holds them together. */
+  grid-template-rows: auto;
   align-items: center;
   column-gap: var(--grid-gap);
   margin-bottom: var(--space-fl-8);
@@ -682,6 +756,7 @@ button {
 .section__head::before {
   content: '';
   grid-column: 2;
+  grid-row: 1;
   height: 1px;
   background: var(--ink-line-strong);
 }
@@ -691,6 +766,10 @@ button {
      have not already claimed. Both of those carry a definite column, so the
      label was landing in the third one, 833px right of the edge it names. */
   grid-column: 1;
+  /* And explicit in the other axis for the reason written on the grid above:
+     column 1 is behind the cursor the rule leaves at column 2, so without
+     this the label opened a second row and the rule floated above it. */
+  grid-row: 1;
   color: var(--ink);
   margin-bottom: 0;
 }
@@ -743,6 +822,10 @@ button {
 .section__head::after {
   content: '';
   grid-column: 3;
+  /* Same row as the label and the rule. It already resolved there by
+     accident, because column 3 is ahead of the cursor; it is stated so the
+     row cannot come apart again if the order of the three ever changes. */
+  grid-row: 1;
   justify-self: end;
 
   /* THE BOX IS RE-TUNED FOR THE DELIVERED PAYLOAD, AND THE RE-TUNE IS THE
@@ -1120,7 +1203,6 @@ body > footer {
   /* Full-bleed surfaces print as a sheet of toner and say nothing on paper.
      Every plate, every frost band and the focal surface's own ground come off,
      including the ones that live on a pseudo-element. */
-  .plate::before,
   .doc__cta h2::before,
   .portal__plate,
   .portal__glass {
@@ -1133,7 +1215,6 @@ body > footer {
      them: the backdrop-filter is dropped, so a pane prints as a grey box, and
      a full-bleed run prints as most of a cartridge. */
   .depth,
-  .brief__glass,
   .rulefield::after {
     display: none !important;
   }

@@ -995,7 +995,37 @@ html .footer__col a::after {
      so the label stays on the type baseline */
   min-height: 44px;
   min-width: 44px;
-  padding: 10px var(--sp-3) 10px var(--sp-2);
+  /* THE PAIR HAS TO CANCEL, AND IT DID NOT. The negative margin exists to
+     pull this control's own padding back off the page margin so the GLYPH,
+     not the invisible target box, closes the bar on --anchor-content's right
+     edge. That only works when the two figures are the same figure. They
+     were not: --sp-3 resolves to 16px and the margin took back 8, so the
+     glyph stopped 9px inside the edge while the mark on the other end of the
+     same bar starts exactly on it. Measured on composited pixels, both
+     themes, every width the toggle is drawn at:
+
+       320   content  24..296   mark ink  24 (0.00)   glyph ink 287 (-9.00)
+       390   content  24..366   mark ink  24 (0.00)   glyph ink 357 (-9.00)
+       768   content  32..736   mark ink  32 (0.00)   glyph ink 727 (-9.00)
+       1024  content  48..976   mark ink  48 (0.00)   glyph ink 967 (-9.00)
+
+     AND THE CONTROL DISAGREED WITH ITSELF. .nav__close is this same object
+     in its open state -- same display, gap, floors, radius, step and ink --
+     and it is built with `padding: 10px var(--sp-2)` against the same -8px
+     margin, so its glyph lands on the edge: 365 against an inner edge of 366
+     at 390, the 1px being antialias. So the right end of the masthead moved
+     8px outward the moment the menu opened and 8px back when it closed, on
+     the one element that stands over all sixteen routes.
+
+     THE FIX IS THE MATCHING PADDING, NOT A BIGGER MARGIN. Taking the margin
+     to -16 would have put the glyph on the edge too, but it would also have
+     carried the target box and its 3px focus ring 19px past the page margin,
+     which at 320 leaves five pixels of viewport. The padding comes down to
+     the same token the margin is written against instead: the border box
+     still ends at content + 8 exactly where it did, the ring does not move,
+     the target loses 8px of a width that measured 90 against a floor of 44,
+     and the two states of one control are now one construction. */
+  padding: 10px var(--sp-2);
   margin-right: calc(var(--sp-2) * -1);
   border-radius: var(--radius-ui);
   font-size: var(--text-body-sm);
@@ -1981,22 +2011,12 @@ html.nav-open {
   color: var(--ink-quiet);
 }
 
-/* THE STAGE IS EXACTLY AS TALL AS THE PLATE, and it clips on one axis only.
-
-   min-height was the mark's own size, so the stage stood 5px taller than the
-   band behind it and the mark's top and bottom tips protruded into the paper
-   as two detached slivers. In the rendered frame those read as a rendering
-   fault rather than as a crop, which is the one thing the archive portal
-   4,000px earlier gets right and this did not.
-
-   `overflow: visible clip` is x then y: the vertical axis crops the mark to
-   the band's own edges, and the horizontal axis stays open because the plate
-   behind it bleeds out of this box by 50vw either side and clipping x here
-   would delete the bleed. */
+/* THE STAGE IS A WRAPPER AND NOTHING ELSE NOW. It held a full-bleed plate
+   and, before that, 384px of the mark; both are deleted, so there is nothing
+   left to crop and nothing left to let out of the box. The overflow pair is
+   gone with the bleed it was written for. */
 .footer__stage {
   position: relative;
-  min-height: 0;
-  overflow: visible clip;
   display: flex;
   align-items: center;
 }
@@ -2021,39 +2041,57 @@ html.nav-open {
    closing display step is finally set at the width the rest of the site sets
    it at. --footer-mark is deleted with it. */
 
-/* The last statement on every route, and it closes on the brand. The plate
-   bleeds to both edges of the viewport behind it, so the object that closes
-   the document is one surface rather than a display line and a decoration
-   beside it. */
-.footer__title::before {
-  /* THE BLEED IS OVERRIDDEN, because -50vw is measured from THIS box and this
-     box is capped at the mark's width off the column. At 100px the statement
-     is 441px wide, so 50vw of overshoot landed at x=1251 in a 1500 viewport
-     and left an 86px strip of unexplained white paper at the right of the
-     last screen on the site. -100vw cannot fall short at any width, and the
-     overshoot costs nothing: the footer clips on x. */
-  right: -100vw;
-}
+/* ============================================================
+   THE CLOSING STATEMENT, DEMOTED ONE RUNG AND TAKEN OFF THE PLATE
 
+   IT WAS COMPETING WITH THE HERO AND WINNING. Measured at 1500 the H1 and
+   this sentence were both 79.9995px -- the same step, to four decimal places
+   -- and this one had a full-bleed inverted ground under it while the H1
+   stands on the open sheet. Two objects at one size, and the louder of them
+   was the last one on the page rather than the first. A colophon closes a
+   document; it does not restate the masthead in bigger type.
+
+   THE PLATE IS DELETED, and the reasoning is at THE PLATE IS DELETED in
+   base.css: it was the route's SECOND focal surface, against a system rule
+   that allows one. The `.plate` class comes off this element in
+   partials/footer.html and the selector pair comes out of base.css, so
+   nothing is hidden and left behind. `.footer__title::before` went with it.
+
+   THE STEP IS --text-heading, WHICH IS THE ONE THIS PAGE ALREADY CLOSES ITS
+   ARGUMENTS AT. 48px at 1500: the archive's statement is set there and so is
+   the brief's address, and the hero keeps the display step to itself. It is
+   still comfortably the largest object in the colophon -- everything else
+   down here is 16px or under -- so it is dominant where it stands without
+   arguing with the top of the page.
+   ============================================================ */
 .footer__title {
   position: relative;
   font-family: var(--font-display);
-  font-size: var(--text-display);
+  font-size: var(--text-heading);
   font-weight: var(--weight-display);
-  line-height: var(--leading-display);
+  line-height: var(--leading-tight);
   color: var(--ink);
 }
 
-/* THE 6PX STAGGER, FIXED BY HAND AND ONLY THIS ONE. Measured on the rendered
-   frame at 1500: the ink of the L in "Let's make" starts at x=67 and the ink
-   of the y in "your mark." starts at x=61, so the two lines of one display
-   block begin 6px apart. Nobody can name a side bearing and everybody can see
-   that the closing line of the site is misaligned with itself. This is a
-   correction to one pair of lines, not the beginning of a per-initial offset
-   table: a lookup table of optical corrections is still a lookup table and it
-   would drift silently the moment a word changed. */
+/* THE STAGGER, RE-MEASURED AT THE NEW STEP AND RE-STATED IN em.
+
+   It was a flat -6px, taken off the rendered frame while this line was set at
+   80px. A side bearing is a property of the glyph and scales with the type,
+   so a pixel constant was only ever right at one size and the demotion to
+   the heading step would have left it 2.24px over-corrected.
+
+   MEASURED RATHER THAN EYEBALLED THIS TIME. TextMetrics on the element's own
+   computed font and letter-spacing returns actualBoundingBoxLeft of -4.416
+   for "Let's make" and -1.056 for "your mark." at 48px: the L's ink starts
+   3.36px further right than the y's. 3.36 / 48 is 0.07em exactly, which is
+   also 5.6px at the old 80px step -- within a rounding of the -6 that was
+   read off the screen, which is the check that the two agree.
+
+   This is a correction to one pair of lines, not the beginning of a
+   per-initial offset table: a lookup table of optical corrections is still a
+   lookup table and it would drift silently the moment a word changed. */
 .footer__title .line:first-child .line__in {
-  text-indent: -6px;
+  text-indent: -0.07em;
 }
 
 /* THE REPEAT ASK STANDS ON THE CONTENT EDGE AND ITS NOTE ON THE COPY EDGE,
@@ -2079,11 +2117,47 @@ html.nav-open {
 .footer__ctas-note {
   font-size: var(--text-body);
   color: var(--ink-dim);
-  /* The sentence measures 377.86px. A cap of 42ch resolved to 421.3, which
-     is wide enough, but it is a cap stated in a unit that moves with the face
-     and the sentence is fixed: 26rem is 390px, which clears the measured line
-     by 12px and cannot land under it when the body step next moves. */
-  max-width: 26rem;
+  /* THE CAP WAS 26rem AND IT WAS SHORT OF THE SENTENCE, SO THE NOTE BROKE
+     WITH ONE WORD ON THE LAST LINE ON EVERY ONE OF THE SIXTEEN ROUTES.
+
+     The figure this cap was written against, 377.86px, is not what the line
+     measures. Cloned to `white-space: nowrap` and read off the built page,
+     "Every brief is read by the person who would do the work." sets at
+     412.77px at the 16.0005px body step and 386.97px at the 15px one. 26rem
+     is 390px in the desktop band, so the cap fell 22.77px SHORT of the
+     sentence rather than clearing it by 12, and the note set as two lines
+     whose second held the single word "work.":
+
+       1500 / 1440 / 1280   line 1 369.14   line 2  39.63   <- one word
+       1100                 line 1 346.08   line 2  37.14   <- one word
+       1024 and below       the rag is fine, the track is what governs there
+
+     rem WAS THE SECOND HALF OF THE FAULT. The root step clamps below the
+     desktop band, so a rem cap shrinks on its own ladder while the sentence
+     shrinks on the type's: the same declaration resolved to 390, 357.5,
+     332.8, 292.5 and 234 while the line it had to hold went 412.77 -> 386.97
+     and then stopped. That is the trap this file already records against
+     .caps__num, and it is the same trap here.
+
+     em IS THE UNIT THE SENTENCE ITSELF IS MEASURED IN. 412.77 / 16.0005 and
+     386.97 / 15 are both 25.80em: the string's own constant, identical at
+     both steps because a line scales with its type. 27em clears it by 19.2px
+     at the desktop step and 18.0px at the phone one and cannot fall under it
+     when the body step next moves.
+
+     THE COPY IS UNTOUCHED AND NO BREAK WAS ADDED. This is a measure, and it
+     is the note's own first-baseline row with the ghost beside it that the
+     one line restores: the pair share a baseline by `align-items: baseline`
+     and a two-line note hangs below a 44px control instead of sitting level
+     with it.
+
+     text-wrap: pretty IS FOR THE NARROW BAND, where the track and not the
+     cap decides. Below about 428 the column is shorter than the sentence and
+     it must wrap; pretty is what stops the wrap it is forced into from
+     landing on a single word again. The .body role carries it already; this
+     paragraph does not wear .body, which is why it never had it. */
+  max-width: 27em;
+  text-wrap: pretty;
 }
 
 .footer__rule {
@@ -2112,8 +2186,18 @@ html.nav-open {
   }
 }
 
-.footer__meta .label {
-  color: var(--ink-quiet);
+/* THE LEGAL AND META ROW MOVES ONE STEP DARKER, and it is the same one-step
+   move .caps__num was given for the same reason. These four labels are the
+   only 13px type on the page a reader may actually need to read rather than
+   be oriented by -- the copyright, the credit, the utility control and the
+   sign-off -- and at --ink-quiet they measured 5.96:1 in daylight, the
+   site's floor. At --ink-dim they measure 8.10. The TOKEN is untouched: the
+   quiet ink stays where it is, because taking it to 7:1 collapses the gap
+   between the secondary and tertiary inks on sixteen routes. The column
+   heads above are still quiet, so the rank in the colophon is unchanged. */
+.footer__meta .label,
+.footer__utility a {
+  color: var(--ink-dim);
 }
 
 .footer__meta-right {
@@ -2136,7 +2220,6 @@ html.nav-open {
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--ink-quiet);
   transition: color var(--dur-half) var(--curve);
 }
 
@@ -2150,16 +2233,22 @@ html.nav-open {
    Responsive
    ============================================================ */
 
+/* THE ONE MEASURED DEFECT IN THIS BLOCK, AND IT WAS IN THE SHORTHAND.
+   `gap: var(--sp-4)` on a two-track GRID is both axes, so below 760 the
+   column gap became 24px while the first track is still stated as
+   --anchor-copy less --grid-gap, which is 16px there. Measured at 700: the
+   note started at 203.00 against a copy anchor at 195.00. Eight pixels, on
+   every one of the sixteen routes, for the whole of the phone band. It is a
+   row-gap now and the column gap stays the grid's.
+
+   `flex-direction` and `.footer__ctas .pill` are deleted rather than left:
+   the row is a grid, so the first was inert, and the repeat ask has been a
+   ghost rather than a pill since it was demoted -- there is no .pill in the
+   colophon on any route. */
 @media (max-width: 760px) {
   .footer__ctas {
-    flex-direction: column;
     align-items: flex-start;
-    gap: var(--sp-4);
-  }
-
-  .footer__ctas .pill {
-    width: 100%;
-    justify-content: space-between;
+    row-gap: var(--sp-4);
   }
 
   .footer__meta-right {

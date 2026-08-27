@@ -172,7 +172,10 @@
   color: var(--ink);
   font-size: var(--text-body-sm);
   font-weight: var(--weight-medium);
-  padding: 10px var(--sp-4);
+  /* 10px either side of a 23px line box gave 43: one pixel under the floor,
+     on the single control that exists purely for keyboard users. Derived from
+     the line box rather than nudged to 12, so it holds if the body ramp moves. */
+  padding: max(10px, calc((44px - 1lh) / 2)) var(--sp-4);
   border-radius: 0 0 var(--radius-ui) var(--radius-ui);
   /* Arrives DOWN the arm, because down the arm is where it is going: out of
      the top edge and into the frame. One rung, one duration, one curve. */
