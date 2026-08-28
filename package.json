@@ -1,7 +1,7 @@
 {
   "name": "xstudioz",
   "version": "1.0.0",
-  "description": "XStudioz \u2014 brand design studio. The site is the brand manual.",
+  "description": "XStudioz — brand design studio. The site is the brand manual.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -12,8 +12,12 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
+    "@types/three": "^0.185.4",
     "typescript": "^7.0.2",
     "vite": "^8.2.1"
   },
-  "private": true
+  "private": true,
+  "dependencies": {
+    "three": "^0.185.1"
+  }
 }

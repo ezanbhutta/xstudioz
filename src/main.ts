@@ -27,6 +27,7 @@ import {
 } from './lib/motion';
 import { initUnit } from './lib/measure';
 import { initCover } from './motion/cover';
+import { initOptic } from './motion/optic';
 import { initConsent } from './lib/consent';
 import { initAnalytics } from './lib/analytics';
 
@@ -62,6 +63,11 @@ function boot(): void {
   initNav();
 
   initCover();
+
+  /* The hero's optical scene. This call links nothing: the whole of three
+     sits behind a dynamic import inside it, and the decision to fetch that
+     chunk at all is taken here, synchronously, before the first paint. */
+  initOptic();
 
   applyStaticScroll();
 }

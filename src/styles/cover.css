@@ -252,7 +252,16 @@ html.no-motion .hero__edge {
   top: 0;
   white-space: nowrap;
   color: var(--ink);
-  transition: opacity var(--dur) var(--curve);
+  /* HANDED OVER, NOT CROSS-FADED. The two labels are stacked at the same
+     origin, so fading them simultaneously put both near 0.5 for the middle of
+     the move: two different strings of different lengths overprinting, and
+     for about 200ms of every rotation the line read as garbled type. Captured
+     at 1500 light, the frame said "TAINDEPENDENT STUDIO".
+
+     So the fade is sequenced rather than shortened. Each leg takes half the
+     duration and the arriving label waits out the leaving one, which keeps
+     the whole move on --dur and never has two labels legible at once. */
+  transition: opacity calc(var(--dur) / 2) var(--curve);
 }
 
 .hero__state-item[hidden] {
@@ -262,6 +271,8 @@ html.no-motion .hero__edge {
 [data-rotator='0'] .hero__state-item:nth-of-type(1),
 [data-rotator='1'] .hero__state-item:nth-of-type(2) {
   opacity: 1;
+  /* The arriving label starts only once the leaving one has gone. */
+  transition-delay: calc(var(--dur) / 2);
 }
 
 [data-rotator='0'] .hero__state-item:nth-of-type(2),
@@ -618,6 +629,172 @@ html.no-motion .hero__edge {
        out of two different values reads as a join that failed. */
     border-left: 1px solid var(--ink-line-strong);
     pointer-events: none;
+  }
+
+}
+
+/* ============================================================
+   THE OPTICAL SCENE
+
+   ONE SENTENCE. A single structural rule crosses the reserved field, a
+   precision optical pane cut on the mark's own 40.82 degrees lies across it,
+   and where the two meet the rule bends into the glass, is displaced, and
+   comes back out.
+
+   WHY THAT IS THE SUBJECT AND NOT A DRAWING OF THE LOGO. The headline says
+   the studio draws the mark and every rule that protects it. The one thing
+   in the frame that can be seen to be acted upon is a RULE, and the thing
+   acting on it is the studio's own angle, made material. Remove the pane and
+   the field holds a hairline and nothing happens; remove the rule and the
+   pane has nothing to prove. Neither object is a decoration on the other.
+
+   THE LINE IS HORIZONTAL AND THE MATERIAL CARRIES THE ANGLE, which is the
+   way round that survives the file's own audit. A hairline drawn at
+   --band-angle inside this box was already built once, as THE BRIDGE, and
+   deleted for two reasons: its upper end terminated in open paper, and it
+   put a second unaligned run at the same angle as .hero__edge. Both faults
+   belong to a DIAGONAL LINE in this box. A horizontal rule has neither: it
+   opens on the drawn boundary as a T-junction and closes on the container
+   edge, which is the same vertical the divider below it and the foot rule
+   under that both close on. The pane, meanwhile, runs off the top and the
+   bottom of the field, so it terminates nowhere at all — it is a fragment of
+   something larger, which is the licence .hero__edge already takes.
+
+   COLOUR. Everything above is one ink at four alphas, so the composition
+   holds with the colour removed. The accent appears in one place and it is
+   the size of a tick: the eight pixels of the rule that lie in the pane's
+   leading edge, where the crossing actually happens. It is the same
+   permission .rulefield::after already spends on the copy edge — an accent
+   marking a structural event, not a glow.
+   ============================================================ */
+.optic {
+  display: none;
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+  align-self: stretch;
+  min-height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Both layers are out of flow, so this element contributes NO height to row
+   1 and the headline still sizes the row exactly as it did before. */
+.optic__still,
+.optic canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* THE STILL IS NOT A PLACEHOLDER AND IT IS NEVER SEEN TO BE REPLACED. The
+   loader decides synchronously, before the first paint, whether it is going
+   to attempt the scene; when it is, this attribute is already on the host
+   and the drawing below never paints. If the import fails, or the viewport
+   drops under 1024, the attribute comes off and the drawing is the answer
+   again. Nothing cross-fades, nothing pops, and there is no third state. */
+.optic[data-optic='live'] .optic__still {
+  display: none;
+}
+
+/* THE DRAWING FITS RATHER THAN FILLS, and the choice is measured. `slice`
+   was tried first, and it cropped: at 1024 the field is 293 by 256 against a
+   drawing 571 by 310, and covering it puts the pane's square end 33px past
+   the right edge. `meet` scales the whole composition down instead, so the
+   rule still runs the field's full width, the pane keeps all four of its
+   edges, and the 40.82 degrees is never stretched — which a non-uniform fit
+   would do and which is the one thing this drawing cannot survive. */
+
+/* The hairlines hold 1px through the fit scale rather than growing with it,
+   which is the whole reason this is stroked SVG and not a background. */
+.optic__still line,
+.optic__still path,
+.optic__still polyline,
+.optic__still polygon {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-width: 1;
+}
+
+/* The contact shadow, and it is the only reason the pane reads as being
+   ABOVE the sheet rather than printed on it. Offset down the light's own
+   direction and drawn first, so what survives is a crescent along the two
+   edges the pane is lifted off.
+
+   IT IS WORTH NOTHING ON THE VOID, and that is the room inverting rather
+   than an exception. A contact shadow is ink laid under an object, and on
+   paper the ink is 220 levels below the ground. In the dark room the ground
+   is already at ten and the ink is 233 levels ABOVE it, so the same
+   declaration lightens the sheet exactly where the shadow should be. On the
+   void the pane reads by the lift of its body and its chamfer instead, which
+   is what a glass plate on a black surface actually looks like. */
+.optic__shade {
+  fill: light-dark(var(--ink), transparent);
+  fill-opacity: 0.03;
+  stroke: none;
+}
+
+/* The glass body. One ink at half --edge-quiet, which is the canvas
+   illumination step this site already spends on .hero__edge, so the pane is
+   the same material one level up rather than a new surface. */
+.optic__pane {
+  fill: var(--ink);
+  fill-opacity: 0.03;
+  stroke: var(--ink);
+  stroke-opacity: 0.26;
+}
+
+/* The one thing in the frame painted LIGHTER than the sheet: the polished
+   chamfer on the edges facing the light.
+
+   IT TAKES WHICHEVER TOKEN IS LIGHTER, because a highlight is by definition
+   the lightest thing in the picture. On paper that is --canvas-elevated,
+   eight levels above porcelain, and all eight are spent. On the void
+   --canvas-elevated is nine levels above black, which is DARKER than the
+   chamfer it would be painted over, so the highlight takes the ink instead —
+   at a tenth, because the ink is 233 levels off the void and the whole 233
+   would be a white edge rather than a gleam. Both figures are the same
+   twenty-four levels of change, solved for the room's own headroom. */
+.optic__gleam {
+  stroke: light-dark(
+    var(--canvas-elevated),
+    color-mix(in srgb, var(--ink) 10%, transparent)
+  );
+}
+
+/* The rule, at the weight of the two hairlines it meets. */
+.optic__rule {
+  stroke: var(--ink-line-strong);
+}
+
+/* ONE restrained caustic: the stretch of rule the exit chamfer compresses,
+   carried at a little over the rule's own weight and nowhere else. */
+.optic__caustic {
+  stroke: var(--ink);
+  stroke-opacity: 0.4;
+}
+
+/* The accent, and its whole budget is this segment: the rule where it enters
+   the pane's leading edge, drawn along that edge. */
+.optic__tick {
+  stroke: var(--ink-accent);
+  stroke-opacity: 0.85;
+}
+
+/* THE SCENE TAKES THE RESERVED TRACK, NOT A BOX OF ITS OWN, and it takes it
+   only where the track exists. The @media that reserves column 2 opens at
+   1024 and there is no narrow variant of it, so there is no narrow variant of
+   this: under 1024 the field is withdrawn and the element is not drawn at
+   all, rather than being squeezed into a decorative strip.
+
+   The boundary hairline is painted by .hero__floor::after, which generates
+   after this element, so the drawn edge always sits ON TOP of the canvas and
+   stays exactly one pixel wide. */
+@media (min-width: 1024px) {
+  .optic {
+    display: block;
   }
 }
 

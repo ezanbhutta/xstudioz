@@ -1029,6 +1029,229 @@ html.no-motion [data-enter].is-in {
 }
 
 /* ============================================================
+   THE HANDOVER BETWEEN DOCUMENTS
+
+   Sixteen routes, no router, no client-side navigation and no framework.
+   Every link on this site is an ordinary link and every navigation is an
+   ordinary navigation; what changes here is only that the browser is now
+   allowed to hold the outgoing frame for a third of a second while it swaps
+   the document underneath.
+
+   IT IS DECLARED HERE RATHER THAN IN EITHER ENTRY'S OWN STYLESHEET. A
+   cross-document transition needs BOTH documents to opt in: the outgoing one
+   to agree to be captured and the incoming one to agree to animate. The
+   cover loads cover.css and the fifteen documents load doc.css and neither
+   sees the other, so a rule in either of those would animate half the site's
+   navigations and silently skip the rest. base.css is the only sheet both
+   entries import.
+
+   THERE IS NO JAVASCRIPT ANYWHERE IN THIS AND THERE MUST NOT BE.
+   @view-transition is an unknown at-rule to a browser that does not
+   implement it, and an unknown at-rule is dropped at parse. So a browser
+   without the feature does not fall back to anything: it never learns the
+   feature was offered, and its navigation is the navigation this site has
+   always had. That is the entire degradation story and it costs zero bytes
+   of script.
+
+   THE DURATION IS NOT A NEW RUNG. The law carries two: --dur-half, 204ms,
+   which is what a surface takes when it answers a pointer, and --dur, 408ms,
+   which is what a surface takes when it opens or closes. A document handing
+   over to another document is neither of those things, and neither rung fits
+   it: 204ms reads as a flicker across a whole viewport and 408ms is long
+   enough that a reader notices they are waiting for a page they already
+   asked for. This is the arithmetic middle of the two rungs the ladder
+   already has, 306ms, so the number is composed out of the ladder rather
+   than invented beside it. The curve is --curve, like everything else.
+
+   EXACTLY TWO THINGS ARE NAMED, and the count is a correctness constraint
+   before it is a design one. A view-transition-name that resolves twice in
+   one document makes the whole transition invalid, and the browser's answer
+   to an invalid transition is to skip it — silently, on every navigation,
+   site-wide, with nothing in the console. So the two names below are the
+   two elements this site can prove are unique on all sixteen routes:
+   .nav__mark, which every document carries exactly once in its header, and
+   the page's own H1, which is .hero__title on the cover and .doc__title on
+   the other fifteen and never both.
+
+   WHAT NAMING THEM BUYS. The mark is the same drawing at the same size in
+   the same place on every route, so pairing it means it does not take part
+   in the crossfade at all: it stands still while the page changes behind it,
+   which is what a logo is for. The heading is the reader's own subject, so
+   pairing it carries that subject across the gap rather than dissolving it
+   and drawing another one.
+   ============================================================ */
+
+@view-transition {
+  navigation: auto;
+}
+
+:root {
+  /* 0.30615s. Stated as arithmetic on the two rungs rather than as a
+     literal, so it cannot drift away from the ladder it is derived from. */
+  --vt-dur: calc((var(--dur-half) + var(--dur)) / 2);
+}
+
+/* The whole animation, for every participant, is opacity. No transform is
+   authored here and no clip: the two named groups still take the geometry
+   morph the browser computes between their old and new boxes, which is the
+   one movement in this system, and it is a measurement rather than a
+   decision. */
+::view-transition-group(root),
+::view-transition-old(root),
+::view-transition-new(root),
+::view-transition-group(xz-mark),
+::view-transition-old(xz-mark),
+::view-transition-new(xz-mark),
+::view-transition-group(xz-title),
+::view-transition-old(xz-title),
+::view-transition-new(xz-title) {
+  animation-duration: var(--vt-dur);
+  animation-timing-function: var(--curve);
+}
+
+.nav__mark {
+  view-transition-name: xz-mark;
+}
+
+.hero__title,
+.doc__title {
+  view-transition-name: xz-title;
+}
+
+/* TWO STATES IN WHICH THE MARK GIVES UP ITS NAME, and both of them are
+   about where the mark IS rather than about what it looks like.
+
+   A named element is lifted out of the page and into an overlay that sits
+   above everything, including the top layer. So:
+
+   THE HEADER HIDES ITSELF GOING DOWN THE PAGE. Past 480px of scroll
+   .nav--hidden translates the whole bar off the top of the frame. A reader
+   who follows a link from the footer at that point would be handing the
+   transition an outgoing mark that is off screen and an incoming one at the
+   top of the viewport, and the browser would faithfully fly it down the
+   frame — the one thing a logo must never do. Without the name on the
+   outgoing side there is no pair, and the incoming mark simply arrives with
+   the page.
+
+   THE MENU IS AN OVERLAY. While the dialog is open the header is behind it,
+   and a named mark would be lifted above the panel and painted on top of the
+   menu it is supposed to be underneath. In practice nav.ts closes the
+   dialog on the click that navigates, so this state is rarely the one
+   captured; it costs one selector to be certain. */
+.nav--hidden .nav__mark,
+html.nav-open .nav__mark {
+  view-transition-name: none;
+}
+
+/* THE HEADING GIVES UP ITS NAME ON THE SAME CONDITION, AND LEAVING IT OUT
+   WAS A REAL FAULT RATHER THAN AN OMISSION OF TIDINESS.
+
+   The rule above was written because a named element that is off screen on
+   one side of the navigation gets flown across the frame by the group's
+   geometry morph. That reasoning is not about the mark. It is about any
+   named element whose two boxes are far apart, and the H1 is the largest
+   named element on the page.
+
+   The morph is defensible at rest, where it is genuinely a measurement of
+   two designed positions: at the top of /about/ the group moves the heading
+   14px, from y 278 to y 292, and that reads as a settle. It stops being a
+   measurement the moment the reader scrolls, because the outgoing box then
+   carries the scroll offset, which is not a design relationship at all. It
+   is a record of where the reader happened to be standing.
+
+   Measured on the shipped build, /about/ to /process/ at 1500x900, reading
+   the keyframes off ::view-transition-group(xz-title):
+     at rest          matrix(...,48,278)   -> matrix(...,31.7,292)     14px
+     scrolled 1400    matrix(...,48,-1122) -> matrix(...,48,278)     1400px
+     scrolled 4000    matrix(...,48,-3722) -> matrix(...,48,278)     4000px
+   The flight distance is exactly the scroll offset, so it is unbounded on a
+   long document. A 900x400 headline sweeping the full height of the frame
+   is the slide this work says it does not author, and it was visible in
+   captured frames rather than inferred from the numbers.
+
+   The condition can only be asked in the OUTGOING document, because that is
+   where the capture happens and where the scroll state lives; by the time
+   the pseudo-elements exist they belong to the incoming document, which is
+   always at the top. So the name is what gets conditioned, not the
+   animation, and .nav--hidden is the one hook in the DOM that already means
+   "the reader has left the top". It is set on the header rather than on an
+   ancestor of the heading, so :has is what reaches it.
+
+   This bounds the flight at the 480px threshold where the header hides,
+   instead of the full document height. The residual is stated plainly in
+   the report rather than described as solved: below 480px of scroll a
+   proportional morph remains, and closing that needs a hook this sheet does
+   not have. */
+:root:has(.nav--hidden) .hero__title,
+:root:has(.nav--hidden) .doc__title {
+  view-transition-name: none;
+}
+
+/* ============================================================
+   THE HANDOVER UNDER REDUCED MOTION
+
+   The names come OFF. That is deliberate and it is not the same thing as
+   turning the animation off on the snapshots.
+
+   `animation: none` on a ::view-transition-old or -new pseudo removes the
+   fill-mode: both that came with the browser's own keyframes, which leaves
+   BOTH snapshots sitting at their base opacity of 1, stacked, blended with
+   plus-lighter. Two copies of a page added together is a page rendered
+   roughly twice as bright, held for the length of the transition, on a
+   reader who asked for less. Removing the name removes the element from the
+   transition instead, so there is one copy of it and it is the real one.
+
+   The root pair keeps its fill and gets a duration short enough to be a
+   swap. The reader still gets the state change — the new document, complete
+   and immediate — with nothing crossing the frame to announce it.
+
+   THE GROUP IS ON THE SHORT RUNG TOO, AND LEAVING IT OFF WAS A REAL FAULT
+   RATHER THAN A TIDINESS ONE. Shortening only the old and new pair does
+   shorten the only thing a reader can SEE: the two snapshots swap in a
+   millisecond and the frame is correct from then on. But a transition is
+   not over until every one of its animations is, and
+   ::view-transition-group(root) was still running the full 306.15ms on the
+   rule above. Measured in headless Chrome under prefers-reduced-motion:
+   reduce, the group's duration came back 306.15 against the pair's 1, and
+   viewTransition.finished settled at 318ms. For those 306ms the reader is
+   looking at a static picture of the new page held in the transition
+   overlay instead of the new page itself. Nothing moves — the group's box
+   is the viewport on both sides, so there is no animation to see — which is
+   exactly why it was invisible on paper and why only the timing said so.
+   Now all three are 1ms and finished settles in single digits.
+
+   .no-motion is the second switch, for the three cases a media query cannot
+   see: ?static, a renderer viewport, and prefers-reduced read through
+   matchMedia. It is written onto the root by both entries before the first
+   paint, so it is already matching when the incoming document is captured.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .nav__mark,
+  .hero__title,
+  .doc__title {
+    view-transition-name: none;
+  }
+
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 1ms;
+  }
+}
+
+html.no-motion .nav__mark,
+html.no-motion .hero__title,
+html.no-motion .doc__title {
+  view-transition-name: none;
+}
+
+html.no-motion::view-transition-group(root),
+html.no-motion::view-transition-old(root),
+html.no-motion::view-transition-new(root) {
+  animation-duration: 1ms;
+}
+
+/* ============================================================
    WHAT USED TO BE HERE
 
    The lighting rig: a registered --rot angle, a 120s rotation, two conic
